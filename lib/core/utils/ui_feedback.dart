@@ -27,10 +27,32 @@ extension UiFeedback on BuildContext {
         accent: AppColors.gold,
       );
 
+  /// رسالة نجاح مع زر إجراء (مثل «تراجع») يمنح المستخدم نافذة لتصحيح تعديل
+  /// غير مقصود. تُمنح مدة أطول حتى يتمكن من اللحاق بالزر.
+  void showSuccessAction(
+    String message, {
+    required String actionLabel,
+    required VoidCallback onAction,
+    Duration duration = const Duration(seconds: 7),
+  }) =>
+      _show(
+        message,
+        icon: Icons.check_circle_rounded,
+        accent: AppColors.success,
+        duration: duration,
+        action: SnackBarAction(
+          label: actionLabel,
+          textColor: AppColors.gold,
+          onPressed: onAction,
+        ),
+      );
+
   void _show(
     String message, {
     required IconData icon,
     required Color accent,
+    Duration duration = const Duration(seconds: 4),
+    SnackBarAction? action,
   }) {
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(this);
     messenger
@@ -38,7 +60,8 @@ extension UiFeedback on BuildContext {
       ..showSnackBar(
         SnackBar(
           backgroundColor: AppColors.navy,
-          duration: const Duration(seconds: 4),
+          duration: duration,
+          action: action,
           content: Row(
             children: <Widget>[
               Icon(icon, color: accent, size: 20),

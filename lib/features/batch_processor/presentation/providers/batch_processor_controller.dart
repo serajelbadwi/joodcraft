@@ -228,6 +228,24 @@ class BatchProcessorController extends ChangeNotifier {
     return true;
   }
 
+  /// يلغي أثر [convertTextToField]: يعيد النص الثابت [originalText] مكان
+  /// الحقل ثم يُعيد الربط التلقائي (فيُزال ربط عمود الاسم بالحقل الملغى).
+  /// يعيد `false` إن كان الفهرس غير صالح أو العنصر ليس نصاً.
+  bool revertTextToField(int index, String originalText) {
+    final TemplateDocument? document = _document;
+    if (document == null) return false;
+    if (index < 0 || index >= document.elements.length) return false;
+    final TemplateElement element = document.elements[index];
+    if (element is! TextElement) return false;
+    final List<TemplateElement> elements =
+        List<TemplateElement>.from(document.elements);
+    elements[index] = element.copyWith(text: originalText);
+    _document = document.copyWith(elements: elements);
+    _autoMap();
+    notifyListeners();
+    return true;
+  }
+
   /// القيمة التجريبية لحقل — كما ستُستخدم عند اختيار «استخدم القيمة التجريبية».
   String sampleOf(String field) {
     final String? fromTemplate = _document?.sampleData[field];

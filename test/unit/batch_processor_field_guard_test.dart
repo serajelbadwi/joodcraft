@@ -137,5 +137,37 @@ void main() {
       expect(controller.convertTextToField(99), isFalse);
       expect(controller.convertTextToField(-1), isFalse);
     });
+
+    test('revertTextToField يُعيد النص ويزيل الحقل والربط', () {
+      controller.useDocument(_dateOnlyTemplate());
+      controller.loadBytes(fileName: 'data.csv', bytes: _csv);
+
+      final NameTextFieldCandidate candidate =
+          controller.nameFieldCandidates.single;
+      final String original = candidate.preview;
+      controller.convertTextToField(candidate.index);
+      expect(controller.mapping.fieldFor(0), 'اسم_المتدرب');
+
+      final bool reverted =
+          controller.revertTextToField(candidate.index, original);
+      expect(reverted, isTrue);
+
+      // عاد النص ثابتاً، وزال الحقل، وعاد عمود الاسم بلا ربط.
+      expect(controller.hasNameField, isFalse);
+      expect(controller.availableFields, <String>['التاريخ']);
+      expect(controller.mapping.fieldFor(0), isNull);
+      final TextElement restored =
+          controller.document!.elements[candidate.index] as TextElement;
+      expect(restored.text, original);
+      expect(
+        controller.document!.fieldKeys,
+        isNot(contains('اسم_المتدرب')),
+      );
+    });
+
+    test('revertTextToField يرفض فهرساً غير صالح', () {
+      controller.useDocument(_dateOnlyTemplate());
+      expect(controller.revertTextToField(42, 'x'), isFalse);
+    });
   });
 }

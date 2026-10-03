@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/template_document.dart';
+import '../../../../core/models/template_element.dart';
 import '../../../../core/templates/local_template_store.dart';
 import '../../../../core/templates/template_library_controller.dart';
 import '../../../../core/templates/template_library_entry.dart';
@@ -168,15 +169,30 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   /// يضيع عند إعادة التحميل. للقوالب الجاهزة غير القابلة للتعديل نكتفي
   /// بالتوليد الحالي مع إرشاد المستخدم.
   Future<void> _convertTextToField(int index) async {
+    // نلتقط النص الأصلي **قبل** التحويل لنمنح المستخدم تراجعاً كاملاً (في
+    // الذاكرة وفي القالب المحفوظ معاً).
+    final TemplateDocument? before = _controller.document;
+    if (before == null || index < 0 || index >= before.elements.length) return;
+    final TemplateElement element = before.elements[index];
+    if (element is! TextElement) return;
+    final String originalText = element.text;
+
     if (!_controller.convertTextToField(index)) return;
     final TemplateDocument? document = _controller.document;
     final TemplateLibraryEntry? entry = _selectedUserEntry();
     if (!mounted || document == null) return;
 
+    void undo() =>
+        unawaited(_revertTextToField(index, originalText, entry));
+
     if (entry == null) {
-      context.showSuccess(
+      // قالب جاهز غير قابل للتعديل: التحويل للتوليد الحالي فقط، والتراجع
+      // يُلغي أثره في الذاكرة.
+      context.showSuccessAction(
         'تم تحويل النص إلى حقل {{اسم_المتدرب}} للتوليد الحالي — احفظ القالب '
         'لتثبيت التعديل دائماً.',
+        actionLabel: 'تراجع',
+        onAction: undo,
       );
       return;
     }
@@ -184,12 +200,40 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     try {
       await _library.updateDocument(entry: entry, document: document);
       if (!mounted) return;
-      context.showSuccess(
+      context.showSuccessAction(
         'تم تحويل النص إلى حقل {{اسم_المتدرب}} وحُفظ التعديل في القالب.',
+        actionLabel: 'تراجع',
+        onAction: undo,
       );
     } catch (error) {
       if (!mounted) return;
       context.showError('تعذّر حفظ التعديل في القالب: $error');
+    }
+  }
+
+  /// تراجع: يُعيد النص الثابت مكان الحقل، ويُزيل الربط التلقائي، ويُثبّت
+  /// الاستعادة في القالب المحفوظ إن كان قالب مستخدم.
+  Future<void> _revertTextToField(
+    int index,
+    String originalText,
+    TemplateLibraryEntry? entry,
+  ) async {
+    if (!_controller.revertTextToField(index, originalText)) return;
+    final TemplateDocument? document = _controller.document;
+    if (!mounted || document == null) return;
+
+    if (entry == null) {
+      context.showSuccess('تم التراجع عن التحويل.');
+      return;
+    }
+
+    try {
+      await _library.updateDocument(entry: entry, document: document);
+      if (!mounted) return;
+      context.showSuccess('تم التراجع عن التحويل واستعادة النص في القالب.');
+    } catch (error) {
+      if (!mounted) return;
+      context.showError('تعذّر استعادة النص في القالب: $error');
     }
   }
 

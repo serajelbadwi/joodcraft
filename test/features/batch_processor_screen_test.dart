@@ -530,6 +530,22 @@ void main() {
       saved.elements.whereType<TextElement>().map((TextElement e) => e.text),
       isNot(contains('محمد بن عبد الله الشمري')),
     );
+
+    // زر «تراجع» في الإشعار يُعيد النص ويثبّت الاستعادة في القالب.
+    expect(find.text('تراجع'), findsOneWidget);
+    await tester.tap(find.text('تراجع'));
+    await tester.pumpAndSettle();
+
+    expect(controller.hasNameField, isFalse);
+    expect(controller.mapping.fieldFor(0), isNull);
+    final TemplateDocument afterUndo = repository.records.single.toDocument();
+    expect(afterUndo.fieldKeys, isNot(contains('اسم_المتدرب')));
+    expect(
+      afterUndo.elements
+          .whereType<TextElement>()
+          .map((TextElement e) => e.text),
+      contains('محمد بن عبد الله الشمري'),
+    );
   });
 
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',
