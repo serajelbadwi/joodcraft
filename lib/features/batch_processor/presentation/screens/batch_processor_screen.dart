@@ -342,14 +342,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               ? 'جارٍ تحميل القالب النموذجي…'
               : 'القالب: $activeTemplate • الحقول المطلوبة: '
                   '${_controller.availableFields.length}',
-          // تحذير صريح حين لا يحوي القالب أي حقل `{{...}}`: المستخدم يظنّ
-          // أنه «مربوط» بينما النص ثابت لا يتغيّر بين السجلات.
-          warning: _controller.document != null &&
-                  !_controller.templateHasDynamicFields
-              ? 'هذا القالب بلا حقول ديناميكية — لن تتغيّر البيانات بين '
-                  'السجلات. أضف حقل «اسم المتدرب» من شريط المحرّر '
-                  '(حقل ديناميكي) ثم احفظ القالب.'
-              : null,
+          // تحذير صريح: إمّا قالب بلا حقول `{{...}}` إطلاقاً، أو قالب فيه حقول
+          // لكن بلا حقل اسم (فيُربط عمود الاسم بحقل تاريخ/رقم خطأً).
+          warning: _controller.templateWarningAr,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -725,6 +720,49 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                   ],
                 ),
                 const SizedBox(height: AppTheme.space4),
+                if (!_controller.hasNameField &&
+                    _controller.templateHasDynamicFields)
+                  _Note(
+                    color: AppColors.warning,
+                    soft: AppColors.warningSoft,
+                    icon: Icons.person_search_rounded,
+                    text: 'هذا القالب لا يحتوي على حقل اسم ديناميكي '
+                        '{{اسم_المتدرب}} — لا تربط عمود الاسم بحقل تاريخ أو رقم '
+                        'إشعار، فقد يُطبع الاسم في مكانه الخطأ.\n'
+                        'اختر المفتاح {{اسم_المتدرب}} من قائمة العمود، أو '
+                        'حوّل نص الاسم الثابت من المحرّر إلى حقل ديناميكي.',
+                  ),
+                // ربط سريع بضغطة واحدة: النصوص الثابتة التي تبدو أسماءً — هذه
+                // هي اللحظة التي كان المستخدم يعلق فيها بلا حقل اسم فيُجبر على
+                // ربط عمود الاسم بحقل تاريخ. الضغطة هنا تحوّل النص إلى
+                // `{{اسم_المتدرب}}` وتعيد الربط التلقائي فوراً.
+                if (!_controller.hasNameField)
+                  for (final NameTextFieldCandidate candidate
+                      in _controller.nameFieldCandidates) ...<Widget>[
+                  const SizedBox(height: AppTheme.space4),
+                  Text(
+                    'نصّ ثابت يشبه الاسم: «${candidate.preview}» — لا يستبدله أي '
+                    'حقل ديناميكي.',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  OutlinedButton.icon(
+                    onPressed: () =>
+                        _controller.convertTextToField(candidate.index),
+                    icon: const Icon(Icons.add_link_rounded, size: 16),
+                    label: const Text(
+                      'حوّله إلى حقل {{اسم_المتدرب}}',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 38),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: AppTheme.space4),
                 for (final int column in _controller.visibleColumns)
                   _mappingRow(column),
                 if (_controller.mapping.hasDuplicates)
@@ -918,6 +956,20 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               soft: AppColors.dangerSoft,
               icon: Icons.error_outline_rounded,
               text: _controller.errorAr!,
+            ),
+          // شرح سبب تعطيل الزر: الغموض هنا هو ما دفع المستخدم لربط عمود
+          // الاسم بحقل تاريخ «ليتفعّل الزر».
+          if (!_controller.canGenerate && !_controller.busy)
+            _Note(
+              color: AppColors.warning,
+              soft: AppColors.warningSoft,
+              icon: Icons.info_outline_rounded,
+              text: _controller.sheet.isEmpty
+                  ? 'اختر ملف بيانات أولاً ليُفعَّل التوليد.'
+                  : _controller.mapping.isNotEmpty
+                      ? 'الربط غير صالح — لا تُربط الحقول الحقل نفسه بعمودين.'
+                      : 'اربط عموداً واحداً على الأقل بحقل من القالب ليُفعَّل '
+                          'التوليد.',
             ),
           FilledButton.icon(
             onPressed: _controller.canGenerate ? _generate : null,

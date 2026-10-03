@@ -6,6 +6,7 @@ import '../../../../core/constants/dynamic_fields.dart';
 import '../../domain/field_aliases.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/models/template_document.dart';
+import '../../../../core/models/template_element.dart';
 import '../../../../core/services/pdf_generator_service.dart';
 import '../../data/sheet_parse_isolate.dart';
 import '../../domain/bulk_generation.dart';
@@ -154,6 +155,78 @@ class BatchProcessorController extends ChangeNotifier {
   /// عند `false` لن يتغيّر أي نص بين السجلات — وهي الحالة التي يظنّ فيها
   /// المستخدم أن القالب «مربوط» بينما هو نص ثابت لا حقول فيه.
   bool get templateHasDynamicFields => _document?.hasDynamicFields ?? false;
+
+  /// هل يحوي القالب النشط حقل **اسم** (شخص/جهة) على الأقل؟
+  ///
+  /// عند `false` ومع وجود حقول أخرى (تاريخ/رقم) يُدفع المستخدم لربط عمود
+  /// الاسم بحقل خطأ فيظهر الاسم مكان التاريخ — وهي الحالة الحرجة التي
+  /// يشرحها [templateWarningAr].
+  bool get hasNameField =>
+      availableFields.any(FieldAliases.isNameToken);
+
+  /// تحذير عربي واضح عن القالب النشط — أو `null` إن كان سليماً.
+  ///
+  /// الأولوية: «بلا حقول ديناميكية إطلاقاً»، ثم «فيه حقول لكن بلا حقل اسم».
+  String? get templateWarningAr {
+    final TemplateDocument? document = _document;
+    if (document == null) return null;
+    if (!templateHasDynamicFields) {
+      return 'هذا القالب بلا حقول ديناميكية — لن تتغيّر البيانات بين '
+          'السجلات. أضف حقل «اسم المتدرب» من شريط المحرّر (حقل ديناميكي) '
+          'ثم احفظ القالب.';
+    }
+    if (!hasNameField) {
+      return 'هذا القالب لا يحتوي على حقل اسم ديناميكي {{اسم_المتدرب}} — '
+          'قد يربط عمود الاسم بحقل تاريخ أو رقم إشعار فيظهر الاسم في مكانه '
+          'الخطأ. حوّل نص الاسم الثابت إلى حقل أو أعد تصميم القالب.';
+    }
+    return null;
+  }
+
+  /// نصوص ثابتة في القالب تبدو أسماءً ويمكن تحويلها إلى حقل بضغطة واحدة.
+  ///
+  /// تُعرض في خطوة الربط كاقتراح صريح يتقدّم على [templateWarningAr]: بدل أن
+  /// يعلق المستخدم بلا حقل اسم يستقبل عمود ملفه، يحوّل النص المرئي أمامه إلى
+  /// `{{اسم_المتدرب}}` فيُعاد الربط التلقائي فوراً.
+  List<NameTextFieldCandidate> get nameFieldCandidates {
+    final TemplateDocument? document = _document;
+    if (document == null) return const <NameTextFieldCandidate>[];
+    final List<NameTextFieldCandidate> candidates = <NameTextFieldCandidate>[];
+    for (int i = 0; i < document.elements.length; i++) {
+      final TemplateElement element = document.elements[i];
+      if (element is! TextElement || element.hasDynamicFields) continue;
+      if (!FieldAliases.looksLikePersonName(
+        element.text,
+        fontSize: element.fontSize,
+      )) {
+        continue;
+      }
+      candidates.add(
+        NameTextFieldCandidate(index: i, preview: element.text.trim()),
+      );
+    }
+    return candidates;
+  }
+
+  /// يحوّل نصاً ثابتاً (بفهرسه في عناصر القالب) إلى حقل ديناميكي `{{fieldKey}}`.
+  ///
+  /// التعديل يخصّ **نسخة التوليد الحالية** في الذاكرة فقط ولا يُحفظ على القرص،
+  /// ثم يُعاد الربط التلقائي حتى يرتبط عمود الاسم بالحقل الجديد فوراً. يعيد
+  /// `false` إن كان الفهرس غير صالح أو العنصر ليس نصاً.
+  bool convertTextToField(int index, {String fieldKey = 'اسم_المتدرب'}) {
+    final TemplateDocument? document = _document;
+    if (document == null) return false;
+    if (index < 0 || index >= document.elements.length) return false;
+    final TemplateElement element = document.elements[index];
+    if (element is! TextElement) return false;
+    final List<TemplateElement> elements =
+        List<TemplateElement>.from(document.elements);
+    elements[index] = element.copyWith(text: DynamicFields.token(fieldKey));
+    _document = document.copyWith(elements: elements);
+    _autoMap();
+    notifyListeners();
+    return true;
+  }
 
   /// القيمة التجريبية لحقل — كما ستُستخدم عند اختيار «استخدم القيمة التجريبية».
   String sampleOf(String field) {
@@ -447,7 +520,21 @@ class BatchProcessorController extends ChangeNotifier {
       headers: _sheet.headers,
       fieldKeys: availableFields,
       aliases: FieldAliases.byToken,
+      allowMatch: _allowsAutoMatch,
     );
+  }
+
+  /// حاجز الربط الدلالي: يمنع ربط عمود اسم (Name/الاسم) بحقل تاريخ أو رقم
+  /// إشعار تلقائياً — الأصل هو ألا يطبع الاسم في مكان التاريخ. الربط اليدوي
+  /// من القائمة يبقى متاحاً كما هو.
+  bool _allowsAutoMatch(int column, String field) {
+    final String header =
+        column < _sheet.headers.length ? _sheet.headers[column] : '';
+    if (FieldAliases.looksLikeNameHeader(header) &&
+        FieldAliases.isTemporalOrCodeToken(field)) {
+      return false;
+    }
+    return true;
   }
 
   void setPolicy(MissingCellPolicy policy) {
@@ -522,4 +609,16 @@ class BatchProcessorController extends ChangeNotifier {
     _total = 0;
     notifyListeners();
   }
+}
+
+/// نصّ ثابت في القالب يبدو اسمَ شخص ويمكن تحويله إلى حقل ديناميكي بضغطة.
+class NameTextFieldCandidate {
+  const NameTextFieldCandidate({required this.index, required this.preview});
+
+  /// موضع العنصر في `document.elements` (يُمرَّر إلى
+  /// `BatchProcessorController.convertTextToField`).
+  final int index;
+
+  /// النص الثابت كما يظهر في القالب (للعرض في الزر).
+  final String preview;
 }

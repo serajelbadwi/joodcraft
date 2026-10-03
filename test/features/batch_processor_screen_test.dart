@@ -454,6 +454,75 @@ void main() {
     expect(find.textContaining('بلا حقول ديناميكية'), findsWidgets);
   });
 
+  testWidgets('قالب بلا حقل اسم: يظهر التنبيه وزر التحويل السريع يعمل',
+      (WidgetTester tester) async {
+    // قالب فيه حقل تاريخ فقط ونصّ ثابت يشبه اسم المتدرب — أصل الخلل.
+    final TemplateDocument dateOnly = TemplateDocument(
+      orientation: PageOrientation.landscape,
+      elements: const <TemplateElement>[
+        TextElement(
+          id: 'name',
+          box: ElementBox(x: 100, y: 260, width: 480, height: 70),
+          text: 'محمد بن عبد الله الشمري',
+          fontSize: 22,
+        ),
+        TextElement(
+          id: 'date',
+          box: ElementBox(x: 100, y: 120, width: 300, height: 40),
+          text: 'بتاريخ {{التاريخ}}',
+        ),
+      ],
+    );
+    final FakeTemplateRepository repository = FakeTemplateRepository();
+    repository.records.add(
+      TemplateRecord(
+        id: 'date-only-1',
+        userId: 'user-1',
+        title: 'قالب بلا اسم',
+        category: TemplateCategory.certificate,
+        orientation: PageOrientation.landscape,
+        layoutData: dateOnly.toJson(),
+      ),
+    );
+
+    await pumpScreen(
+      tester,
+      size: const Size(1400, 1600),
+      repository: repository,
+      localStore: InMemoryLocalTemplateStore(),
+    );
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('قالب بلا اسم').last);
+    await tester.pumpAndSettle();
+
+    expect(controller.hasNameField, isFalse);
+
+    // ملف عموداه الاسم والتاريخ.
+    final Uint8List csv = Uint8List.fromList(
+      utf8.encode('الاسم,التاريخ\nأحمد الشمري,1447/03/12\n'),
+    );
+    await controller.loadBytes(fileName: 'data.csv', bytes: csv);
+    await tester.pumpAndSettle();
+
+    // الحاجز: عمود الاسم لم يُربط بحقل التاريخ.
+    expect(controller.mapping.fieldFor(0), isNull);
+    expect(controller.mapping.fieldFor(1), 'التاريخ');
+    expect(
+      find.textContaining('لا يحتوي على حقل اسم ديناميكي'),
+      findsWidgets,
+    );
+
+    // زر التحويل السريع يحوّل النص الثابت ويربط عمود الاسم فوراً.
+    expect(find.textContaining('محمد بن عبد الله الشمري'), findsWidgets);
+    await tester.tap(find.text('حوّله إلى حقل {{اسم_المتدرب}}'));
+    await tester.pumpAndSettle();
+
+    expect(controller.hasNameField, isTrue);
+    expect(controller.mapping.fieldFor(0), 'اسم_المتدرب');
+  });
+
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',
       (WidgetTester tester) async {
     await pumpScreen(tester);

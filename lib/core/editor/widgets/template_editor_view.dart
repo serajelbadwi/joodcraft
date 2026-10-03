@@ -21,7 +21,6 @@ import '../../templates/template_repository.dart';
 import '../../templates/unsaved_changes_guard.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
-import '../../assets/asset_store.dart';
 import '../../utils/ui_feedback.dart';
 import '../../widgets/pdf_template_preview.dart';
 import '../element_factory.dart';

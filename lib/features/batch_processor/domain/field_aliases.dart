@@ -122,4 +122,112 @@ abstract final class FieldAliases {
 
   /// كل المفاتيح المعروفة في الجدولة.
   static Set<String> get knownTokens => byToken.keys.toSet();
+
+  // ==========================================================================
+  //  تصنيف الحقول والعناوين (حاجز الربط الدلالي)
+  // ==========================================================================
+
+  /// مفاتيح حقول «الاسم» (شخص/جهة): أي قالب يحوي أحدها جاهز لاستقبال عمود
+  /// الاسم مباشرةً.
+  static const Set<String> nameTokens = <String>{
+    'student_name',
+    'party_1',
+    'party_2',
+    'اسم_المتدرب',
+    'اسم_الطرف_الأول',
+    'اسم_الطرف_الثاني',
+    'اسم_المنشأة',
+    'المدرب',
+  };
+
+  /// مفاتيح الحقول الزمنية/الرقمية (تاريخ أو رقم إشعار/شهادة/عقد) التي **لا
+  /// يجوز** ربط عمود اسم بها تلقائياً — وهذا أصل الخلل المطروح: قالب فيه حقل
+  /// تاريخ فقط، فيُجبر المستخدم على ربط عمود الاسم به فيظهر الاسم مكان التاريخ.
+  static const Set<String> temporalOrCodeTokens = <String>{
+    // القوالب النموذجية (مفاتيح إنجليزية).
+    'date',
+    'start_date',
+    'end_date',
+    'contract_no',
+    'verify_code',
+    // قوالب المحرّر (مفاتيح عربية).
+    'التاريخ',
+    'تاريخ_العقد',
+    'تاريخ_البداية',
+    'تاريخ_النهاية',
+    'رقم_الشهادة',
+    'رقم_العقد',
+  };
+
+  /// كلمات تدلّ على أن عنوان العمود هو عمود اسم.
+  static const List<String> _nameHeaderKeywords = <String>[
+    'اسم',
+    'name',
+    'student',
+    'trainee',
+    'participant',
+    'employee',
+    'party',
+    'متدرب',
+    'طالب',
+    'مشارك',
+    'موظف',
+    'عامل',
+    'مدرب',
+  ];
+
+  /// كلمات تدلّ على أن نصاً ثابتاً عنوانُ مستند لا اسم شخص.
+  static final RegExp _nonNameLabel = RegExp(
+    r'شهاد|عقد|اتفاقي|دورة|برنامج|تاريخ|رقم|إشعار|اشعار|تحقق|رابط|جهة|مانح',
+  );
+
+  /// هل مفتاح الحقل حقل اسم؟
+  static bool isNameToken(String token) => nameTokens.contains(token.trim());
+
+  /// هل مفتاح الحقل حقل تاريخ/رقم لا يُربط بعمود اسم تلقائياً؟
+  static bool isTemporalOrCodeToken(String token) =>
+      temporalOrCodeTokens.contains(token.trim());
+
+  /// هل يشير عنوان العمود إلى اسم؟ يُستخدم لمنع ربطه تلقائياً بحقل تاريخ أو
+  /// رقم إشعار (انظر معامل `allowMatch` في `ColumnMapping.autoDetect`).
+  static bool looksLikeNameHeader(String header) {
+    final String compact = _compact(header);
+    if (compact.isEmpty) return false;
+    for (final String keyword in _nameHeaderKeywords) {
+      final String key = _compact(keyword);
+      if (key.isNotEmpty && compact.contains(key)) return true;
+    }
+    return false;
+  }
+
+  /// تطبيع مبسّط للمقارنة بالاحتواء: حذف الفواصل وتوحيد الهمزات والتاء
+  /// المربوطة والألف المقصورة (بلا اعتماد على `ColumnMapping`).
+  static String _compact(String value) => value
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'[\s_\-./()\[\]:,\u00B7\\]'), '')
+      .replaceAll('أ', 'ا')
+      .replaceAll('إ', 'ا')
+      .replaceAll('آ', 'ا')
+      .replaceAll('ة', 'ه')
+      .replaceAll('ى', 'ي');
+
+  /// هل يشبه نصّ عنصر ثابت اسمَ شخص؟ (كشف «النص الذي كان يجب أن يكون حقلاً».)
+  ///
+  /// المسطرة مقصودة وحدسية: كلمتان إلى خمس، بلا أرقام، وبلا كلمات تدلّ على
+  /// عنوان مستند، وبخطّ غير صغير (الموقع الرئيسي عادةً). النتيجة مجرّد اقتراح
+  /// لا يُطبَّق إلا بضغطة صريحة من المستخدم.
+  static bool looksLikePersonName(String text, {double fontSize = 16}) {
+    final String trimmed = text.trim();
+    if (trimmed.isEmpty || trimmed.contains('{{')) return false;
+    if (fontSize < 12) return false;
+    if (RegExp(r'[0-9\u0660-\u0669]').hasMatch(trimmed)) return false;
+    if (_nonNameLabel.hasMatch(trimmed)) return false;
+    if (trimmed.length > 40) return false;
+    final List<String> words = trimmed
+        .split(RegExp(r'\s+'))
+        .where((String word) => word.trim().isNotEmpty)
+        .toList(growable: false);
+    return words.length >= 2 && words.length <= 5;
+  }
 }

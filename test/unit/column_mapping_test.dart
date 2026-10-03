@@ -65,6 +65,20 @@ void main() {
       expect(mapping.fieldFor(0), 'اسم_الطرف_الأول');
       expect(mapping.fieldFor(1), 'قيمة_العقد');
     });
+
+    test('allowMatch يستبعد الأزواج غير المنطقية (عمود اسم ← حقل تاريخ)', () {
+      final ColumnMapping mapping = ColumnMapping.autoDetect(
+        columns: <int>[0, 1],
+        headers: <String>['الاسم', 'التاريخ'],
+        fieldKeys: <String>['التاريخ'],
+        // الحاجز الذي يستخدمه متحكّم التوليد الجماعي.
+        allowMatch: (int column, String field) =>
+            !(column == 0 && field == 'التاريخ'),
+      );
+
+      expect(mapping.fieldFor(0), isNull);
+      expect(mapping.fieldFor(1), 'التاريخ');
+    });
   });
 
   group('إدارة الربط', () {

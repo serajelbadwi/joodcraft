@@ -65,12 +65,12 @@ enum PaperSize {
 
   /// واردات وحدات قياس الصيغ عند الطباعة (باستخدام نقاط→v). يُنفذ كدالة مساعدة.
   static const Map<String, CustomPageSize> allPresets = <String, CustomPageSize>{
-    'a4': const CustomPageSize(width: 21.0, height: 29.7, unit: MeasurementUnit.cm),
-    'a3': const CustomPageSize(width: 29.7, height: 42.0, unit: MeasurementUnit.cm),
-    'a5': const CustomPageSize(width: 14.8, height: 21.0, unit: MeasurementUnit.cm),
-    'letter': const CustomPageSize(width: 8.5, height: 11.0, unit: MeasurementUnit.inch),
-    'legal': const CustomPageSize(width: 8.5, height: 14.0, unit: MeasurementUnit.inch),
-    'a4_us': const CustomPageSize(width: 8.5, height: 11.0, unit: MeasurementUnit.inch),
+    'a4': CustomPageSize(width: 21.0, height: 29.7, unit: MeasurementUnit.cm),
+    'a3': CustomPageSize(width: 29.7, height: 42.0, unit: MeasurementUnit.cm),
+    'a5': CustomPageSize(width: 14.8, height: 21.0, unit: MeasurementUnit.cm),
+    'letter': CustomPageSize(width: 8.5, height: 11.0, unit: MeasurementUnit.inch),
+    'legal': CustomPageSize(width: 8.5, height: 14.0, unit: MeasurementUnit.inch),
+    'a4_us': CustomPageSize(width: 8.5, height: 11.0, unit: MeasurementUnit.inch),
   };
 
   static PaperSize fromJson(Object? value) {

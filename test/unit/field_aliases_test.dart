@@ -101,4 +101,61 @@ void main() {
       }
     });
   });
+
+  group('تصنيف الحقول والعناوين', () {
+    test('يميّز مفاتيح الاسم عن مفاتيح التاريخ/الرقم', () {
+      for (final String token in <String>[
+        'student_name',
+        'party_1',
+        'اسم_المتدرب',
+        'اسم_الطرف_الثاني',
+      ]) {
+        expect(FieldAliases.isNameToken(token), isTrue, reason: token);
+      }
+      for (final String token in <String>[
+        'date',
+        'start_date',
+        'verify_code',
+        'التاريخ',
+        'رقم_الشهادة',
+      ]) {
+        expect(FieldAliases.isTemporalOrCodeToken(token), isTrue, reason: token);
+      }
+    });
+
+    test('يكتشف عناوين الأعمدة التي تشير إلى اسم', () {
+      for (final String header in <String>[
+        'الاسم',
+        'اسم المتدرب',
+        'اسم الطالب',
+        'Full Name',
+        'Employee Name',
+      ]) {
+        expect(FieldAliases.looksLikeNameHeader(header), isTrue, reason: header);
+      }
+      for (final String header in <String>[
+        'التاريخ',
+        'رقم الإشعار',
+        'رقم الشهادة',
+        'value',
+      ]) {
+        expect(FieldAliases.looksLikeNameHeader(header), isFalse, reason: header);
+      }
+    });
+
+    test('يكتشف النصوص الثابتة التي تشبه اسم شخص', () {
+      expect(
+        FieldAliases.looksLikePersonName('محمد بن عبد الله الشمري'),
+        isTrue,
+      );
+      expect(FieldAliases.looksLikePersonName('Sara Al-Otaibi'), isTrue);
+      expect(FieldAliases.looksLikePersonName('{{اسم_المتدرب}}'), isFalse);
+      expect(FieldAliases.looksLikePersonName('شهادة إتمام دورة'), isFalse);
+      expect(FieldAliases.looksLikePersonName('1447/03/12'), isFalse);
+      expect(
+        FieldAliases.looksLikePersonName('محمد الشمري', fontSize: 9),
+        isFalse,
+      );
+    });
+  });
 }

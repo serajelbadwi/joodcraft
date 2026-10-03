@@ -11,7 +11,6 @@ import '../../models/template_document.dart';
 import '../../pdf/pdf_font_catalog.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
-import '../../assets/asset_store.dart';
 import '../../constants/app_assets.dart';
 import '../element_factory.dart';
 import '../template_editor_controller.dart';

@@ -119,11 +119,17 @@ class ColumnMapping {
   /// [aliases] تربط مفتاح الحقل بعناوين بديلة تُطابَق فقط ولا تُكتب في الربط
   /// (انظر `FieldAliases`): مفاتيح القالب تبقى هي المُسجَّلة حتى يستبدل محرّك
   /// الطباعة القيم فعلاً.
+  /// [allowMatch] حاجز دلالي اختياري: أي زوج (عمود، حقل) يُرجع عنه `false`
+  /// يُستبعد من الربط التلقائي بالكامل. يُستخدم لمنع الربط غير المنطقي — أبرزُه
+  /// ربط عمود اسم (Name/الاسم) بحقل تاريخ أو رقم إشعار، وهو ما يطبع الاسم في
+  /// مكان التاريخ. الحاجز لا يمسّ الربط اليدوي: المستخدم يستطيع دائماً فرض ما
+  /// يريد من القائمة.
   static ColumnMapping autoDetect({
     required List<int> columns,
     required List<String> headers,
     required List<String> fieldKeys,
     Map<String, List<String>> aliases = const <String, List<String>>{},
+    bool Function(int column, String field)? allowMatch,
   }) {
     final List<_Candidate> candidates = <_Candidate>[];
     final Set<String> seenHeaders = <String>{};
@@ -133,6 +139,7 @@ class ColumnMapping {
       // مختلف، يُترك للمستخدم ويظهر بوضوح في الواجهة.
       if (!seenHeaders.add(normalize(header))) continue;
       for (final String field in fieldKeys) {
+        if (allowMatch != null && !allowMatch(column, field)) continue;
         int score = similarity(header, field);
         for (final String alias in aliases[field] ?? const <String>[]) {
           final int aliasScore = similarity(header, alias);
