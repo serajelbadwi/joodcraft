@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:qr/qr.dart';
 
+import '../../models/decoration.dart';
 import '../../utils/hex_color.dart';
 import '../canvas_geometry.dart';
 
@@ -269,4 +270,46 @@ class SmartGuidesPainter extends CustomPainter {
   bool shouldRepaint(SmartGuidesPainter oldDelegate) =>
       oldDelegate.scale != scale ||
       !listEquals(oldDelegate.guides, guides);
+}
+
+/// رسم الزخرفة المتجهية الإجرائية في المحرر — مطابق تماماً لما يرسمه محرّك
+/// الـ PDF (نفس [VectorDecor.build])، فيرى المستخدم ما سيُطبع بالضبط.
+class DecorationPainter extends CustomPainter {
+  const DecorationPainter({required this.spec});
+
+  final DecorSpec spec;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final DecorPath path in VectorDecor.build(spec, size.width, size.height)) {
+      final Paint paint = Paint()
+        ..color = colorFromHex(path.colorHex)
+        ..style = path.stroke ? PaintingStyle.stroke : PaintingStyle.fill
+        ..strokeWidth = path.strokeWidth > 0 ? path.strokeWidth : 1;
+
+      final Path target = Path();
+      for (final DecorSegment segment in path.segments) {
+        switch (segment) {
+          case DecorMove(:final double x, :final double y):
+            target.moveTo(x, y);
+          case DecorLine(:final double x, :final double y):
+            target.lineTo(x, y);
+          case DecorCubic(
+              :final double x1,
+              :final double y1,
+              :final double x2,
+              :final double y2,
+              :final double x,
+              :final double y,
+            ):
+            target.cubicTo(x1, y1, x2, y2, x, y);
+        }
+      }
+      if (path.closed) target.close();
+      canvas.drawPath(target, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(DecorationPainter oldDelegate) => oldDelegate.spec != spec;
 }

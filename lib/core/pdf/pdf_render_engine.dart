@@ -10,6 +10,7 @@ import '../models/template_element.dart';
 import '../models/text_flow.dart';
 import 'arabic_text_engine.dart';
 import 'pdf_color.dart';
+import 'pdf_decor_painter.dart';
 import 'pdf_font_catalog.dart';
 
 /// بيانات وصفية تُكتب داخل ملف الـ PDF.
@@ -164,6 +165,24 @@ class PdfRenderer {
               size: PdfPoint(size, size),
               painter: (PdfGraphics canvas, PdfPoint _) =>
                   _paintSeal(canvas, size, seal),
+            ),
+          ),
+        );
+
+      case final DecorationElement decor:
+        final double decorHeight =
+            decor.box.height > 0 ? decor.box.height * s : width;
+        return _positioned(
+          left: left,
+          top: top,
+          width: width,
+          rotation: decor.rotation,
+          child: pw.Opacity(
+            opacity: decor.opacity.clamp(0, 1),
+            child: pw.CustomPaint(
+              size: PdfPoint(width, decorHeight),
+              painter: (PdfGraphics canvas, PdfPoint _) =>
+                  paintVectorDecor(canvas, decor.spec, width, decorHeight),
             ),
           ),
         );

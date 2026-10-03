@@ -1094,6 +1094,13 @@ class TemplateEditorController extends ChangeNotifier {
           colorHex: element.colorHex,
           backgroundHex: element.backgroundHex,
         ),
+      DecorationElement() => DecorationElement(
+          id: id,
+          box: element.box,
+          rotation: element.rotation,
+          spec: element.spec,
+          opacity: element.opacity,
+        ),
       UnknownElement() => UnknownElement(
           id: id,
           box: element.box,

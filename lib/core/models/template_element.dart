@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import '../pdf/pdf_font_catalog.dart';
+import 'decoration.dart';
 
 /// محاذاة النص الأفقية — `start`/`end` تُحسبان حسب اتجاه النص.
 enum ElementTextAlign {
@@ -228,6 +229,8 @@ sealed class TemplateElement {
       'ellipse' || 'circle' => ShapeElement.fromJson(json, id, ShapeKind.ellipse),
       'line' || 'divider' => ShapeElement.fromJson(json, id, ShapeKind.line),
       'seal' || 'stamp' => SealElement.fromJson(json, id),
+      'decoration' || 'decor' || 'ornament' =>
+        DecorationElement.fromJson(json, id),
       'image' || 'picture' || 'logo' => ImageElement.fromJson(json, id),
       'qr' || 'qrcode' => QrElement.fromJson(json, id),
       _ => UnknownElement(
@@ -585,6 +588,67 @@ final class SealElement extends TemplateElement {
         'ring': ringHex,
         'star': starHex,
         if (starRatio != 0.5) 'starRatio': starRatio,
+        if (opacity != 1) 'opacity': opacity,
+        if (rotation != 0) 'rotation': rotation,
+      };
+}
+
+// ===========================================================================
+//  الزخرفة المتجهية الإجرائية (بلا صور — تُولَّد هندسياً)
+// ===========================================================================
+final class DecorationElement extends TemplateElement {
+  const DecorationElement({
+    required super.id,
+    required super.box,
+    super.rotation,
+    this.spec = const DecorSpec(),
+    this.opacity = 1,
+  });
+
+  /// وصف الزخرفة (النوع والألوان والطبقات) — يُحفظ داخل القالب.
+  final DecorSpec spec;
+  final double opacity;
+
+  static DecorationElement fromJson(Map<String, dynamic> json, String id) {
+    final Object? raw = json['spec'] ?? json['decor'];
+    return DecorationElement(
+      id: id,
+      box: ElementBox.fromJson(json),
+      rotation: TemplateElement.readRotation(json),
+      spec: raw is Map
+          ? DecorSpec.fromJson(raw.cast<String, dynamic>())
+          : DecorSpec.fromJson(json),
+      opacity: (json['opacity'] as num?)?.toDouble() ?? 1,
+    );
+  }
+
+  DecorationElement copyWith({
+    ElementBox? box,
+    double? rotation,
+    DecorSpec? spec,
+    double? opacity,
+  }) =>
+      DecorationElement(
+        id: id,
+        box: box ?? this.box,
+        rotation: rotation ?? this.rotation,
+        spec: spec ?? this.spec,
+        opacity: opacity ?? this.opacity,
+      );
+
+  @override
+  DecorationElement withBox(ElementBox box) => copyWith(box: box);
+
+  @override
+  DecorationElement withRotation(double rotation) =>
+      copyWith(rotation: rotation);
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'type': 'decoration',
+        ...box.toJson(),
+        'spec': spec.toJson(),
         if (opacity != 1) 'opacity': opacity,
         if (rotation != 0) 'rotation': rotation,
       };

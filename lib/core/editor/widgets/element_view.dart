@@ -77,6 +77,7 @@ class ElementView extends StatelessWidget {
       final TextElement text => _buildText(text),
       final ShapeElement shape => _buildShape(shape),
       final SealElement seal => _buildSeal(seal),
+      final DecorationElement decor => _buildDecoration(decor),
       final ImageElement image => _buildImage(image),
       final QrElement qr => _buildQr(qr),
       final UnknownElement unknown => _buildUnknown(unknown),
@@ -176,6 +177,16 @@ class ElementView extends StatelessWidget {
           starRatio: seal.starRatio,
         ),
       ),
+    );
+  }
+
+  // --------------------------------------------------------------------------
+  //  الزخرفة المتجهية
+  // --------------------------------------------------------------------------
+  Widget _buildDecoration(DecorationElement decor) {
+    return Opacity(
+      opacity: decor.opacity.clamp(0, 1),
+      child: CustomPaint(painter: DecorationPainter(spec: decor.spec)),
     );
   }
 
