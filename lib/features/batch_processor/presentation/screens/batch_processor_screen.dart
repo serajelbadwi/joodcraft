@@ -342,6 +342,14 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               ? 'جارٍ تحميل القالب النموذجي…'
               : 'القالب: $activeTemplate • الحقول المطلوبة: '
                   '${_controller.availableFields.length}',
+          // تحذير صريح حين لا يحوي القالب أي حقل `{{...}}`: المستخدم يظنّ
+          // أنه «مربوط» بينما النص ثابت لا يتغيّر بين السجلات.
+          warning: _controller.document != null &&
+                  !_controller.templateHasDynamicFields
+              ? 'هذا القالب بلا حقول ديناميكية — لن تتغيّر البيانات بين '
+                  'السجلات. أضف حقل «اسم المتدرب» من شريط المحرّر '
+                  '(حقل ديناميكي) ثم احفظ القالب.'
+              : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -673,14 +681,25 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       title: '3) ربط الأعمدة بالحقول',
       subtitle: sheet.isEmpty
           ? 'اختر ملفاً أولاً ليظهر جدول الربط.'
-          : 'مرتبط ${_controller.mapping.mappedCount} من '
-              '${_controller.visibleColumns.length} عموداً',
+          : _controller.availableFields.isEmpty
+                  && _controller.document != null
+              ? 'لا حقول ديناميكية في القالب الحالي.'
+              : 'مرتبط ${_controller.mapping.mappedCount} من '
+                  '${_controller.visibleColumns.length} عموداً',
       child: sheet.isEmpty
           ? Text(
               'بعد اختيار الملف سيُقترح ربط تلقائي ذكي، ويمكنك تعديل كل عمود.',
               style: text.bodySmall,
             )
-          : Column(
+          : _controller.availableFields.isEmpty
+              ? Text(
+                  'القالب المختار لا يحتوي حقولاً ديناميكية `{{...}}`، فلا شيء '
+                  'ليُربط بأعمدة الملف. افتح القالب في المحرّر وأدرج حقل '
+                  '«حقل ديناميكي» في خانة الاسم (مثل `{{اسم_المتدرب}}`) ثم '
+                  'احفظ القالب ثم أعد المحاولة.',
+                  style: text.bodySmall,
+                )
+              : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Wrap(
@@ -1050,12 +1069,16 @@ class _Card extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.child,
+    this.warning,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
   final Widget child;
+
+  /// تنبيه اختياري يظهر أسفل الوصف (مثل: قالب بلا حقول ديناميكية).
+  final String? warning;
 
   @override
   Widget build(BuildContext context) {
@@ -1079,6 +1102,15 @@ class _Card extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(subtitle, style: text.bodySmall),
+          if (warning != null) ...<Widget>[
+            const SizedBox(height: AppTheme.space8),
+            _Note(
+              color: AppColors.warning,
+              soft: AppColors.warningSoft,
+              icon: Icons.info_outline_rounded,
+              text: warning!,
+            ),
+          ],
           const SizedBox(height: AppTheme.space12),
           child,
         ],

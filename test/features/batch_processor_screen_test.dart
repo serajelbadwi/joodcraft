@@ -364,6 +364,96 @@ void main() {
     expect(find.textContaining('لا توجد قوالب محفوظة'), findsOneWidget);
   });
 
+  testWidgets('قالب مستخدم: عنوان مرادف في الملف يُربط ويُستبدل فعلاً',
+      (WidgetTester tester) async {
+    // ملف بعنوان مرادف («اسم الطالب») لا يطابق مفتاح القالب حرفياً — وهو
+    // الحال الأشيع في ملفات Excel العربية.
+    final Uint8List csv = Uint8List.fromList(
+      utf8.encode(
+        'اسم الطالب,رقم التحقق\n'
+        'أحمد الشمري,JC-0001\n'
+        'سارة العتيبي,JC-0002\n',
+      ),
+    );
+
+    final FakeTemplateRepository repository = FakeTemplateRepository();
+    repository.records.add(customTemplate());
+
+    await pumpScreen(
+      tester,
+      repository: repository,
+      localStore: InMemoryLocalTemplateStore(),
+    );
+
+    // اختيار قالب المستخدم المخصّص.
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('شهادتي المخصّصة').last);
+    await tester.pumpAndSettle();
+
+    await controller.loadBytes(fileName: 'students.csv', bytes: csv);
+    await tester.pumpAndSettle();
+
+    // الربط التلقائي يطابق العناوين المرادفة بمفاتيح القالب العربية.
+    expect(controller.mapping.fieldFor(0), 'اسم_المتدرب');
+    expect(controller.mapping.fieldFor(1), 'رقم_الشهادة');
+    expect(controller.canGenerate, isTrue);
+
+    // والاستبدال الفعلي يُنتج اسم الصف لا القيمة التجريبية.
+    final TemplateDocument document = controller.document!;
+    final Map<String, String> row = controller.mapping.apply(
+      controller.sheet.rowAt(0),
+    );
+    expect(row['اسم_المتدرب'], 'أحمد الشمري');
+    expect(
+      document.resolveFields(
+        (document.elements.single as TextElement).text,
+        row,
+      ),
+      contains('أحمد الشمري'),
+    );
+  });
+
+  testWidgets('قالب مستخدم بلا حقول ديناميكية يظهر له تنبيه واضح',
+      (WidgetTester tester) async {
+    final TemplateDocument plain = TemplateDocument(
+      orientation: PageOrientation.landscape,
+      elements: const <TemplateElement>[
+        TextElement(
+          id: 'static',
+          box: ElementBox(x: 100, y: 100, width: 520, height: 80),
+          text: 'شهادة ثابتة بلا حقول',
+        ),
+      ],
+    );
+    final FakeTemplateRepository repository = FakeTemplateRepository();
+    repository.records.add(
+      TemplateRecord(
+        id: 'plain-1',
+        userId: 'user-1',
+        title: 'قالب ثابت',
+        category: TemplateCategory.certificate,
+        orientation: PageOrientation.landscape,
+        layoutData: plain.toJson(),
+      ),
+    );
+
+    await pumpScreen(
+      tester,
+      repository: repository,
+      localStore: InMemoryLocalTemplateStore(),
+    );
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('قالب ثابت').last);
+    await tester.pumpAndSettle();
+
+    expect(controller.templateHasDynamicFields, isFalse);
+    expect(controller.availableFields, isEmpty);
+    expect(find.textContaining('بلا حقول ديناميكية'), findsWidgets);
+  });
+
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',
       (WidgetTester tester) async {
     await pumpScreen(tester);

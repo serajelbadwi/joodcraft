@@ -133,16 +133,27 @@ class BatchProcessorController extends ChangeNotifier {
 
   /// المفاتيح المتاحة للربط: ما يستخدمه القالب فعلاً في نصوصه.
   ///
-  /// عند عدم وجود قالب مُحمَّل نعرض مكتبة الحقول كلها حتى لا تفرغ الواجهة.
+  /// **مصدر الحقيقة هو القالب نفسه** لا مكتبة الحقول العامة: القالب المخصّص
+  /// الذي صمّمه المستخدم يستخدم مفاتيحه العربية (`{{اسم_المتدرب}}`)، وربط عمود
+  /// بمفتاح لا يظهر في القالب لن يُستبدل عند الطباعة. لذلك إذا كان القالب
+  /// مُحمَّلاً ومفاتيحه فارغة فلا حقول للربط — والواجهة تنبّه المستخدم بدل أن
+  /// توهمه بربطٍ لن يظهر أثره. أما قبل تحميل أي قالب فتُعرض المكتبة كاملة حتى
+  /// لا تفرغ الواجهة.
   List<String> get availableFields {
     final TemplateDocument? document = _document;
-    if (document == null || document.fieldKeys.isEmpty) {
+    if (document == null) {
       return DynamicFields.all
           .map((DynamicField field) => field.key)
           .toList(growable: false);
     }
     return document.fieldKeys.toList(growable: false)..sort();
   }
+
+  /// هل يحتوي القالب النشط على حقول ديناميكية `{{...}}`؟
+  ///
+  /// عند `false` لن يتغيّر أي نص بين السجلات — وهي الحالة التي يظنّ فيها
+  /// المستخدم أن القالب «مربوط» بينما هو نص ثابت لا حقول فيه.
+  bool get templateHasDynamicFields => _document?.hasDynamicFields ?? false;
 
   /// القيمة التجريبية لحقل — كما ستُستخدم عند اختيار «استخدم القيمة التجريبية».
   String sampleOf(String field) {

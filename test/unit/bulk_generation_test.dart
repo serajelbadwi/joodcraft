@@ -2,9 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/constants/dynamic_fields.dart';
 import 'package:joodcraft/core/errors/app_exception.dart';
 import 'package:joodcraft/core/models/template_document.dart';
+import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/services/pdf_generator_service.dart';
 import 'package:joodcraft/features/batch_processor/domain/bulk_generation.dart';
 import 'package:joodcraft/features/batch_processor/domain/column_mapping.dart';
+import 'package:joodcraft/features/batch_processor/domain/field_aliases.dart';
 import 'package:joodcraft/features/batch_processor/domain/sheet_data.dart';
 
 const SheetData _sheet = SheetData(
@@ -188,6 +190,60 @@ void main() {
 
     expect(sheet.notes, isNotEmpty);
     expect(report.warnings, containsAll(sheet.notes));
+  });
+
+  test('قالب مستخدم بمفاتيح عربية: عنوان مرادف في الملف يُستبدل فعلاً', () async {
+    // قالب صمّمه المستخدم في المحرّر: مفاتيح عربية داخل `{{...}}`.
+    final TemplateDocument custom =
+        TemplateDocument.fromJson(<String, dynamic>{
+      'schema_version': 1,
+      'orientation': 'portrait',
+      'elements': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'type': 'text',
+          'x': 30,
+          'y': 30,
+          'w': 500,
+          'h': 40,
+          'text': 'المتدرب: {{اسم_المتدرب}}',
+          'size': 20,
+        },
+      ],
+    });
+
+    // ملف Excel بعنوان مرادف («اسم الطالب») لا يطابق المفتاح حرفياً.
+    const SheetData sheet = SheetData(
+      headers: <String>['اسم الطالب'],
+      rows: <List<String>>[
+        <String>['أحمد الشمري'],
+        <String>['سارة العتيبي'],
+      ],
+    );
+
+    final ColumnMapping mapping = ColumnMapping.autoDetect(
+      columns: <int>[0],
+      headers: sheet.headers,
+      fieldKeys: custom.fieldKeys.toList(growable: false),
+      aliases: FieldAliases.byToken,
+    );
+    // الربط يكتب مفتاح القالب نفسه، فيستبدل resolveFields القيمة فعلاً.
+    expect(mapping.fieldFor(0), 'اسم_المتدرب');
+    expect(
+      custom.resolveFields(
+        (custom.elements.single as TextElement).text,
+        mapping.apply(sheet.rowAt(0)),
+      ),
+      'المتدرب: أحمد الشمري',
+    );
+
+    final BulkGenerationReport report = await service.run(
+      document: custom,
+      sheet: sheet,
+      mapping: mapping,
+    );
+    expect(report.generatedCount, 2);
+    expect(report.pageCount, 2);
+    expect(report.hasOutput, isTrue);
   });
 
   test('الربط التلقائي يعمل من العناوين حتى التوليد الكامل', () async {
