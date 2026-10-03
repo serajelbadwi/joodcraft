@@ -341,6 +341,42 @@ class TemplateEditorController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// العنصر النصي المحدّد حالياً، أو `null` في غيره.
+  TextElement? get selectedTextElement =>
+      selected is TextElement ? selected as TextElement : null;
+
+  /// تحويل عنصر نصي بالقيمة المفتاحية إلى حقل ديناميكي.
+  ///
+  /// يُغلف المحتوى بـ `{{...}}`، ويتحوّل النوع إلى حقل ديناميكي يربط بين
+  /// المحرّر والتوليد الجماعي دون الحاجة لحذف النص وإعادة إنشائه.
+  void convertTextToDynamicField(String fieldKey) {
+    final TextElement? element = selectedTextElement;
+    if (element == null) return;
+    final String token = '{{${fieldKey.trim()}}}';
+    updateSelected(
+      (TemplateElement updated) => updated is TextElement
+          ? TextElement(
+              id: updated.id,
+              box: updated.box,
+              text: updated.text.isEmpty ? token : token,
+              family: updated.family,
+              weight: updated.weight,
+              fontSize: updated.fontSize,
+              colorHex: updated.colorHex,
+              backgroundHex: updated.backgroundHex,
+              align: updated.align,
+              verticalAlign: updated.verticalAlign,
+              direction: updated.direction,
+              justifyMode: updated.justifyMode,
+              lineHeight: updated.lineHeight,
+              letterSpacing: updated.letterSpacing,
+              maxLines: updated.maxLines,
+              opacity: updated.opacity,
+            )
+          : updated,
+    );
+  }
+
   /// إدراج عنصر جاهز في ترتيب الرسم المطلوب مع تحديده.
   ///
   /// [index] = 0 يضعه في الخلف (خلفية/إطار المستند)، وأي قيمة خارج المدى

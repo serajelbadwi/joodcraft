@@ -51,6 +51,9 @@ class PropertyToolbar extends StatefulWidget {
 }
 
 class _PropertyToolbarState extends State<PropertyToolbar> {
+  /// النواة المحرّرة للعنصر المحدّد (يُستخدم من أدوات الشريط).
+  TemplateEditorController get controller => widget.controller;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -521,6 +524,24 @@ class _PropertyToolbarState extends State<PropertyToolbar> {
       icon: Icons.text_fields_rounded,
       label: 'تنسيق النص',
       children: <Widget>[
+        // إجراء سريع: تحويل النص الحالي إلى حقل ديناميكي بـ مفتاح محدّد.
+        if (controller.selectedTextElement != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.space12,
+              vertical: AppTheme.space8,
+            ),
+            child: OutlinedButton.icon(
+              onPressed: () =>
+                  _showConvertToFieldDialog(element),
+              icon: const Icon(Icons.edit_rounded, size: 16),
+              label: const Text('تحويل إلى حقل ديناميكي'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 36),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+              ),
+            ),
+          ),
         // مفتاح العنصر يجعل حقل النص يُعاد تهيئته عند تغيير التحديد.
         ElementTextEditor(
           key: ValueKey<String>('text-editor-${element.id}'),
@@ -914,8 +935,7 @@ class _PropertyToolbarState extends State<PropertyToolbar> {
             (TemplateElement e) =>
                 e is QrElement ? e.copyWith(colorHex: hex) : e,
           ),
-        ),
-        ColorField(
+        ),        ColorField(
           label: 'خلفية الرمز',
           hex: element.backgroundHex,
           onChanged: (String hex) =>
@@ -927,7 +947,88 @@ class _PropertyToolbarState extends State<PropertyToolbar> {
       ],
     );
   }
+
+  void _showConvertToFieldDialog(TextElement element) {
+    final List<String> suggestions = _suggestedFieldKeys();
+
+    final TextEditingController controllerKeyboard =
+        TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('تحويل إلى حقل ديناميكي'),
+        content: SizedBox(
+          width: 360,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'التحويل يغيّر النص «${element.text.isEmpty ? '(نص فارغ)' : element.text}» '
+                'إلى علامة `{{...}}`، وتصبح قابلة للربط في التوليد الجماعي.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: AppTheme.space10),
+              DropdownButtonFormField<String>(
+                initialValue:
+                    suggestions.isNotEmpty ? suggestions.first : null,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'مفتاح الحقل (مثل: الاسم، التاريخ، المرجع)',
+                  border: OutlineInputBorder(),
+                ),
+                items: <DropdownMenuItem<String>>[
+                  for (final String key in suggestions)
+                    DropdownMenuItem<String>(
+                      value: key,
+                      child: Text(key, overflow: TextOverflow.ellipsis),
+                    ),
+                ],
+                onChanged: (String? value) =>
+                    controllerKeyboard.text = value ?? '',
+              ),
+              const SizedBox(height: AppTheme.space10),
+              TextField(
+                controller: controllerKeyboard,
+                decoration: const InputDecoration(
+                  labelText: 'أدخل مفتاح مخصص (بدون {{}} — سيُضاف تلقائياً)',
+                  border: OutlineInputBorder(),
+                ),
+                style: const TextStyle(fontSize: 12.5),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final String key =
+                  controllerKeyboard.text.trim().isEmpty
+                      ? (suggestions.isNotEmpty ? suggestions.first : '')
+                      : controllerKeyboard.text.trim();
+              if (key.isEmpty) return;
+              controller.convertTextToDynamicField(key);
+              Navigator.of(context).pop();
+            },
+            child: const Text('تحويل'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<String> _suggestedFieldKeys() {
+    final List<String> available = controller.document.fieldKeys.toList();
+    if (available.isNotEmpty) return available;
+    return DynamicFields.all.map((DynamicField field) => field.key).toList(growable: false);
+  }
 }
+
 
 /// حقل محتوى نصي بسيط لمحتوى النص/المسار/بيانات الرمز.
 class _PathField extends StatefulWidget {
@@ -1135,8 +1236,6 @@ class _ElementTextEditorState extends State<ElementTextEditor> {
     ];
   }
 }
-
-/// أزرار إضافة العناصر — تُعرض أسفل المحرر دائماً.
 class ElementPaletteBar extends StatelessWidget {
   const ElementPaletteBar({
     super.key,
