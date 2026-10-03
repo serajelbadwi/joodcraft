@@ -242,15 +242,16 @@ void main() {
     expect(controller.errorAr, isNull);
     expect(controller.canChooseHeaderRow, isTrue);
     expect(find.text('صف العناوين'), findsOneWidget);
-    // الاكتشاف التلقائي يأخذ السطر التعريفي الأول عناوينَ.
-    expect(controller.sheet.headers.first, 'كشف المتدربين');
+    // الكشف الذكي يتخطى سطري العنوان ويجد صف العناوين الحقيقي تلقائياً.
+    expect(controller.effectiveHeaderRowIndex, 2);
+    expect(controller.sheet.headers.first, 'اسم المتدرب');
 
-    await controller.setHeaderRowIndex(2);
+    // ويمكن للمستخدم فرض صفٍ بعينه يدوياً (هنا الصف الأول).
+    await controller.setHeaderRowIndex(0);
     await tester.pumpAndSettle();
 
-    expect(controller.headerRowIndex, 2);
-    expect(controller.sheet.headers, <String>['اسم المتدرب', 'رقم الشهادة']);
-    expect(controller.sheet.rowAt(0).cell('اسم المتدرب'), 'أحمد');
+    expect(controller.headerRowIndex, 0);
+    expect(controller.sheet.headers.first, 'كشف المتدربين');
   });
 
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',

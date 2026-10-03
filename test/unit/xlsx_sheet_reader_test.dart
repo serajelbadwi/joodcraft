@@ -178,6 +178,25 @@ void main() {
     expect(data.rowAt(0).cell('اسم المتدرب'), 'سالم');
   });
 
+  test('الكشف الذكي يتجاهل أسطر العنوان والعنوان الممتد ثم يجد العناوين', () {
+    final Uint8List bytes = buildWorkbook(<List<CellValue?>>[
+      // عنوان الملف — خلية واحدة (كما تُقرأ الخلية المدمجة: ممتلئة ثم فارغة).
+      <CellValue?>[TextCellValue('كشف المتدربين لحفل التخرج ٢٠٢٦')],
+      <CellValue?>[TextCellValue('تاريخ الإصدار: 1447/03/12')],
+      <CellValue?>[TextCellValue('الاسم'), TextCellValue('الرقم')],
+      <CellValue?>[TextCellValue('أحمد'), TextCellValue('JC-1')],
+      <CellValue?>[TextCellValue('سارة'), TextCellValue('JC-2')],
+    ]);
+
+    final SheetData data = reader.read(bytes);
+
+    expect(data.headerRowIndex, 2);
+    expect(data.headers, <String>['الاسم', 'الرقم']);
+    expect(data.rowCount, 2);
+    expect(data.rowAt(0).cell('الاسم'), 'أحمد');
+    expect(data.notes.join(' '), contains('تمهيدية'));
+  });
+
   test('يقرأ العناوين من صف محدَّد بعد أسطر تعريفية', () {
     final Uint8List bytes = buildWorkbook(<List<CellValue?>>[
       <CellValue?>[TextCellValue('كشف المتدربين لحفل التخرج ٢٠٢٦')],

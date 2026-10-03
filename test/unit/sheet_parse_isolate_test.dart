@@ -76,16 +76,20 @@ void main() {
     addTearDown(controller.dispose);
 
     await controller.loadBytes(fileName: 'titled.xlsx', bytes: _titledWorkbook());
-    // الاكتشاف التلقائي يعتبر أول صف غير فارغ عناوينَ — وهو هنا سطر تعريفي.
-    expect(controller.effectiveHeaderRowIndex, 0);
-    expect(controller.sheet.headers.first, 'كشف المتدربين');
-    expect(controller.canChooseHeaderRow, isTrue);
-
-    await controller.setHeaderRowIndex(2);
-
-    expect(controller.errorAr, isNull);
-    expect(controller.headerRowIndex, 2);
+    // الكشف الذكي يتخطى سطري العنوان أحاديّي الخلية ويجد صف العناوين الحقيقي.
+    expect(controller.effectiveHeaderRowIndex, 2);
     expect(controller.sheet.headers, <String>['اسم المتدرب', 'رقم الشهادة']);
     expect(controller.sheet.rowAt(0).cell('اسم المتدرب'), 'أحمد');
+    expect(controller.canChooseHeaderRow, isTrue);
+
+    // يمكن للمستخدم فرض الصف الأول يدوياً ثم العودة إلى «تلقائي».
+    await controller.setHeaderRowIndex(0);
+    expect(controller.headerRowIndex, 0);
+    expect(controller.sheet.headers.first, 'كشف المتدربين');
+
+    await controller.setHeaderRowIndex(null);
+    expect(controller.headerRowIndex, isNull);
+    expect(controller.effectiveHeaderRowIndex, 2);
+    expect(controller.errorAr, isNull);
   });
 }

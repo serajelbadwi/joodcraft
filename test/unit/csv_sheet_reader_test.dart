@@ -171,6 +171,35 @@ void main() {
       expect(data.rowAt(0).displayNumber, 2);
     });
 
+    test('الكشف الذكي يتجاهل أسطر العنوان أحادية الخلية ويجد العناوين', () {
+      final SheetData data = reader.read(
+        _utf8('شهادات دورة ٢٠٢٦\nتقرير المتدربين\n'
+            'الاسم,الرقم\nأحمد,JC-1\n'),
+      );
+
+      expect(data.headerRowIndex, 2);
+      expect(data.headers, <String>['الاسم', 'الرقم']);
+      expect(data.rowCount, 1);
+      expect(data.rowAt(0).cell('الاسم'), 'أحمد');
+      expect(data.notes.join(' '), contains('تمهيدية'));
+    });
+
+    test('الكشف الذكي يسقط الأسطر الفارغة في الأعلى', () {
+      final SheetData data = reader.read(
+        _utf8('\n\nالاسم,الرقم\nأحمد,JC-1\n'),
+      );
+      expect(data.headerRowIndex, 2);
+      expect(data.headers, <String>['الاسم', 'الرقم']);
+    });
+
+    test('ملف بعمود واحد يبقى على أول صف غير فارغ', () {
+      // لا صف متعدد الأعمدة ⇒ لا إشارة للكشف الذكي، فيبقى السلوك الآمن.
+      final SheetData data = reader.read(_utf8('الاسم\nأحمد\n'));
+      expect(data.headerRowIndex, 0);
+      expect(data.headers, <String>['الاسم']);
+      expect(data.rowCount, 1);
+    });
+
     test('يرصد الأعمدة التي تحمل بيانات فعلية', () {
       final SheetData data = reader.read(_utf8('a,b,c\n1,,3\n'));
       expect(data.dataColumns, <int>[0, 2]);

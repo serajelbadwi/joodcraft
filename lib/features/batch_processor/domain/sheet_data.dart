@@ -52,7 +52,8 @@ class SheetData {
   final List<List<String>> rowSamples;
 
   /// بناء ورقة من مصفوفة خام مع **تطبيع كامل**:
-  /// * أول صف غير فارغ هو العناوين (الصفوف الفارغة قبله تُسقط).
+  /// * الكشف الذكي عن صف العناوين: يتجاهل الأسطر التمهيدية والأسطر الفارغة
+  ///   وعناوين الجدول الممتدة، ويُرجع أول صف يقارب عرض الجدول ([detectHeaderRowIndex]).
   /// * العناوين الفارغة تُسمّى `عمود N` حتى تبقى قابلة للربط.
   /// * عناوين مكرّرة تُلحَق برقم لتبقى فريدة (شرط لربط العمود بحقل).
   /// * كل صف يُطبَّع إلى عرض العناوين بالضبط، والصفوف الفارغة تماماً تُسقط.
@@ -76,7 +77,8 @@ class SheetData {
         .map(List<String>.unmodifiable)
         .toList(growable: false);
 
-    // أول صف غير فارغ — يُستخدم كافتراض عندما لا يختار المستخدم صفاً بعينه.
+    // أول صف غير فارغ — يُستخدم للتحقق من وجود بيانات وللاحتياط حين لا صف
+    // عناوين واضح (ملف بعمود واحد مثلاً).
     final int firstFilled = trimmed.indexWhere(
       (List<String> row) => row.any((String cell) => cell.isNotEmpty),
     );
@@ -92,15 +94,23 @@ class SheetData {
     }
 
     // الصف الفعلي للعناوين: اختيار المستخدم إن وُجد (مقيّداً بحدود المصفوفة)،
-    // وإلا أول صف غير فارغ (السلوك التلقائي السابق).
+    // وإلا الكشف الذكي الذي يتجاهل الأسطر التمهيدية والعناوين الممتدة.
     final int headerIndex = headerRowIndex == null
-        ? firstFilled
+        ? detectHeaderRowIndex(trimmed)
         : headerRowIndex.clamp(0, trimmed.length - 1);
     if (headerRowIndex != null && headerIndex > 0) {
       notes.add('اعتُبر الصف ${headerIndex + 1} صفَ العناوين بناءً على اختيارك؛ '
           'أُهمل ما قبله.');
-    } else if (headerRowIndex == null && firstFilled > 0) {
-      notes.add('أُسقطت $firstFilled صف/صفوف فارغة قبل العناوين.');
+    } else if (headerRowIndex == null && headerIndex > 0) {
+      final int blanksBefore = trimmed
+          .take(headerIndex)
+          .where((List<String> row) =>
+              row.every((String cell) => cell.isEmpty))
+          .length;
+      notes.add(blanksBefore == headerIndex
+          ? 'أُسقطت $headerIndex صف/صفوف فارغة قبل العناوين.'
+          : 'تجاهل الكشف التلقائي $headerIndex صف/صفوف تمهيدية (عنوان أو أسطر '
+              'فارغة) قبل صف العناوين الحقيقي.');
     }
     final List<List<String>> body = trimmed.sublist(headerIndex);
 
@@ -132,6 +142,39 @@ class SheetData {
       headerRowIndex: headerIndex,
       rowSamples: samples,
     );
+  }
+
+  /// أقصى عدد صفوف يفحصها الكشف الذكي بحثاً عن صف العناوين.
+  ///
+  /// القيمة صغيرة عمداً: الأسطر التمهيدية في أعلى الملفات نادرةٌ أن تتجاوز
+  /// عدداً قليلاً، وتحديد النافذة يمنع اختيار صف بيانات بعيد كصف عناوين.
+  static const int headerScanLimit = 12;
+
+  /// الكشف الذكي عن صف العناوين.
+  ///
+  /// يهدف إلى إيجاد «أول صف عناوين حقيقي» في ملفات تبدأ بعنوان أو أسطر
+  /// تعريفية أو خلايا مدمجة تمتد عرض الجدول:
+  /// * الخلية المدمجة (عنوان يسبق الجدول) تُقرأ في مكتبة Excel كخلية واحدة
+  ///   ممتلئة تليها خلايا فارغة ⇒ صفٌ بعمود واحد فقط.
+  /// * صف العناوين الحقيقي يمتد على أكثر من عمود ⇒ **خليتُه الممتلئتان على
+  ///   الأقل** هي الإشارة الأبسط والأدقّ لبدء الجدول.
+  ///
+  /// لذلك يُرجع أول صف غير فارغ يحمل خليتين ممتلئتين أو أكثر خلال نافذةِ
+  /// [headerScanLimit] الأولى (فتُسقَط بذلك الأسطر الفارغة والعناوين الممتدة).
+  /// وإذا خلا الملف من أي صف متعدد الأعمدة (ملف بعمود واحد) يعود إلى أول صف
+  /// غير فارغ — وهو السلوك القديم الآمن.
+  static int detectHeaderRowIndex(List<List<String>> matrix) {
+    final int scan =
+        matrix.length < headerScanLimit ? matrix.length : headerScanLimit;
+    for (int i = 0; i < scan; i++) {
+      final int filled =
+          matrix[i].where((String cell) => cell.isNotEmpty).length;
+      if (filled >= 2) return i;
+    }
+    final int firstFilled = matrix.indexWhere(
+      (List<String> row) => row.any((String cell) => cell.isNotEmpty),
+    );
+    return firstFilled < 0 ? 0 : firstFilled;
   }
 
   static List<String> _normalizeHeaders(List<String> raw, List<String> notes) {
