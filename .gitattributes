@@ -1,0 +1,30 @@
+# توحيد نهايات الأسطر في المستودع — LF دائماً (تجاوز أي core.autocrlf محلي).
+* text=auto eol=lf
+
+# ملفات ثنائية: لا تُطبَّع إطلاقاً.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.webp binary
+*.bmp  binary
+*.ttf  binary
+*.otf  binary
+*.woff  binary
+*.woff2 binary
+*.pdf  binary
+*.zip  binary
+*.xlsx binary
+*.xlsm binary
+*.jar  binary
+
+# سكربتات ويندوز تبقى CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# ملفات مولَّدة/مقفلة: تُعامل كنصوص لكن لا تُعرض في إحصاءات اللغة.
+pubspec.lock          linguist-generated=true
+ios/Runner.xcodeproj/project.pbxproj linguist-generated=true
+macos/Runner.xcodeproj/project.pbxproj linguist-generated=true
