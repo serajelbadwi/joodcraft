@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "paper": "a4",
+  "orientation": "portrait",
+  "background": "#FFFFFF",
+  "canvas": { "width": 794, "height": 1123, "unit": "px" },
+  "sample_data": {
+    "contract_no": "JC-C-2026-0041",
+    "day": "الأحد",
+    "date": "١٥ محرم ١٤٤٨هـ",
+    "party_1": "جمعية جود الخيرية — ويمثلها المدير التنفيذي",
+    "party_2": "مؤسسة البناء للمقاولات — ويمثلها المدير العام",
+    "subject": "تنفيذ أعمال الصيانة الشاملة لمقر الجمعية وفق المواصفات المتفق عليها في الملحق الفني.",
+    "start_date": "١ محرم ١٤٤٨هـ",
+    "end_date": "١ رجب ١٤٤٨هـ",
+    "amount": "مبلغ وقدره (خمسون ألف ريال) يُسدَّد على ثلاث دفعات متساوية وفق الجدول الزمني المرفق."
+  },
+  "elements": [
+    { "id": "frame", "type": "rect", "x": 28, "y": 28, "w": 738, "h": 1067, "stroke": "#1B2539", "strokeWidth": 1.5, "radius": 6 },
+    { "id": "header_band", "type": "rect", "x": 28, "y": 28, "w": 738, "h": 96, "fill": "#1B2539", "radius": 6 },
+    { "id": "title", "type": "text", "x": 28, "y": 54, "w": 738, "h": 44, "text": "عقد تقديم خدمات", "font": "amiri", "weight": "bold", "size": 30, "color": "#FFFFFF", "align": "center", "valign": "middle" },
+    { "id": "contract_no", "type": "text", "x": 60, "y": 140, "w": 674, "h": 24, "text": "الرقم المرجعي: {{contract_no}}", "font": "amiri", "size": 15, "color": "#6B7280", "align": "start" },
+    { "id": "preamble", "type": "text", "x": 60, "y": 178, "w": 674, "h": 32, "text": "إنه في يوم {{day}} الموافق {{date}}، تم الاتفاق بين كل من:", "font": "amiri", "size": 18, "color": "#1B2539", "align": "start", "lineHeight": 1.9 },
+    { "id": "party_1", "type": "text", "x": 60, "y": 220, "w": 674, "h": 32, "text": "الطرف الأول: {{party_1}}", "font": "amiri", "weight": "bold", "size": 18, "color": "#1B2539", "align": "start", "lineHeight": 1.9 },
+    { "id": "party_2", "type": "text", "x": 60, "y": 258, "w": 674, "h": 32, "text": "الطرف الثاني: {{party_2}}", "font": "amiri", "weight": "bold", "size": 18, "color": "#1B2539", "align": "start", "lineHeight": 1.9 },
+    { "id": "sep_1", "type": "line", "x": 60, "y": 310, "w": 674, "stroke": "#E5E7EB", "strokeWidth": 1 },
+    { "id": "clause_1_title", "type": "text", "x": 60, "y": 326, "w": 674, "h": 30, "text": "البند الأول: موضوع العقد", "font": "amiri", "weight": "bold", "size": 19, "color": "#1B2539", "align": "start" },
+    { "id": "clause_1_body", "type": "text", "x": 60, "y": 360, "w": 674, "h": 100, "text": "{{subject}}", "font": "amiri", "size": 17, "color": "#374151", "align": "justify", "lineHeight": 2, "maxLines": 4 },
+    { "id": "clause_2_title", "type": "text", "x": 60, "y": 480, "w": 674, "h": 30, "text": "البند الثاني: مدة العقد", "font": "amiri", "weight": "bold", "size": 19, "color": "#1B2539", "align": "start" },
+    { "id": "clause_2_body", "type": "text", "x": 60, "y": 514, "w": 674, "h": 40, "text": "تبدأ مدة هذا العقد من تاريخ {{start_date}} وتنتهي في {{end_date}}، ويجوز تجديده باتفاق خطي بين الطرفين.", "font": "amiri", "size": 17, "color": "#374151", "align": "justify", "lineHeight": 2, "maxLines": 2 },
+    { "id": "clause_3_title", "type": "text", "x": 60, "y": 596, "w": 674, "h": 30, "text": "البند الثالث: المقابل المالي", "font": "amiri", "weight": "bold", "size": 19, "color": "#1B2539", "align": "start" },
+    { "id": "clause_3_body", "type": "text", "x": 60, "y": 630, "w": 674, "h": 60, "text": "{{amount}}", "font": "amiri", "size": 17, "color": "#374151", "align": "justify", "lineHeight": 2, "maxLines": 3 },
+    { "id": "clause_4_title", "type": "text", "x": 60, "y": 716, "w": 674, "h": 30, "text": "البند الرابع: الأحكام العامة", "font": "amiri", "weight": "bold", "size": 19, "color": "#1B2539", "align": "start" },
+    { "id": "clause_4_body", "type": "text", "x": 60, "y": 750, "w": 674, "h": 80, "text": "يخضع هذا العقد لأنظمة المملكة العربية السعودية، وأي نزاع ينشأ عنه يُحال إلى الجهة القضائية المختصة.", "font": "amiri", "size": 17, "color": "#374151", "align": "justify", "lineHeight": 2, "maxLines": 3 },
+    { "id": "seal", "type": "seal", "x": 337, "y": 820, "w": 120, "h": 120, "fill": "#1B2539", "ring": "#FFFFFF", "star": "#C7A26B" },
+    { "id": "sign_line_1", "type": "line", "x": 60, "y": 900, "w": 250, "stroke": "#1B2539", "strokeWidth": 1 },
+    { "id": "sign_label_1", "type": "text", "x": 60, "y": 906, "w": 250, "h": 26, "text": "الطرف الأول", "font": "amiri", "size": 15, "color": "#6B7280", "align": "center" },
+    { "id": "sign_line_2", "type": "line", "x": 484, "y": 900, "w": 250, "stroke": "#1B2539", "strokeWidth": 1 },
+    { "id": "sign_label_2", "type": "text", "x": 484, "y": 906, "w": 250, "h": 26, "text": "الطرف الثاني", "font": "amiri", "size": 15, "color": "#6B7280", "align": "center" },
+    { "id": "footer", "type": "text", "x": 60, "y": 1050, "w": 674, "h": 24, "text": "حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{date}}", "font": "amiri", "size": 13, "color": "#9CA3AF", "align": "center" }
+  ]
+}

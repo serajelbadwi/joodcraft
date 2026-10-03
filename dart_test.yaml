@@ -1,0 +1,9 @@
+# إعدادات حزمة الاختبارات.
+#
+# الاختبارات الموسومة بـ `live` تتصل بمشروع Supabase الفعلي:
+#   flutter test test/integration --dart-define-from-file=env.json
+# وللاستثنائها في أي وقت:
+#   flutter test --exclude-tags live
+tags:
+  live:
+    description: اختبارات تكامل حقيقية تحتاج مفاتيح Supabase واتصالاً بالإنترنت.

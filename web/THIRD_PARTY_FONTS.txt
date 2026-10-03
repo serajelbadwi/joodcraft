@@ -1,0 +1,24 @@
+خطوط تعويض محرك Flutter — نسخ محلية (بلا شبكة)
+==================================================
+
+يستخدم محرك Flutter على الويب (Canvaskit) خطوط تعويض حين ينقص محرف في خطوط
+التطبيق، وينزّلها افتراضياً من fonts.gstatic.com.ضبطنا fontFallbackBaseUrl
+إلى "" في flutter_bootstrap.js، فصار المحرك يطلبها من جذر التطبيق — وهذا
+المجلد يطابق مسارات الطلب حرفياً (المصدر: flutter_web_sdk
+lib/_engine/engine/canvaskit/fonts.dart و font_fallback_data.dart).
+
+لا تُغيَّر أسماء المجلدات أو الملفات إلا بمطابقة تحديث المحرك.
+
+1) roboto/v32/KFOmCnqEu92FrMe4GZLCzYlKw.woff2   (Roboto — خط افتراضي
+   لتفادي انهيار التخطيط عند عائلة غير مسجّلة)
+   المصدر: https://fonts.gstatic.com/s/roboto/v32/KFOmCnqEu92FrMe4GZLCzYlKw.woff2
+   الترخيص: Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+   SHA-256: 35b02ca266b79eb4996590f15817425a1ce9ebf48f84471843233ff614656bf2
+
+2) notosansarabic/v28/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvvnCBFQLaig.woff2
+   (Noto Sans Arabic — يُنزَّل عند نقص محرف عربي لا تغطيه خطوط التطبيق)
+   المصدر: https://fonts.gstatic.com/s/notosansarabic/v28/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvvnCBFQLaig.woff2
+   الترخيص: SIL Open Font License 1.1 — مرفق نص الترخيص: OFL.txt
+   SHA-256: 53251baf8845f9b2c35517a8d157b76aa80ab871fa9848ff2374c7f5f0e4ef97
+
+تحققت البصمات أثناء التنزيل (أكتُب هنا عند كل تحديث).

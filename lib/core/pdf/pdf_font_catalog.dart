@@ -1,0 +1,264 @@
+import 'package:flutter/services.dart';
+import 'package:pdf/widgets.dart' as pw;
+
+import '../constants/app_assets.dart';
+import '../errors/app_error_code.dart';
+import '../errors/app_exception.dart';
+import 'custom_pdf_fonts.dart';
+
+/// عائلات الخطوط المدعومة في محرّك الـ PDF.
+///
+/// ⚠️ قاعدة تقنية مهمة اكتُشفت بالقياس الفعلي لملفات الخطوط:
+/// محرّك الطباعة في دارت يرسم الحروف العربية **بصيغ العرض المتصلة**
+/// (Arabic Presentation Forms-B / U+FE70..FEFC) لأن جداول GSUB لا تُنفَّذ هنا.
+/// لذلك يجب أن يحتوي الخط على هذه الصيغ داخل `cmap`، وإلا ظهرت مربعات فارغة.
+///
+/// | الخط | تغطية U+FE80..FEF4 |
+/// | --- | --- |
+/// | IBM Plex Sans Arabic | 117/117 ✅ |
+/// | Amiri | 117/117 ✅ |
+/// | Cairo | 117/117 ✅ (بعد وصْل صور الحروف المعزولة إلى محارفها الأم) |
+/// | Tajawal | 117/117 ✅ (بعد الوصْل نفسه) |
+/// | Noto Sans Arabic | 117/117 ✅ |
+///
+/// ملفات الخطوط المحزومة تُفحَص آلياً في `test/unit/font_inspector_test.dart`،
+/// وأداة الوصْل التي أصلحت Cairo وTajawal هي `tool/patch_arabic_cmaps.py`.
+enum PdfFontFamily {
+  plex(
+    jsonValue: 'plex',
+    labelAr: 'IBM Plex Sans Arabic',
+    descriptionAr: 'خط حديث Sans — مناسب للشهادات والترويسات',
+    uiFamily: AppAssets.plexArabicFont,
+  ),
+  amiri(
+    jsonValue: 'amiri',
+    labelAr: 'Amiri',
+    descriptionAr: 'خط نسخ تقليدي — مناسب للعقود والوثائق الرسمية',
+    uiFamily: AppAssets.amiriFont,
+  ),
+  cairo(
+    jsonValue: 'cairo',
+    labelAr: 'Cairo',
+    descriptionAr: 'Sans عصري دقيق — مناسب للعناوين والترويسات',
+    uiFamily: AppAssets.cairoFont,
+  ),
+  tajawal(
+    jsonValue: 'tajawal',
+    labelAr: 'Tajawal',
+    descriptionAr: 'Sans هندسي أنيق — مناسب للشهادات الحديثة',
+    uiFamily: AppAssets.tajawalFont,
+  ),
+  noto(
+    jsonValue: 'noto',
+    labelAr: 'Noto Sans Arabic',
+    descriptionAr: 'الأوسع تغطية للمحارف العربية — مناسب للنصوص المختلطة',
+    uiFamily: AppAssets.notoArabicFont,
+  );
+
+  const PdfFontFamily({
+    required this.jsonValue,
+    required this.labelAr,
+    required this.descriptionAr,
+    required this.uiFamily,
+    // يُحتفظ بالمعامل لتوسيع القائمة لاحقاً؛ لا عائلة محزومة تحقّق القيمة بعد
+    // أن صارت تغطية صور الحروف كاملة في كل الملفات المضمّنة (فَحصها في
+    // test/unit/font_inspector_test.dart).
+    // ignore: unused_element_parameter
+    this.usableInPdf = true,
+  });
+
+  final String jsonValue;
+  final String labelAr;
+  final String descriptionAr;
+
+  /// اسم العائلة المسجَّل في `pubspec.yaml` والمستخدم في واجهة فلاتر
+  /// (يجب أن يطابق اسم الخط في `ThemeData` كي تكون المعاينة مطابقة للطباعة).
+  final String uiFamily;
+
+  /// هل يصلح الرسم في الـ PDF (يحتوي صور الحروف المتصلة)؟
+  final bool usableInPdf;
+
+  /// العائلات التي يجوز استخدامها داخل قوالب الـ PDF.
+  static List<PdfFontFamily> get pdfFamilies =>
+      values.where((PdfFontFamily f) => f.usableInPdf).toList();
+
+  /// قراءة آمنة من الـ JSON مع الرجوع للافتراضي عند قيمة غير معروفة.
+  static PdfFontFamily fromJson(String? value) {
+    if (value == null) return plex;
+    final String needle = value.trim().toLowerCase();
+    return values.firstWhere(
+      (PdfFontFamily f) => f.jsonValue == needle || f.labelAr == value.trim(),
+      orElse: () => plex,
+    );
+  }
+}
+
+/// أوزان الخطوط المدعومة.
+enum PdfFontWeight {
+  regular(400, 'regular'),
+  semiBold(600, 'semiBold'),
+  bold(700, 'bold');
+
+  const PdfFontWeight(this.value, this.jsonValue);
+
+  final int value;
+  final String jsonValue;
+
+  static PdfFontWeight fromJson(Object? value) {
+    if (value is int) return fromValue(value);
+    if (value is num) return fromValue(value.toInt());
+    final String needle = '${value ?? ''}'.trim().toLowerCase();
+    if (needle == 'bold' || needle == '700' || needle == '800') return bold;
+    if (needle == 'semibold' || needle == '600' || needle == 'medium') {
+      return semiBold;
+    }
+    if (needle == '500') return semiBold;
+    return regular;
+  }
+
+  static PdfFontWeight fromValue(int value) {
+    if (value >= 700) return bold;
+    if (value >= 500) return semiBold;
+    return regular;
+  }
+}
+
+/// مجموعة الخطوط الجاهزة للرسم (تُحمَّل مرة واحدة).
+class PdfFontSet {
+  const PdfFontSet._(this._fonts, this._bytesByKey, this.loadedFontFileCount);
+
+  final Map<String, pw.Font> _fonts;
+
+  /// بايتات كل خط بالمفتاح `family:weight` — تُستخدم لإعادة بناء المجموعة داخل
+  /// isolate آخر (لا تُنقل كائنات `pw.Font`، بل بايتات TTF).
+  final Map<String, Uint8List> _bytesByKey;
+
+  /// عدد ملفات الخطوط المقروءة فعلياً من الأصول (بلا تكرار).
+  final int loadedFontFileCount;
+
+  static const Map<PdfFontFamily, Map<PdfFontWeight, String>> _sources =
+      <PdfFontFamily, Map<PdfFontWeight, String>>{
+    PdfFontFamily.plex: <PdfFontWeight, String>{
+      PdfFontWeight.regular: AppAssets.pdfPlexRegular,
+      PdfFontWeight.semiBold: AppAssets.pdfPlexSemiBold,
+      PdfFontWeight.bold: AppAssets.pdfPlexBold,
+    },
+    PdfFontFamily.amiri: <PdfFontWeight, String>{
+      PdfFontWeight.regular: AppAssets.pdfAmiriRegular,
+      // Amiri لا يملك وزناً متوسطاً — نستخدم العريض بدلاً منه.
+      PdfFontWeight.semiBold: AppAssets.pdfAmiriBold,
+      PdfFontWeight.bold: AppAssets.pdfAmiriBold,
+    },
+    PdfFontFamily.cairo: <PdfFontWeight, String>{
+      PdfFontWeight.regular: AppAssets.pdfCairoRegular,
+      PdfFontWeight.semiBold: AppAssets.pdfCairoSemiBold,
+      PdfFontWeight.bold: AppAssets.pdfCairoBold,
+    },
+    PdfFontFamily.tajawal: <PdfFontWeight, String>{
+      PdfFontWeight.regular: AppAssets.pdfTajawalRegular,
+      PdfFontWeight.semiBold: AppAssets.pdfTajawalMedium,
+      PdfFontWeight.bold: AppAssets.pdfTajawalBold,
+    },
+    PdfFontFamily.noto: <PdfFontWeight, String>{
+      PdfFontWeight.regular: AppAssets.pdfNotoArabicRegular,
+      PdfFontWeight.semiBold: AppAssets.pdfNotoArabicSemiBold,
+      PdfFontWeight.bold: AppAssets.pdfNotoArabicBold,
+    },
+  };
+
+  static Future<PdfFontSet>? _cached;
+
+  /// الخط المطلوب، مع الرجوع التلقائي إلى خط آمن عند عائلة غير صالحة للطباعة.
+  ///
+  /// إن مُرِّر [customFamily] (خط رفعه المستخدم عبر المحرّك الديناميكي) فهو
+  /// **المقدَّم**، ويُرجَع الخط المضمّن تلقائياً إن لم يكن الخط المخصص مسجَّلاً
+  /// بعد (قالب محفوظ على جهاز آخر مثلاً).
+  pw.Font resolve(
+    PdfFontFamily family, [
+    PdfFontWeight weight = PdfFontWeight.regular,
+    String? customFamily,
+  ]) {
+    if (customFamily != null && customFamily.trim().isNotEmpty) {
+      final pw.Font? custom =
+          CustomPdfFonts.resolve(customFamily.trim(), weight.value);
+      if (custom != null) return custom;
+    }
+    final PdfFontFamily safeFamily = family.usableInPdf ? family : defaultFamily;
+    final pw.Font? font = _fonts['${safeFamily.jsonValue}:${weight.jsonValue}'];
+    if (font != null) return font;
+    final pw.Font? fallback =
+        _fonts['${defaultFamily.jsonValue}:${PdfFontWeight.regular.jsonValue}'];
+    if (fallback == null) {
+      throw const AppException(
+        AppErrorCode.unknown,
+        message: 'لم تُحمَّل الخطوط المضمّنة. تأكد من تنفيذ PdfFontSet.load.',
+      );
+    }
+    return fallback;
+  }
+
+  /// العائلة الافتراضية للـ PDF.
+  static const PdfFontFamily defaultFamily = PdfFontFamily.plex;
+
+  /// تحميل كل الخطوط من أصول التطبيق (بلا شبكة).
+  ///
+  /// يُقرأ كل ملف خط **مرة واحدة** فقط حتى لو استُخدم لأكثر من وزن (كما في
+  /// Amiri الذي يخدم الوسط والعريض بالملف العريض نفسه).
+  static Future<PdfFontSet> load({AssetBundle? bundle}) async {
+    final AssetBundle assets = bundle ?? rootBundle;
+    final Map<String, Uint8List> bytesByPath = <String, Uint8List>{};
+    final Map<String, pw.Font> byPath = <String, pw.Font>{};
+    final Map<String, pw.Font> fonts = <String, pw.Font>{};
+    final Map<String, Uint8List> bytesByKey = <String, Uint8List>{};
+
+    for (final MapEntry<PdfFontFamily, Map<PdfFontWeight, String>> family
+        in _sources.entries) {
+      for (final MapEntry<PdfFontWeight, String> variant in family.value.entries) {
+        // يُقرأ كل ملف خط مرة واحدة فقط حتى لو خدم أكثر من وزن.
+        final Uint8List bytes = bytesByPath[variant.value] ??=
+            (await assets.load(variant.value)).buffer.asUint8List();
+        final String key = '${family.key.jsonValue}:${variant.key.jsonValue}';
+        byPath[variant.value] ??= pw.Font.ttf(bytes.buffer.asByteData());
+        fonts[key] = byPath[variant.value]!;
+        bytesByKey[key] = bytes;
+      }
+    }
+    return PdfFontSet._(fonts, bytesByKey, bytesByPath.length);
+  }
+
+  /// إعادة بناء المجموعة من بايتات نمطها المصدر (تُستعمل داخل isolate).
+  ///
+  /// لا تلمس `rootBundle` إطلاقاً — كل الخطوط تأتي من البايتات الممرَّرة.
+  factory PdfFontSet.fromBytes(Map<String, Uint8List> bytesByKey) {
+    final Map<String, pw.Font> fonts = <String, pw.Font>{};
+    bytesByKey.forEach((String key, Uint8List bytes) {
+      fonts[key] = pw.Font.ttf(bytes.buffer.asByteData());
+    });
+    return PdfFontSet._(fonts, bytesByKey, bytesByKey.length);
+  }
+
+  /// بايتات كل خط بالمفتاح `family:weight` (نسخة غير قابلة للتعديل).
+  Map<String, Uint8List> get bytesByKey =>
+      Map<String, Uint8List>.unmodifiable(_bytesByKey);
+
+  /// تحميل مخزَّن مؤقتاً — يُستخدم في الواجهة لتجنّب إعادة قراءة ملفات الخطوط
+  /// (‎~1.7MB) عند كل إعادة توليد للمعاينة.
+  static Future<PdfFontSet> loadCached({AssetBundle? bundle}) {
+    final Future<PdfFontSet>? cached = _cached;
+    if (cached != null) return cached;
+    final Future<PdfFontSet> loading = load(bundle: bundle).catchError(
+      (Object error, StackTrace stackTrace) {
+        _cached = null; // لا نحتفظ بالفشل حتى يمكن إعادة المحاولة.
+        throw error;
+      },
+    );
+    _cached = loading;
+    return loading;
+  }
+
+  /// مسح الذاكرة المؤقتة (للاختبارات).
+  static void resetCache() => _cached = null;
+
+  /// عدد الخطوط المتاحة للاختيار (عائلة × وزن).
+  int get loadedCount => _fonts.length;
+}

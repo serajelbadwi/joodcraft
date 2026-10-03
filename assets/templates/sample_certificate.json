@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "paper": "a4",
+  "orientation": "landscape",
+  "background": "#FFFDF8",
+  "canvas": { "width": 1123, "height": 794, "unit": "px" },
+  "sample_data": {
+    "student_name": "عبدالله بن أحمد الأحمد",
+    "program_name": "إدارة المشاريع الاحترافية",
+    "date": "١٥ محرم ١٤٤٨هـ",
+    "verify_code": "JC-2026-000112"
+  },
+  "elements": [
+    { "id": "frame_outer", "type": "rect", "x": 30, "y": 30, "w": 1063, "h": 734, "stroke": "#C7A26B", "strokeWidth": 2.5, "radius": 10 },
+    { "id": "frame_inner", "type": "rect", "x": 44, "y": 44, "w": 1035, "h": 706, "stroke": "#1B2539", "strokeWidth": 1, "radius": 6 },
+    { "id": "header_band", "type": "rect", "x": 44, "y": 44, "w": 1035, "h": 108, "fill": "#1B2539", "radius": 6 },
+    { "id": "title", "type": "text", "x": 44, "y": 66, "w": 1035, "h": 56, "text": "شهادة شكر وتقدير", "font": "plex", "weight": "bold", "size": 40, "color": "#FFFFFF", "align": "center", "valign": "middle", "lineHeight": 1.2 },
+    { "id": "subtitle", "type": "text", "x": 44, "y": 122, "w": 1035, "h": 22, "text": "CERTIFICATE OF APPRECIATION", "font": "plex", "weight": "regular", "size": 11, "color": "#C7A26B", "align": "center", "direction": "ltr", "letterSpacing": 3.2 },
+    { "id": "rule_top", "type": "line", "x": 461, "y": 182, "w": 200, "stroke": "#C7A26B", "strokeWidth": 4 },
+    { "id": "intro", "type": "text", "x": 111, "y": 206, "w": 900, "h": 34, "text": "تشهد إدارة منصة جودكرافت بأن", "font": "plex", "size": 22, "color": "#6B7280", "align": "center" },
+    { "id": "recipient_name", "type": "text", "x": 61, "y": 244, "w": 1000, "h": 82, "text": "{{student_name}}", "font": "plex", "weight": "bold", "size": 46, "color": "#1B2539", "align": "center", "valign": "middle" },
+    { "id": "rule_name", "type": "line", "x": 361, "y": 340, "w": 400, "stroke": "#C7A26B", "strokeWidth": 2 },
+    { "id": "body", "type": "text", "x": 131, "y": 372, "w": 860, "h": 140, "text": "قد أتمّ بنجاح البرنامج التدريبي «{{program_name}}» وأظهر التزاماً وتميّزاً في الأداء، ونحن نُثمّن جهوده المبذولة ونتمنى له دوام التوفيق.", "font": "plex", "size": 20, "color": "#374151", "align": "center", "lineHeight": 1.9, "maxLines": 4 },
+    { "id": "date", "type": "text", "x": 703, "y": 596, "w": 330, "h": 30, "text": "التاريخ: {{date}}", "font": "plex", "size": 17, "color": "#1B2539", "align": "center" },
+    { "id": "sign_line_right", "type": "line", "x": 763, "y": 656, "w": 250, "stroke": "#1B2539", "strokeWidth": 1 },
+    { "id": "sign_label_right", "type": "text", "x": 763, "y": 662, "w": 250, "h": 26, "text": "المدير التنفيذي — جودكرافت", "font": "plex", "size": 14, "color": "#6B7280", "align": "center" },
+    { "id": "sign_line_left", "type": "line", "x": 110, "y": 656, "w": 250, "stroke": "#1B2539", "strokeWidth": 1 },
+    { "id": "sign_label_left", "type": "text", "x": 110, "y": 662, "w": 250, "h": 26, "text": "التوقيع المعتمد", "font": "plex", "size": 14, "color": "#6B7280", "align": "center" },
+    { "id": "seal", "type": "seal", "x": 497, "y": 556, "w": 130, "h": 130, "fill": "#C7A26B", "ring": "#FFFDF8", "star": "#1B2539" },
+    { "id": "footer_verify", "type": "text", "x": 60, "y": 728, "w": 420, "h": 22, "text": "للتحقق من صحة الشهادة: {{verify_code}}", "font": "plex", "size": 11, "color": "#9CA3AF", "align": "start" },
+    { "id": "footer_site", "type": "text", "x": 643, "y": 728, "w": 420, "h": 22, "text": "joodcraft.app/verify", "font": "plex", "size": 11, "color": "#9CA3AF", "align": "end", "direction": "ltr" }
+  ]
+}
