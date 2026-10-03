@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/models/template_document.dart';
 import '../../../../core/templates/local_template_store.dart';
 import '../../../../core/templates/template_library_controller.dart';
 import '../../../../core/templates/template_library_entry.dart';
@@ -147,6 +148,49 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       _selectedTemplateTitle = null;
     });
     unawaited(_controller.selectTemplate(kind));
+  }
+
+  /// القالب المستخدم المختار حالياً (محلي/سحابي) — أو `null` للقوالب الجاهزة.
+  TemplateLibraryEntry? _selectedUserEntry() {
+    final String? id = _selectedTemplateId;
+    if (id == null) return null;
+    for (final TemplateLibraryEntry entry in _library.entries) {
+      if (entry.id == id && !entry.isPreset) return entry;
+    }
+    return null;
+  }
+
+  /// يحوّل نصاً ثابتاً يشبه الاسم إلى حقل `{{اسم_المتدرب}}` **ثم يحفظ التعديل**
+  /// في القالب الأصلي إن كان قالب مستخدم (محلي/سحابي).
+  ///
+  /// التعديل الفوري يجري في [BatchProcessorController] ليُعاد الربط فوراً،
+  /// ثم يُثبَّت في السجل عبر [TemplateLibraryController.updateDocument] حتى لا
+  /// يضيع عند إعادة التحميل. للقوالب الجاهزة غير القابلة للتعديل نكتفي
+  /// بالتوليد الحالي مع إرشاد المستخدم.
+  Future<void> _convertTextToField(int index) async {
+    if (!_controller.convertTextToField(index)) return;
+    final TemplateDocument? document = _controller.document;
+    final TemplateLibraryEntry? entry = _selectedUserEntry();
+    if (!mounted || document == null) return;
+
+    if (entry == null) {
+      context.showSuccess(
+        'تم تحويل النص إلى حقل {{اسم_المتدرب}} للتوليد الحالي — احفظ القالب '
+        'لتثبيت التعديل دائماً.',
+      );
+      return;
+    }
+
+    try {
+      await _library.updateDocument(entry: entry, document: document);
+      if (!mounted) return;
+      context.showSuccess(
+        'تم تحويل النص إلى حقل {{اسم_المتدرب}} وحُفظ التعديل في القالب.',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      context.showError('تعذّر حفظ التعديل في القالب: $error');
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -751,7 +795,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                   const SizedBox(height: 6),
                   OutlinedButton.icon(
                     onPressed: () =>
-                        _controller.convertTextToField(candidate.index),
+                        unawaited(_convertTextToField(candidate.index)),
                     icon: const Icon(Icons.add_link_rounded, size: 16),
                     label: const Text(
                       'حوّله إلى حقل {{اسم_المتدرب}}',

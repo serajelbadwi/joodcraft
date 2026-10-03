@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:joodcraft/core/constants/app_constants.dart';
 import 'package:joodcraft/core/errors/app_error_code.dart';
 import 'package:joodcraft/core/errors/app_exception.dart';
+import 'package:joodcraft/core/models/template_document.dart';
+import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/templates/local_template_store.dart';
 import 'package:joodcraft/core/templates/preset_catalog.dart';
 import 'package:joodcraft/core/templates/preset_template.dart';
@@ -68,6 +71,48 @@ void main() {
 
       expect(controller.localTemplates, isEmpty);
       expect(store.records, isEmpty);
+    });
+
+    test('updateDocument يثبّت الحقل الجديد في القالب المحلي على القرص',
+        () async {
+      final TemplateRecord imported =
+          await controller.importPreset(PresetCatalog.all.first);
+      final TemplateLibraryEntry local = controller.entries.firstWhere(
+        (TemplateLibraryEntry entry) => entry.id == imported.id,
+      );
+
+      final TemplateDocument updated = TemplateDocument(
+        orientation: PageOrientation.landscape,
+        elements: const <TemplateElement>[
+          TextElement(
+            id: 'name',
+            box: ElementBox(x: 0, y: 0, width: 10, height: 10),
+            text: 'تحولت إلى {{اسم_المتدرب}}',
+          ),
+        ],
+      );
+
+      final TemplateRecord? saved = await controller.updateDocument(
+        entry: local,
+        document: updated,
+      );
+
+      expect(saved, isNotNull);
+      expect(saved!.id, imported.id);
+      // المخزن على الجهاز يحوي الحقل فعلاً (لا في الذاكرة فقط).
+      final TemplateRecord onDisk = store.records.single;
+      expect(onDisk.toDocument().fieldKeys, contains('اسم_المتدرب'));
+
+      // وإعادة تشغيل بمخزن جديد على نفس البيانات تُعيده.
+      final TemplateLibraryController restarted = TemplateLibraryController(
+        null,
+        localStore: InMemoryLocalTemplateStore(store.records),
+      );
+      await restarted.refresh();
+      expect(
+        restarted.localTemplates.single.toDocument().fieldKeys,
+        contains('اسم_المتدرب'),
+      );
     });
 
     test('save يحفظ في السحابة يرمي notConfigured', () async {
@@ -143,6 +188,56 @@ void main() {
 
       expect(controller.errorMessage, isNotNull);
       expect(controller.entries.length, PresetCatalog.all.length);
+    });
+
+    test('updateDocument يحدّث القالب السحابي في مكانه', () async {
+      repository.records.add(
+        TemplateRecord(
+          id: 'cloud-1',
+          userId: 'user-1',
+          title: 'قالب سحابي',
+          category: PresetCatalog.all.first.category,
+          orientation: PresetCatalog.all.first.orientation,
+          layoutData: <String, dynamic>{'schema_version': 1},
+        ),
+      );
+      await controller.refresh();
+      final TemplateLibraryEntry cloud = controller.entries.firstWhere(
+        (TemplateLibraryEntry entry) => entry.id == 'cloud-1',
+      );
+
+      final TemplateDocument updated = TemplateDocument(
+        elements: const <TemplateElement>[
+          TextElement(
+            id: 'name',
+            box: ElementBox(x: 0, y: 0, width: 10, height: 10),
+            text: '{{اسم_المتدرب}}',
+          ),
+        ],
+      );
+
+      await controller.updateDocument(entry: cloud, document: updated);
+
+      expect(repository.updateCalls, 1);
+      expect(
+        repository.records.single.toDocument().fieldKeys,
+        contains('اسم_المتدرب'),
+      );
+    });
+
+    test('updateDocument لا يمسّ القوالب الجاهزة', () async {
+      await controller.refresh();
+      final TemplateLibraryEntry preset = controller.entries.firstWhere(
+        (TemplateLibraryEntry entry) => entry.isPreset,
+      );
+
+      final TemplateRecord? result = await controller.updateDocument(
+        entry: preset,
+        document: const TemplateDocument(elements: <TemplateElement>[]),
+      );
+
+      expect(result, isNull);
+      expect(repository.updateCalls, 0);
     });
 
     test('remove يحذف السحابي ويحدّث القائمة', () async {

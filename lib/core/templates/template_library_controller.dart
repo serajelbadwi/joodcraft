@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../constants/app_constants.dart';
 import '../errors/app_error_code.dart';
 import '../errors/app_exception.dart';
+import '../models/template_document.dart';
 import 'local_template_store.dart';
 import 'preset_catalog.dart';
 import 'preset_template.dart';
@@ -189,6 +190,58 @@ class TemplateLibraryController extends ChangeNotifier {
       orientation: entry.orientation,
       layoutData: entry.toDocument().toJson(),
     );
+  }
+
+  /// حفظ مستند مُحدّث داخل **قالب مستخدم قائم** (محلي أو سحابي) مع بقاء معرّفه.
+  ///
+  /// يُستخدم بعد تعديل يجرى من خارج المحرّر (مثل تحويل نص ثابت إلى حقل ديناميكي
+  /// في خطوة التوليد الجماعي) حتى لا يبقى التعديل في الذاكرة فقط. القوالب
+  /// الجاهزة المحزومة غير قابلة للتعديل، فتُرجع `null` بلا رمي حتى يقرّر
+  /// المستدعي ما يعرضه.
+  Future<TemplateRecord?> updateDocument({
+    required TemplateLibraryEntry entry,
+    required TemplateDocument document,
+  }) async {
+    final Map<String, dynamic> layoutData = document.toJson();
+    if (entry.isLocal) {
+      return _updateLocal(entry.id, layoutData);
+    }
+    if (entry.isCloud) {
+      return save(
+        id: entry.id,
+        title: entry.title,
+        category: entry.category,
+        orientation: entry.orientation,
+        layoutData: layoutData,
+        isPublic: entry.record.isPublic,
+      );
+    }
+    return null;
+  }
+
+  /// تحديث هيكل قالب محلي قائم في مكانه ثم حفظه على الجهاز.
+  Future<TemplateRecord> _updateLocal(
+    String id,
+    Map<String, dynamic> layoutData,
+  ) async {
+    final int index =
+        _localTemplates.indexWhere((TemplateRecord item) => item.id == id);
+    if (index < 0) throw const AppException(AppErrorCode.notFound);
+
+    final TemplateRecord updated = _localTemplates[index].copyWith(
+      layoutData: layoutData,
+      updatedAt: DateTime.now(),
+    );
+    _localTemplates = <TemplateRecord>[..._localTemplates]..[index] = updated;
+    _beginBusy();
+    notifyListeners();
+    try {
+      await _persistLocal();
+    } finally {
+      _endBusy();
+      notifyListeners();
+    }
+    return updated;
   }
 
   /// استيراد قالب جاهز إلى المكتبة المحلية (يعمل أوفلاين ويُستعاد لاحقاً).

@@ -521,6 +521,15 @@ void main() {
 
     expect(controller.hasNameField, isTrue);
     expect(controller.mapping.fieldFor(0), 'اسم_المتدرب');
+
+    // التعديل ثُبّت في القالب الأصلي على "الخادم" لا في الذاكرة فقط.
+    expect(repository.updateCalls, greaterThanOrEqualTo(1));
+    final TemplateDocument saved = repository.records.single.toDocument();
+    expect(saved.fieldKeys, contains('اسم_المتدرب'));
+    expect(
+      saved.elements.whereType<TextElement>().map((TextElement e) => e.text),
+      isNot(contains('محمد بن عبد الله الشمري')),
+    );
   });
 
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',
