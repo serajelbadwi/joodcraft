@@ -239,34 +239,14 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
   // ==========================================================================
 
   Future<void> _rename(UserAsset asset) async {
-    final TextEditingController field =
-        TextEditingController(text: asset.name);
+    // الحقل يملكه ودجت النافذة نفسه (يتنظّف في `dispose`) بدل إنشائه هنا
+    // وإتلافه فور ارتجاع `showDialog`: الإتلاف المبكر يقع أثناء حركة إغلاق
+    // النافذة بينما `TextField` لا يزال يشير إلى المتحكّم.
     final String? name = await showDialog<String>(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text('إعادة تسمية الأصل'),
-        content: TextField(
-          controller: field,
-          autofocus: true,
-          maxLength: AppConstants.maxNameLength,
-          decoration: const InputDecoration(labelText: 'الاسم'),
-          onSubmitted: (String value) =>
-              Navigator.of(dialogContext).pop(value.trim()),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('إلغاء'),
-          ),
-          FilledButton(
-            onPressed: () =>
-                Navigator.of(dialogContext).pop(field.text.trim()),
-            child: const Text('حفظ'),
-          ),
-        ],
-      ),
+      builder: (BuildContext dialogContext) =>
+          _RenameAssetDialog(initial: asset.name),
     );
-    field.dispose();
     if (name == null || !mounted) return;
     await _controller.renameAsset(asset.id, name);
     if (mounted) context.showSuccess('أُعيدت تسمية الأصل.');
@@ -274,14 +254,15 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
 
   Future<void> _reassign(UserAsset asset, AssetType type) async {
     if (asset.type == type) return;
-    // تغيير النوع: نحذف ونعيد الإضافة بالبايتات نفسها بالنوع الجديد.
-    await _controller.removeAsset(asset.id);
+    // تغيير النوع: نُضيف النسخة الجديدة بالنوع المطلوب **أولاً**، ثم نحذف
+    // الأصل القديم — فإن فشلت الإضافة (لأي سبب) لا يضيع الأصل الأصلي.
     await _controller.addAsset(
       type: type,
       name: asset.name,
       fileName: asset.fileName,
       bytes: asset.bytes,
     );
+    await _controller.removeAsset(asset.id);
     if (!mounted) return;
     context.showSuccess('نُقل الأصل إلى «${type.labelAr}».');
   }
@@ -311,6 +292,51 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
     if (confirmed != true || !mounted) return;
     await _controller.removeAsset(asset.id);
     if (mounted) context.showSuccess('حُذف الأصل «${asset.name}».');
+  }
+}
+
+/// نافذة إعادة تسمية أصل — تملك متحكّم حقلها وتُنظّفه بنفسها.
+class _RenameAssetDialog extends StatefulWidget {
+  const _RenameAssetDialog({required this.initial});
+
+  final String initial;
+
+  @override
+  State<_RenameAssetDialog> createState() => _RenameAssetDialogState();
+}
+
+class _RenameAssetDialogState extends State<_RenameAssetDialog> {
+  late final TextEditingController _field =
+      TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('إعادة تسمية الأصل'),
+      content: TextField(
+        controller: _field,
+        autofocus: true,
+        maxLength: AppConstants.maxNameLength,
+        decoration: const InputDecoration(labelText: 'الاسم'),
+        onSubmitted: (String value) => Navigator.of(context).pop(value.trim()),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('إلغاء'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_field.text.trim()),
+          child: const Text('حفظ'),
+        ),
+      ],
+    );
   }
 }
 

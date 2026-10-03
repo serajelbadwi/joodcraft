@@ -17,6 +17,7 @@ import '../../templates/local_template_store.dart';
 import '../../templates/template_library_controller.dart';
 import '../../templates/template_record.dart';
 import '../../templates/template_repository.dart';
+import '../../templates/unsaved_changes_guard.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/ui_feedback.dart';
@@ -106,6 +107,13 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   /// مدة التوقف التي تفصل بين ضغطتين مستقلتين في سجل التراجع.
   static const Duration _nudgeSettleDelay = Duration(milliseconds: 350);
 
+  /// معالج المغادرة المسجَّل في [UnsavedChangesGuard] — نحتفظ به كحقل لضمان
+  /// أن إزالته عند التخلّص تُطابق نسخة التسجيل نفسها.
+  late final Future<bool> Function() _leaveHandler = _confirmLeave;
+
+  /// علم مؤقّت يسمح بالخروج البرمجي بعد تأكيد المستخدم (يتجاوز `PopScope`).
+  bool _allowPop = false;
+
   double _zoom = 1;
   bool _showGrid = true;
   bool _snapToGuides = true;
@@ -128,6 +136,9 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       recordId: widget.initialRecordId,
     );
     _controller.addListener(_onControllerChanged);
+    // يمنح المحرّر فرصة اعتراض التنقّل (اللوحة الجانبية/رجوع النظام) عند
+    // وجود تعديلات غير محفوظة.
+    UnsavedChangesGuard.instance.register(_leaveHandler);
     // نافذة «قوالبي» داخل المحرّر تعرض القوالب السحابية فقط، فلا داعي لفتح
     // المخزن المحلي (يتفادى اعتماداً غير ضروري على المنصة).
     _library = TemplateLibraryController(
@@ -159,6 +170,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
 
   @override
   void dispose() {
+    UnsavedChangesGuard.instance.unregister(_leaveHandler);
     _nudgeSettleTimer?.cancel();
     _controller.removeListener(_onControllerChanged);
     _controller.dispose();
@@ -184,21 +196,79 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   // ==========================================================================
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _header(context),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(AppTheme.space12),
-            child: _mode == EditorViewMode.preview
-                ? _previewPanel()
-                : _editorPanel(),
+    return PopScope<Object?>(
+      // يُعترض دائماً، ويُقرَّر في المعالج حسب وجود تعديلات غير محفوظة — فلا
+      // نحتاج إعادة بناء الشجرة كلها عند كل تعديل فقط لتحديث `canPop`.
+      canPop: _allowPop,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (didPop) return;
+        final bool leave = await _confirmLeave();
+        if (!context.mounted || !leave) return;
+        setState(() => _allowPop = true);
+        Navigator.of(context).maybePop();
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _header(context),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(AppTheme.space12),
+              child: _mode == EditorViewMode.preview
+                  ? _previewPanel()
+                  : _editorPanel(),
+            ),
           ),
-        ),
-        if (_mode == EditorViewMode.editor) _bottomBar(context),
-      ],
+          if (_mode == EditorViewMode.editor) _bottomBar(context),
+        ],
+      ),
     );
+  }
+
+  /// يُسأل قبل مغادرة المحرّر: `true` يعني السماح بالمغادرة.
+  ///
+  /// بلا تعديلات غير محفوظة يعود `true` فوراً (بلا أي نافذة). وإلا يعرض
+  /// خياراً بين الحفظ والمغادرة دون حفظ والإلغاء، ويعود `false` إن اختار
+  /// المستخدم الإلغاء أو فشل الحفظ (فيبقى عمله محفوظاً في الشاشة).
+  Future<bool> _confirmLeave() async {
+    if (!mounted) return true;
+    if (!_controller.hasUnsavedChanges) return true;
+
+    final _LeaveChoice? choice = await showDialog<_LeaveChoice>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: const Text('تعديلات غير محفوظة'),
+        content: Text(
+          'لديك تعديلات على «${_controller.title}» لم تُحفَظ بعد. '
+          'هل تريد حفظها قبل المغادرة؟',
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(_LeaveChoice.cancel),
+            child: const Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(_LeaveChoice.discard),
+            child: const Text('المغادرة دون حفظ'),
+          ),
+          if (_controller.canPersist)
+            FilledButton(
+              onPressed: () =>
+                  Navigator.of(dialogContext).pop(_LeaveChoice.save),
+              child: const Text('حفظ والمغادرة'),
+            ),
+        ],
+      ),
+    );
+
+    if (choice == null || choice == _LeaveChoice.cancel) return false;
+    if (choice == _LeaveChoice.discard) return true;
+    // «حفظ والمغادرة»: يُتابع فقط إن نجح الحفظ فعلاً (لا يُغلق عنوانٌ ملغى
+    // أو فشلُ شبكة الطريقَ ويُفقد العمل).
+    await _save();
+    return !_controller.hasUnsavedChanges;
   }
 
   // ==========================================================================
@@ -859,6 +929,9 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
     _controller.endInteraction();
   }
 }
+
+/// اختيار المستخدم في نافذة «تعديلات غير محفوظة».
+enum _LeaveChoice { save, discard, cancel }
 
 /// نافذة إدخال عنوان القالب (تملك متحكم الحقل وتُنظّفه بنفسها).
 class _TemplateTitleDialog extends StatefulWidget {

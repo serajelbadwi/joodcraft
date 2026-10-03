@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/constants/app_assets.dart';
@@ -9,6 +11,7 @@ import 'package:joodcraft/core/errors/app_error_code.dart';
 import 'package:joodcraft/features/contract_builder/presentation/screens/template_editor_screen.dart';
 import 'package:joodcraft/core/models/template_document.dart';
 import 'package:joodcraft/core/models/template_element.dart';
+import 'package:joodcraft/core/templates/unsaved_changes_guard.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 
 import '../support/fake_template_repository.dart';
@@ -237,6 +240,82 @@ void main() {
         findsOneWidget,
       );
 
+      await tester.pump(const Duration(seconds: 5));
+    });
+  });
+
+  group('حماية التعديلات غير المحفوظة', () {
+    testWidgets('بلا تعديلات: المغادرة مسموحة فوراً بلا نافذة',
+        (WidgetTester tester) async {
+      await pumpEditor(tester);
+
+      final bool allowed = await UnsavedChangesGuard.instance.canLeave();
+
+      expect(allowed, isTrue);
+      expect(find.text('تعديلات غير محفوظة'), findsNothing);
+    });
+
+    testWidgets('بعد تعديل: «إلغاء» يمنع المغادرة',
+        (WidgetTester tester) async {
+      await pumpEditor(tester);
+      await tester.tap(find.byTooltip('إضافة نص'));
+      await tester.pump();
+
+      bool? allowed;
+      unawaited(
+        UnsavedChangesGuard.instance.canLeave().then((bool v) => allowed = v),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('تعديلات غير محفوظة'), findsOneWidget);
+      await tester.tap(find.text('إلغاء'));
+      await tester.pumpAndSettle();
+
+      expect(allowed, isFalse);
+    });
+
+    testWidgets('بعد تعديل: «المغادرة دون حفظ» تسمح بالخروج',
+        (WidgetTester tester) async {
+      await pumpEditor(tester);
+      await tester.tap(find.byTooltip('إضافة نص'));
+      await tester.pump();
+
+      bool? allowed;
+      unawaited(
+        UnsavedChangesGuard.instance.canLeave().then((bool v) => allowed = v),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('المغادرة دون حفظ'));
+      await tester.pumpAndSettle();
+
+      expect(allowed, isTrue);
+    });
+
+    testWidgets('«حفظ والمغادرة» يحفظ فعلاً ثم يسمح بالخروج',
+        (WidgetTester tester) async {
+      await pumpEditor(tester);
+      await tester.tap(find.byTooltip('إضافة نص'));
+      await tester.pump();
+
+      bool? allowed;
+      unawaited(
+        UnsavedChangesGuard.instance.canLeave().then((bool v) => allowed = v),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('حفظ والمغادرة'));
+      await tester.pumpAndSettle();
+
+      // الحفظ الأول يطلب عنواناً قبل الإنشاء.
+      expect(find.text('عنوان القالب'), findsOneWidget);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'العنوان'),
+        'قالب محفوظ قبل المغادرة',
+      );
+      await tester.tap(find.text('متابعة'));
+      await tester.pumpAndSettle();
+
+      expect(repository.createCalls, 1);
+      expect(allowed, isTrue);
       await tester.pump(const Duration(seconds: 5));
     });
   });

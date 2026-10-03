@@ -36,6 +36,10 @@ class TemplateLibraryController extends ChangeNotifier {
   List<TemplateRecord> _cloudTemplates = const <TemplateRecord>[];
   List<TemplateRecord> _localTemplates = const <TemplateRecord>[];
   bool _busy = false;
+
+  /// عمق العمليات الجارية. نعدّها بدل علم واحد كي لا تُطفئ عمليةٌ منتهية
+  /// مؤشّر انشغال عملية أخرى ما زالت جارية (فيتحرّر الزر قبل أوانه).
+  int _busyDepth = 0;
   String? _errorMessage;
 
   /// هل القوالب السحابية متاحة (مرتبطة بـ Supabase)؟
@@ -89,7 +93,7 @@ class TemplateLibraryController extends ChangeNotifier {
   /// لا يرمي: فشل السحابة يُعرض في [errorMessage] مع بقاء القوالب الجاهزة
   /// والمحلية متاحة، وهذا جوهر العمل أوفلاين.
   Future<void> refresh() async {
-    _busy = true;
+    _beginBusy();
     _errorMessage = null;
     notifyListeners();
 
@@ -117,7 +121,7 @@ class TemplateLibraryController extends ChangeNotifier {
       }
     }
 
-    _busy = false;
+    _endBusy();
     notifyListeners();
   }
 
@@ -135,7 +139,7 @@ class TemplateLibraryController extends ChangeNotifier {
       throw const AppException(AppErrorCode.notConfigured);
     }
 
-    _busy = true;
+    _beginBusy();
     notifyListeners();
     try {
       final TemplateRecord record = id == null || id.isEmpty
@@ -169,7 +173,7 @@ class TemplateLibraryController extends ChangeNotifier {
       _errorMessage = error.message;
       Error.throwWithStackTrace(error, stackTrace);
     } finally {
-      _busy = false;
+      _endBusy();
       notifyListeners();
     }
   }
@@ -205,8 +209,14 @@ class TemplateLibraryController extends ChangeNotifier {
       updatedAt: now,
     );
     _localTemplates = <TemplateRecord>[record, ..._localTemplates];
+    _beginBusy();
     notifyListeners();
-    await _persistLocal();
+    try {
+      await _persistLocal();
+    } finally {
+      _endBusy();
+      notifyListeners();
+    }
     return record;
   }
 
@@ -229,8 +239,14 @@ class TemplateLibraryController extends ChangeNotifier {
       updatedAt: now,
     );
     _localTemplates = <TemplateRecord>[record, ..._localTemplates];
+    _beginBusy();
     notifyListeners();
-    await _persistLocal();
+    try {
+      await _persistLocal();
+    } finally {
+      _endBusy();
+      notifyListeners();
+    }
     return record;
   }
 
@@ -239,8 +255,14 @@ class TemplateLibraryController extends ChangeNotifier {
     _localTemplates = _localTemplates
         .where((TemplateRecord item) => item.id != id)
         .toList(growable: false);
+    _beginBusy();
     notifyListeners();
-    await _persistLocal();
+    try {
+      await _persistLocal();
+    } finally {
+      _endBusy();
+      notifyListeners();
+    }
   }
 
   /// حذف قالب سحابي. يرمي [AppException] عند الفشل.
@@ -250,7 +272,7 @@ class TemplateLibraryController extends ChangeNotifier {
       throw const AppException(AppErrorCode.notConfigured);
     }
 
-    _busy = true;
+    _beginBusy();
     notifyListeners();
     try {
       await repository.delete(id);
@@ -262,7 +284,7 @@ class TemplateLibraryController extends ChangeNotifier {
       _errorMessage = error.message;
       Error.throwWithStackTrace(error, stackTrace);
     } finally {
-      _busy = false;
+      _endBusy();
       notifyListeners();
     }
   }
@@ -275,6 +297,16 @@ class TemplateLibraryController extends ChangeNotifier {
     final TemplateRepository? repository = _repository;
     if (repository == null) return null;
     return repository.findById(id);
+  }
+
+  void _beginBusy() {
+    _busyDepth++;
+    _busy = true;
+  }
+
+  void _endBusy() {
+    if (_busyDepth > 0) _busyDepth--;
+    _busy = _busyDepth > 0;
   }
 
   Future<void> _persistLocal() async {

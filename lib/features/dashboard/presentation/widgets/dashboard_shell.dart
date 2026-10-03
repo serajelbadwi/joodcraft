@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/templates/unsaved_changes_guard.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
@@ -28,6 +29,19 @@ class DashboardShell extends StatefulWidget {
 class _DashboardShellState extends State<DashboardShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  /// تنقّل آمن: يسأل [UnsavedChangesGuard] أولاً، فلا تُغادَر شاشةٌ بها عمل غير
+  /// محفوظ (مثل محرّر القوالب) إلا بعد تأكيد المستخدم.
+  Future<void> _navigate(
+    BuildContext context,
+    String next, {
+    bool popDrawer = false,
+  }) async {
+    if (popDrawer) Navigator.of(context).pop();
+    final bool allowed = await UnsavedChangesGuard.instance.canLeave();
+    if (!allowed || !context.mounted) return;
+    context.go(next);
+  }
+
   @override
   Widget build(BuildContext context) {
     final String path = GoRouterState.of(context).matchedLocation;
@@ -43,10 +57,7 @@ class _DashboardShellState extends State<DashboardShell> {
               child: _Sidebar(
                 currentPath: path,
                 compact: false,
-                onNavigate: (String next) {
-                  Navigator.of(context).pop();
-                  context.go(next);
-                },
+                onNavigate: (String next) => _navigate(context, next, popDrawer: true),
               ),
             )
           : null,
@@ -64,7 +75,7 @@ class _DashboardShellState extends State<DashboardShell> {
                   child: _Sidebar(
                     currentPath: path,
                     compact: compact,
-                    onNavigate: (String next) => context.go(next),
+                    onNavigate: (String next) => _navigate(context, next),
                   ),
                 ),
               Expanded(
@@ -364,7 +375,7 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppTheme.space16),
-          // تبديل المظهر بنقرة واحدة (☀️/🌙) — يقرأ حالة المحرّك فيुحدّث فوراً.
+          // تبديل المظهر بنقرة واحدة (☀️/🌙) — يقرأ حالة المحرّك ويحدّث فوراً.
           const ThemeToggleButton(),
           const SizedBox(width: AppTheme.space4),
           Container(

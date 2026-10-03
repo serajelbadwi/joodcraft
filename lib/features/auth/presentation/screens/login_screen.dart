@@ -48,63 +48,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _openResetPasswordDialog() async {
-    final GlobalKey<FormState> dialogFormKey = GlobalKey<FormState>();
-    final TextEditingController controller =
-        TextEditingController(text: _email.text);
-
+    // الحقل يملكه ودجت النافذة نفسه (يتنظّف في `dispose`) بدل إنشائه هنا
+    // وإتلافه فور ارتجاع `showDialog`: الإتلاف المبكر يقع أثناء حركة إغلاق
+    // النافذة بينما `TextField` لا يزال يشير إلى المتحكّم.
     final String? email = await showDialog<String>(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('استعادة كلمة المرور'),
-          content: SizedBox(
-            width: 380,
-            child: Form(
-              key: dialogFormKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور.',
-                    style: Theme.of(dialogContext).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: AppTheme.space20),
-                  AppTextField(
-                    controller: controller,
-                    label: 'البريد الإلكتروني',
-                    hint: 'name@organization.com',
-                    prefixIcon: Icons.alternate_email_rounded,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputFormatterEnabled: false,
-                    validator: Validators.email,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('إلغاء'),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(120, 44),
-              ),
-              onPressed: () {
-                if (dialogFormKey.currentState?.validate() ?? false) {
-                  Navigator.of(dialogContext).pop(controller.text.trim());
-                }
-              },
-              child: const Text('إرسال الرابط'),
-            ),
-          ],
-        );
-      },
+      builder: (BuildContext dialogContext) =>
+          _ResetPasswordDialog(initialEmail: _email.text),
     );
 
-    controller.dispose();
     if (email == null || email.isEmpty || !mounted) return;
 
     try {
@@ -203,6 +155,79 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// نافذة طلب بريد استعادة كلمة المرور — تملك متحكّم حقلها وتُنظّفه بنفسها.
+class _ResetPasswordDialog extends StatefulWidget {
+  const _ResetPasswordDialog({required this.initialEmail});
+
+  final String initialEmail;
+
+  @override
+  State<_ResetPasswordDialog> createState() => _ResetPasswordDialogState();
+}
+
+class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final TextEditingController _email =
+      TextEditingController(text: widget.initialEmail);
+
+  @override
+  void dispose() {
+    _email.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (_formKey.currentState?.validate() ?? false) {
+      Navigator.of(context).pop(_email.text.trim());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('استعادة كلمة المرور'),
+      content: SizedBox(
+        width: 380,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: AppTheme.space20),
+              AppTextField(
+                controller: _email,
+                label: 'البريد الإلكتروني',
+                hint: 'name@organization.com',
+                prefixIcon: Icons.alternate_email_rounded,
+                keyboardType: TextInputType.emailAddress,
+                textInputFormatterEnabled: false,
+                validator: Validators.email,
+                onSubmitted: (_) => _submit(),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('إلغاء'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(minimumSize: const Size(120, 44)),
+          onPressed: _submit,
+          child: const Text('إرسال الرابط'),
+        ),
+      ],
     );
   }
 }

@@ -106,6 +106,32 @@ void main() {
     expect(find.text('كلمة المرور مطلوبة.'), findsOneWidget);
   });
 
+  testWidgets('نافذة استعادة كلمة المرور تُرسل البريد ثم تُغلق',
+      (WidgetTester tester) async {
+    final AuthProvider provider = AuthProvider(repository);
+    addTearDown(provider.dispose);
+
+    await tester.pumpWidget(wrap(provider));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('نسيت كلمة المرور؟'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('استعادة كلمة المرور'), findsOneWidget);
+
+    final Finder dialogField = find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.byType(TextFormField),
+    );
+    await tester.enterText(dialogField, 'abdullah@jood.org');
+    await tester.tap(find.text('إرسال الرابط'));
+    await tester.pumpAndSettle();
+
+    // النافذة أُغلقت (وكذلك حقلها) بلا استثناء استخدام-بعد-التخلص، والبريد أُرسل.
+    expect(find.text('استعادة كلمة المرور'), findsNothing);
+    expect(repository.passwordResetEmails, <String>['abdullah@jood.org']);
+  });
+
   testWidgets('بيانات صحيحة تُنفّذ الدخول وتحدّث حالة المصادقة',
       (WidgetTester tester) async {
     final AuthProvider provider = AuthProvider(repository);

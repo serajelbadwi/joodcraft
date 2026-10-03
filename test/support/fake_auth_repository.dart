@@ -28,6 +28,9 @@ class FakeAuthRepository implements AuthRepository {
   String? lastSignUpFullName;
   String? lastSignUpOrganization;
 
+  /// كل عناوين البريد التي طُلبت لها استعادة كلمة المرور.
+  final List<String> passwordResetEmails = <String>[];
+
   @override
   AppUser? get currentUser => _current;
 
@@ -73,7 +76,9 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> sendPasswordReset(String email) async {}
+  Future<void> sendPasswordReset(String email) async {
+    passwordResetEmails.add(email);
+  }
 
   @override
   Future<Map<String, dynamic>?> fetchProfile(String userId) async {

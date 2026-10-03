@@ -98,6 +98,56 @@ void main() {
     expect(find.text('لا توجد أصول بعد'), findsOneWidget);
   });
 
+  testWidgets('إعادة التسمية تفتح نافذة وتُحدّث الاسم', (WidgetTester tester) async {
+    final UserAsset asset = await seed();
+    await pump(tester);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(ValueKey<String>('asset-card-${asset.id}')),
+        matching: find.byIcon(Icons.more_vert_rounded),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('إعادة التسمية'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('إعادة تسمية الأصل'), findsOneWidget);
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(TextField),
+      ),
+      'شعار محدّث',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'حفظ'));
+    await tester.pumpAndSettle();
+
+    // النافذة أُغلقت بلا استثناء استخدام-بعد-التخلص، والاسم تحدّث.
+    expect(find.text('إعادة تسمية الأصل'), findsNothing);
+    expect(controller.byId(asset.id)!.name, 'شعار محدّث');
+  });
+
+  testWidgets('تغيير النوع لا يفقد الأصل', (WidgetTester tester) async {
+    final UserAsset asset = await seed();
+    await pump(tester);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(ValueKey<String>('asset-card-${asset.id}')),
+        matching: find.byIcon(Icons.more_vert_rounded),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('اجعل النوع: ختم'));
+    await tester.pumpAndSettle();
+
+    expect(controller.count, 1);
+    final List<UserAsset> stamps = controller.byType(AssetType.stamp);
+    expect(stamps.length, 1);
+    expect(stamps.single.name, 'شعار الشركة');
+  });
+
   testWidgets('الرفع عبر منتقي الملفات يُضيف أصلاً', (WidgetTester tester) async {
     FilePickerPlatform.instance = _FakeFilePicker(<PlatformFile>[
       _FakePlatformFile(name: 'logo.png', bytes: samplePngBytes()),
