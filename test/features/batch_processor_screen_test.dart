@@ -5,13 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/constants/app_assets.dart';
+import 'package:joodcraft/core/constants/app_constants.dart';
 import 'package:joodcraft/core/models/template_document.dart';
+import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/pdf/pdf_font_catalog.dart';
+import 'package:joodcraft/core/templates/local_template_store.dart';
+import 'package:joodcraft/core/templates/template_record.dart';
 import 'package:joodcraft/core/services/pdf_generator_service.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/features/batch_processor/domain/bulk_generation.dart';
 import 'package:joodcraft/features/batch_processor/presentation/providers/batch_processor_controller.dart';
 import 'package:joodcraft/features/batch_processor/presentation/screens/batch_processor_screen.dart';
+
+import '../support/fake_template_repository.dart';
 
 /// ملف CSV تجريبي فيه صف ناقص عمداً.
 final Uint8List _csv = Uint8List.fromList(
@@ -75,6 +81,8 @@ void main() {
   Future<void> pumpScreen(
     WidgetTester tester, {
     Size size = const Size(1400, 1000),
+    FakeTemplateRepository? repository,
+    LocalTemplateStore? localStore,
   }) async {
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -88,11 +96,45 @@ void main() {
         theme: AppTheme.light,
         home: Directionality(
           textDirection: TextDirection.rtl,
-          child: Scaffold(body: BatchProcessorScreen(controller: controller)),
+          child: Scaffold(
+            body: BatchProcessorScreen(
+              controller: controller,
+              repository: repository,
+              localStore: localStore,
+            ),
+          ),
         ),
       ),
     );
     await tester.pumpAndSettle();
+  }
+
+  /// قالب مستخدم مخصّص فيه حقلا `{{اسم_المتدرب}}` و`{{رقم_الشهادة}}`.
+  TemplateRecord customTemplate({
+    String id = 'cloud-custom-1',
+    String title = 'شهادتي المخصّصة',
+  }) {
+    final TemplateDocument document = TemplateDocument(
+      orientation: PageOrientation.landscape,
+      elements: const <TemplateElement>[
+        TextElement(
+          id: 'text-1',
+          box: ElementBox(x: 100, y: 100, width: 520, height: 80),
+          text: 'تشهد المؤسسة بأن {{اسم_المتدرب}} أتمّ الدورة '
+              'برقم {{رقم_الشهادة}}.',
+        ),
+      ],
+    );
+    return TemplateRecord(
+      id: id,
+      userId: 'user-1',
+      title: title,
+      category: TemplateCategory.certificate,
+      orientation: PageOrientation.landscape,
+      layoutData: document.toJson(),
+      createdAt: DateTime(2026, 1, 1),
+      updatedAt: DateTime(2026, 2, 1),
+    );
   }
 
   setUp(() {
@@ -252,6 +294,74 @@ void main() {
 
     expect(controller.headerRowIndex, 0);
     expect(controller.sheet.headers.first, 'كشف المتدربين');
+  });
+
+  testWidgets('يُتيح اختيار قالب المستخدم ويستخرج حقوله الديناميكية',
+      (WidgetTester tester) async {
+    final FakeTemplateRepository repository = FakeTemplateRepository();
+    repository.records.add(customTemplate());
+
+    await pumpScreen(
+      tester,
+      repository: repository,
+      localStore: InMemoryLocalTemplateStore(),
+    );
+
+    expect(find.text('قالب من قوالبي'), findsOneWidget);
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    // الخيارات ظاهرة بعد فتح القائمة (قبل الفتح تكون offstage داخل الزر).
+    expect(find.textContaining('شهادتي المخصّصة'), findsWidgets);
+    await tester.tap(find.textContaining('شهادتي المخصّصة').last);
+    await tester.pumpAndSettle();
+    expect(controller.templateTitle, 'شهادتي المخصّصة');
+
+    // الحقول استُخرجت ديناميكياً من نصّ القالب المختار.
+    expect(
+      controller.availableFields,
+      containsAll(<String>['اسم_المتدرب', 'رقم_الشهادة']),
+    );
+
+    // الربط التلقائي مع ملف الإكسل المرفوع.
+    await controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    expect(controller.mapping.mappedCount, greaterThanOrEqualTo(2));
+    expect(controller.canGenerate, isTrue);
+  });
+
+  testWidgets('يُظهر قالب المستخدم المحلي ويسمح بالعودة للنموذجي',
+      (WidgetTester tester) async {
+    await pumpScreen(
+      tester,
+      localStore: InMemoryLocalTemplateStore(<TemplateRecord>[
+        customTemplate(id: 'local-1', title: 'قالبي المحلي'),
+      ]),
+    );
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('قالبي المحلي'), findsWidgets);
+    await tester.tap(find.textContaining('قالبي المحلي').last);
+    await tester.pumpAndSettle();
+
+    expect(controller.templateTitle, 'قالبي المحلي');
+
+    // العودة إلى القوالب النموذجية المدمجة.
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('القوالب النموذجية').last);
+    await tester.pumpAndSettle();
+
+    expect(controller.templateTitle, isNot('قالبي المحلي'));
+  });
+
+  testWidgets('بلا قوالب مستخدم تظهر ملاحظة إرشادية',
+      (WidgetTester tester) async {
+    await pumpScreen(tester, localStore: InMemoryLocalTemplateStore());
+
+    expect(find.textContaining('لا توجد قوالب محفوظة'), findsOneWidget);
   });
 
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',

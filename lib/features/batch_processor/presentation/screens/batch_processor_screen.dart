@@ -7,7 +7,11 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/templates/local_template_store.dart';
+import '../../../../core/templates/template_library_controller.dart';
+import '../../../../core/templates/template_library_entry.dart';
 import '../../../../core/templates/template_record.dart';
+import '../../../../core/templates/template_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
@@ -21,13 +25,29 @@ import '../providers/batch_processor_controller.dart';
 /// المسار كامل بلا شبكة: ملف `.xlsx`/`.csv` من جهاز المستخدم ← قراءة محلية ←
 /// ربط الأعمدة بحقول القالب ← ملف PDF واحد بصفحة لكل سجل.
 class BatchProcessorScreen extends StatefulWidget {
-  const BatchProcessorScreen({super.key, this.controller, this.record});
+  const BatchProcessorScreen({
+    super.key,
+    this.controller,
+    this.record,
+    this.repository,
+    this.localStore,
+    this.libraryController,
+  });
 
   /// محرّك الشاشة — يُمرَّر في الاختبارات أو عند استئناف جلسة سابقة.
   final BatchProcessorController? controller;
 
   /// قالب مختار من مكتبة القوالب — يُحمَّل مباشرةً بدل القالب النموذجي.
   final TemplateRecord? record;
+
+  /// مستودع القوالب السحابية — لجلب قوالب المستخدم في منتقي القالب.
+  final TemplateRepository? repository;
+
+  /// مخزن القوالب المحلية — يُحقن في الاختبارات (مخزن في الذاكرة).
+  final LocalTemplateStore? localStore;
+
+  /// متحكّم مكتبة القوالب جاهز — يُحقن في الاختبارات (يتقدّم على الافتراضي).
+  final TemplateLibraryController? libraryController;
 
   /// امتدادات ملفات البيانات المقبولة في منتقي الملفات.
   ///
@@ -44,16 +64,40 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   late final BatchProcessorController _controller =
       widget.controller ?? BatchProcessorController();
 
+  /// مكتبة القوالب — تُوفّر قوالب المستخدم (المحلية والسحابية) للاختيار هنا.
+  late final TemplateLibraryController _library = widget.libraryController ??
+      TemplateLibraryController(
+        widget.repository,
+        localStore: widget.localStore,
+      );
+  late final bool _ownsLibrary = widget.libraryController == null;
+
+  /// القالب الخاصّ المختار حالياً (للتمييز في القائمة والتسمية).
+  String? _selectedTemplateId;
+  String? _selectedTemplateTitle;
+
+  /// هل يوجد مصدر حقيقي لقوالب المستخدم (سحابة/محلي/متحكّم محقون)؟
+  ///
+  /// نتجنّب تحميلاً لا معنى له (ومؤقّتاً معلّقاً) عندما لا يوجد مصدر — كما في
+  /// اختبارات الودجات وواجهة التهيئة بلا Supabase.
+  bool get _hasLibrarySource =>
+      widget.libraryController != null ||
+      widget.repository != null ||
+      widget.localStore != null;
+
   @override
   void initState() {
     super.initState();
+    if (_hasLibrarySource) unawaited(_library.refresh());
+
     final TemplateRecord? record = widget.record;
     if (record != null) {
+      _selectedTemplateId = record.id;
+      _selectedTemplateTitle = record.title;
       _controller.useDocument(
         record.toDocument(),
-        kind: record.category == TemplateCategory.contract
-            ? BatchTemplateKind.contract
-            : BatchTemplateKind.certificate,
+        kind: _kindFor(record.category),
+        title: record.title,
       );
     } else if (_controller.document == null) {
       unawaited(_controller.selectTemplate(_controller.kind));
@@ -62,9 +106,47 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
 
   @override
   void dispose() {
-    // لا نُتلف محرّكاً يملكه المستدعي.
+    // لا نُتلف محرّكات يملكها المستدعي.
+    if (_ownsLibrary) _library.dispose();
     if (widget.controller == null) _controller.dispose();
     super.dispose();
+  }
+
+  static BatchTemplateKind _kindFor(TemplateCategory category) =>
+      category == TemplateCategory.contract
+          ? BatchTemplateKind.contract
+          : BatchTemplateKind.certificate;
+
+  /// قوالب المستخدم (المحلية والسحابية) — بلا القوالب الجاهزة المحزومة.
+  List<TemplateLibraryEntry> _userTemplates() {
+    final List<TemplateLibraryEntry> mine = _library.entries
+        .where((TemplateLibraryEntry entry) => !entry.isPreset)
+        .toList();
+    mine.sort((TemplateLibraryEntry a, TemplateLibraryEntry b) =>
+        a.title.compareTo(b.title));
+    return mine;
+  }
+
+  /// اعتماد قالب خاصّ للمستخدم في عملية التوليد.
+  void _applyUserTemplate(TemplateLibraryEntry entry) {
+    setState(() {
+      _selectedTemplateId = entry.id;
+      _selectedTemplateTitle = entry.title;
+    });
+    _controller.useDocument(
+      entry.toDocument(),
+      kind: _kindFor(entry.category),
+      title: entry.title,
+    );
+  }
+
+  /// العودة إلى القوالب النموذجية المدمجة.
+  void _applyDefaultTemplate(BatchTemplateKind kind) {
+    setState(() {
+      _selectedTemplateId = null;
+      _selectedTemplateTitle = null;
+    });
+    unawaited(_controller.selectTemplate(kind));
   }
 
   // --------------------------------------------------------------------------
@@ -247,32 +329,135 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   //  الخطوات
   // ==========================================================================
   Widget _templateStep() {
-    return _Card(
-      icon: Icons.school_outlined,
-      title: '1) القالب',
-      subtitle: _controller.document == null
-          ? 'جارٍ تحميل القالب النموذجي…'
-          : 'الحقول المطلوبة: ${_controller.availableFields.length}',
-      child: SegmentedButton<BatchTemplateKind>(
-        segments: <ButtonSegment<BatchTemplateKind>>[
-          for (final BatchTemplateKind kind in BatchTemplateKind.values)
-            ButtonSegment<BatchTemplateKind>(
-              value: kind,
-              label: Text(kind.labelAr),
-              icon: Icon(
-                kind == BatchTemplateKind.certificate
-                    ? Icons.workspace_premium_outlined
-                    : Icons.handshake_outlined,
-                size: 16,
+    return AnimatedBuilder(
+      animation: _library,
+      builder: (BuildContext context, Widget? _) {
+        final String activeTemplate = _selectedTemplateTitle ??
+            _controller.templateTitle ??
+            _controller.kind.labelAr;
+        return _Card(
+          icon: Icons.school_outlined,
+          title: '1) القالب',
+          subtitle: _controller.document == null
+              ? 'جارٍ تحميل القالب النموذجي…'
+              : 'القالب: $activeTemplate • الحقول المطلوبة: '
+                  '${_controller.availableFields.length}',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SegmentedButton<BatchTemplateKind>(
+                segments: <ButtonSegment<BatchTemplateKind>>[
+                  for (final BatchTemplateKind kind
+                      in BatchTemplateKind.values)
+                    ButtonSegment<BatchTemplateKind>(
+                      value: kind,
+                      label: Text(kind.labelAr),
+                      icon: Icon(
+                        kind == BatchTemplateKind.certificate
+                            ? Icons.workspace_premium_outlined
+                            : Icons.handshake_outlined,
+                        size: 16,
+                      ),
+                    ),
+                ],
+                selected: <BatchTemplateKind>{_controller.kind},
+                onSelectionChanged: (Set<BatchTemplateKind> selection) {
+                  if (selection.isEmpty) return;
+                  _applyDefaultTemplate(selection.first);
+                },
               ),
+              const SizedBox(height: AppTheme.space12),
+              _userTemplatePicker(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// منتقي قوالب المستخدم (المحلية والسحابية) بجانب القوالب النموذجية.
+  ///
+  /// اختيار قالب هنا يستدعي [BatchProcessorController.useDocument] فيُستخرج
+  /// نطاق حقوله (`{{...}}`) تلقائياً وتُربط أعمدته بذكاء كما في القوالب النموذجية.
+  Widget _userTemplatePicker() {
+    final List<TemplateLibraryEntry> mine = _userTemplates();
+    final bool hasSelected = _selectedTemplateId != null &&
+        mine.any((TemplateLibraryEntry e) => e.id == _selectedTemplateId);
+    final Color hintColor = Theme.of(context).colorScheme.onSurfaceVariant;
+
+    if (mine.isEmpty) {
+      return Row(
+        children: <Widget>[
+          Icon(Icons.bookmark_border_rounded, size: 15, color: hintColor),
+          const SizedBox(width: AppTheme.space8),
+          Expanded(
+            child: Text(
+              _library.isBusy
+                  ? 'جارٍ تحميل قوالبك…'
+                  : 'لا توجد قوالب محفوظة بعد — أنشئ قالباً في المحرّر أو '
+                      'استورده من مكتبة القوالب ليظهر هنا.',
+              style: TextStyle(fontSize: 11.5, color: hintColor),
             ),
+          ),
         ],
-        selected: <BatchTemplateKind>{_controller.kind},
-        onSelectionChanged: (Set<BatchTemplateKind> selection) {
-          if (selection.isEmpty) return;
-          unawaited(_controller.selectTemplate(selection.first));
-        },
-      ),
+      );
+    }
+
+    return Row(
+      children: <Widget>[
+        Icon(
+          Icons.bookmark_rounded,
+          size: 16,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        const SizedBox(width: AppTheme.space8),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            // مفتاح يعتمد على الاختيار: يُعيد تهيئة الحقل عند تغيّر القالب.
+            key: ValueKey<String>(
+              'batch-user-template-${_selectedTemplateId ?? ''}-${mine.length}',
+            ),
+            initialValue: hasSelected ? _selectedTemplateId : '',
+            isDense: true,
+            isExpanded: true,
+            decoration: const InputDecoration(
+              labelText: 'قالب من قوالبي',
+              isDense: true,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            ),
+            items: <DropdownMenuItem<String>>[
+              const DropdownMenuItem<String>(
+                value: '',
+                child: Text(
+                  '— القوالب النموذجية —',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+              for (final TemplateLibraryEntry entry in mine)
+                DropdownMenuItem<String>(
+                  value: entry.id,
+                  child: Text(
+                    '${entry.title}  •  ${entry.isCloud ? 'سحابي' : 'محلي'}',
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+            onChanged: (String? value) {
+              if (value == null) return;
+              if (value.isEmpty) {
+                _applyDefaultTemplate(_controller.kind);
+                return;
+              }
+              final TemplateLibraryEntry entry = mine.firstWhere(
+                (TemplateLibraryEntry e) => e.id == value,
+              );
+              _applyUserTemplate(entry);
+            },
+          ),
+        ),
+      ],
     );
   }
 

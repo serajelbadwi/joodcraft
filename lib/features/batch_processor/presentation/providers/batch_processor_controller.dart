@@ -71,6 +71,11 @@ class BatchProcessorController extends ChangeNotifier {
   TemplateDocument? _document;
   TemplateDocument? get document => _document;
 
+  /// عنوان القالب النشط للعرض (قالب جاهز في المكتبة أو قالب المستخدم) —
+  /// يُميّز في الواجهة أيّ قالب سيُبنى منه التوليد.
+  String? _templateTitle;
+  String? get templateTitle => _templateTitle;
+
   SheetData _sheet = SheetData.empty;
   SheetData get sheet => _sheet;
 
@@ -166,6 +171,7 @@ class BatchProcessorController extends ChangeNotifier {
   /// تحميل القالب النموذجي المطلوب من الأصول المحزومة.
   Future<void> selectTemplate(BatchTemplateKind kind) async {
     _kind = kind;
+    _templateTitle = kind.labelAr;
     _errorAr = null;
     notifyListeners();
     try {
@@ -183,9 +189,14 @@ class BatchProcessorController extends ChangeNotifier {
   /// استخدام قالب جاهز (من محرر القوالب أو من مكتبة القوالب).
   ///
   /// [kind] يضبط وسم التوليد (شهادة/عقد) ليطابق تصنيف القالب المُختار.
-  void useDocument(TemplateDocument document, {BatchTemplateKind? kind}) {
+  void useDocument(
+    TemplateDocument document, {
+    BatchTemplateKind? kind,
+    String? title,
+  }) {
     if (kind != null) _kind = kind;
     _document = document;
+    if (title != null && title.trim().isNotEmpty) _templateTitle = title.trim();
     _autoMap();
     notifyListeners();
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/services/supabase_service.dart';
+import '../../core/templates/local_template_store.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/templates/template_draft.dart';
@@ -115,7 +116,11 @@ abstract final class AppRouter {
               path: AppRoutes.batchProcessor,
               name: 'batch-processor',
               builder: (BuildContext context, GoRouterState state) =>
-                  BatchProcessorScreen(record: _recordFromExtra(state.extra)),
+                  BatchProcessorScreen(
+                repository: templateRepository,
+                localStore: SharedPreferencesLocalTemplateStore(),
+                record: _recordFromExtra(state.extra),
+              ),
             ),
             GoRoute(
               path: AppRoutes.templates,
