@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/templates/unsaved_changes_guard.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../../../core/widgets/joodcraft_logo.dart';
+import '../../../../core/widgets/language_menu_button.dart';
 import '../../../../core/widgets/theme_toggle_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../dashboard_destinations.dart';
@@ -159,7 +161,7 @@ class _Sidebar extends StatelessWidget {
             padding: const EdgeInsets.all(AppTheme.space12),
             child: compact
                 ? IconButton(
-                    tooltip: 'تسجيل الخروج',
+                    tooltip: context.l10n?.actionSignOut ?? 'تسجيل الخروج',
                     onPressed: () => _signOut(context),
                     icon: const Icon(
                       Icons.logout_rounded,
@@ -319,7 +321,7 @@ class _AccountTile extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'تسجيل الخروج',
+            tooltip: context.l10n?.actionSignOut ?? 'تسجيل الخروج',
             onPressed: onSignOut,
             iconSize: 18,
             icon: const Icon(Icons.logout_rounded, color: AppColors.onNavy),
@@ -375,6 +377,8 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppTheme.space16),
+          // منتقي اللغة (🌐) — يبدّل الواجهة والاتجاه فوراً وبلا إعادة تشغيل.
+          const LanguageMenuButton(),
           // تبديل المظهر بنقرة واحدة (☀️/🌙) — يقرأ حالة المحرّك ويحدّث فوراً.
           const ThemeToggleButton(),
           const SizedBox(width: AppTheme.space4),
@@ -396,7 +400,7 @@ class _TopBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'معالجة محلية',
+                  context.l10n?.offlineProcessingLabel ?? 'معالجة محلية',
                   style: text.labelSmall?.copyWith(fontSize: 11.5),
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'app/app.dart';
 import 'core/assets/assets_controller.dart';
 import 'core/fonts/custom_font_controller.dart';
+import 'core/locale/locale_controller.dart';
 import 'core/services/supabase_service.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
@@ -29,6 +30,11 @@ Future<void> main() async {
   final ThemeController themeController = ThemeController();
   await themeController.load();
 
+  // لغة الواجهة واتجاهها — تُقرأ قبل البناء أيضاً فلا يظهر التطبيق بالعربية
+  // لحظةً ثم يتبدّل إلى لغة المستخدم المختارة.
+  final LocaleController localeController = LocaleController();
+  await localeController.load();
+
   final bool supabaseReady = await SupabaseService.initialize();
 
   final AuthRepository? authRepository =
@@ -38,6 +44,7 @@ Future<void> main() async {
     JoodCraftApp(
       authRepository: authRepository,
       themeController: themeController,
+      localeController: localeController,
     ),
   );
 }

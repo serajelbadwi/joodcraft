@@ -87,6 +87,8 @@ flutter_launcher_icons:
     theme_color: "#ffffff"
 
 flutter:
+  # توليد كلاس الترجمة تلقائياً عند البناء (انظر l10n.yaml).
+  generate: true
   # The following line ensures that the Material Icons font is
   uses-material-design: true
 

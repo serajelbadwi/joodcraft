@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_l10n.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import 'joodcraft_logo.dart';
+import 'language_menu_button.dart';
 
 /// تُعرض فقط حين لا يُعثر على مفاتيح Supabase في **أي** مصدر عند التشغيل:
 /// لا في `--dart-define`، ولا في `env.json` على القرص، ولا في الأصل المحزوم.
@@ -35,7 +37,16 @@ class ConfigurationScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const JoodCraftWordmark(markSize: 44),
+                    Row(
+                      children: <Widget>[
+                        const Expanded(
+                          child: JoodCraftWordmark(markSize: 44),
+                        ),
+                        // منتقي اللغة متاح حتى قبل ربط التطبيق — فيمكن للمستخدم
+                        // قراءة سبب التهيئة بلغته.
+                        const LanguageMenuButton(showLabel: true),
+                      ],
+                    ),
                     const SizedBox(height: AppTheme.space24),
                     Row(
                       children: <Widget>[
@@ -44,16 +55,23 @@ class ConfigurationScreen extends StatelessWidget {
                           color: AppColors.gold,
                         ),
                         const SizedBox(width: AppTheme.space8),
-                        Text('لم يُعثر على مفاتيح الاتصال', style: text.titleLarge),
+                        Expanded(
+                          child: Text(
+                            context.l10n?.configMissingKeysTitle ??
+                                'لم يُعثر على مفاتيح الاتصال',
+                            style: text.titleLarge,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppTheme.space12),
                     Text(
-                      'يبحث التطبيق تلقائياً وقت التشغيل في ثلاثة مصادر: علامة '
-                      '‎--dart-define‎، ثم ملف env.json على القرص '
-                      '(الجذر أو assets/env/)، ثم النسخة المحزومة داخل التطبيق '
-                      '— ولم يُعثر على أيٍّ منها. أنشئ الملف واملأه مرة واحدة ثم '
-                      'شغّل بلا أي علامة:',
+                      context.l10n?.configMissingKeysBody ??
+                          'يبحث التطبيق تلقائياً وقت التشغيل في ثلاثة مصادر: '
+                              'علامة ‎--dart-define‎، ثم ملف env.json على القرص '
+                              '(الجذر أو assets/env/)، ثم النسخة المحزومة داخل '
+                              'التطبيق — ولم يُعثر على أيٍّ منها. أنشئ الملف '
+                              'واملأه مرة واحدة ثم شغّل بلا أي علامة:',
                       style: text.bodyLarge,
                     ),
                     const SizedBox(height: AppTheme.space20),
@@ -93,11 +111,13 @@ class ConfigurationScreen extends StatelessWidget {
                         const SizedBox(width: AppTheme.space8),
                         Expanded(
                           child: Text(
-                            'الحزمة تُعلن مجلد assets/env/ كأصل، لذا غياب الملف '
-                            'لا يُسقط البناء من نسخة نظيفة. أنشئه من '
-                            'env.example.json أو شغّل: dart run tool/ensure_env.dart '
-                            '— والمفتاح المطلوب anon/public فقط، وservice_role '
-                            'لا يُستخدم في التطبيق إطلاقاً.',
+                            context.l10n?.configEnvNote ??
+                                'الحزمة تُعلن مجلد assets/env/ كأصل، لذا غياب '
+                                    'الملف لا يُسقط البناء من نسخة نظيفة. أنشئه من '
+                                    'env.example.json أو شغّل: dart run '
+                                    'tool/ensure_env.dart — والمفتاح المطلوب '
+                                    'anon/public فقط، وservice_role لا يُستخدم '
+                                    'في التطبيق إطلاقاً.',
                             style: text.bodySmall,
                           ),
                         ),

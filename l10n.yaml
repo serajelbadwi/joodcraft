@@ -1,0 +1,15 @@
+# إعدادات توليد الترجمة (gen-l10n) — تُنشئ AppLocalizations من ملفات ARB.
+#
+# * القالب (template) هو العربية لأنها اللغة الافتراضية في JoodCraft.
+# * `synthetic-package: false` مع `output-dir` يولّدان الكلاس داخل المشروع
+#   (‎lib/l10n/generated‎) بدل الحزمة الاصطناعية الملغاة في إصدارات Flutter
+#   الحديثة — فيبقى الاستيراد صريحاً وقابلاً للاختبار.
+# * `nullable-getter: false` يجعل `AppLocalizations.of(context)` غير قابلة
+#   للعدم — لكننا نستخدم `Localizations.of` المرن في الأدوات المساعدة حتى
+#   تعمل الودجات في الاختبارات التي لا تُمرّر المندوبين.
+arb-dir: lib/l10n
+template-arb-file: app_ar.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+output-dir: lib/l10n/generated
+nullable-getter: false

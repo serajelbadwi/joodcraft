@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n/app_l10n.dart';
 import '../../core/services/supabase_service.dart';
 import '../../core/templates/local_template_store.dart';
 import '../../core/theme/app_colors.dart';
@@ -181,10 +182,16 @@ class _RouteNotFoundScreen extends StatelessWidget {
                     size: 28,
                   ),
                   const SizedBox(height: AppTheme.space16),
-                  Text('الصفحة غير موجودة', style: text.titleLarge),
+                  Text(
+                    context.l10n?.routeNotFoundTitle ?? 'الصفحة غير موجودة',
+                    style: text.titleLarge,
+                  ),
                   const SizedBox(height: AppTheme.space8),
-                  Text('المسار المطلوب غير معرّف في التطبيق:',
-                      style: text.bodyMedium),
+                  Text(
+                    context.l10n?.routeNotFoundBody ??
+                        'المسار المطلوب غير معرّف في التطبيق:',
+                    style: text.bodyMedium,
+                  ),
                   const SizedBox(height: AppTheme.space8),
                   SelectableText(
                     location,
@@ -196,7 +203,10 @@ class _RouteNotFoundScreen extends StatelessWidget {
                   const SizedBox(height: AppTheme.space24),
                   FilledButton(
                     onPressed: () => context.go(AppRoutes.dashboard),
-                    child: const Text('العودة إلى لوحة التحكم'),
+                    child: Text(
+                      context.l10n?.actionBackToDashboard ??
+                          'العودة إلى لوحة التحكم',
+                    ),
                   ),
                 ],
               ),
