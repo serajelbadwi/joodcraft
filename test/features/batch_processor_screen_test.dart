@@ -152,7 +152,8 @@ void main() {
     expect(find.text('3) ربط الأعمدة بالحقول'), findsOneWidget);
     expect(find.text('4) الخلايا الفارغة والبيانات الناقصة'), findsOneWidget);
     expect(find.text('5) التوليد'), findsOneWidget);
-    expect(find.text('المعاينة تظهر هنا'), findsOneWidget);
+    // قبل اختيار ملف: لوحة «تعيين الحقول بالنقر» بدل معاينة PDF.
+    expect(find.text('تعيين الحقول بالنقر'), findsOneWidget);
     expect(
       find.text('لم يُختَر ملف بعد — الصيغ المدعومة: xlsx, xlsm, csv, tsv, txt'),
       findsOneWidget,
@@ -546,6 +547,73 @@ void main() {
           .map((TextElement e) => e.text),
       contains('محمد بن عبد الله الشمري'),
     );
+  });
+
+  testWidgets('التعيين بالنقر يمسّ العنصر المحدَّد وحده ويثبّت التعديل',
+      (WidgetTester tester) async {
+    // قالب بعنصرين ثابتين: اسم تاريخ — لاختبار أن التعيين لا يمسّ غيره.
+    const String nameText = 'محمد بن عبد الله الشمري';
+    const String dateText = 'صدر بتاريخ ١٤٤٧/٠٣/١٢';
+    final TemplateDocument document = TemplateDocument(
+      orientation: PageOrientation.landscape,
+      elements: const <TemplateElement>[
+        TextElement(
+          id: 'name',
+          box: ElementBox(x: 100, y: 100, width: 480, height: 70),
+          text: nameText,
+          fontSize: 22,
+        ),
+        TextElement(
+          id: 'date',
+          box: ElementBox(x: 100, y: 200, width: 360, height: 40),
+          text: dateText,
+        ),
+      ],
+    );
+    final FakeTemplateRepository repository = FakeTemplateRepository();
+    repository.records.add(
+      TemplateRecord(
+        id: 'pick-1',
+        userId: 'user-1',
+        title: 'قالب النقر',
+        category: TemplateCategory.certificate,
+        orientation: PageOrientation.landscape,
+        layoutData: document.toJson(),
+      ),
+    );
+
+    await pumpScreen(
+      tester,
+      size: const Size(1400, 1400),
+      repository: repository,
+      localStore: InMemoryLocalTemplateStore(),
+    );
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('قالب النقر').last);
+    await tester.pumpAndSettle();
+
+    // لوحة التعيين تعرض العناصر غير المربوطة قابلة للنقر.
+    expect(find.textContaining(nameText), findsWidgets);
+    await tester.tap(find.textContaining(nameText).first);
+    await tester.pumpAndSettle();
+
+    // منتقي الحقول يظهر مع تأكيد عدم المساس بغيره.
+    expect(find.text('تعيين حقل ديناميكي لهذا العنصر'), findsOneWidget);
+    await tester.tap(find.textContaining('اسم_المتدرب').last);
+    await tester.pumpAndSettle();
+
+    // العنصر المحدَّد صار حقلاً، والعنصر الآخر (التاريخ) لم يُمسّ.
+    final TemplateDocument after = controller.document!;
+    expect((after.elements[0] as TextElement).text, '{{اسم_المتدرب}}');
+    expect((after.elements[1] as TextElement).text, dateText);
+    expect(after.fieldKeys, <String>{'اسم_المتدرب'});
+
+    // والتعديل ثُبّت في القالب المحفوظ.
+    final TemplateDocument saved = repository.records.single.toDocument();
+    expect(saved.fieldKeys, contains('اسم_المتدرب'));
+    expect((saved.elements[1] as TextElement).text, dateText);
   });
 
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',

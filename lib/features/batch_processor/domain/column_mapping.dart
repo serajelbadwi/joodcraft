@@ -108,8 +108,12 @@ class ColumnMapping {
   //  الكشف التلقائي
   // ==========================================================================
 
-  /// أقصى تشابه مقبول للربط التلقائي.
+  /// أقصى تشابه مقبول للربط التلقائي (مطابقة مرنة تقريبية — زر «ربط تلقائي»).
   static const int autoDetectThreshold = 500;
+
+  /// حدّ التطابق المؤكَّد: النص نفسه (1000) أو ما يساويه بعد حذف «ال» التعريف
+  /// (900). دونه يبقى الربط تخميناً ولا يُطبَّق تلقائياً.
+  static const int strictThreshold = 900;
 
   /// ربط تلقائي ذكي: يطابق عناوين الأعمدة العربية مع الحقول الديناميكية.
   ///
@@ -124,12 +128,18 @@ class ColumnMapping {
   /// ربط عمود اسم (Name/الاسم) بحقل تاريخ أو رقم إشعار، وهو ما يطبع الاسم في
   /// مكان التاريخ. الحاجز لا يمسّ الربط اليدوي: المستخدم يستطيع دائماً فرض ما
   /// يريد من القائمة.
+  /// [minScore] أدنى درجة تُقبل للربط. القيمة الافتراضية [autoDetectThreshold]
+  /// تعني مطابقة مرنة (تقريبية). عند رفعها إلى [strictThreshold] يبقى الربط
+  /// مقتصراً على التطابق **المؤكَّد** (النص نفسه أو اسمه بعد حذف «ال» أو مرادف
+  /// مطابق تماماً) — وهذا هو الربط التلقائي غير التخميني الذي يستخدمه متحكّم
+  /// التوليد الجماعي عند تحميل الملف بلا ضغط المستخدم.
   static ColumnMapping autoDetect({
     required List<int> columns,
     required List<String> headers,
     required List<String> fieldKeys,
     Map<String, List<String>> aliases = const <String, List<String>>{},
     bool Function(int column, String field)? allowMatch,
+    int minScore = autoDetectThreshold,
   }) {
     final List<_Candidate> candidates = <_Candidate>[];
     final Set<String> seenHeaders = <String>{};
@@ -145,7 +155,7 @@ class ColumnMapping {
           final int aliasScore = similarity(header, alias);
           if (aliasScore > score) score = aliasScore;
         }
-        if (score >= autoDetectThreshold) {
+        if (score >= minScore) {
           candidates.add(_Candidate(column, field, score));
         }
       }

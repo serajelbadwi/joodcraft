@@ -521,8 +521,12 @@ class BatchProcessorController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// ربط تلقائي **مرن** بطلب صريح من المستخدم (زر «ربط تلقائي»).
+  ///
+  /// خلافاً للربط التلقائي عند تحميل الملف، هذا يقبل المطابقة التقريبية لأن
+  /// المستخدم طلبها بنفسه ويراجعها بعينه قبل التوليد.
   void autoMap() {
-    _autoMap();
+    _autoMap(strict: false);
     notifyListeners();
   }
 
@@ -531,7 +535,14 @@ class BatchProcessorController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _autoMap() {
+  /// الربط التلقائي — **غير تخميني افتراضياً**.
+  ///
+  /// عند [strict] (وهو الافتراضي في كل استدعاء تلقائي عند تحميل الملف أو
+  /// اختيار قالب أو تعديل عنصر) تُقبل المطابقة **المؤكَّدة** فقط: عنوان العمود
+  /// نفسه أو ما يساويه بعد حذف «ال» التعريف، أو مرادف مطابق تماماً. فلا يُربط
+  /// عمود بحقل بالتخمين، ولا يُلمس أي عنصر في القالب. المطابقة المرنة تُتاح
+  /// فقط بضغطة صريحة على «ربط تلقائي» ([autoMap]).
+  void _autoMap({bool strict = true}) {
     if (_sheet.isEmpty) return;
     _mapping = ColumnMapping.autoDetect(
       columns: visibleColumns,
@@ -539,6 +550,9 @@ class BatchProcessorController extends ChangeNotifier {
       fieldKeys: availableFields,
       aliases: FieldAliases.byToken,
       allowMatch: _allowsAutoMatch,
+      minScore: strict
+          ? ColumnMapping.strictThreshold
+          : ColumnMapping.autoDetectThreshold,
     );
   }
 

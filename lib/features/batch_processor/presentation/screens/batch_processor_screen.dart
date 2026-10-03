@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/dynamic_fields.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/models/template_element.dart';
 import '../../../../core/templates/local_template_store.dart';
@@ -168,7 +169,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   /// ثم يُثبَّت في السجل عبر [TemplateLibraryController.updateDocument] حتى لا
   /// يضيع عند إعادة التحميل. للقوالب الجاهزة غير القابلة للتعديل نكتفي
   /// بالتوليد الحالي مع إرشاد المستخدم.
-  Future<void> _convertTextToField(int index) async {
+  Future<void> _convertTextToField(
+    int index, {
+    String fieldKey = 'اسم_المتدرب',
+  }) async {
     // نلتقط النص الأصلي **قبل** التحويل لنمنح المستخدم تراجعاً كاملاً (في
     // الذاكرة وفي القالب المحفوظ معاً).
     final TemplateDocument? before = _controller.document;
@@ -176,8 +180,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     final TemplateElement element = before.elements[index];
     if (element is! TextElement) return;
     final String originalText = element.text;
+    final String token = '{{$fieldKey}}';
 
-    if (!_controller.convertTextToField(index)) return;
+    // التحويل يمسّ هذا العنصر وحده — لا يُلمس أي عنصر آخر في القالب.
+    if (!_controller.convertTextToField(index, fieldKey: fieldKey)) return;
     final TemplateDocument? document = _controller.document;
     final TemplateLibraryEntry? entry = _selectedUserEntry();
     if (!mounted || document == null) return;
@@ -189,8 +195,8 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       // قالب جاهز غير قابل للتعديل: التحويل للتوليد الحالي فقط، والتراجع
       // يُلغي أثره في الذاكرة.
       context.showSuccessAction(
-        'تم تحويل النص إلى حقل {{اسم_المتدرب}} للتوليد الحالي — احفظ القالب '
-        'لتثبيت التعديل دائماً.',
+        'عُيّن هذا العنصر إلى $token للتوليد الحالي — بقية العناصر لم تُمسّ. '
+        'احفظ القالب لتثبيت التعديل دائماً.',
         actionLabel: 'تراجع',
         onAction: undo,
       );
@@ -201,7 +207,8 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       await _library.updateDocument(entry: entry, document: document);
       if (!mounted) return;
       context.showSuccessAction(
-        'تم تحويل النص إلى حقل {{اسم_المتدرب}} وحُفظ التعديل في القالب.',
+        'عُيّن هذا العنصر إلى $token وحُفظ التعديل في القالب. '
+        'بقية العناصر لم تُمسّ.',
         actionLabel: 'تراجع',
         onAction: undo,
       );
@@ -209,6 +216,61 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       if (!mounted) return;
       context.showError('تعذّر حفظ التعديل في القالب: $error');
     }
+  }
+
+  /// يفتح منتقي الحقل لعنصر نصي محدَّد بالنقر (تعيين صريح بلا تخمين).
+  Future<void> _assignFieldToElement(int index) async {
+    final TemplateDocument? document = _controller.document;
+    if (document == null || index < 0 || index >= document.elements.length) {
+      return;
+    }
+    final TemplateElement element = document.elements[index];
+    if (element is! TextElement) return;
+
+    // الحقول المقترحة: ما يستخدمه القالب فعلاً + مكتبة الحقول العامة.
+    final List<String> fields = <String>[
+      ..._controller.availableFields,
+      ...DynamicFields.all.map((DynamicField f) => f.key),
+    ];
+    final List<String> unique = <String>[];
+    for (final String field in fields) {
+      if (!unique.contains(field)) unique.add(field);
+    }
+
+    final String? picked = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => SimpleDialog(
+        title: const Text('تعيين حقل ديناميكي لهذا العنصر'),
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+            child: Text(
+              'سيُستبدل نص هذا العنصر وحده بحقل، ولن يُمسّ أي عنصر آخر.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+          for (final String field in unique)
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(context).pop(field),
+              child: Row(
+                children: <Widget>[
+                  const Icon(Icons.data_object_rounded, size: 16),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '$field  •  ${_controller.sampleOf(field)}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+
+    if (picked == null || picked.isEmpty || !mounted) return;
+    await _convertTextToField(index, fieldKey: picked);
   }
 
   /// تراجع: يُعيد النص الثابت مكان الحقل، ويُزيل الربط التلقائي، ويُثبّت
@@ -1162,39 +1224,161 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   // ==========================================================================
   Widget _previewArea() {
     final Uint8List? bytes = _controller.report?.combinedPdf;
-    final TextTheme text = Theme.of(context).textTheme;
-
-    if (bytes == null) {
-      return Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 460),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(Icons.picture_as_pdf_outlined,
-                  size: 40, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(height: AppTheme.space12),
-              Text('المعاينة تظهر هنا', style: text.titleMedium),
-              const SizedBox(height: AppTheme.space8),
-              Text(
-                'اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — '
-                'سترى أول صفحة من الملف الناتج هنا مباشرة.',
-                style: text.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+    if (bytes != null) {
+      return PdfPreview(
+        build: (PdfPageFormat format) async => bytes,
+        allowPrinting: false,
+        allowSharing: false,
+        canChangePageFormat: false,
+        canChangeOrientation: false,
+        canDebug: false,
       );
     }
 
-    return PdfPreview(
-      build: (PdfPageFormat format) async => bytes,
-      allowPrinting: false,
-      allowSharing: false,
-      canChangePageFormat: false,
-      canChangeOrientation: false,
-      canDebug: false,
+    // قبل التوليد: لوحة تعيين بالنقر على عناصر القالب (تعيين صريح لا تخميني).
+    final TemplateDocument? document = _controller.document;
+    if (document != null) return _interactiveTemplatePanel(document);
+
+    return _previewPlaceholder();
+  }
+
+  Widget _previewPlaceholder() {
+    final TextTheme text = Theme.of(context).textTheme;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(Icons.picture_as_pdf_outlined,
+                size: 40, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(height: AppTheme.space12),
+            Text('المعاينة تظهر هنا', style: text.titleMedium),
+            const SizedBox(height: AppTheme.space8),
+            Text(
+              'اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — '
+              'سترى أول صفحة من الملف الناتج هنا مباشرة.',
+              style: text.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// لوحة تعيين تفاعلية: كل عنصر نصي في القالب صف قابل للنقر.
+  ///
+  /// النقر يفتح منتقي حقل ديناميكي يحوّل **هذا العنصر وحده** — وهو جوهر
+  /// «التعيين الصريح» بدل التخمين التلقائي الذي قد يبدّل التاريخ أو اسم المدير.
+  /// بقية العناصر تبقى مقفلة ولا تُمسّ إطلاقاً.
+  Widget _interactiveTemplatePanel(TemplateDocument document) {
+    final TextTheme text = Theme.of(context).textTheme;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final List<MapEntry<int, TextElement>> texts = <MapEntry<int, TextElement>>[
+      for (int i = 0; i < document.elements.length; i++)
+        if (document.elements[i] is TextElement)
+          MapEntry<int, TextElement>(i, document.elements[i] as TextElement),
+    ];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppTheme.space16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(Icons.touch_app_outlined, size: 20, color: scheme.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text('تعيين الحقول بالنقر', style: text.titleMedium),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'انقر أي نص في القالب لتعيينه إلى حقل ديناميكي بنفسك. لن يُمسّ أي '
+            'عنصر آخر — لا التاريخ ولا اسم المدير ولا أي نص ثابت.',
+            style: text.bodySmall,
+          ),
+          const SizedBox(height: AppTheme.space12),
+          if (texts.isEmpty)
+            Text('لا نصوص في هذا القالب.', style: text.bodySmall)
+          else
+            for (final MapEntry<int, TextElement> entry in texts)
+              _assignableElementRow(entry.key, entry.value),
+        ],
+      ),
+    );
+  }
+
+  /// صفّ عنصر نصي واحد قابل للتعيين بالنقر.
+  Widget _assignableElementRow(int index, TextElement element) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final bool hasField = element.hasDynamicFields;
+    final String preview =
+        element.text.trim().isEmpty ? '(نص فارغ)' : element.text.trim();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.space8),
+      child: Material(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        child: InkWell(
+          onTap: () => unawaited(_assignFieldToElement(index)),
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.all(AppTheme.space12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(color: scheme.outline),
+            ),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  hasField
+                      ? Icons.data_object_rounded
+                      : Icons.text_fields_rounded,
+                  size: 18,
+                  color: hasField ? scheme.primary : scheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        preview,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12.5),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        hasField
+                            ? 'حقل ديناميكي — انقر لتغييره'
+                            : 'نص ثابت — انقر للتعيين',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: () => unawaited(_assignFieldToElement(index)),
+                  child: const Text(
+                    'تعيين حقل',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

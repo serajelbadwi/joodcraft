@@ -107,6 +107,45 @@ void main() {
     });
   });
 
+  group('الربط التلقائي غير التخميني', () {
+    TemplateDocument nameOnly() => TemplateDocument(
+          orientation: PageOrientation.landscape,
+          elements: const <TemplateElement>[
+            TextElement(
+              id: 'n',
+              box: ElementBox(x: 0, y: 0, width: 200, height: 30),
+              text: '{{اسم_المتدرب}}',
+            ),
+          ],
+        );
+
+    test('عند التحميل يُربط التطابق المؤكَّد (مرادف مطابق) تلقائياً', () {
+      controller.useDocument(nameOnly());
+      final Uint8List csv =
+          Uint8List.fromList(utf8.encode('الاسم\nأحمد الشمري\n'));
+      controller.loadBytes(fileName: 'd.csv', bytes: csv);
+
+      // «الاسم» مرادف مطابق تماماً للحقل — ربط مؤكَّد لا تخميني.
+      expect(controller.mapping.fieldFor(0), 'اسم_المتدرب');
+    });
+
+    test('عنوان يشبه الحقل جزئياً لا يُربط تلقائياً عند التحميل', () {
+      controller.useDocument(nameOnly());
+      // «اسم متدرب» يشابه «اسم_المتدرب» تشابهاً جزئياً (‏875 دون حدّ 900).
+      final Uint8List csv =
+          Uint8List.fromList(utf8.encode('اسم متدرب\nأحمد الشمري\n'));
+      controller.loadBytes(fileName: 'd.csv', bytes: csv);
+
+      expect(controller.mapping.isEmpty, isTrue);
+      // ولا حاجة للتوليد حتى يُفعّل الزر — فالمستخدم لم يوافق بعد.
+      expect(controller.canGenerate, isFalse);
+
+      // زر «ربط تلقائي» الصريح يقبل المطابقة المرنة.
+      controller.autoMap();
+      expect(controller.mapping.fieldFor(0), 'اسم_المتدرب');
+    });
+  });
+
   group('تحويل النص الثابت إلى حقل بضغطة', () {
     test('يقترح النص الذي يشبه الاسم ثم يحوّله ويربط عمود الاسم', () {
       controller.useDocument(_dateOnlyTemplate());
