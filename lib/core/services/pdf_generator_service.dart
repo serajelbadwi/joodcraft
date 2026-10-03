@@ -18,6 +18,7 @@ import '../pdf/custom_pdf_fonts.dart';
 import '../pdf/pdf_font_catalog.dart';
 import '../pdf/pdf_generation_isolate.dart';
 import '../pdf/pdf_render_engine.dart';
+import '../pdf/pdf_script_coverage.dart';
 
 // يبقى `PdfDocumentMetadata` متاحاً من هذا الملف لمن يستورده تاريخياً.
 export '../pdf/pdf_render_engine.dart' show PdfDocumentMetadata;
@@ -249,6 +250,11 @@ class PdfGeneratorService {
   }) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     final List<String> warnings = <String>[...document.warnings];
+    // تحذيرات تغطية الكتابات (سيريلية/صينية بلا خط محزوم) قبل أي رسم.
+    for (final PdfScript script
+        in PdfScriptCoverage.unsupportedInDocument(document)) {
+      warnings.add(PdfScriptCoverage.warningFor(script));
+    }
 
     if (rows.isEmpty) {
       throw const AppException(
