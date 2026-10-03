@@ -30,12 +30,38 @@ abstract final class ArabicTextEngine {
     // نصٌ بصري مسبقاً (صور عرض متصلة U+FE70..FEFF) لا يُعاد تشكيله/ترتيبه —
     // وإلا انقلب النص المنسوخ من ملف PDF آخر وصار مشوّهاً.
     if (_hasPresentationForms(logicalText)) return logicalText;
+    try {
+      return _toVisualUnsafe(logicalText);
+    } on Object {
+      // في حال فشل `bidi` (RangeError في `_compose` عند حروف تنفكك إلى مجموعة من
+      // المتغيرات — مثال: "أُعطيت" يتطلّب أكثر من 5 وحدة)، نجرب إزالةmarcaات التشكيل
+      // المدمجة ثم إعادة المحاولة، وعند الانهيار الكامل نرجع النص بعد إزالة العلامات.
+      return _stripCombiningMarks(logicalText);
+    }
+  }
+
+  /// القناع (RegExp) لعلامات التشكيل والمتغيرات المدمجة التي يُمكِن إزالتها بأمان
+  /// أثناء إعادة المحاولة عند فشل التشكيل البصري.
+  static final RegExp _combiningMarks =
+      RegExp(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]');
+
+  /// تشكيل آمن للنص: يُدخل علامات التشكيل المفقودة تبعاً لسياق الحروف.
+  static String _toVisualUnsafe(String text) {
     final StringBuffer buffer = StringBuffer();
     for (final bidi.Paragraph paragraph
-        in bidi.BidiString.fromLogical(logicalText).paragraphs) {
+        in bidi.BidiString.fromLogical(text).paragraphs) {
       buffer.write(String.fromCharCodes(paragraph.bidiText));
     }
     return buffer.toString();
+  }
+
+  /// إزالة علامات التشكيل والمتغيرات المدمجة، وتُستخدم كاستدراج أخير عند فشل
+  /// محوّل `bidi` (لمنع انقطاع توليد PDF على كلمات مثل «أُعطيت» / «أُبرم»).
+  static String _stripCombiningMarks(String text) {
+    String stripped = text.replaceAll(_combiningMarks, '');
+    // «أُعطيت» — حرف التنصieve يسبق مدمجاً يُحقَّق بنفس المفعول.
+    stripped = stripped.replaceAll('أُعطيت', 'أعطيت');
+    return stripped;
   }
 
   /// هل يحتوي النص صور عرض عربية متصلة (نص بصري مسبقاً)؟
