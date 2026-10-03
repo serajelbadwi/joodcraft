@@ -29,7 +29,11 @@ class CsvSheetReader implements SheetReader {
   ];
 
   @override
-  SheetData read(Uint8List bytes, {String sourceName = ''}) {
+  SheetData read(
+    Uint8List bytes, {
+    String sourceName = '',
+    int? headerRowIndex,
+  }) {
     if (bytes.isEmpty) {
       throw const AppException(
         AppErrorCode.excelImport,
@@ -50,6 +54,7 @@ class CsvSheetReader implements SheetReader {
     final SheetData data = SheetData.fromMatrix(
       matrix,
       sourceName: sourceName,
+      headerRowIndex: headerRowIndex,
     );
     if (data.isEmpty) {
       throw const AppException(

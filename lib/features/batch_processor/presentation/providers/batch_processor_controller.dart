@@ -7,6 +7,7 @@ import '../../domain/field_aliases.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/services/pdf_generator_service.dart';
+import '../../data/sheet_parse_isolate.dart';
 import '../../domain/bulk_generation.dart';
 import '../../domain/column_mapping.dart';
 import '../../domain/sheet_data.dart';
@@ -32,13 +33,34 @@ class BatchProcessorController extends ChangeNotifier {
     AssetBundle? bundle,
     PdfGeneratorService? generator,
     BulkGenerationService? bulkService,
+    this.parseInIsolate = true,
+    this.isolateByteThreshold = defaultIsolateByteThreshold,
   })  : _bundle = bundle ?? rootBundle,
         _generator = generator,
         _bulkService = bulkService;
 
+  /// أصغر حجم ملف (بالبايت) يستحق نقل تفكيكه إلى isolate خلفي.
+  static const int defaultIsolateByteThreshold = 48 * 1024;
+
   final AssetBundle _bundle;
   PdfGeneratorService? _generator;
   BulkGenerationService? _bulkService;
+
+  /// هل يُسمح بتفكيك Excel في isolate خلفي؟ (يُعطَّل في اختبارات الودجات التي
+  /// تعمل بمؤقّت مزيف لا يقود isolate حقيقياً، وعلى الويب.)
+  final bool parseInIsolate;
+
+  /// عند بلوغ حجم الملف هذا الحد يُستخدم الـ isolate (لتفادي زمن بدء الـ isolate
+  /// في الملفات الصغيرة).
+  final int isolateByteThreshold;
+
+  /// بايتات آخر ملف مُختار — تُحفظ لإعادة القراءة عند تغيير الورقة أو صف
+  /// العناوين.
+  Uint8List? _bytes;
+
+  /// صف العناوين الذي اختاره المستخدم يدوياً (يبدأ من صفر)، أو `null` للاكتشاف
+  /// التلقائي. يُصفَّر عند تحميل ملف جديد.
+  int? _headerRowIndex;
 
   // --------------------------------------------------------------------------
   //  الحالة
@@ -54,6 +76,34 @@ class BatchProcessorController extends ChangeNotifier {
 
   String? _fileName;
   String? get fileName => _fileName;
+
+  List<String> _sheetNames = const <String>[];
+
+  /// أسماء أوراق مصنّف Excel الحالي (فارغة للملفات النصية).
+  List<String> get sheetNames => _sheetNames;
+
+  /// هل يحتوي الملف أكثر من ورقة ⇒ يُعرض منتقي الأوراق في الواجهة؟
+  bool get hasSheetChoice => _sheetNames.length > 1;
+
+  bool _loadingFile = false;
+
+  /// هل يجري تفكيك الملف الآن في الخلفية؟ (لعرض مؤشّر تحميل.)
+  bool get loadingFile => _loadingFile;
+
+  /// صف العناوين المختار يدوياً (`null` = تلقائي) — لقيمة منتقي الواجهة.
+  int? get headerRowIndex => _headerRowIndex;
+
+  /// فهرس صف العناوين المستخدم فعلاً بعد القراءة (يبدأ من صفر).
+  int get effectiveHeaderRowIndex => _sheet.headerRowIndex;
+
+  /// رقم صف العناوين كما يراه المستخدم في Excel (يبدأ من 1).
+  int get headerRowNumber => _sheet.headerRowIndex + 1;
+
+  /// الصفوف الأولية الخام لعرضها في منتقي صف العناوين.
+  List<List<String>> get rowSamples => _sheet.rowSamples;
+
+  /// هل يمكن للمستخدم اختيار صف العناوين؟ (وجود أكثر من صف مرشّح.)
+  bool get canChooseHeaderRow => _sheet.rowSamples.length > 1;
 
   ColumnMapping _mapping = ColumnMapping.empty;
   ColumnMapping get mapping => _mapping;
@@ -146,32 +196,192 @@ class BatchProcessorController extends ChangeNotifier {
 
   /// قراءة ملف البيانات محلياً ثم ربط الأعمدة تلقائياً.
   ///
-  /// كل الفشل يُختصر في [errorAr] بدل رمي استثناء إلى الواجهة.
-  void loadBytes({required String fileName, required Uint8List bytes}) {
+  /// الملفات الصغيرة (والنصية) تُقرأ على الخيط الرئيسي مباشرةً فتُحدَّث الحالة
+  /// بشكل متزامن؛ أما ملفات Excel الكبيرة فتُفكَّك في isolate خلفي. كل الفشل
+  /// يُختصر في [errorAr] بدل رمي استثناء إلى الواجهة.
+  Future<void> loadBytes({
+    required String fileName,
+    required Uint8List bytes,
+  }) async {
+    _bytes = bytes;
+    _headerRowIndex = null;
     _errorAr = null;
     _report = null;
+
+    if (_shouldUseIsolate(fileName, bytes)) {
+      _loadingFile = true;
+      notifyListeners();
+      try {
+        final SheetReadResult result = await parseSheetInBackground(
+          SheetParseRequest(fileName: fileName, bytes: bytes),
+        );
+        _applyResult(fileName, result);
+      } on AppException catch (error) {
+        _applyFailure(error.message);
+      } catch (error, stackTrace) {
+        debugPrint('[التوليد الجماعي] تعذّر قراءة الملف: $error\n$stackTrace');
+        _applyFailure('تعذّر قراءة الملف: $error');
+      } finally {
+        _loadingFile = false;
+        notifyListeners();
+      }
+      return;
+    }
+
+    _readSync(fileName: fileName, bytes: bytes);
+    notifyListeners();
+  }
+
+  /// إعادة قراءة الملف نفسه بورقة عمل أخرى اختارها المستخدم.
+  Future<void> selectSheet(String sheetName) async {
+    final Uint8List? bytes = _bytes;
+    final String? fileName = _fileName;
+    if (bytes == null || fileName == null) return;
+    if (sheetName == _sheet.sheetName) return;
+
+    _errorAr = null;
+    _report = null;
+    if (_shouldUseIsolate(fileName, bytes)) {
+      _loadingFile = true;
+      notifyListeners();
+      try {
+        final SheetReadResult result = await parseSheetInBackground(
+          SheetParseRequest(
+            fileName: fileName,
+            bytes: bytes,
+            sheetName: sheetName,
+            headerRowIndex: _headerRowIndex,
+          ),
+        );
+        _applyResult(fileName, result);
+      } on AppException catch (error) {
+        _applyFailure(error.message);
+      } catch (error, stackTrace) {
+        debugPrint('[التوليد الجماعي] تعذّر قراءة الورقة: $error\n$stackTrace');
+        _applyFailure('تعذّر قراءة الورقة: $error');
+      } finally {
+        _loadingFile = false;
+        notifyListeners();
+      }
+      return;
+    }
+
+    _readSync(
+      fileName: fileName,
+      bytes: bytes,
+      sheetName: sheetName,
+      headerRowIndex: _headerRowIndex,
+    );
+    notifyListeners();
+  }
+
+  /// تغيير صف العناوين (أو إعادته للتلقائي عند تمرير `null`) وإعادة القراءة.
+  ///
+  /// يُستخدم عندما يحتوي الملف أسطراً تعريفية أو عنواناً قبل صف العناوين
+  /// الحقيقي. يعمل بنفس مسارَي الورقة: isolate للملفات الكبيرة والمزامن للصغيرة.
+  Future<void> setHeaderRowIndex(int? headerRowIndex) async {
+    if (headerRowIndex == _headerRowIndex) return;
+    final Uint8List? bytes = _bytes;
+    final String? fileName = _fileName;
+    if (bytes == null || fileName == null) {
+      _headerRowIndex = headerRowIndex;
+      notifyListeners();
+      return;
+    }
+
+    _headerRowIndex = headerRowIndex;
+    _errorAr = null;
+    _report = null;
+    final String? sheetName = _sheet.sheetName.isEmpty ? null : _sheet.sheetName;
+    if (_shouldUseIsolate(fileName, bytes)) {
+      _loadingFile = true;
+      notifyListeners();
+      try {
+        final SheetReadResult result = await parseSheetInBackground(
+          SheetParseRequest(
+            fileName: fileName,
+            bytes: bytes,
+            sheetName: sheetName,
+            headerRowIndex: headerRowIndex,
+          ),
+        );
+        _applyResult(fileName, result);
+      } on AppException catch (error) {
+        _applyFailure(error.message);
+      } catch (error, stackTrace) {
+        debugPrint('[التوليد الجماعي] تعذّر تحديث صف العناوين: $error\n$stackTrace');
+        _applyFailure('تعذّر تحديث صف العناوين: $error');
+      } finally {
+        _loadingFile = false;
+        notifyListeners();
+      }
+      return;
+    }
+
+    _readSync(
+      fileName: fileName,
+      bytes: bytes,
+      sheetName: sheetName,
+      headerRowIndex: headerRowIndex,
+    );
+    notifyListeners();
+  }
+
+  /// قراءة متزامنة (المسار السريع للملفات الصغيرة والنصية).
+  void _readSync({
+    required String fileName,
+    required Uint8List bytes,
+    String? sheetName,
+    int? headerRowIndex,
+  }) {
     try {
-      _sheet = SheetReaders.read(bytes, fileName: fileName);
-      _fileName = fileName;
-      _autoMap();
+      _applyResult(
+        fileName,
+        SheetReaders.readResult(
+          bytes,
+          fileName: fileName,
+          sheetName: sheetName,
+          headerRowIndex: headerRowIndex,
+        ),
+      );
     } on AppException catch (error) {
-      _sheet = SheetData.empty;
-      _fileName = null;
-      _mapping = ColumnMapping.empty;
-      _errorAr = error.message;
+      _applyFailure(error.message);
     } catch (error, stackTrace) {
       debugPrint('[التوليد الجماعي] تعذّر قراءة الملف: $error\n$stackTrace');
-      _sheet = SheetData.empty;
-      _fileName = null;
-      _mapping = ColumnMapping.empty;
-      _errorAr = 'تعذّر قراءة الملف: $error';
+      _applyFailure('تعذّر قراءة الملف: $error');
     }
-    notifyListeners();
+  }
+
+  /// هل يُفكَّك هذا الملف في isolate خلفي؟ (ملفات Excel الكبيرة فقط.)
+  bool _shouldUseIsolate(String fileName, Uint8List bytes) =>
+      parseInIsolate &&
+      !kIsWeb &&
+      SheetReaders.isWorkbook(fileName) &&
+      bytes.lengthInBytes >= isolateByteThreshold;
+
+  void _applyResult(String fileName, SheetReadResult result) {
+    _sheet = result.sheet;
+    _fileName = fileName;
+    _sheetNames = result.sheetNames;
+    _autoMap();
+  }
+
+  void _applyFailure(String message) {
+    _sheet = SheetData.empty;
+    _fileName = null;
+    _sheetNames = const <String>[];
+    _bytes = null;
+    _mapping = ColumnMapping.empty;
+    _errorAr = message;
   }
 
   void clearFile() {
     _sheet = SheetData.empty;
     _fileName = null;
+    _sheetNames = const <String>[];
+    _bytes = null;
+    _headerRowIndex = null;
+    _loadingFile = false;
     _mapping = ColumnMapping.empty;
     _report = null;
     _errorAr = null;
@@ -279,6 +489,10 @@ class BatchProcessorController extends ChangeNotifier {
   void reset() {
     _sheet = SheetData.empty;
     _fileName = null;
+    _sheetNames = const <String>[];
+    _bytes = null;
+    _headerRowIndex = null;
+    _loadingFile = false;
     _mapping = ColumnMapping.empty;
     _report = null;
     _errorAr = null;

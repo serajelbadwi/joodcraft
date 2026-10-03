@@ -97,6 +97,28 @@ void main() {
         isA<CsvSheetReader>(),
       );
     });
+
+    test('يرفض .xls برسالة لطيفة تنصح بالتحويل إلى .xlsx', () {
+      expect(SheetReaders.isSupported('قديم.xls'), isFalse);
+      expect(
+        () => SheetReaders.forFileName('قديم.xls'),
+        throwsA(
+          isA<AppException>()
+              .having((AppException e) => e.message, 'message',
+                  contains('Excel قديم'))
+              .having((AppException e) => e.message, 'message',
+                  contains('.xlsx')),
+        ),
+      );
+    });
+
+    test('الامتدادات والوصف مصدر واحد متطابقان', () {
+      expect(SheetReaders.supportedExtensions, contains('txt'));
+      for (final String extension in SheetReaders.supportedExtensions) {
+        expect(SheetReaders.supportedLabel, contains(extension),
+            reason: 'الوصف يجب أن يذكر كل امتداد مدعوم');
+      }
+    });
   });
 
   group('تطبيع الورقة', () {
@@ -122,6 +144,31 @@ void main() {
       final SheetData data = reader.read(_utf8('a\n1\n2\n'));
       expect(data.rowAt(0).displayNumber, 2);
       expect(data.rowAt(1).displayNumber, 3);
+    });
+
+    test('يبدأ العناوين من صفٍ يختاره المستخدم بعد الأسطر التعريفية', () {
+      final SheetData data = reader.read(
+        _utf8('شهادات دورة ٢٠٢٦\nتقرير المتدربين\nالاسم,الرقم\nأحمد,JC-1\nسارة,JC-2\n'),
+        headerRowIndex: 2,
+      );
+
+      expect(data.headers, <String>['الاسم', 'الرقم']);
+      expect(data.rowCount, 2);
+      expect(data.rowAt(0).cell('الاسم'), 'أحمد');
+      expect(data.headerRowIndex, 2);
+      expect(data.notes.join(' '), contains('اختيارك'));
+      // الصف الأول من البيانات هو الصف الرابع في Excel (بعد العناوين في الثالث).
+      expect(data.rowAt(0).displayNumber, 4);
+      // الصفوف الأولية محفوظة للمنتقي كي يستطيع المستخدم التبديل.
+      expect(data.rowSamples.first.first, 'شهادات دورة ٢٠٢٦');
+    });
+
+    test('الاكتشاف التلقائي يبقى افتراضياً عندما لا يُختار صف', () {
+      final SheetData data = reader.read(
+        _utf8('الاسم,الرقم\nأحمد,JC-1\n'),
+      );
+      expect(data.headerRowIndex, 0);
+      expect(data.rowAt(0).displayNumber, 2);
     });
 
     test('يرصد الأعمدة التي تحمل بيانات فعلية', () {

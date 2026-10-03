@@ -19,7 +19,31 @@ class XlsxSheetReader implements SheetReader {
   final String? sheetName;
 
   @override
-  SheetData read(Uint8List bytes, {String sourceName = ''}) {
+  SheetData read(
+    Uint8List bytes, {
+    String sourceName = '',
+    int? headerRowIndex,
+  }) =>
+      readResult(
+        bytes,
+        sourceName: sourceName,
+        sheetName: sheetName,
+        headerRowIndex: headerRowIndex,
+      ).sheet;
+
+  /// يفكّ الملف **مرة واحدة** ويعيد الورقة المطلوبة مع أسماء كل الأوراق.
+  ///
+  /// التفكيك الواحد يمنع قراءة المصنّف مرتين (مرة لسرد الأوراق ومرة للبيانات)
+  /// — وهو مكلف في ملفات الآلاف من الصفوف. البايتات تصل من القرص عبر
+  /// `await file.readAsBytes()` ثم تمرّ إلى المكتبة هنا داخل try-catch — فلا
+  /// يتوقف البرنامج عند اختلاف صيغ الملفات، ويُطبع السبب الحقيقي مع الـ
+  /// stacktrace في الـ Console بدل الاكتفاء برسالة تلف مبهمة.
+  static SheetReadResult readResult(
+    Uint8List bytes, {
+    String sourceName = '',
+    String? sheetName,
+    int? headerRowIndex,
+  }) {
     if (bytes.isEmpty) {
       throw const AppException(
         AppErrorCode.excelImport,
@@ -27,10 +51,6 @@ class XlsxSheetReader implements SheetReader {
       );
     }
 
-    // قراءة آمنة: البايتات تصل من القرص عبر `await file.readAsBytes()` (شاشة
-    // الاستيراد) ثم تمرّ إلى المكتبة هنا داخل try-catch — فلا يتوقف البرنامج
-    // عند اختلاف صيغ الملفات، ويُطبع السبب الحقيقي مع الـ stacktrace في الـ
-    // Console بدل الاكتفاء برسالة تلف مبهمة.
     final Excel workbook;
     try {
       workbook = Excel.decodeBytes(bytes);
@@ -40,8 +60,12 @@ class XlsxSheetReader implements SheetReader {
       );
       // احتياطي: محتوى نصي بامتداد مُختلف (CSV أُعيدت تسميته مثلاً) يُقرأ
       // كـ CSV تلقائياً بذات الهيكلية بدل رفضه.
-      final SheetData? fallback = _readAsCsvText(bytes, sourceName: sourceName);
-      if (fallback != null) return fallback;
+      final SheetData? fallback = _readAsCsvText(
+        bytes,
+        sourceName: sourceName,
+        headerRowIndex: headerRowIndex,
+      );
+      if (fallback != null) return SheetReadResult(sheet: fallback);
       throw AppException(
         AppErrorCode.excelImport,
         message: 'تعذّر قراءة الملف: لا يُفتح كملف Excel (.xlsx) سليم ولا '
@@ -50,19 +74,30 @@ class XlsxSheetReader implements SheetReader {
       );
     }
 
-    // أوراق تلقائية: التحقق من وجود شيتات ثم أخذ أول ورقة متاحة بدلاً من
-    // الالتزام باسم محدد قد لا يكون موجوداً في هذا الملف.
-    if (workbook.tables.isEmpty) {
+    // الوصول إلى `tables` يرمي داخل المكتبة إذا كان المصنّف تالفاً بلا أوراق،
+    // فنلتقطه ونحوّله إلى رسالة عربية واضحة بدل تسريب خطأ المكتبة (الفحص
+    // القديم `tables.isEmpty` كان غير قابل للوصول لأن الـ getter نفسه يرمي).
+    final List<String> sheetNames;
+    try {
+      sheetNames = workbook.tables.keys.toList(growable: false);
+    } catch (error, stackTrace) {
+      debugPrint('[استيراد Excel] مصنّف بلا أوراق صالحة: $error\n$stackTrace');
+      throw const AppException(
+        AppErrorCode.excelImport,
+        message: 'ملف Excel لا يحتوي أي ورقة عمل — تأكد أن الملف سليم ثم أعد '
+            'المحاولة.',
+      );
+    }
+    if (sheetNames.isEmpty) {
       throw const AppException(
         AppErrorCode.excelImport,
         message: 'ملف Excel لا يحتوي أي ورقة عمل.',
       );
     }
 
-    final String resolved = sheetName != null &&
-            workbook.tables.containsKey(sheetName)
-        ? sheetName!
-        : workbook.tables.keys.first;
+    final String resolved = sheetName != null && sheetNames.contains(sheetName)
+        ? sheetName
+        : sheetNames.first;
     final Sheet sheet = workbook.tables[resolved]!;
 
     int formulaCells = 0;
@@ -85,6 +120,7 @@ class XlsxSheetReader implements SheetReader {
       matrix,
       sourceName: sourceName,
       sheetName: resolved,
+      headerRowIndex: headerRowIndex,
     );
     if (data.isEmpty) {
       throw AppException(
@@ -93,19 +129,24 @@ class XlsxSheetReader implements SheetReader {
       );
     }
     if (formulaCells > 0) {
-      return SheetData(
-        headers: data.headers,
-        rows: data.rows,
-        sourceName: data.sourceName,
-        sheetName: data.sheetName,
-        notes: <String>[
-          ...data.notes,
-          'يحتوي الملف $formulaCells خلية بصيغة غير محسوبة — تُستورد فارغة. '
-              'انسخ القيم ولصقها كقيم ثابتة قبل الاستيراد.',
-        ],
+      return SheetReadResult(
+        sheet: SheetData(
+          headers: data.headers,
+          rows: data.rows,
+          sourceName: data.sourceName,
+          sheetName: data.sheetName,
+          notes: <String>[
+            ...data.notes,
+            'يحتوي الملف $formulaCells خلية بصيغة غير محسوبة — تُستورد فارغة. '
+                'انسخ القيم ولصقها كقيم ثابتة قبل الاستيراد.',
+          ],
+          headerRowIndex: data.headerRowIndex,
+          rowSamples: data.rowSamples,
+        ),
+        sheetNames: sheetNames,
       );
     }
-    return data;
+    return SheetReadResult(sheet: data, sheetNames: sheetNames);
   }
 
   /// أسماء أوراق الملف (لعرضها في الواجهة عند وجود أكثر من ورقة).
@@ -127,6 +168,7 @@ class XlsxSheetReader implements SheetReader {
   static SheetData? _readAsCsvText(
     Uint8List bytes, {
     required String sourceName,
+    int? headerRowIndex,
   }) {
     if (bytes.isEmpty) return null;
 
@@ -143,7 +185,7 @@ class XlsxSheetReader implements SheetReader {
     try {
       final SheetData data = CsvSheetReader(
         forcedDelimiter: extension == 'tsv' ? '\t' : null,
-      ).read(bytes, sourceName: sourceName);
+      ).read(bytes, sourceName: sourceName, headerRowIndex: headerRowIndex);
       if (data.isEmpty) return null;
       debugPrint(
         '[استيراد Excel] الملف ليس XLSX صالحاً — رُوِّي تلقائياً كملف نصي '
@@ -159,6 +201,8 @@ class XlsxSheetReader implements SheetReader {
           'لم يُقرأ الملف كـ Excel (.xlsx)؛ رُوِّي تلقائياً كملف نصي '
               '(CSV/TSV).',
         ],
+        headerRowIndex: data.headerRowIndex,
+        rowSamples: data.rowSamples,
       );
     } catch (error, stackTrace) {
       debugPrint('[استيراد Excel] تعذّر تفكيك النص كـ CSV: $error\n$stackTrace');

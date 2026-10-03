@@ -10,7 +10,12 @@ class SheetData {
     this.sourceName = '',
     this.sheetName = '',
     this.notes = const <String>[],
+    this.headerRowIndex = 0,
+    this.rowSamples = const <List<String>>[],
   });
+
+  /// أقصى عدد من الصفوف الأولية يُحتفظ بها لعرض منتقي «صف العناوين» في الواجهة.
+  static const int sampleRowLimit = 15;
 
   /// ورقة فارغة — تُستخدم كحالة ابتدائية قبل اختيار ملف.
   static const SheetData empty = SheetData(
@@ -34,6 +39,18 @@ class SheetData {
   /// تُعرض للمستخدم حتى يفهم لماذا اختلف عدد الصفوف عمّا في ملفه.
   final List<String> notes;
 
+  /// فهرس الصف الذي اعتُبر صف العناوين داخل المصفوفة الأصلية (يبدأ من صفر).
+  ///
+  /// `0` يعني «الصف الأول»، و`2` يعني «الصف الثالث» كما يراه المستخدم في Excel
+  /// (أي أن رقم الصف في Excel = القيمة + 1). يُستخدم لترقيم الصفوف بدقة ولإظهار
+  /// الصف المُكتشف تلقائياً في الواجهة.
+  final int headerRowIndex;
+
+  /// الصفوف الأولية الخام (قبل تحديد العناوين) لعرضها في منتقي صف العناوين.
+  ///
+  /// مقتطعة عند [sampleRowLimit] صفاً؛ كل صف نصوص مقصوصة بلا تطبيع للعرض فقط.
+  final List<List<String>> rowSamples;
+
   /// بناء ورقة من مصفوفة خام مع **تطبيع كامل**:
   /// * أول صف غير فارغ هو العناوين (الصفوف الفارغة قبله تُسقط).
   /// * العناوين الفارغة تُسمّى `عمود N` حتى تبقى قابلة للربط.
@@ -43,14 +60,23 @@ class SheetData {
     List<List<String>> matrix, {
     String sourceName = '',
     String sheetName = '',
+    int? headerRowIndex,
   }) {
     final List<String> notes = <String>[];
 
-    List<List<String>> trimmed = matrix
+    final List<List<String>> trimmed = matrix
         .map((List<String> row) =>
             row.map((String cell) => cell.trim()).toList(growable: false))
         .toList(growable: false);
 
+    // عيّنة الصفوف الأولية للمنتقي: تُبنى من المصفوفة كاملة قبل أي اقتطاع حتى
+    // يبقى فهرسها مطابقاً لرقم الصف الحقيقي في الملف.
+    final List<List<String>> samples = trimmed
+        .take(sampleRowLimit)
+        .map(List<String>.unmodifiable)
+        .toList(growable: false);
+
+    // أول صف غير فارغ — يُستخدم كافتراض عندما لا يختار المستخدم صفاً بعينه.
     final int firstFilled = trimmed.indexWhere(
       (List<String> row) => row.any((String cell) => cell.isNotEmpty),
     );
@@ -61,19 +87,29 @@ class SheetData {
         sourceName: sourceName,
         sheetName: sheetName,
         notes: const <String>['الملف لا يحتوي أي بيانات.'],
+        rowSamples: samples,
       );
     }
-    if (firstFilled > 0) {
+
+    // الصف الفعلي للعناوين: اختيار المستخدم إن وُجد (مقيّداً بحدود المصفوفة)،
+    // وإلا أول صف غير فارغ (السلوك التلقائي السابق).
+    final int headerIndex = headerRowIndex == null
+        ? firstFilled
+        : headerRowIndex.clamp(0, trimmed.length - 1);
+    if (headerRowIndex != null && headerIndex > 0) {
+      notes.add('اعتُبر الصف ${headerIndex + 1} صفَ العناوين بناءً على اختيارك؛ '
+          'أُهمل ما قبله.');
+    } else if (headerRowIndex == null && firstFilled > 0) {
       notes.add('أُسقطت $firstFilled صف/صفوف فارغة قبل العناوين.');
     }
-    trimmed = trimmed.sublist(firstFilled);
+    final List<List<String>> body = trimmed.sublist(headerIndex);
 
-    final List<String> headers = _normalizeHeaders(trimmed.first, notes);
+    final List<String> headers = _normalizeHeaders(body.first, notes);
     final int width = headers.length;
 
     final List<List<String>> rows = <List<String>>[];
     int droppedBlank = 0;
-    for (final List<String> raw in trimmed.skip(1)) {
+    for (final List<String> raw in body.skip(1)) {
       if (raw.every((String cell) => cell.isEmpty)) {
         droppedBlank++;
         continue;
@@ -93,6 +129,8 @@ class SheetData {
       sourceName: sourceName,
       sheetName: sheetName,
       notes: notes,
+      headerRowIndex: headerIndex,
+      rowSamples: samples,
     );
   }
 
@@ -147,6 +185,7 @@ class SheetData {
         index: index,
         headers: headers,
         cells: rows[index],
+        headerRowNumber: headerRowIndex + 1,
       );
 
   Iterable<SheetRow> get sheetRows sync* {
@@ -175,6 +214,8 @@ class SheetData {
         sourceName: sourceName,
         sheetName: sheetName,
         notes: notes,
+        headerRowIndex: headerRowIndex,
+        rowSamples: rowSamples,
       );
 }
 
@@ -184,6 +225,7 @@ class SheetRow {
     required this.index,
     required this.headers,
     required this.cells,
+    this.headerRowNumber = 1,
   });
 
   /// فهرس الصف داخل [SheetData.rows] (يبدأ من صفر).
@@ -192,8 +234,13 @@ class SheetRow {
   final List<String> headers;
   final List<String> cells;
 
-  /// رقم الصف كما يراه المستخدم في Excel (‏+2 لصف العناوين والصفر).
-  int get displayNumber => index + 2;
+  /// رقم صف العناوين في Excel (يبدأ من 1). يكون `1` عندما تبدأ العناوين من
+  /// الصف الأول، و`3` إذا اختار المستخدم أن تبدأ من الصف الثالث مثلاً.
+  final int headerRowNumber;
+
+  /// رقم الصف كما يراه المستخدم في Excel: يبدأ بعد صف العناوين مباشرةً
+  /// (‏+1 للصف نفسه و+1 بسبب أن الفهرس يبدأ من صفر).
+  int get displayNumber => index + headerRowNumber + 1;
 
   int get columnCount => cells.length;
 

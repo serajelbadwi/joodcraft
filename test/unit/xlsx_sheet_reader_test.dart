@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/errors/app_exception.dart';
 import 'package:joodcraft/features/batch_processor/data/xlsx_sheet_reader.dart';
 import 'package:joodcraft/features/batch_processor/domain/sheet_data.dart';
+import 'package:joodcraft/features/batch_processor/domain/sheet_reader.dart';
 
 /// يبني ملف xlsx حقيقياً في الذاكرة ثم يقرأه بالقارئ المحلي.
 Uint8List buildWorkbook(List<List<CellValue?>> rows, {String sheet = 'Sheet1'}) {
@@ -175,5 +176,49 @@ void main() {
         const XlsxSheetReader(sheetName: 'البيانات').read(bytes);
     expect(data.sheetName, 'البيانات');
     expect(data.rowAt(0).cell('اسم المتدرب'), 'سالم');
+  });
+
+  test('يقرأ العناوين من صف محدَّد بعد أسطر تعريفية', () {
+    final Uint8List bytes = buildWorkbook(<List<CellValue?>>[
+      <CellValue?>[TextCellValue('كشف المتدربين لحفل التخرج ٢٠٢٦')],
+      <CellValue?>[TextCellValue('تاريخ الإصدار: 1447/03/12')],
+      <CellValue?>[TextCellValue('الاسم'), TextCellValue('الرقم')],
+      <CellValue?>[TextCellValue('أحمد'), TextCellValue('JC-1')],
+      <CellValue?>[TextCellValue('سارة'), TextCellValue('JC-2')],
+    ]);
+
+    final SheetData data = reader.read(bytes, headerRowIndex: 2);
+
+    expect(data.headers, <String>['الاسم', 'الرقم']);
+    expect(data.rowCount, 2);
+    expect(data.rowAt(0).cell('الاسم'), 'أحمد');
+    expect(data.headerRowIndex, 2);
+    expect(data.rowAt(0).displayNumber, 4);
+    expect(data.notes.join(' '), contains('اختيارك'));
+  });
+
+  test('قراءة واحدة تُعيد الورقة المطلوبة وأسماء كل الأوراق معاً', () {
+    final Excel excel = Excel.createExcel();
+    final String first = excel.getDefaultSheet() ?? 'Sheet1';
+    excel[first].appendRow(<CellValue?>[TextCellValue('الاسم')]);
+    excel[first].appendRow(<CellValue?>[TextCellValue('أحمد')]);
+    excel['الثانية'].appendRow(<CellValue?>[TextCellValue('الاسم')]);
+    excel['الثانية'].appendRow(<CellValue?>[TextCellValue('سارة')]);
+    final Uint8List bytes = Uint8List.fromList(excel.encode()!);
+
+    final SheetReadResult named = SheetReaders.readResult(
+      bytes,
+      fileName: 'multi.xlsx',
+      sheetName: 'الثانية',
+    );
+    expect(named.sheetNames, containsAll(<String>[first, 'الثانية']));
+    expect(named.sheet.sheetName, 'الثانية');
+    expect(named.sheet.rowAt(0).cell('الاسم'), 'سارة');
+
+    // بلا اسم ورقة ⇒ أول ورقة في المصنّف.
+    final SheetReadResult defaultSheet =
+        SheetReaders.readResult(bytes, fileName: 'multi.xlsx');
+    expect(defaultSheet.sheet.rowAt(0).cell('الاسم'), 'أحمد');
+    expect(defaultSheet.sheetNames.length, 2);
   });
 }

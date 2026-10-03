@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +22,34 @@ final Uint8List _csv = Uint8List.fromList(
     'خالد القحطاني,JC-0003,1447/03/14\n',
   ),
 );
+
+/// مصنّف Excel فيه سطران تعريفيان قبل صف العناوين — لاختبار منتقي صف العناوين.
+Uint8List _titledWorkbook() {
+  final Excel excel = Excel.createExcel();
+  final String sheet = excel.getDefaultSheet() ?? 'Sheet1';
+  excel[sheet].appendRow(<CellValue?>[TextCellValue('كشف المتدربين')]);
+  excel[sheet].appendRow(<CellValue?>[TextCellValue('تاريخ الإصدار')]);
+  excel[sheet].appendRow(<CellValue?>[
+    TextCellValue('اسم المتدرب'),
+    TextCellValue('رقم الشهادة'),
+  ]);
+  excel[sheet].appendRow(<CellValue?>[
+    TextCellValue('أحمد'),
+    TextCellValue('JC-1'),
+  ]);
+  return Uint8List.fromList(excel.encode()!);
+}
+
+/// مصنّف Excel فيه ورقتان ببيانات مختلفة — لاختبار منتقي الأوراق.
+Uint8List _twoSheetWorkbook() {
+  final Excel excel = Excel.createExcel();
+  final String first = excel.getDefaultSheet() ?? 'Sheet1';
+  excel[first].appendRow(<CellValue?>[TextCellValue('اسم المتدرب')]);
+  excel[first].appendRow(<CellValue?>[TextCellValue('أحمد')]);
+  excel['الثانية'].appendRow(<CellValue?>[TextCellValue('اسم المتدرب')]);
+  excel['الثانية'].appendRow(<CellValue?>[TextCellValue('سارة')]);
+  return Uint8List.fromList(excel.encode()!);
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -82,8 +111,10 @@ void main() {
     expect(find.text('4) الخلايا الفارغة والبيانات الناقصة'), findsOneWidget);
     expect(find.text('5) التوليد'), findsOneWidget);
     expect(find.text('المعاينة تظهر هنا'), findsOneWidget);
-    expect(find.text('لم يُختَر ملف بعد — الصيغ المدعومة: xlsx, csv, tsv'),
-        findsOneWidget);
+    expect(
+      find.text('لم يُختَر ملف بعد — الصيغ المدعومة: xlsx, xlsm, csv, tsv, txt'),
+      findsOneWidget,
+    );
 
     // القالب النموذجي (الشهادة) محمَّل وحقوله ظاهرة للربط.
     expect(controller.document, isNotNull);
@@ -157,6 +188,69 @@ void main() {
     expect(controller.errorAr, isNotNull);
     expect(find.textContaining('صيغة الملف غير مدعومة'), findsOneWidget);
     expect(controller.sheet.isEmpty, isTrue);
+  });
+
+  testWidgets('يُظهر تنبيهاً لطيفاً لملف Excel القديم .xls',
+      (WidgetTester tester) async {
+    await pumpScreen(tester);
+
+    controller.loadBytes(
+      fileName: 'قديم.xls',
+      bytes: Uint8List.fromList(<int>[0xD0, 0xCF, 0x11, 0xE0]),
+    );
+    await tester.pumpAndSettle();
+
+    expect(controller.errorAr, isNotNull);
+    expect(controller.errorAr, contains('.xlsx'));
+    expect(find.textContaining('Excel قديم'), findsOneWidget);
+    expect(controller.sheet.isEmpty, isTrue);
+  });
+
+  testWidgets('يعرض منتقي الأوراق للمصنّف متعدد الأوراق ويقرأ الورقة المختارة',
+      (WidgetTester tester) async {
+    await pumpScreen(tester);
+
+    await controller.loadBytes(
+      fileName: 'multi.xlsx',
+      bytes: _twoSheetWorkbook(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(controller.errorAr, isNull);
+    expect(controller.hasSheetChoice, isTrue);
+    expect(controller.sheetNames.length, greaterThanOrEqualTo(2));
+    expect(controller.sheet.rowAt(0).cellAt(0), 'أحمد');
+    expect(find.text('ورقة العمل'), findsOneWidget);
+
+    await controller.selectSheet('الثانية');
+    await tester.pumpAndSettle();
+
+    expect(controller.sheet.sheetName, 'الثانية');
+    expect(controller.sheet.rowAt(0).cellAt(0), 'سارة');
+  });
+
+  testWidgets('يعرض منتقي صف العناوين ويُعيد القراءة عند اختياره',
+      (WidgetTester tester) async {
+    await pumpScreen(tester);
+
+    await controller.loadBytes(
+      fileName: 'titled.xlsx',
+      bytes: _titledWorkbook(),
+    );
+    await tester.pumpAndSettle();
+
+    expect(controller.errorAr, isNull);
+    expect(controller.canChooseHeaderRow, isTrue);
+    expect(find.text('صف العناوين'), findsOneWidget);
+    // الاكتشاف التلقائي يأخذ السطر التعريفي الأول عناوينَ.
+    expect(controller.sheet.headers.first, 'كشف المتدربين');
+
+    await controller.setHeaderRowIndex(2);
+    await tester.pumpAndSettle();
+
+    expect(controller.headerRowIndex, 2);
+    expect(controller.sheet.headers, <String>['اسم المتدرب', 'رقم الشهادة']);
+    expect(controller.sheet.rowAt(0).cell('اسم المتدرب'), 'أحمد');
   });
 
   testWidgets('تبديل القالب إلى العقد يغيّر الحقول المتاحة',

@@ -13,6 +13,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../domain/bulk_generation.dart';
 import '../../domain/sheet_data.dart';
+import '../../domain/sheet_reader.dart';
 import '../providers/batch_processor_controller.dart';
 
 /// شاشة «التوليد الجماعي» (المرحلة 4).
@@ -29,12 +30,11 @@ class BatchProcessorScreen extends StatefulWidget {
   final TemplateRecord? record;
 
   /// امتدادات ملفات البيانات المقبولة في منتقي الملفات.
-  static const List<String> acceptedExtensions = <String>[
-    'xlsx',
-    'xlsm',
-    'csv',
-    'tsv',
-  ];
+  ///
+  /// **مأخوذة من المصدر الوحيد للحقيقة** في [SheetReaders] — فلا تتباعد قائمة
+  /// المنتقي عن قائمة القارئ أبداً (كان يُقبل هنا `txt` هناك ولا يُعرض العكس).
+  static const List<String> acceptedExtensions =
+      SheetReaders.supportedExtensions;
 
   @override
   State<BatchProcessorScreen> createState() => _BatchProcessorScreenState();
@@ -89,7 +89,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     try {
       // قراءة آمنة للبايتات أولاً ثم تمريرها للقارئ داخل try-catch.
       final Uint8List bytes = await file.readAsBytes();
-      _controller.loadBytes(fileName: file.name, bytes: bytes);
+      await _controller.loadBytes(fileName: file.name, bytes: bytes);
     } catch (error, stackTrace) {
       debugPrint('[استيراد الملف] تعذّرت قراءة الملف: $error\n$stackTrace');
       if (!mounted) return;
@@ -283,37 +283,199 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     return _Card(
       icon: Icons.upload_file_outlined,
       title: '2) ملف البيانات',
-      subtitle: fileName == null
-          ? 'لم يُختَر ملف بعد — الصيغ المدعومة: xlsx, csv, tsv'
-          : '$fileName — ${sheet.rowCount} صفاً، ${sheet.columnCount} عموداً'
-              '${sheet.sheetName.isEmpty ? '' : ' (ورقة: ${sheet.sheetName})'}',
+      subtitle: _controller.loadingFile
+          ? 'جارٍ قراءة الملف…'
+          : fileName == null
+              ? 'لم يُختَر ملف بعد — الصيغ المدعومة: '
+                  '${SheetReaders.supportedLabel}'
+              : '$fileName — ${sheet.rowCount} صفاً، ${sheet.columnCount} عموداً'
+                  '${sheet.sheetName.isEmpty ? '' : ' (ورقة: ${sheet.sheetName})'}',
       // الأزرار داخل صف/التفاف تحتاج `minimumSize` منتهياً: الثيم العام يضبط
       // العرض الأدنى على ما لا نهاية (Size.fromHeight)، وهو صحيح داخل عمود
       // ممتدّ لكنه غير صالح داخل صف.
-      child: Wrap(
-        spacing: AppTheme.space8,
-        runSpacing: AppTheme.space8,
-        crossAxisAlignment: WrapCrossAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          FilledButton.icon(
-            onPressed: _pickFile,
-            icon: const Icon(Icons.folder_open_rounded, size: 18),
-            label: const Text('اختيار ملف'),
-            style: FilledButton.styleFrom(
-              minimumSize: const Size(150, 44),
-            ),
-          ),
-          if (fileName != null)
-            OutlinedButton.icon(
-              onPressed: _controller.clearFile,
-              icon: const Icon(Icons.close_rounded, size: 18),
-              label: const Text('إزالة'),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(100, 44),
+          Wrap(
+            spacing: AppTheme.space8,
+            runSpacing: AppTheme.space8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              FilledButton.icon(
+                onPressed: _controller.loadingFile ? null : _pickFile,
+                icon: const Icon(Icons.folder_open_rounded, size: 18),
+                label: const Text('اختيار ملف'),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(150, 44),
+                ),
               ),
-            ),
+              if (fileName != null)
+                OutlinedButton.icon(
+                  onPressed: _controller.clearFile,
+                  icon: const Icon(Icons.close_rounded, size: 18),
+                  label: const Text('إزالة'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(100, 44),
+                  ),
+                ),
+            ],
+          ),
+          if (_controller.loadingFile) ...<Widget>[
+            const SizedBox(height: AppTheme.space12),
+            const LinearProgressIndicator(),
+          ],
+          if (_controller.hasSheetChoice) ...<Widget>[
+            const SizedBox(height: AppTheme.space12),
+            _sheetPicker(),
+          ],
+          if (_controller.canChooseHeaderRow && sheet.isNotEmpty) ...<Widget>[
+            const SizedBox(height: AppTheme.space12),
+            _headerRowPicker(),
+          ],
         ],
       ),
+    );
+  }
+
+  /// منتقي «صف العناوين» — يسمح بتحديد الصف الذي تبدأ منه العناوين عندما
+  /// يحوي الملف عنواناً أو أسطراً تعريفية قبلها.
+  Widget _headerRowPicker() {
+    final List<List<String>> samples = _controller.rowSamples;
+    // قيمة حارسة للمدخل «تلقائي» لأن `null` في القائمة يتعارض مع «بلا اختيار».
+    const int autoValue = -1;
+    final int selected = _controller.headerRowIndex ?? autoValue;
+
+    return Row(
+      children: <Widget>[
+        Icon(
+          Icons.format_list_numbered_rounded,
+          size: 16,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        const SizedBox(width: AppTheme.space8),
+        Expanded(
+          child: DropdownButtonFormField<int>(
+            // مفتاح يعتمد على الاختيار: يُعيد تهيئة الحقل عند تغيّر القيمة
+            // (FormField يحتفظ بحالته ولا يتحدّث بتغيّر initialValue وحده).
+            key: ValueKey<int>(selected),
+            initialValue: selected,
+            isDense: true,
+            isExpanded: true,
+            decoration: const InputDecoration(
+              labelText: 'صف العناوين',
+              isDense: true,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            ),
+            selectedItemBuilder: (BuildContext context) => <Widget>[
+              DropdownMenuItem<int>(
+                value: autoValue,
+                child: Text(
+                  'تلقائي (الصف ${_controller.effectiveHeaderRowIndex + 1})',
+                  style: const TextStyle(fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              for (int i = 0; i < samples.length; i++)
+                DropdownMenuItem<int>(
+                  value: i,
+                  child: Text(
+                    'الصف ${i + 1}',
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+            items: <DropdownMenuItem<int>>[
+              DropdownMenuItem<int>(
+                value: autoValue,
+                child: Text(
+                  'تلقائي — الصف ${_controller.effectiveHeaderRowIndex + 1}',
+                  style: const TextStyle(fontSize: 12),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              for (int i = 0; i < samples.length; i++)
+                if (samples[i].any((String cell) => cell.isNotEmpty))
+                  DropdownMenuItem<int>(
+                    value: i,
+                    child: Text(
+                      'الصف ${i + 1}: ${_rowPreview(samples[i])}',
+                      style: const TextStyle(fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+            ],
+            onChanged: _controller.loadingFile
+                ? null
+                : (int? value) {
+                    if (value == null) return;
+                    unawaited(_controller.setHeaderRowIndex(
+                      value == autoValue ? null : value,
+                    ));
+                  },
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// وصف مختصر لمحتوى صف مرشّح ليكون صف العناوين.
+  String _rowPreview(List<String> row) {
+    final List<String> filled =
+        row.where((String cell) => cell.isNotEmpty).toList(growable: false);
+    if (filled.isEmpty) return '(صف فارغ)';
+    final String text = filled.take(4).join(' • ');
+    return text.length > 48 ? '${text.substring(0, 48)}…' : text;
+  }
+
+  /// منتقي ورقة العمل — يظهر فقط عندما يحتوي المصنّف أكثر من ورقة.
+  Widget _sheetPicker() {
+    final List<String> sheets = _controller.sheetNames;
+    final String current = _controller.sheet.sheetName;
+    final String selected =
+        sheets.contains(current) ? current : sheets.first;
+
+    return Row(
+      children: <Widget>[
+        Icon(
+          Icons.layers_outlined,
+          size: 16,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        const SizedBox(width: AppTheme.space8),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            initialValue: selected,
+            isDense: true,
+            isExpanded: true,
+            decoration: const InputDecoration(
+              labelText: 'ورقة العمل',
+              isDense: true,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            ),
+            items: <DropdownMenuItem<String>>[
+              for (final String name in sheets)
+                DropdownMenuItem<String>(
+                  value: name,
+                  child: Text(
+                    name,
+                    style: const TextStyle(fontSize: 12.5),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+            onChanged: _controller.loadingFile
+                ? null
+                : (String? value) {
+                    if (value != null) {
+                      unawaited(_controller.selectSheet(value));
+                    }
+                  },
+          ),
+        ),
+      ],
     );
   }
 
