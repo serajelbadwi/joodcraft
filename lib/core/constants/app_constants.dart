@@ -87,6 +87,54 @@ enum AssetType {
   final String labelAr;
 }
 
+/// وحدات القياس المتاحة للدخول المخصص.
+enum MeasurementUnit {
+  /// سنتيمتر — الوحدة القياسية المستخدمة عند إدخال الأبعاد المخصصة.
+  cm('cm', 'سم'),
+
+  /// مليمتر.
+  mm('mm', 'ملم'),
+
+  /// بوصة.
+  inch('in', 'بوصة'),
+
+  /// نقطة طباعة (72 نقطة = 1 بوصة).
+  pt('pt', 'نقطة');
+
+  const MeasurementUnit(this.jsonValue, this.labelAr);
+
+  final String jsonValue;
+  final String labelAr;
+
+  /// تحويل من قيمة قاعدة بيانات (مع الافتراض `cm`).
+  static MeasurementUnit fromJson(Object? value) {
+    final String needle = '${value ?? 'cm'}'.trim().toLowerCase();
+    return switch (needle) {
+      'mm' || 'مم' => MeasurementUnit.mm,
+      'in' || 'بوصة' => MeasurementUnit.inch,
+      'pt' || 'نقطة' => MeasurementUnit.pt,
+      _ => MeasurementUnit.cm,
+    };
+  }
+
+  /// التحويل من وحدة إلى نقطة فاحصة (نقطة). هذه النقاط هي ما يطعمه
+  /// محرّك الـ PDF فعلياً.
+  double toPoints(double value) => switch (this) {
+    MeasurementUnit.mm => value / 10 * 72,
+    MeasurementUnit.inch => value * 72,
+    MeasurementUnit.pt => value,
+    MeasurementUnit.cm => value / 2.54 * 72,
+  };
+
+  /// التحويل من نقطة فاحصة إلى هذه الوحدة.
+  double fromPoints(double value) => switch (this) {
+    MeasurementUnit.mm => value * 10 / 72,
+    MeasurementUnit.inch => value / 72,
+    MeasurementUnit.pt => value,
+    MeasurementUnit.cm => value * 2.54 / 72,
+  };
+}
+
 /// مستويات الاشتراك — مطابقة لقيود `CHECK` في قاعدة البيانات.
 enum SubscriptionTier {
   free('free', 'مجاني'),

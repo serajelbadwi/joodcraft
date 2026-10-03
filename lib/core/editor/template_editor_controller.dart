@@ -809,6 +809,28 @@ class TemplateEditorController extends ChangeNotifier {
     _mutate(_document.copyWith(orientation: orientation));
   }
 
+  /// الدخول المخصص (السماح للمستخدم بإدخال الأبعاد بالسم والمليمتر والبوصة).
+  void setCustomPageSize(double width, double height, MeasurementUnit unit) {
+    if (_document.customPageSize?.width == width &&
+        _document.customPageSize?.height == height &&
+        _document.customPageSize?.unit == unit) {
+      return;
+    }
+    _mutate(_document.copyWith(customPageSize: CustomPageSize(
+      width: width,
+      height: height,
+      unit: unit,
+    )));
+  }
+
+  /// المقاس الاسمي المُعروض في شريط الأدوات.
+  String get paperSizeLabel =>
+      _document.customPageSize != null
+          ? '${_document.customPageSize!.width.toStringAsFixed(2)} × '
+              '${_document.customPageSize!.height.toStringAsFixed(2)} '
+              '${_document.customPageSize!.unit.labelAr}'
+          : _document.paperSize.descriptionAr;
+
   void setBackgroundHex(String hex) {
     if (hex == _document.backgroundHex) return;
     _mutate(_document.copyWith(backgroundHex: hex));

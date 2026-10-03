@@ -6,6 +6,44 @@ import '../errors/app_error_code.dart';
 import '../errors/app_exception.dart';
 import 'template_element.dart';
 
+/// أبعاد دقيقة لمساحة التصميم تُخزَّن حين يختار المستخدم مقاساً مخصّصاً (بـ
+/// السنتيمتر/المليمتر/البوصة) وتُحوَّل إلى نقاط عند التصدير. يبقى المحرك
+/// مستخدماً لنقاط الطباعة بغض النظر عن الوحدة المحدّثة.
+class CustomPageSize {
+  const CustomPageSize({
+    required this.width,
+    required this.height,
+    required this.unit,
+  });
+
+  final double width;
+  final double height;
+  final MeasurementUnit unit;
+
+  /// عرض الصفحة بالنجوم في الوضع الرأسي (إشارة الاتجاه في PDF).
+  double get widthPt => unit.toPoints(width);
+
+  /// ارتفاع الصفحة بالنجوم في الوضع الرأسي.
+  double get heightPT => unit.toPoints(height);
+
+  /// عرض الصفحة بالنجوم في الوضع الأفقي (عند تدوير الورقة).
+  double get landscapeWidthPt => heightPT;
+
+  /// ارتفاع الصفحة بالنجوم في الوضع الأفقي.
+  double get landscapeHeightPt => widthPt;
+
+  CustomPageSize copyWith({
+    double? width,
+    double? height,
+    MeasurementUnit? unit,
+  }) =>
+      CustomPageSize(
+        width: width ?? this.width,
+        height: height ?? this.height,
+        unit: unit ?? this.unit,
+      );
+}
+
 /// مقاسات الورق المدعومة (بالنقاط).
 enum PaperSize {
   a4('a4', 'A4', 595.28, 841.89),
@@ -22,7 +60,18 @@ enum PaperSize {
   /// الارتفاع بالنقاط في الوضع الرأسي.
   final double heightPt;
 
+  /// الوصف العربي.
   String get descriptionAr => '$labelAr (${widthPt.round()}×${heightPt.round()}pt)';
+
+  /// واردات وحدات قياس الصيغ عند الطباعة (باستخدام نقاط→v). يُنفذ كدالة مساعدة.
+  static const Map<String, CustomPageSize> allPresets = <String, CustomPageSize>{
+    'a4': const CustomPageSize(width: 21.0, height: 29.7, unit: MeasurementUnit.cm),
+    'a3': const CustomPageSize(width: 29.7, height: 42.0, unit: MeasurementUnit.cm),
+    'a5': const CustomPageSize(width: 14.8, height: 21.0, unit: MeasurementUnit.cm),
+    'letter': const CustomPageSize(width: 8.5, height: 11.0, unit: MeasurementUnit.inch),
+    'legal': const CustomPageSize(width: 8.5, height: 14.0, unit: MeasurementUnit.inch),
+    'a4_us': const CustomPageSize(width: 8.5, height: 11.0, unit: MeasurementUnit.inch),
+  };
 
   static PaperSize fromJson(Object? value) {
     final String needle = '${value ?? 'a4'}'.trim().toLowerCase();
@@ -30,6 +79,17 @@ enum PaperSize {
       (PaperSize size) => size.jsonValue == needle,
       orElse: () => PaperSize.a4,
     );
+  }
+
+  /// وارد الدخول المخصصة — معاودة تحويلها إلى نقاط بدقة الفاحصة.
+  static CustomPageSize fromCustom(double width, double height, MeasurementUnit unit) {
+    if (width <= 0 || height <= 0) {
+      throw const AppException(
+        AppErrorCode.customPageSize,
+        message: 'الأبعاد المخصصة يجب أن تكون أرقاماً موجبة (وكبيراً من الصفر).',
+      );
+    }
+    return CustomPageSize(width: width, height: height, unit: unit);
   }
 }
 
@@ -49,10 +109,12 @@ class TemplateDocument {
     this.canvasWidth,
     this.canvasHeight,
     this.warnings = const <String>[],
+    this.customPageSize,
   });
 
   final int schemaVersion;
   final PaperSize paperSize;
+  final CustomPageSize? customPageSize;
   final PageOrientation orientation;
   final String backgroundHex;
   final List<TemplateElement> elements;
@@ -88,6 +150,14 @@ class TemplateDocument {
   double get pageHeightPt =>
       isLandscape ? paperSize.widthPt : paperSize.heightPt;
 
+  /// المقاس المُسلَّم بالوحدة المحدَّثة — إما مقاساً قياسياً (الملف `paper`) أو
+  /// مخصّصاً (الحقل `customPageSize`).
+  CustomPageSize get resolvedPageSize =>
+      customPageSize ??
+          (PaperSize.allPresets.containsKey(paperSize.jsonValue)
+              ? PaperSize.allPresets[paperSize.jsonValue]!
+              : const CustomPageSize(width: 21.0, height: 29.7, unit: MeasurementUnit.cm));
+
   /// عرض مساحة التصميم (وحدات التصميم = بكسل عند 96dpi).
   double get designWidth => canvasWidth ?? pageWidthPt * 96 / 72;
 
@@ -110,7 +180,7 @@ class TemplateDocument {
   /// تحويل صندوق من وحدات التصميم إلى مستطيل بنقاط الطباعة.
   ///
   /// **مصدر الحقيقة الوحيد** لتحويل الإحداثيات: يستخدمه محرّك الـ PDF، ويجب أن
-  /// يطابقه عرض المحرر (‎`CanvasGeometry`‎) — كلاهما تقريب خطّي يحفظ النِسب من
+  /// يطابقه عرض المحرر (`CanvasGeometry`) — كلاهما تقريب خطّي يحفظ النِسب من
   /// الزاوية العليا اليسرى. [box.width]/[box.height] = 0 يعني الامتداد (مقروء
   /// من المحرّك). الارتفاع الصفري يبقى صفراً ليقرّره المحرّك حسب نوع العنصر.
   Rect boxToPdfRect(ElementBox box) {
@@ -256,6 +326,15 @@ class TemplateDocument {
         final num value when value > 0 => value.toDouble(),
         _ => null,
       },
+      customPageSize: switch (canvas['paperSize']) {
+        final Map<String, dynamic> psz when psz.containsKey('width') && psz.containsKey('height') && psz.containsKey('unit') =>
+          CustomPageSize(
+            width: psz['width']?.toDouble() ?? 0,
+            height: psz['height']?.toDouble() ?? 0,
+            unit: MeasurementUnit.fromJson(psz['unit']),
+          ),
+        _ => null,
+      },
       warnings: warnings,
     );
   }
@@ -273,6 +352,12 @@ class TemplateDocument {
           'width': designWidth,
           'height': designHeight,
           'unit': 'px',
+          if (customPageSize != null)
+            'paperSize': <String, dynamic>{
+              'width': customPageSize!.width,
+              'height': customPageSize!.height,
+              'unit': customPageSize!.unit.jsonValue,
+            }
         },
         'elements': elements
             .map((TemplateElement element) => element.toJson())
@@ -302,7 +387,7 @@ class TemplateDocument {
   /// استبدال الحقول `{{key}}` بالقيم، مع الرجوع إلى `sampleData` ثم إلى فراغ.
   ///
   /// [keepUnknownTokens] يبقي الصيغة `{{key}}` كما هي عندما لا توجد قيمة —
-  /// وهذا ما يستخدمه **المحرر** حتى يرى المصمّم الحقول غير المعبّأة بدل فراغ
+  /// وهو ما يستخدمه **المحرر** حتى يرى المصمّم الحقول غير المعبّأة بدل فراغ
   /// صامت، بينما التوليد الفعلي (PDF) يتركها فراغاً.
   String resolveFields(
     String raw,
@@ -326,18 +411,19 @@ class TemplateDocument {
     Map<String, String>? assets,
     double? canvasWidth,
     double? canvasHeight,
-  }) {
-    return TemplateDocument(
-      schemaVersion: schemaVersion,
-      paperSize: paperSize ?? this.paperSize,
-      orientation: orientation ?? this.orientation,
-      backgroundHex: backgroundHex ?? this.backgroundHex,
-      elements: elements ?? this.elements,
-      sampleData: sampleData ?? this.sampleData,
-      assets: assets ?? this.assets,
-      canvasWidth: canvasWidth ?? this.canvasWidth,
-      canvasHeight: canvasHeight ?? this.canvasHeight,
-      warnings: warnings,
-    );
-  }
+    CustomPageSize? customPageSize,
+  }) =>
+      TemplateDocument(
+        schemaVersion: schemaVersion,
+        paperSize: paperSize ?? this.paperSize,
+        orientation: orientation ?? this.orientation,
+        backgroundHex: backgroundHex ?? this.backgroundHex,
+        sampleData: sampleData ?? this.sampleData,
+        assets: assets ?? this.assets,
+        canvasWidth: canvasWidth ?? this.canvasWidth,
+        canvasHeight: canvasHeight ?? this.canvasHeight,
+        customPageSize: customPageSize ?? this.customPageSize,
+        elements: elements ?? this.elements,
+        warnings: warnings,
+      );
 }

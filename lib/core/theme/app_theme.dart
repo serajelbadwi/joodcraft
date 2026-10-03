@@ -31,6 +31,7 @@ abstract final class AppTheme {
   /// سلم التباعد الموحّد (مضاعفات 4).
   static const double space2 = 2;
   static const double space4 = 4;
+  static const double space6 = 6;
   static const double space8 = 8;
   static const double space12 = 12;
   static const double space16 = 16;

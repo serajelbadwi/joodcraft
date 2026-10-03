@@ -7,9 +7,12 @@ import '../../assets/user_asset.dart';
 import '../../constants/app_constants.dart';
 import '../../constants/dynamic_fields.dart';
 import '../../models/template_element.dart';
+import '../../models/template_document.dart';
 import '../../pdf/pdf_font_catalog.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
+import '../../assets/asset_store.dart';
+import '../../constants/app_assets.dart';
 import '../element_factory.dart';
 import '../template_editor_controller.dart';
 import 'asset_library_picker.dart';
@@ -80,6 +83,7 @@ class _PropertyToolbarState extends State<PropertyToolbar> {
                 children: <Widget>[
                   _elementHeader(controller, element),
                   const SizedBox(height: AppTheme.space12),
+                  _pageSizeSection(controller),
                   _geometrySection(controller, element),
                   if (element is TextElement) ...<Widget>[
                     const SizedBox(height: AppTheme.space12),
@@ -316,6 +320,91 @@ class _PropertyToolbarState extends State<PropertyToolbar> {
           tooltip: 'إلغاء التحديد',
           onPressed: controller.clearSelection,
         ),
+      ],
+    );
+  }
+
+  // ==========================================================================
+  //  إعدادات الصفحة (المقاس + الوحدة)
+  // ==========================================================================
+  Widget _pageSizeSection(TemplateEditorController controller) {
+    return ControlSection(
+      icon: Icons.pageview_rounded,
+      label: 'إعدادات الصفحة',
+      children: <Widget>[
+        if (controller.document.customPageSize == null)
+          DropdownField<PaperSize>(
+            label: 'المقاس',
+            value: controller.document.paperSize,
+            items: PaperSize.values,
+            labelOf: (PaperSize size) => size.labelAr,
+            onChanged: controller.setPaperSize,
+          )
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: DropdownField<MeasurementUnit>(
+                      label: 'الوحدة',
+                      value: controller.document.customPageSize!.unit,
+                      items: MeasurementUnit.values,
+                      labelOf: (MeasurementUnit unit) => unit.labelAr,
+                      onChanged: (MeasurementUnit unit) =>
+                          controller.setCustomPageSize(
+                            controller.document.customPageSize!.width,
+                            controller.document.customPageSize!.height,
+                            unit,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: NumberField(
+                      label: 'العرض',
+                      value: controller.document.customPageSize!.width,
+                      min: 1,
+                      max: 500,
+                      decimals: 2,
+                      onChanged: (double width) =>
+                          controller.setCustomPageSize(
+                            width,
+                            controller.document.customPageSize!.height,
+                            controller.document.customPageSize!.unit,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: NumberField(
+                      label: 'الارتفاع',
+                      value: controller.document.customPageSize!.height,
+                      min: 1,
+                      max: 500,
+                      decimals: 2,
+                      onChanged: (double height) =>
+                          controller.setCustomPageSize(
+                            controller.document.customPageSize!.width,
+                            height,
+                            controller.document.customPageSize!.unit,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                '${controller.document.customPageSize!.width.toStringAsFixed(2)} '
+                '× ${controller.document.customPageSize!.height.toStringAsFixed(2)} '
+                '${controller.document.customPageSize!.unit.labelAr} '
+                '→ ${controller.paperSizeLabel}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontFamily: AppAssets.cairoFont,
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }

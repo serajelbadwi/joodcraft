@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 import '../../assets/asset_image_cache.dart';
 import '../../assets/embedded_assets.dart';
 import '../../assets/user_asset.dart';
+import '../../constants/app_assets.dart';
 import '../../constants/app_constants.dart';
 import '../../errors/app_exception.dart';
 import '../../models/template_document.dart';
@@ -20,6 +21,7 @@ import '../../templates/template_repository.dart';
 import '../../templates/unsaved_changes_guard.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
+import '../../assets/asset_store.dart';
 import '../../utils/ui_feedback.dart';
 import '../../widgets/pdf_template_preview.dart';
 import '../element_factory.dart';
@@ -321,14 +323,85 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                             : Icons.crop_portrait_rounded,
                     onChanged: _controller.setOrientation,
                   ),
-                  DropdownField<PaperSize>(
-                    label: 'المقاس',
-                    value: _controller.document.paperSize,
-                    items: PaperSize.values,
-                    labelOf: (PaperSize size) => size.labelAr,
-                    width: 120,
-                    onChanged: _controller.setPaperSize,
-                  ),
+                  // شريط إعدادات الصفحة المتجاوز (أفقي) — خيارات المقاسات القياسية
+  // ومقاس مخصّص بالسنتيمتر/المليمتر/البوصة مع التحويل التلقائي إلى نقاط.
+  if (_controller.document.customPageSize == null)
+    Wrap(
+      spacing: AppTheme.space8,
+      runSpacing: AppTheme.space8,
+      children: <Widget>[
+        DropdownField<PaperSize>(
+          label: 'المقاس',
+          value: _controller.document.paperSize,
+          items: PaperSize.values,
+          labelOf: (PaperSize size) => size.labelAr,
+          width: 110,
+          onChanged: _controller.setPaperSize,
+        ),
+      ],
+    )
+  else
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: DropdownField<MeasurementUnit>(
+                label: 'الوحدة',
+                value: _controller.document.customPageSize!.unit,
+                items: MeasurementUnit.values,
+                labelOf: (MeasurementUnit unit) => unit.labelAr,
+                width: 110,
+                onChanged: (MeasurementUnit unit) => _controller.setCustomPageSize(
+                  _controller.document.customPageSize!.width,
+                  _controller.document.customPageSize!.height,
+                  unit,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: NumberField(
+                label: 'العرض (cm)',
+                value: _controller.document.customPageSize!.width,
+                min: 1,
+                max: 500,
+                decimals: 2,
+                onChanged: (double width) => _controller.setCustomPageSize(
+                  width,
+                  _controller.document.customPageSize!.height,
+                  _controller.document.customPageSize!.unit,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: NumberField(
+                label: 'الارتفاع (cm)',
+                value: _controller.document.customPageSize!.height,
+                min: 1,
+                max: 500,
+                decimals: 2,
+                onChanged: (double height) => _controller.setCustomPageSize(
+                  _controller.document.customPageSize!.width,
+                  height,
+                  _controller.document.customPageSize!.unit,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Text(
+          '${_controller.document.customPageSize!.width.toStringAsFixed(2)} × '
+          '${_controller.document.customPageSize!.height.toStringAsFixed(2)} '
+          '→ ${_controller.paperSizeLabel}',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontFamily: AppAssets.cairoFont,
+          ),
+        ),
+      ],
+    ),
                   IconAction(
                     icon: Icons.undo_rounded,
                     tooltip: 'تراجع (Ctrl+Z)',
