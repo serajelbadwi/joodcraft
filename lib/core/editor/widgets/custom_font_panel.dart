@@ -82,7 +82,14 @@ class CustomFontSection extends StatelessWidget {
   }
 
   Widget _picker(BuildContext context, CustomFontController fonts) {
-    final List<String> keys = <String>['', ...fonts.families];
+    // مفتاح فارغ = الخط المضمّن، ثم الخطوط المرفوعة، ثم خطوط النظام (Windows).
+    final List<String> keys = <String>[
+      '',
+      ...fonts.families,
+      ...fonts.systemFamilies.where(
+        (String family) => !fonts.families.contains(family),
+      ),
+    ];
     if (selected != null &&
         selected!.trim().isNotEmpty &&
         !keys.contains(selected)) {
@@ -107,8 +114,21 @@ class CustomFontSection extends StatelessWidget {
       labelOf: (String key) => key.isEmpty
           ? (context.l10n?.cfpBuiltinOption ?? 'بلا (الخط المضمّن)')
           : fonts.displayNameOf(key),
-      onChanged: (String value) => onChanged(value.isEmpty ? null : value),
+      onChanged: (String value) => _select(fonts, value),
     );
+  }
+
+  /// يوجّه اختيار الخط: خط النظام يُحمَّل ديناميكياً أولاً، ثم يُبلَّغ الأب.
+  Future<void> _select(CustomFontController fonts, String value) async {
+    if (value.isEmpty) {
+      onChanged(null);
+      return;
+    }
+    // عائلات المستخدم تحمل البادئة التقنية؛ ما عداها خط نظام.
+    if (!value.startsWith(CustomFontFace.familyPrefix)) {
+      await fonts.registerSystemFont(value);
+    }
+    onChanged(value);
   }
 }
 

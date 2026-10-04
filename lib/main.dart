@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'app/app.dart';
@@ -22,6 +24,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await CustomFontController.instance.restore();
+
+  // خطوط النظام (Windows) تُفحص في الخلفية فلا تؤخّر الإقلاع؛ تظهر في منتقي
+  // الخطوط بمجرّد انتهاء الفحص. على الويب/الجوال لا تفعل شيئاً.
+  unawaited(CustomFontController.instance.scanSystemFonts());
 
   // مكتبة الأصول (الشعار/الختم/التوقيع) محلية أيضاً — تُستعاد قبل الواجهة.
   await AssetsController.instance.restore();

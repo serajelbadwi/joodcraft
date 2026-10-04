@@ -9,6 +9,8 @@ import '../pdf/custom_pdf_fonts.dart';
 import 'custom_font_face.dart';
 import 'custom_font_store.dart';
 import 'font_inspector.dart';
+import 'system_font_font_loader.dart';
+import 'windows_system_font_service.dart';
 
 /// نتيجة إضافة خط مخصص — تحمل التحذيرات غير المُعطِّلة لعرضها للمستخدم.
 class CustomFontAddResult {
@@ -68,6 +70,12 @@ class CustomFontController extends ChangeNotifier {
   /// لذلك نتتبّعها هنا حتى لا نكرّرها (التكرار يرمي استثناء).
   static final Set<String> _uiRegistered = <String>{};
 
+  /// عائلات خطوط النظام المكتشفة (Windows فقط) — تُعرض في منتقي الخطوط.
+  List<String> _systemFamilies = const <String>[];
+
+  /// هل جرى فحص خطوط النظام مرة واحدة على الأقل؟
+  bool _systemFontsScanned = false;
+
   bool _restored = false;
   bool get isRestored => _restored;
 
@@ -120,6 +128,76 @@ class CustomFontController extends ChangeNotifier {
 
   /// هل الخط مسجَّل وجاهز في الواجهة؟
   bool isRegisteredWithUi(String family) => _uiRegistered.contains(family);
+
+  /// عائلات خطوط النظام المكتشفة على هذا الجهاز (Windows).
+  List<String> get systemFamilies => _systemFamilies;
+
+  bool get hasSystemFonts => _systemFamilies.isNotEmpty;
+
+  // ==========================================================================
+  //  خطوط النظام (Windows)
+  // ==========================================================================
+
+  /// يفحص خطوط النظام المثبتة ويملأ [systemFamilies] بها.
+  ///
+  /// آمن للاستدعاء أكثر من مرة (يعمل مرة واحدة إلا مع `force`)، ولا يرمي:
+  /// على الويب/الجوال يبقى الفراغ فوراً بلا أي خطأ.
+  Future<void> scanSystemFonts({bool force = false}) async {
+    if (_systemFontsScanned && !force) return;
+    _systemFontsScanned = true;
+    if (!WindowsSystemFontService.isSupported) return;
+    try {
+      final WindowsFontDiscoveryResult result =
+          await WindowsSystemFontService.discover(
+        onError: (String source, String error) => debugPrint(
+          '[الخطوط المخصصة] فحص خطوط النظام ($source): $error',
+        ),
+      );
+      _systemFamilies = result.families
+          .where((WindowsSystemFontFamily f) => f.filePaths.isNotEmpty)
+          .map((WindowsSystemFontFamily f) => f.displayName)
+          .toList(growable: false);
+    } on Object catch (error) {
+      debugPrint('[الخطوط المخصصة] تعذّر فحص خطوط النظام: $error');
+    }
+    notifyListeners();
+  }
+
+  /// يسجّل عائلة خط نظام في محرّك خطوط فلاتر عند اختيارها (تحميل ديناميكي).
+  ///
+  /// يُرجع `true` عند الجهوزية للرسم. يُضاف الخط لمحرّك الطباعة أيضاً متى كان
+  /// TrueType؛ خطوط النظام قد تكون CFF فلا يقبلها المحرّك — نتعامل مع الفشل
+  /// بهدوء بدل الانهيار.
+  Future<bool> registerSystemFont(String family) async {
+    final String normalized = family.trim();
+    if (normalized.isEmpty) return false;
+    if (_uiRegistered.contains(normalized)) return true;
+
+    final SystemFontLoadResult? loaded =
+        await SystemFontFontLoader.loadSystemFont(
+      normalized,
+      onError: (String error) =>
+          debugPrint('[الخطوط المخصصة] $error'),
+    );
+    if (loaded == null) return false;
+
+    _uiRegistered.add(normalized);
+
+    try {
+      final bytes = loaded.byteData.buffer.asUint8List(
+        loaded.byteData.offsetInBytes,
+        loaded.byteData.lengthInBytes,
+      );
+      CustomPdfFonts.register(normalized, bytes);
+    } on Object catch (error) {
+      debugPrint(
+        '[الخطوط المخصصة] تعذّر تسجيل «$normalized» في الطباعة: $error',
+      );
+    }
+
+    notifyListeners();
+    return true;
+  }
 
   // ==========================================================================
   //  الاستعادة عند بدء التشغيل
