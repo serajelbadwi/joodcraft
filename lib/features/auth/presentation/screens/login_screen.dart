@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await auth.signIn(email: _email.text, password: _password.text);
       if (!mounted) return;
-      context.showSuccess('مرحباً بك في جودكرافت.');
+      context.showSuccess(context.l10n?.authWelcomeBack ?? 'مرحباً بك في جودكرافت.');
     } on AppException catch (error) {
       if (!mounted) return;
       context.showError(error.message);
@@ -62,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await context.read<AuthProvider>().sendPasswordReset(email);
       if (!mounted) return;
-      context.showSuccess('تم إرسال رابط الاستعادة. تحقّق من بريدك الإلكتروني.');
+      context.showSuccess(context.l10n?.authResetLinkSent ?? 'تم إرسال رابط الاستعادة. تحقّق من بريدك الإلكتروني.');
     } on AppException catch (error) {
       if (!mounted) return;
       context.showError(error.message);
@@ -75,20 +76,20 @@ class _LoginScreenState extends State<LoginScreen> {
     final bool busy = auth.isBusy;
 
     return AuthScaffold(
-      title: 'تسجيل الدخول',
-      subtitle: 'بريدك الإلكتروني وكلمة المرور للمتابعة إلى لوحة التحكم.',
+      title: context.l10n?.authLogin ?? 'تسجيل الدخول',
+      subtitle: context.l10n?.authLoginSubtitle ?? 'بريدك الإلكتروني وكلمة المرور للمتابعة إلى لوحة التحكم.',
       // Wrap (لا Row) حتى لا يتجاوز السطر عرض النافذة الضيقة.
       footer: Wrap(
         alignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
           Text(
-            'ليس لديك حساب؟',
+            context.l10n?.authNoAccount ?? 'ليس لديك حساب؟',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           TextButton(
             onPressed: busy ? null : () => context.go(AppRoutes.register),
-            child: const Text('أنشئ حساباً جديداً'),
+            child: Text(context.l10n?.authCreateAccountLink ?? 'أنشئ حساباً جديداً'),
           ),
         ],
       ),
@@ -107,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
             AppTextField(
               controller: _email,
-              label: 'البريد الإلكتروني',
+              label: context.l10n?.authEmail ?? 'البريد الإلكتروني',
               hint: 'name@organization.com',
               prefixIcon: Icons.alternate_email_rounded,
               keyboardType: TextInputType.emailAddress,
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: AppTheme.space20),
             AppTextField(
               controller: _password,
-              label: 'كلمة المرور',
+              label: context.l10n?.authPassword ?? 'كلمة المرور',
               hint: '••••••••',
               prefixIcon: Icons.lock_outline_rounded,
               obscure: true,
@@ -136,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
               alignment: AlignmentDirectional.centerStart,
               child: TextButton(
                 onPressed: busy ? null : _openResetPasswordDialog,
-                child: const Text('نسيت كلمة المرور؟'),
+                child: Text(context.l10n?.authForgotPassword ?? 'نسيت كلمة المرور؟'),
               ),
             ),
             const SizedBox(height: AppTheme.space16),
@@ -150,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppColors.navy,
                       ),
                     )
-                  : const Text('دخول إلى اللوحة'),
+                  : Text(context.l10n?.authEnterDashboard ?? 'دخول إلى اللوحة'),
             ),
           ],
         ),
@@ -189,7 +190,7 @@ class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('استعادة كلمة المرور'),
+      title: Text(context.l10n?.authResetPassword ?? 'استعادة كلمة المرور'),
       content: SizedBox(
         width: 380,
         child: Form(
@@ -199,13 +200,13 @@ class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور.',
+                context.l10n?.authResetPasswordHint ?? 'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور.',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: AppTheme.space20),
               AppTextField(
                 controller: _email,
-                label: 'البريد الإلكتروني',
+                label: context.l10n?.authEmail ?? 'البريد الإلكتروني',
                 hint: 'name@organization.com',
                 prefixIcon: Icons.alternate_email_rounded,
                 keyboardType: TextInputType.emailAddress,
@@ -220,12 +221,12 @@ class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('إلغاء'),
+          child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
         ),
         FilledButton(
           style: FilledButton.styleFrom(minimumSize: const Size(120, 44)),
           onPressed: _submit,
-          child: const Text('إرسال الرابط'),
+          child: Text(context.l10n?.authSendLink ?? 'إرسال الرابط'),
         ),
       ],
     );

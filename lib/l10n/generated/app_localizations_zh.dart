@@ -616,4 +616,478 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get paletteLogo => '标志/签名';
+
+  @override
+  String get evSignatureEmptyLabel => '空签名';
+
+  @override
+  String get evSignatureEmptyDetail => '添加职务、姓名和签名图片';
+
+  @override
+  String get evSignatureMissingLabel => '缺少签名';
+
+  @override
+  String get evUploadToLibraryDetail => '将图片上传到素材库';
+
+  @override
+  String get evImageNotFoundLabel => '找不到图片';
+
+  @override
+  String get evNoFileLabel => '未选择文件';
+
+  @override
+  String get evChooseFromAssetsDetail => '从素材库中选择图片';
+
+  @override
+  String get evAssetMissingLabel => '缺少素材';
+
+  @override
+  String get evReselectAssetDetail => '从素材库重新选择边框/素材';
+
+  @override
+  String get evInvalidImageLabel => '无效图片';
+
+  @override
+  String get evRenderDataFailedDetail => '无法显示数据';
+
+  @override
+  String get evInvalidDataLabel => '无效数据';
+
+  @override
+  String get evDecodeFailedDetail => '无法解码图片';
+
+  @override
+  String get evEmptyQrLabel => '空编码';
+
+  @override
+  String get evEmptyQrDetail => '在属性栏中输入编码值';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return '不支持的元素：$type';
+  }
+
+  @override
+  String get alpFilterAll => '全部';
+
+  @override
+  String get alpEmptyHint => '所需类型的已上传素材为空。请从“素材与签名”部分上传边框或标志，然后重试。';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return '没有“$type”类型的素材。';
+  }
+
+  @override
+  String get authWelcomeBack => '欢迎使用 JoodCraft。';
+
+  @override
+  String get authResetLinkSent => '重置链接已发送。请检查您的电子邮箱。';
+
+  @override
+  String get authLogin => '登录';
+
+  @override
+  String get authLoginSubtitle => '您的电子邮箱和密码，继续进入控制面板。';
+
+  @override
+  String get authNoAccount => '还没有账户？';
+
+  @override
+  String get authCreateAccountLink => '创建新账户';
+
+  @override
+  String get authConfirmEmailThenLogin => '您的账户已创建。请先确认电子邮箱，然后登录。';
+
+  @override
+  String get authEmail => '电子邮箱';
+
+  @override
+  String get authPassword => '密码';
+
+  @override
+  String get authForgotPassword => '忘记密码？';
+
+  @override
+  String get authEnterDashboard => '进入控制面板';
+
+  @override
+  String get authResetPassword => '重置密码';
+
+  @override
+  String get authResetPasswordHint => '输入您的电子邮箱，我们将向您发送密码重置链接。';
+
+  @override
+  String get authSendLink => '发送链接';
+
+  @override
+  String get authConfirmEmailMessage => '您的账户已创建。请查收邮件确认账户，然后登录。';
+
+  @override
+  String get authAccountCreatedWelcome => '您的账户已创建。欢迎使用 JoodCraft。';
+
+  @override
+  String get authCreateAccount => '创建账户';
+
+  @override
+  String get authRegisterSubtitle => '您的账户会保存模板和素材（标志、签名、印章），以便在所有项目中重复使用。';
+
+  @override
+  String get authHaveAccount => '已经有账户？';
+
+  @override
+  String get authFullName => '全名';
+
+  @override
+  String get authFullNameHint => '例如：阿卜杜拉·艾哈迈德';
+
+  @override
+  String get authName => '姓名';
+
+  @override
+  String get authOrgName => '机构名称（可选）';
+
+  @override
+  String get authOrgNameHint => '例如：Jood 慈善协会';
+
+  @override
+  String get authOrgHelper => '自动打印在证书和合同上。';
+
+  @override
+  String get authOrgNameShort => '机构名称';
+
+  @override
+  String get authPasswordHint => '至少 8 个字符';
+
+  @override
+  String authPasswordRule(Object min) {
+    return '使用至少 $min 个字符，包含数字和符号。';
+  }
+
+  @override
+  String get authConfirmPassword => '确认密码';
+
+  @override
+  String get authCreateAccountButton => '创建账户';
+
+  @override
+  String get authFeatureLocalExcel => 'Excel 文件全程本地处理——数据绝不离开设备';
+
+  @override
+  String get authFeaturePdf => '使用高质量阿拉伯字体生成 PDF，全面支持 RTL';
+
+  @override
+  String get authFeatureTemplates => '您的模板保存在账户中，随时可重复使用';
+
+  @override
+  String get authTagline => '您的正式证书和合同……放心打印。';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • 版本 $version';
+  }
+
+  @override
+  String get dashModules => '平台模块';
+
+  @override
+  String dashWelcome(Object name) {
+    return '欢迎，$name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return '订阅：$tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return '机构：$name';
+  }
+
+  @override
+  String get dashOrgMissing => '您尚未设置机构名称——它将自动打印在证书和合同上。';
+
+  @override
+  String get dashOpenModule => '打开模块';
+
+  @override
+  String get dashRoadmapSupabase => '搭建 Supabase 数据库（表 + RLS + 触发器）';
+
+  @override
+  String get dashRoadmapModular => '可扩展的模块化 Feature-First 架构';
+
+  @override
+  String get dashRoadmapTheme => '品牌视觉主题，使用 Cairo 字体并支持 RTL';
+
+  @override
+  String get dashRoadmapAuth => '身份验证：登录、创建账户和重置密码';
+
+  @override
+  String get dashPhaseOneDone => '第一阶段已完成';
+
+  @override
+  String get dashNextPhase => '接下来：离线 PDF 引擎和阿拉伯字体，然后是可视化模板编辑器。';
+
+  @override
+  String get destDashboard => '控制面板';
+
+  @override
+  String get destDashboardDesc => '项目和模板概览。';
+
+  @override
+  String get destCertificates => '证书引擎';
+
+  @override
+  String get destCertificatesDesc => '从可编辑模板设计横向证书。';
+
+  @override
+  String get destContracts => '合同引擎';
+
+  @override
+  String get destContractsDesc => '使用动态字段起草纵向合同。';
+
+  @override
+  String get destBatch => '批量生成';
+
+  @override
+  String get destBatchDesc => '在本地读取 Excel 文件，一次生成数百份证书。';
+
+  @override
+  String get destTemplates => '模板库';
+
+  @override
+  String get destTemplatesDesc => '管理、分类并重复使用已保存的模板。';
+
+  @override
+  String get destAssets => '素材与签名';
+
+  @override
+  String get destAssetsDesc => '您的标志、印章、签名和边框。';
+
+  @override
+  String get dashUser => '用户';
+
+  @override
+  String get dashLogoutSuccess => '您已成功退出登录。';
+
+  @override
+  String get dashLogoutError => '无法退出登录。请重试。';
+
+  @override
+  String get commonSave => '保存';
+
+  @override
+  String get commonPreview => '预览';
+
+  @override
+  String get commonOptions => '选项';
+
+  @override
+  String get tplDelete => '删除';
+
+  @override
+  String get tplSortRecentlyUpdated => '最近修改';
+
+  @override
+  String get tplSortTitleAsc => '名称（A–Z）';
+
+  @override
+  String get tplSortLabel => '排序';
+
+  @override
+  String get tplSubtitle => '专业现成模板 + 您保存的模板——搜索、筛选、打开和导入，完全离线。';
+
+  @override
+  String get tplRefreshTooltip => '刷新列表';
+
+  @override
+  String get tplSearchHint => '搜索模板……';
+
+  @override
+  String get tplNoResultsTitle => '无匹配结果';
+
+  @override
+  String get tplNoResultsMessage => '尝试其他搜索词或重置筛选条件。';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return '已将“$title”添加到您的本地模板。';
+  }
+
+  @override
+  String get tplCloudRequiresConnection => '将模板保存到云端需要连接 Supabase 项目。请改为保存在本地。';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return '已将“$title”保存到云端。';
+  }
+
+  @override
+  String get tplRenamed => '模板已重命名。';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title（副本）';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return '已创建“$title”的副本。';
+  }
+
+  @override
+  String get tplNowPrivate => '模板现在为私有。';
+
+  @override
+  String get tplNowPublic => '模板现在为公开（他人只读）。';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return '将从云端永久删除“$title”。此操作不可撤销。';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return '模板“$title”已删除。';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return '将从本设备删除“$title”。原始现成模板仍可在模板库中使用。';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return '本地模板“$title”已删除。';
+  }
+
+  @override
+  String get tplDeleteTitle => '删除模板';
+
+  @override
+  String get tplRenameTitle => '模板标题';
+
+  @override
+  String get tplFieldTitle => '标题';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return '预览：$title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count 个模板';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return '无法加载云端模板：$message';
+  }
+
+  @override
+  String get tplPublicBadge => '公开模板';
+
+  @override
+  String get tplOrientationLandscape => '横向';
+
+  @override
+  String get tplOrientationPortrait => '纵向';
+
+  @override
+  String get tplPresetOffline => '现成模板 • 可离线使用';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return '架构 v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => '作为模板打开';
+
+  @override
+  String get tplOpen => '打开';
+
+  @override
+  String get tplUseInBatch => '用于批量生成';
+
+  @override
+  String get tplImportLocal => '本地导入';
+
+  @override
+  String get tplSaveToCloud => '保存到云端';
+
+  @override
+  String get tplDeleteLocal => '本地删除';
+
+  @override
+  String get tplRename => '重命名';
+
+  @override
+  String get tplMakePrivate => '设为私有';
+
+  @override
+  String get tplMakePublic => '设为公开';
+
+  @override
+  String get tplNoDate => '无日期';
+
+  @override
+  String get amSubtitle => '一次上传标志、印章和签名，然后插入到任意模板——保存在设备上并离线复用。';
+
+  @override
+  String get amSearchHint => '搜索素材……';
+
+  @override
+  String get amTypeLabel => '类型';
+
+  @override
+  String get amUploadTooltip => '上传新素材';
+
+  @override
+  String get amUpload => '上传素材';
+
+  @override
+  String get amEmptyTitle => '还没有素材';
+
+  @override
+  String get amEmptyMessage => '上传您机构的标志、签名或印章，然后从图片属性栏插入任意模板。';
+
+  @override
+  String get amNoResultsMessage => '尝试其他名称或重置筛选条件。';
+
+  @override
+  String get amRenamed => '素材已重命名。';
+
+  @override
+  String amMovedToType(Object type) {
+    return '素材已移至“$type”。';
+  }
+
+  @override
+  String get amDeleteTitle => '删除素材';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return '将从本设备删除“$name”。使用它的模板将丢失图片（不会导致打印失败）。';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return '素材“$name”已删除。';
+  }
+
+  @override
+  String get amRenameTitle => '重命名素材';
+
+  @override
+  String amCount(Object count) {
+    return '$count 个素材';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return '设为类型：$type';
+  }
 }

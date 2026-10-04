@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../../../core/utils/validators.dart';
@@ -56,11 +57,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (outcome.requiresEmailConfirmation) {
         context.showSuccess(
-          'تم إنشاء حسابك. تحقّق من بريدك الإلكتروني لتأكيد الحساب ثم سجّل الدخول.',
+          context.l10n?.authConfirmEmailMessage ?? 'تم إنشاء حسابك. تحقّق من بريدك الإلكتروني لتأكيد الحساب ثم سجّل الدخول.',
         );
         context.go(AppRoutes.login);
       } else {
-        context.showSuccess('تم إنشاء حسابك. أهلاً بك في جودكرافت.');
+        context.showSuccess(context.l10n?.authAccountCreatedWelcome ?? 'تم إنشاء حسابك. أهلاً بك في جودكرافت.');
       }
     } on AppException catch (error) {
       if (!mounted) return;
@@ -73,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final bool busy = context.watch<AuthProvider>().isBusy;
 
     return AuthScaffold(
-      title: 'إنشاء حساب',
+      title: context.l10n?.authCreateAccount ?? 'إنشاء حساب',
       subtitle: 'حسابك يحفظ قوالبك وأصولك (الشعار، التوقيع، الختم) لإعادة '
           'استخدامها في كل مشاريعك.',
       // Wrap (لا Row) حتى لا يتجاوز السطر عرض النافذة الضيقة.
@@ -82,12 +83,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
           Text(
-            'لديك حساب بالفعل؟',
+            context.l10n?.authHaveAccount ?? 'لديك حساب بالفعل؟',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           TextButton(
             onPressed: busy ? null : () => context.go(AppRoutes.login),
-            child: const Text('تسجيل الدخول'),
+            child: Text(context.l10n?.authLogin ?? 'تسجيل الدخول'),
           ),
         ],
       ),
@@ -98,31 +99,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
           children: <Widget>[
             AppTextField(
               controller: _fullName,
-              label: 'الاسم الكامل',
-              hint: 'مثال: عبدالله الأحمد',
+              label: context.l10n?.authFullName ?? 'الاسم الكامل',
+              hint: context.l10n?.authFullNameHint ?? 'مثال: عبدالله الأحمد',
               prefixIcon: Icons.person_outline_rounded,
               textInputAction: TextInputAction.next,
               autofillHints: const <String>[AutofillHints.name],
               enabled: !busy,
               validator: (String? value) =>
-                  Validators.displayName(value, fieldName: 'الاسم'),
+                  Validators.displayName(value, fieldName: context.l10n?.authName ?? 'الاسم'),
             ),
             const SizedBox(height: AppTheme.space16),
             AppTextField(
               controller: _organization,
-              label: 'اسم الجهة / المؤسسة (اختياري)',
-              hint: 'مثال: جمعية جود الخيرية',
+              label: context.l10n?.authOrgName ?? 'اسم الجهة / المؤسسة (اختياري)',
+              hint: context.l10n?.authOrgNameHint ?? 'مثال: جمعية جود الخيرية',
               prefixIcon: Icons.apartment_rounded,
               textInputAction: TextInputAction.next,
               enabled: !busy,
-              helperText: 'يُطبع على الشهادات والعقود تلقائياً.',
+              helperText: context.l10n?.authOrgHelper ?? 'يُطبع على الشهادات والعقود تلقائياً.',
               validator: (String? value) =>
-                  Validators.optionalName(value, fieldName: 'اسم الجهة'),
+                  Validators.optionalName(value, fieldName: context.l10n?.authOrgNameShort ?? 'اسم الجهة'),
             ),
             const SizedBox(height: AppTheme.space16),
             AppTextField(
               controller: _email,
-              label: 'البريد الإلكتروني',
+              label: context.l10n?.authEmail ?? 'البريد الإلكتروني',
               hint: 'name@organization.com',
               prefixIcon: Icons.alternate_email_rounded,
               keyboardType: TextInputType.emailAddress,
@@ -135,8 +136,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: AppTheme.space16),
             AppTextField(
               controller: _password,
-              label: 'كلمة المرور',
-              hint: '8 أحرف على الأقل',
+              label: context.l10n?.authPassword ?? 'كلمة المرور',
+              hint: context.l10n?.authPasswordHint ?? '8 أحرف على الأقل',
               prefixIcon: Icons.lock_outline_rounded,
               obscure: true,
               textInputAction: TextInputAction.next,
@@ -150,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: AppTheme.space16),
             AppTextField(
               controller: _confirmPassword,
-              label: 'تأكيد كلمة المرور',
+              label: context.l10n?.authConfirmPassword ?? 'تأكيد كلمة المرور',
               hint: '••••••••',
               prefixIcon: Icons.lock_reset_rounded,
               obscure: true,
@@ -169,7 +170,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       dimension: 20,
                       child: CircularProgressIndicator(strokeWidth: 2.2),
                     )
-                  : const Text('إنشاء الحساب'),
+                  : Text(context.l10n?.authCreateAccountButton ?? 'إنشاء الحساب'),
             ),
           ],
         ),

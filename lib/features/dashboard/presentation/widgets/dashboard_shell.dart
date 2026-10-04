@@ -83,8 +83,7 @@ class _DashboardShellState extends State<DashboardShell> {
               Expanded(
                 child: Column(
                   children: <Widget>[
-                    _TopBar(
-                      destination: destinationForPath(path),
+                    _TopBar(                       destination: destinationForPath(context, path),
                       onMenuTap: showDrawer
                           ? () => _scaffoldKey.currentState?.openDrawer()
                           : null,
@@ -141,9 +140,10 @@ class _Sidebar extends StatelessWidget {
                 horizontal: AppTheme.space8,
                 vertical: AppTheme.space8,
               ),
-              itemCount: dashboardDestinations.length,
+              itemCount: dashboardDestinations(context).length,
               itemBuilder: (BuildContext context, int index) {
-                final DashboardDestination item = dashboardDestinations[index];
+                final DashboardDestination item =
+                    dashboardDestinations(context)[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppTheme.space4),
                   child: _SidebarItem(
@@ -170,7 +170,9 @@ class _Sidebar extends StatelessWidget {
                   )
                 : _AccountTile(
                     onSignOut: () => _signOut(context),
-                    name: auth.user?.displayName ?? 'مستخدم',
+                    name: auth.user?.displayName ??
+                        context.l10n?.dashUser ??
+                        'مستخدم',
                     email: auth.user?.email ?? '',
                     initials: auth.user?.initials ?? 'JC',
                   ),
@@ -185,10 +187,10 @@ class _Sidebar extends StatelessWidget {
     try {
       await auth.signOut();
       if (!context.mounted) return;
-      context.showSuccess('تم تسجيل الخروج بنجاح.');
+      context.showSuccess(context.l10n?.dashLogoutSuccess ?? 'تم تسجيل الخروج بنجاح.');
     } on Object {
       if (!context.mounted) return;
-      context.showError('تعذّر تسجيل الخروج. حاول مرة أخرى.');
+      context.showError(context.l10n?.dashLogoutError ?? 'تعذّر تسجيل الخروج. حاول مرة أخرى.');
     }
   }
 }

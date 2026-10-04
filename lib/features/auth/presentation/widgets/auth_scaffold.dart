@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/joodcraft_logo.dart';
@@ -71,15 +72,17 @@ class AuthScaffold extends StatelessWidget {
 class _BrandPanel extends StatelessWidget {
   const _BrandPanel();
 
-  static const List<String> _features = <String>[
-    'معالجة محلية كاملة لملفات Excel — بياناتك لا تغادر جهازك',
-    'توليد PDF بخطوط عربية عالية الجودة مع دعم كامل للاتجاه RTL',
-    'قوالبك محفوظة في حسابك وجاهزة لإعادة الاستخدام',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final TextTheme text = Theme.of(context).textTheme;
+    final List<String> features = <String>[
+      context.l10n?.authFeatureLocalExcel ??
+          'معالجة محلية كاملة لملفات Excel — بياناتك لا تغادر جهازك',
+      context.l10n?.authFeaturePdf ??
+          'توليد PDF بخطوط عربية عالية الجودة مع دعم كامل للاتجاه RTL',
+      context.l10n?.authFeatureTemplates ??
+          'قوالبك محفوظة في حسابك وجاهزة لإعادة الاستخدام',
+    ];
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -137,7 +140,8 @@ class _BrandPanel extends StatelessWidget {
                 const JoodCraftWordmark(markSize: 56, onDark: true),
                 const Spacer(),
                 Text(
-                  'شهاداتك وعقودك الرسمية…\nبجودة تُطبع بثقة.',
+                  context.l10n?.authTagline ??
+                      'شهاداتك وعقودك الرسمية…\nبجودة تُطبع بثقة.',
                   style: text.displaySmall?.copyWith(
                     color: AppColors.onNavy,
                     height: 1.5,
@@ -153,7 +157,7 @@ class _BrandPanel extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppTheme.space32),
-                for (final String feature in _features)
+                for (final String feature in features)
                   Padding(
                     padding: const EdgeInsets.only(bottom: AppTheme.space12),
                     child: Row(
@@ -182,7 +186,11 @@ class _BrandPanel extends StatelessWidget {
                   ),
                 const Spacer(),
                 Text(
-                  '${AppConstants.appNameAr} • الإصدار ${AppConstants.appVersion}',
+                  context.l10n?.authVersion(
+                        AppConstants.appNameAr,
+                        AppConstants.appVersion,
+                      ) ??
+                      '${AppConstants.appNameAr} • الإصدار ${AppConstants.appVersion}',
                   style: text.bodySmall?.copyWith(
                     color: AppColors.onNavy.withValues(alpha: 0.55),
                   ),

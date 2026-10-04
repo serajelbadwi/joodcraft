@@ -629,4 +629,514 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get paletteLogo => 'Logo / signature';
+
+  @override
+  String get evSignatureEmptyLabel => 'Signature vide';
+
+  @override
+  String get evSignatureEmptyDetail =>
+      'Ajoutez un rôle, un nom et une image de signature';
+
+  @override
+  String get evSignatureMissingLabel => 'Signature manquante';
+
+  @override
+  String get evUploadToLibraryDetail =>
+      'Importez l’image dans la bibliothèque d’assets';
+
+  @override
+  String get evImageNotFoundLabel => 'Image introuvable';
+
+  @override
+  String get evNoFileLabel => 'Aucun fichier sélectionné';
+
+  @override
+  String get evChooseFromAssetsDetail =>
+      'Choisissez une image dans la bibliothèque d’assets';
+
+  @override
+  String get evAssetMissingLabel => 'Ressource manquante';
+
+  @override
+  String get evReselectAssetDetail =>
+      'Resélectionnez le cadre/la ressource dans la bibliothèque';
+
+  @override
+  String get evInvalidImageLabel => 'Image invalide';
+
+  @override
+  String get evRenderDataFailedDetail => 'Impossible d’afficher les données';
+
+  @override
+  String get evInvalidDataLabel => 'Données invalides';
+
+  @override
+  String get evDecodeFailedDetail => 'Impossible de décoder l’image';
+
+  @override
+  String get evEmptyQrLabel => 'Code vide';
+
+  @override
+  String get evEmptyQrDetail =>
+      'Saisissez la valeur du code dans la barre de propriétés';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return 'Élément non pris en charge : $type';
+  }
+
+  @override
+  String get alpFilterAll => 'Tous';
+
+  @override
+  String get alpEmptyHint =>
+      'Aucune ressource importée des types demandés. Importez un cadre ou un logo depuis la section « Ressources et signatures », puis réessayez.';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return 'Aucune ressource de type « $type ».';
+  }
+
+  @override
+  String get authWelcomeBack => 'Bienvenue dans JoodCraft.';
+
+  @override
+  String get authResetLinkSent =>
+      'Le lien de réinitialisation a été envoyé. Vérifiez votre e-mail.';
+
+  @override
+  String get authLogin => 'Se connecter';
+
+  @override
+  String get authLoginSubtitle =>
+      'Votre e-mail et votre mot de passe pour accéder au tableau de bord.';
+
+  @override
+  String get authNoAccount => 'Vous n’avez pas de compte ?';
+
+  @override
+  String get authCreateAccountLink => 'Créer un nouveau compte';
+
+  @override
+  String get authConfirmEmailThenLogin =>
+      'Votre compte a été créé. Confirmez d’abord votre e-mail, puis connectez-vous.';
+
+  @override
+  String get authEmail => 'E-mail';
+
+  @override
+  String get authPassword => 'Mot de passe';
+
+  @override
+  String get authForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get authEnterDashboard => 'Accéder au tableau de bord';
+
+  @override
+  String get authResetPassword => 'Réinitialiser le mot de passe';
+
+  @override
+  String get authResetPasswordHint =>
+      'Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.';
+
+  @override
+  String get authSendLink => 'Envoyer le lien';
+
+  @override
+  String get authConfirmEmailMessage =>
+      'Votre compte a été créé. Vérifiez votre e-mail pour le confirmer, puis connectez-vous.';
+
+  @override
+  String get authAccountCreatedWelcome =>
+      'Votre compte a été créé. Bienvenue dans JoodCraft.';
+
+  @override
+  String get authCreateAccount => 'Créer un compte';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Votre compte enregistre vos modèles et ressources (logo, signature, sceau) pour les réutiliser dans tous vos projets.';
+
+  @override
+  String get authHaveAccount => 'Vous avez déjà un compte ?';
+
+  @override
+  String get authFullName => 'Nom complet';
+
+  @override
+  String get authFullNameHint => 'ex. : Abdullah Al-Ahmad';
+
+  @override
+  String get authName => 'Nom';
+
+  @override
+  String get authOrgName => 'Nom de l’organisation (facultatif)';
+
+  @override
+  String get authOrgNameHint => 'ex. : Association caritative Jood';
+
+  @override
+  String get authOrgHelper =>
+      'Imprimé automatiquement sur les certificats et contrats.';
+
+  @override
+  String get authOrgNameShort => 'Nom de l’organisation';
+
+  @override
+  String get authPasswordHint => 'Au moins 8 caractères';
+
+  @override
+  String authPasswordRule(Object min) {
+    return 'Utilisez au moins $min caractères avec des chiffres et des symboles.';
+  }
+
+  @override
+  String get authConfirmPassword => 'Confirmer le mot de passe';
+
+  @override
+  String get authCreateAccountButton => 'Créer le compte';
+
+  @override
+  String get authFeatureLocalExcel =>
+      'Traitement 100 % local des fichiers Excel — vos données ne quittent pas votre appareil';
+
+  @override
+  String get authFeaturePdf =>
+      'Génération PDF avec des polices arabes de haute qualité et un support RTL complet';
+
+  @override
+  String get authFeatureTemplates =>
+      'Vos modèles sont enregistrés dans votre compte et prêts à être réutilisés';
+
+  @override
+  String get authTagline =>
+      'Vos certificats et contrats officiels… imprimés en confiance.';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • Version $version';
+  }
+
+  @override
+  String get dashModules => 'Modules de la plateforme';
+
+  @override
+  String dashWelcome(Object name) {
+    return 'Bienvenue, $name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return 'Abonnement : $tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return 'Organisation : $name';
+  }
+
+  @override
+  String get dashOrgMissing =>
+      'Vous n’avez pas encore défini le nom de votre organisation — il sera imprimé automatiquement sur les certificats et contrats.';
+
+  @override
+  String get dashOpenModule => 'Ouvrir le module';
+
+  @override
+  String get dashRoadmapSupabase =>
+      'Mise en place de la base Supabase (tables + RLS + triggers)';
+
+  @override
+  String get dashRoadmapModular =>
+      'Une structure modulaire « Feature-First » évolutive';
+
+  @override
+  String get dashRoadmapTheme =>
+      'Le thème visuel de la marque avec support RTL en police Cairo';
+
+  @override
+  String get dashRoadmapAuth =>
+      'Authentification : connexion, création de compte et réinitialisation du mot de passe';
+
+  @override
+  String get dashPhaseOneDone => 'Première phase terminée';
+
+  @override
+  String get dashNextPhase =>
+      'Ensuite : le moteur PDF hors ligne et les polices arabes, puis l’éditeur visuel de modèles.';
+
+  @override
+  String get destDashboard => 'Tableau de bord';
+
+  @override
+  String get destDashboardDesc => 'Vue d’ensemble de vos projets et modèles.';
+
+  @override
+  String get destCertificates => 'Moteur de certificats';
+
+  @override
+  String get destCertificatesDesc =>
+      'Concevez des certificats en paysage à partir d’un modèle modifiable.';
+
+  @override
+  String get destContracts => 'Moteur de contrats';
+
+  @override
+  String get destContractsDesc =>
+      'Rédigez des contrats en portrait avec des champs dynamiques.';
+
+  @override
+  String get destBatch => 'Génération en masse';
+
+  @override
+  String get destBatchDesc =>
+      'Lisez un fichier Excel localement et générez des centaines de certificats en une fois.';
+
+  @override
+  String get destTemplates => 'Bibliothèque de modèles';
+
+  @override
+  String get destTemplatesDesc =>
+      'Gérez, classez et réutilisez vos modèles enregistrés.';
+
+  @override
+  String get destAssets => 'Ressources et signatures';
+
+  @override
+  String get destAssetsDesc => 'Votre logo, sceau, signature et cadres.';
+
+  @override
+  String get dashUser => 'Utilisateur';
+
+  @override
+  String get dashLogoutSuccess => 'Vous vous êtes déconnecté avec succès.';
+
+  @override
+  String get dashLogoutError => 'Impossible de se déconnecter. Réessayez.';
+
+  @override
+  String get commonSave => 'Enregistrer';
+
+  @override
+  String get commonPreview => 'Aperçu';
+
+  @override
+  String get commonOptions => 'Options';
+
+  @override
+  String get tplDelete => 'Supprimer';
+
+  @override
+  String get tplSortRecentlyUpdated => 'Modifiés récemment';
+
+  @override
+  String get tplSortTitleAsc => 'Nom (A–Z)';
+
+  @override
+  String get tplSortLabel => 'Tri';
+
+  @override
+  String get tplSubtitle =>
+      'Des modèles professionnels prêts à l’emploi + les vôtres — rechercher, filtrer, ouvrir et importer, entièrement hors ligne.';
+
+  @override
+  String get tplRefreshTooltip => 'Actualiser la liste';
+
+  @override
+  String get tplSearchHint => 'Rechercher des modèles…';
+
+  @override
+  String get tplNoResultsTitle => 'Aucun résultat correspondant';
+
+  @override
+  String get tplNoResultsMessage =>
+      'Essayez un autre terme de recherche ou réinitialisez le filtre.';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return '« $title » a été ajouté à vos modèles locaux.';
+  }
+
+  @override
+  String get tplCloudRequiresConnection =>
+      'Enregistrer des modèles dans le cloud nécessite une connexion à un projet Supabase. Enregistrez-le localement.';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return '« $title » a été enregistré dans le cloud.';
+  }
+
+  @override
+  String get tplRenamed => 'Le modèle a été renommé.';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title (copie)';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return 'Une copie de « $title » a été créée.';
+  }
+
+  @override
+  String get tplNowPrivate => 'Le modèle est désormais privé.';
+
+  @override
+  String get tplNowPublic =>
+      'Le modèle est désormais public (lecture seule pour les autres).';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return '« $title » sera définitivement supprimé du cloud. Action irréversible.';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return 'Le modèle « $title » a été supprimé.';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return '« $title » sera supprimé de cet appareil. Le modèle prêt à l’emploi d’origine reste disponible dans la bibliothèque.';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return 'Le modèle local « $title » a été supprimé.';
+  }
+
+  @override
+  String get tplDeleteTitle => 'Supprimer le modèle';
+
+  @override
+  String get tplRenameTitle => 'Titre du modèle';
+
+  @override
+  String get tplFieldTitle => 'Titre';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return 'Aperçu : $title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count modèle(s)';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return 'Impossible de charger les modèles cloud : $message';
+  }
+
+  @override
+  String get tplPublicBadge => 'Modèle public';
+
+  @override
+  String get tplOrientationLandscape => 'Paysage';
+
+  @override
+  String get tplOrientationPortrait => 'Portrait';
+
+  @override
+  String get tplPresetOffline =>
+      'Modèle prêt à l’emploi • disponible hors ligne';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return 'Schéma v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => 'Ouvrir comme modèle';
+
+  @override
+  String get tplOpen => 'Ouvrir';
+
+  @override
+  String get tplUseInBatch => 'Utiliser dans la génération en masse';
+
+  @override
+  String get tplImportLocal => 'Importer localement';
+
+  @override
+  String get tplSaveToCloud => 'Enregistrer dans le cloud';
+
+  @override
+  String get tplDeleteLocal => 'Supprimer localement';
+
+  @override
+  String get tplRename => 'Renommer';
+
+  @override
+  String get tplMakePrivate => 'Rendre privé';
+
+  @override
+  String get tplMakePublic => 'Rendre public';
+
+  @override
+  String get tplNoDate => 'Sans date';
+
+  @override
+  String get amSubtitle =>
+      'Importez une fois votre logo, sceau et signature, puis insérez-les dans n’importe quel modèle — enregistrés sur votre appareil et réutilisables hors ligne.';
+
+  @override
+  String get amSearchHint => 'Rechercher des ressources…';
+
+  @override
+  String get amTypeLabel => 'Type';
+
+  @override
+  String get amUploadTooltip => 'Importer une nouvelle ressource';
+
+  @override
+  String get amUpload => 'Importer une ressource';
+
+  @override
+  String get amEmptyTitle => 'Aucune ressource pour l’instant';
+
+  @override
+  String get amEmptyMessage =>
+      'Importez le logo, la signature ou le sceau de votre organisation, puis insérez-les dans n’importe quel modèle depuis la barre de propriétés de l’image.';
+
+  @override
+  String get amNoResultsMessage =>
+      'Essayez un autre nom ou réinitialisez le filtre.';
+
+  @override
+  String get amRenamed => 'La ressource a été renommée.';
+
+  @override
+  String amMovedToType(Object type) {
+    return 'La ressource a été déplacée vers « $type ».';
+  }
+
+  @override
+  String get amDeleteTitle => 'Supprimer la ressource';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return '« $name » sera supprimé de cet appareil. Les modèles qui l’utilisent perdront l’image (sans échec d’impression).';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return 'La ressource « $name » a été supprimée.';
+  }
+
+  @override
+  String get amRenameTitle => 'Renommer la ressource';
+
+  @override
+  String amCount(Object count) {
+    return '$count ressource(s)';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return 'Définir le type : $type';
+  }
 }

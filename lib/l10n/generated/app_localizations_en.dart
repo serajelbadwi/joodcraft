@@ -628,4 +628,509 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paletteLogo => 'Logo / signature';
+
+  @override
+  String get evSignatureEmptyLabel => 'Empty signature';
+
+  @override
+  String get evSignatureEmptyDetail =>
+      'Add a role, a name and a signature image';
+
+  @override
+  String get evSignatureMissingLabel => 'Missing signature';
+
+  @override
+  String get evUploadToLibraryDetail => 'Upload the image to the asset library';
+
+  @override
+  String get evImageNotFoundLabel => 'Image not found';
+
+  @override
+  String get evNoFileLabel => 'No file selected';
+
+  @override
+  String get evChooseFromAssetsDetail =>
+      'Choose an image from the asset library';
+
+  @override
+  String get evAssetMissingLabel => 'Missing asset';
+
+  @override
+  String get evReselectAssetDetail =>
+      'Re-select the frame/asset from the library';
+
+  @override
+  String get evInvalidImageLabel => 'Invalid image';
+
+  @override
+  String get evRenderDataFailedDetail => 'Unable to display the data';
+
+  @override
+  String get evInvalidDataLabel => 'Invalid data';
+
+  @override
+  String get evDecodeFailedDetail => 'Unable to decode the image';
+
+  @override
+  String get evEmptyQrLabel => 'Empty code';
+
+  @override
+  String get evEmptyQrDetail => 'Enter the code value in the properties bar';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return 'Unsupported element: $type';
+  }
+
+  @override
+  String get alpFilterAll => 'All';
+
+  @override
+  String get alpEmptyHint =>
+      'No uploaded assets of the required types. Upload a frame or logo from the “Assets & signatures” section, then try again.';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return 'No assets of type “$type”.';
+  }
+
+  @override
+  String get authWelcomeBack => 'Welcome to JoodCraft.';
+
+  @override
+  String get authResetLinkSent =>
+      'The reset link has been sent. Check your email.';
+
+  @override
+  String get authLogin => 'Sign in';
+
+  @override
+  String get authLoginSubtitle =>
+      'Your email and password to continue to the dashboard.';
+
+  @override
+  String get authNoAccount => 'Don’t have an account?';
+
+  @override
+  String get authCreateAccountLink => 'Create a new account';
+
+  @override
+  String get authConfirmEmailThenLogin =>
+      'Your account has been created. Please confirm your email first, then sign in.';
+
+  @override
+  String get authEmail => 'Email';
+
+  @override
+  String get authPassword => 'Password';
+
+  @override
+  String get authForgotPassword => 'Forgot your password?';
+
+  @override
+  String get authEnterDashboard => 'Enter the dashboard';
+
+  @override
+  String get authResetPassword => 'Reset password';
+
+  @override
+  String get authResetPasswordHint =>
+      'Enter your email and we’ll send you a password reset link.';
+
+  @override
+  String get authSendLink => 'Send link';
+
+  @override
+  String get authConfirmEmailMessage =>
+      'Your account has been created. Check your email to confirm it, then sign in.';
+
+  @override
+  String get authAccountCreatedWelcome =>
+      'Your account has been created. Welcome to JoodCraft.';
+
+  @override
+  String get authCreateAccount => 'Create account';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Your account saves your templates and assets (logo, signature, seal) to reuse across all your projects.';
+
+  @override
+  String get authHaveAccount => 'Already have an account?';
+
+  @override
+  String get authFullName => 'Full name';
+
+  @override
+  String get authFullNameHint => 'e.g. Abdullah Al-Ahmad';
+
+  @override
+  String get authName => 'Name';
+
+  @override
+  String get authOrgName => 'Organisation name (optional)';
+
+  @override
+  String get authOrgNameHint => 'e.g. Jood Charity Association';
+
+  @override
+  String get authOrgHelper =>
+      'Printed automatically on certificates and contracts.';
+
+  @override
+  String get authOrgNameShort => 'Organisation name';
+
+  @override
+  String get authPasswordHint => 'At least 8 characters';
+
+  @override
+  String authPasswordRule(Object min) {
+    return 'Use $min characters or more with numbers and symbols.';
+  }
+
+  @override
+  String get authConfirmPassword => 'Confirm password';
+
+  @override
+  String get authCreateAccountButton => 'Create the account';
+
+  @override
+  String get authFeatureLocalExcel =>
+      'Full local processing of Excel files — your data never leaves your device';
+
+  @override
+  String get authFeaturePdf =>
+      'PDF generation with high-quality Arabic fonts and full RTL support';
+
+  @override
+  String get authFeatureTemplates =>
+      'Your templates are saved in your account and ready to reuse';
+
+  @override
+  String get authTagline =>
+      'Your official certificates and contracts… printed with confidence.';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • Version $version';
+  }
+
+  @override
+  String get dashModules => 'Platform modules';
+
+  @override
+  String dashWelcome(Object name) {
+    return 'Welcome, $name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return 'Subscription: $tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return 'Organisation: $name';
+  }
+
+  @override
+  String get dashOrgMissing =>
+      'You haven’t set your organisation name yet — it will be printed automatically on certificates and contracts.';
+
+  @override
+  String get dashOpenModule => 'Open the module';
+
+  @override
+  String get dashRoadmapSupabase =>
+      'Set up the Supabase database (tables + RLS + triggers)';
+
+  @override
+  String get dashRoadmapModular => 'A scalable Modular Feature-First structure';
+
+  @override
+  String get dashRoadmapTheme =>
+      'The brand’s visual theme with RTL support in the Cairo font';
+
+  @override
+  String get dashRoadmapAuth =>
+      'Authentication: sign-in, account creation and password reset';
+
+  @override
+  String get dashPhaseOneDone => 'Phase one complete';
+
+  @override
+  String get dashNextPhase =>
+      'Next: the offline PDF engine and Arabic fonts, then the visual template editor.';
+
+  @override
+  String get destDashboard => 'Dashboard';
+
+  @override
+  String get destDashboardDesc => 'An overview of your projects and templates.';
+
+  @override
+  String get destCertificates => 'Certificate engine';
+
+  @override
+  String get destCertificatesDesc =>
+      'Design landscape certificates from an editable template.';
+
+  @override
+  String get destContracts => 'Contract engine';
+
+  @override
+  String get destContractsDesc =>
+      'Draft portrait contracts with dynamic fields.';
+
+  @override
+  String get destBatch => 'Batch generation';
+
+  @override
+  String get destBatchDesc =>
+      'Read an Excel file locally and generate hundreds of certificates at once.';
+
+  @override
+  String get destTemplates => 'Template library';
+
+  @override
+  String get destTemplatesDesc =>
+      'Manage, organise and reuse your saved templates.';
+
+  @override
+  String get destAssets => 'Assets & signatures';
+
+  @override
+  String get destAssetsDesc => 'Your logo, seal, signature and frames.';
+
+  @override
+  String get dashUser => 'User';
+
+  @override
+  String get dashLogoutSuccess => 'You have signed out successfully.';
+
+  @override
+  String get dashLogoutError => 'Couldn’t sign out. Please try again.';
+
+  @override
+  String get commonSave => 'Save';
+
+  @override
+  String get commonPreview => 'Preview';
+
+  @override
+  String get commonOptions => 'Options';
+
+  @override
+  String get tplDelete => 'Delete';
+
+  @override
+  String get tplSortRecentlyUpdated => 'Recently updated';
+
+  @override
+  String get tplSortTitleAsc => 'Name (A–Z)';
+
+  @override
+  String get tplSortLabel => 'Sort';
+
+  @override
+  String get tplSubtitle =>
+      'Professional ready-made templates + your saved ones — search, filter, open and import, fully offline.';
+
+  @override
+  String get tplRefreshTooltip => 'Refresh the list';
+
+  @override
+  String get tplSearchHint => 'Search templates…';
+
+  @override
+  String get tplNoResultsTitle => 'No matching results';
+
+  @override
+  String get tplNoResultsMessage =>
+      'Try another search term or reset the filter.';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return '“$title” was added to your local templates.';
+  }
+
+  @override
+  String get tplCloudRequiresConnection =>
+      'Saving templates to the cloud requires a connection to a Supabase project. Save it locally instead.';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return '“$title” was saved to the cloud.';
+  }
+
+  @override
+  String get tplRenamed => 'The template was renamed.';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title (copy)';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return 'A copy of “$title” was created.';
+  }
+
+  @override
+  String get tplNowPrivate => 'The template is now private.';
+
+  @override
+  String get tplNowPublic =>
+      'The template is now public (read-only for others).';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return '“$title” will be permanently deleted from the cloud. This cannot be undone.';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return 'The template “$title” was deleted.';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return '“$title” will be deleted from this device. The original ready-made template remains available in the library.';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return 'The local template “$title” was deleted.';
+  }
+
+  @override
+  String get tplDeleteTitle => 'Delete template';
+
+  @override
+  String get tplRenameTitle => 'Template title';
+
+  @override
+  String get tplFieldTitle => 'Title';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return 'Preview: $title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count template(s)';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return 'Couldn’t load cloud templates: $message';
+  }
+
+  @override
+  String get tplPublicBadge => 'Public template';
+
+  @override
+  String get tplOrientationLandscape => 'Landscape';
+
+  @override
+  String get tplOrientationPortrait => 'Portrait';
+
+  @override
+  String get tplPresetOffline => 'Ready-made template • available offline';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return 'Schema v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => 'Open as template';
+
+  @override
+  String get tplOpen => 'Open';
+
+  @override
+  String get tplUseInBatch => 'Use in batch generation';
+
+  @override
+  String get tplImportLocal => 'Import locally';
+
+  @override
+  String get tplSaveToCloud => 'Save to the cloud';
+
+  @override
+  String get tplDeleteLocal => 'Delete locally';
+
+  @override
+  String get tplRename => 'Rename';
+
+  @override
+  String get tplMakePrivate => 'Make it private';
+
+  @override
+  String get tplMakePublic => 'Make it public';
+
+  @override
+  String get tplNoDate => 'No date';
+
+  @override
+  String get amSubtitle =>
+      'Upload your logo, seal and signature once, then insert them into any template — saved on your device and reused offline.';
+
+  @override
+  String get amSearchHint => 'Search assets…';
+
+  @override
+  String get amTypeLabel => 'Type';
+
+  @override
+  String get amUploadTooltip => 'Upload a new asset';
+
+  @override
+  String get amUpload => 'Upload asset';
+
+  @override
+  String get amEmptyTitle => 'No assets yet';
+
+  @override
+  String get amEmptyMessage =>
+      'Upload your organisation’s logo, signature or seal, then insert it into any template from the image properties bar.';
+
+  @override
+  String get amNoResultsMessage => 'Try another name or reset the filter.';
+
+  @override
+  String get amRenamed => 'The asset was renamed.';
+
+  @override
+  String amMovedToType(Object type) {
+    return 'The asset was moved to “$type”.';
+  }
+
+  @override
+  String get amDeleteTitle => 'Delete asset';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return '“$name” will be deleted from this device. Templates using it will lose the image (without printing failure).';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return 'The asset “$name” was deleted.';
+  }
+
+  @override
+  String get amRenameTitle => 'Rename asset';
+
+  @override
+  String amCount(Object count) {
+    return '$count asset(s)';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return 'Make type: $type';
+  }
 }

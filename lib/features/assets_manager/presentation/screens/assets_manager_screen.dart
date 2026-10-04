@@ -9,6 +9,7 @@ import '../../../../core/assets/assets_controller.dart';
 import '../../../../core/assets/user_asset.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/editor/widgets/editor_controls.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
@@ -90,11 +91,13 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('الأصول والتوقيعات', style: text.titleMedium),
+                    Text(context.l10n?.destAssets ?? 'الأصول والتوقيعات',
+                        style: text.titleMedium),
                     const SizedBox(height: 2),
                     Text(
-                      'ارفع شعارك وختمك وتوقيعك مرة واحدة، ثم أدرجه في أي قالب — '
-                      'يُحفظ على جهازك ويُستعاد أوفلاين.',
+                      context.l10n?.amSubtitle ??
+                          'ارفع شعارك وختمك وتوقيعك مرة واحدة، ثم أدرجه في أي قالب — '
+                              'يُحفظ على جهازك ويُستعاد أوفلاين.',
                       style: text.bodySmall,
                     ),
                   ],
@@ -116,19 +119,20 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
                 child: TextField(
                   controller: _search,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     isDense: true,
-                    prefixIcon: Icon(Icons.search_rounded, size: 18),
-                    hintText: 'بحث في الأصول…',
-                    hintStyle: TextStyle(fontSize: 12.5),
+                    prefixIcon: const Icon(Icons.search_rounded, size: 18),
+                    hintText: context.l10n?.amSearchHint ?? 'بحث في الأصول…',
+                    hintStyle: const TextStyle(fontSize: 12.5),
                   ),
                 ),
               ),
               DropdownField<AssetType?>(
-                label: 'النوع',
+                label: context.l10n?.amTypeLabel ?? 'النوع',
                 value: _type,
                 items: <AssetType?>[null, ...AssetType.values],
-                labelOf: (AssetType? type) => type?.labelAr ?? 'الكل',
+                labelOf: (AssetType? type) =>
+                    type?.labelAr ?? context.l10n?.alpFilterAll ?? 'الكل',
                 width: 160,
                 onChanged: (AssetType? type) => setState(() => _type = type),
               ),
@@ -141,7 +145,7 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
 
   Widget _uploadButton(BuildContext context) {
     return PopupMenuButton<AssetType>(
-      tooltip: 'رفع أصل جديد',
+      tooltip: context.l10n?.amUploadTooltip ?? 'رفع أصل جديد',
       onSelected: (AssetType type) =>
           unawaited(uploadUserAssets(context, type: type, controller: _controller)),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<AssetType>>[
@@ -152,7 +156,11 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
               children: <Widget>[
                 Icon(type.icon, size: 17, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 10),
-                Text('رفع ${type.labelAr}', style: const TextStyle(fontSize: 13)),
+                Text(
+                  context.l10n?.assetUploadType(type.labelAr) ??
+                      'رفع ${type.labelAr}',
+                  style: const TextStyle(fontSize: 13),
+                ),
               ],
             ),
           ),
@@ -163,14 +171,15 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
           color: AppColors.gold,
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(Icons.upload_file_rounded, size: 17, color: AppColors.navy),
-            SizedBox(width: 8),
+            const Icon(Icons.upload_file_rounded,
+                size: 17, color: AppColors.navy),
+            const SizedBox(width: 8),
             Text(
-              'رفع أصل',
-              style: TextStyle(
+              context.l10n?.amUpload ?? 'رفع أصل',
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: AppColors.navy,
@@ -188,18 +197,20 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
   Widget _body(BuildContext context) {
     final List<UserAsset> visible = _visibleAssets();
     if (_controller.isEmpty) {
-      return const _NoticeCard(
+      return _NoticeCard(
         icon: Icons.add_photo_alternate_outlined,
-        title: 'لا توجد أصول بعد',
-        message: 'ارفع شعار مؤسستك أو توقيعك أو ختمك، ثم أدرجه في أي قالب من '
-            'شريط خصائص الصورة.',
+        title: context.l10n?.amEmptyTitle ?? 'لا توجد أصول بعد',
+        message: context.l10n?.amEmptyMessage ??
+            'ارفع شعار مؤسستك أو توقيعك أو ختمك، ثم أدرجه في أي قالب من '
+                'شريط خصائص الصورة.',
       );
     }
     if (visible.isEmpty) {
-      return const _NoticeCard(
+      return _NoticeCard(
         icon: Icons.search_off_rounded,
-        title: 'لا نتائج مطابقة',
-        message: 'جرّب اسماً آخر أو أعد ضبط عامل التصفية.',
+        title: context.l10n?.tplNoResultsTitle ?? 'لا نتائج مطابقة',
+        message: context.l10n?.amNoResultsMessage ??
+            'جرّب اسماً آخر أو أعد ضبط عامل التصفية.',
       );
     }
 
@@ -249,7 +260,9 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
     );
     if (name == null || !mounted) return;
     await _controller.renameAsset(asset.id, name);
-    if (mounted) context.showSuccess('أُعيدت تسمية الأصل.');
+    if (mounted) {
+      context.showSuccess(context.l10n?.amRenamed ?? 'أُعيدت تسمية الأصل.');
+    }
   }
 
   Future<void> _reassign(UserAsset asset, AssetType type) async {
@@ -264,34 +277,42 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
     );
     await _controller.removeAsset(asset.id);
     if (!mounted) return;
-    context.showSuccess('نُقل الأصل إلى «${type.labelAr}».');
+    context.showSuccess(
+      context.l10n?.amMovedToType(type.labelAr) ??
+          'نُقل الأصل إلى «${type.labelAr}».',
+    );
   }
 
   Future<void> _delete(UserAsset asset) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text('حذف الأصل'),
+        title: Text(context.l10n?.amDeleteTitle ?? 'حذف الأصل'),
         content: Text(
-          'سيُحذف «${asset.name}» من هذا الجهاز. القوالب التي تستخدمه ستفقد '
-          'الصورة (دون فشل الطباعة).',
+          context.l10n?.amConfirmDelete(asset.name) ??
+              'سيُحذف «${asset.name}» من هذا الجهاز. القوالب التي تستخدمه ستفقد '
+                  'الصورة (دون فشل الطباعة).',
         ),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('إلغاء'),
+            child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('حذف'),
+            child: Text(context.l10n?.tplDelete ?? 'حذف'),
           ),
         ],
       ),
     );
     if (confirmed != true || !mounted) return;
     await _controller.removeAsset(asset.id);
-    if (mounted) context.showSuccess('حُذف الأصل «${asset.name}».');
+    if (mounted) {
+      context.showSuccess(
+        context.l10n?.amDeleted(asset.name) ?? 'حُذف الأصل «${asset.name}».',
+      );
+    }
   }
 }
 
@@ -318,22 +339,24 @@ class _RenameAssetDialogState extends State<_RenameAssetDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('إعادة تسمية الأصل'),
+      title: Text(context.l10n?.amRenameTitle ?? 'إعادة تسمية الأصل'),
       content: TextField(
         controller: _field,
         autofocus: true,
         maxLength: AppConstants.maxNameLength,
-        decoration: const InputDecoration(labelText: 'الاسم'),
+        decoration: InputDecoration(
+          labelText: context.l10n?.authName ?? 'الاسم',
+        ),
         onSubmitted: (String value) => Navigator.of(context).pop(value.trim()),
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('إلغاء'),
+          child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(_field.text.trim()),
-          child: const Text('حفظ'),
+          child: Text(context.l10n?.commonSave ?? 'حفظ'),
         ),
       ],
     );
@@ -356,7 +379,7 @@ class _CountChip extends StatelessWidget {
         border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
-        '$count أصل',
+        context.l10n?.amCount(count) ?? '$count أصل',
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w700,
@@ -435,7 +458,7 @@ class _AssetCard extends StatelessWidget {
                 ),
               ),
               PopupMenuButton<_CardAction>(
-                tooltip: 'خيارات',
+                tooltip: context.l10n?.commonOptions ?? 'خيارات',
                 onSelected: (_CardAction action) {
                   switch (action) {
                     case _CardAction.rename:
@@ -454,11 +477,11 @@ class _AssetCard extends StatelessWidget {
                 },
                 itemBuilder: (BuildContext context) =>
                     <PopupMenuEntry<_CardAction>>[
-                  const PopupMenuItem<_CardAction>(
+                  PopupMenuItem<_CardAction>(
                     value: _CardAction.rename,
                     child: _MenuRow(
                       icon: Icons.drive_file_rename_outline_rounded,
-                      label: 'إعادة التسمية',
+                      label: context.l10n?.tplRename ?? 'إعادة التسمية',
                     ),
                   ),
                   const PopupMenuDivider(),
@@ -467,16 +490,17 @@ class _AssetCard extends StatelessWidget {
                       value: _CardActionX.of(type),
                       child: _MenuRow(
                         icon: type.icon,
-                        label: 'اجعل النوع: ${type.labelAr}',
+                        label: context.l10n?.amMakeType(type.labelAr) ??
+                            'اجعل النوع: ${type.labelAr}',
                         selected: type == asset.type,
                       ),
                     ),
                   const PopupMenuDivider(),
-                  const PopupMenuItem<_CardAction>(
+                  PopupMenuItem<_CardAction>(
                     value: _CardAction.delete,
                     child: _MenuRow(
                       icon: Icons.delete_outline_rounded,
-                      label: 'حذف',
+                      label: context.l10n?.tplDelete ?? 'حذف',
                       danger: true,
                     ),
                   ),

@@ -227,5 +227,268 @@
   "paletteHeading": "عنوان",
   "paletteFrame": "مستطيل/برواز",
   "paletteDivider": "خط فاصل",
-  "paletteLogo": "شعار/توقيع"
+  "paletteLogo": "شعار/توقيع",
+  "evSignatureEmptyLabel": "توقيعات فارغة",
+  "evSignatureEmptyDetail": "أضف دوراً واسماً وصورة توقيع",
+  "evSignatureMissingLabel": "توقيع محذوف",
+  "evUploadToLibraryDetail": "ارفع الصورة إلى مكتبة الأصول",
+  "evImageNotFoundLabel": "صورة غير موجودة",
+  "evNoFileLabel": "لم يُحدَّد ملف",
+  "evChooseFromAssetsDetail": "اختر صورة من مكتبة الأصول",
+  "evAssetMissingLabel": "أصل محذوف",
+  "evReselectAssetDetail": "أعد اختيار الإطار/الأصل من المكتبة",
+  "evInvalidImageLabel": "صورة غير صالحة",
+  "evRenderDataFailedDetail": "تعذّر عرض البيانات",
+  "evInvalidDataLabel": "بيانات غير صالحة",
+  "evDecodeFailedDetail": "تعذّر فك ترميز الصورة",
+  "evEmptyQrLabel": "رمز فارغ",
+  "evEmptyQrDetail": "أدخل قيمة الرمز في شريط الخصائص",
+  "evUnknownElementLabel": "عنصر غير مدعوم: {type}",
+  "@evUnknownElementLabel": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "alpFilterAll": "الكل",
+  "alpEmptyHint": "لا توجد أصول مرفوعة من الأنواع المطلوبة. ارفع إطاراً أو شعاراً من قسم «الأصول والتوقيعات» ثم أعد المحاولة.",
+  "alpNoFilteredAssets": "لا توجد أصول من النوع «{type}».",
+  "@alpNoFilteredAssets": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "authWelcomeBack": "مرحباً بك في جودكرافت.",
+  "authResetLinkSent": "تم إرسال رابط الاستعادة. تحقّق من بريدك الإلكتروني.",
+  "authLogin": "تسجيل الدخول",
+  "authLoginSubtitle": "بريدك الإلكتروني وكلمة المرور للمتابعة إلى لوحة التحكم.",
+  "authNoAccount": "ليس لديك حساب؟",
+  "authCreateAccountLink": "أنشئ حساباً جديداً",
+  "authConfirmEmailThenLogin": "تم إنشاء حسابك. يرجى تأكيد بريدك الإلكتروني أولاً ثم تسجيل الدخول.",
+  "authEmail": "البريد الإلكتروني",
+  "authPassword": "كلمة المرور",
+  "authForgotPassword": "نسيت كلمة المرور؟",
+  "authEnterDashboard": "دخول إلى اللوحة",
+  "authResetPassword": "استعادة كلمة المرور",
+  "authResetPasswordHint": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور.",
+  "authSendLink": "إرسال الرابط",
+  "authConfirmEmailMessage": "تم إنشاء حسابك. تحقّق من بريدك الإلكتروني لتأكيد الحساب ثم سجّل الدخول.",
+  "authAccountCreatedWelcome": "تم إنشاء حسابك. أهلاً بك في جودكرافت.",
+  "authCreateAccount": "إنشاء حساب",
+  "authRegisterSubtitle": "حسابك يحفظ قوالبك وأصولك (الشعار، التوقيع، الختم) لإعادة استخدامها في كل مشاريعك.",
+  "authHaveAccount": "لديك حساب بالفعل؟",
+  "authFullName": "الاسم الكامل",
+  "authFullNameHint": "مثال: عبدالله الأحمد",
+  "authName": "الاسم",
+  "authOrgName": "اسم الجهة / المؤسسة (اختياري)",
+  "authOrgNameHint": "مثال: جمعية جود الخيرية",
+  "authOrgHelper": "يُطبع على الشهادات والعقود تلقائياً.",
+  "authOrgNameShort": "اسم الجهة",
+  "authPasswordHint": "8 أحرف على الأقل",
+  "authPasswordRule": "استخدم {min} أحرف أو أكثر مع أرقام ورموز.",
+  "@authPasswordRule": {
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "authConfirmPassword": "تأكيد كلمة المرور",
+  "authCreateAccountButton": "إنشاء الحساب",
+  "authFeatureLocalExcel": "معالجة محلية كاملة لملفات Excel — بياناتك لا تغادر جهازك",
+  "authFeaturePdf": "توليد PDF بخطوط عربية عالية الجودة مع دعم كامل للاتجاه RTL",
+  "authFeatureTemplates": "قوالبك محفوظة في حسابك وجاهزة لإعادة الاستخدام",
+  "authTagline": "شهاداتك وعقودك الرسمية… بجودة تُطبع بثقة.",
+  "authVersion": "{name} • الإصدار {version}",
+  "@authVersion": {
+    "placeholders": {
+      "name": {},
+      "version": {}
+    }
+  },
+  "dashModules": "وحدات المنصة",
+  "dashWelcome": "أهلاً بك، {name}",
+  "@dashWelcome": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "dashSubscription": "الاشتراك: {tier}",
+  "@dashSubscription": {
+    "placeholders": {
+      "tier": {}
+    }
+  },
+  "dashOrg": "الجهة: {name}",
+  "@dashOrg": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "dashOrgMissing": "لم تُسجّل اسم جهتك بعد — سيُطبع تلقائياً على الشهادات والعقود.",
+  "dashOpenModule": "فتح الوحدة",
+  "dashRoadmapSupabase": "تأسيس قاعدة بيانات Supabase (جداول + RLS + Triggers)",
+  "dashRoadmapModular": "هيكل Modular Feature-First قابل للتوسّع",
+  "dashRoadmapTheme": "الثيم البصري للهوية ودعم RTL بخط Cairo",
+  "dashRoadmapAuth": "المصادقة: تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور",
+  "dashPhaseOneDone": "المرحلة الأولى مكتملة",
+  "dashNextPhase": "التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.",
+  "destDashboard": "لوحة التحكم",
+  "destDashboardDesc": "نظرة عامة على مشاريعك وقوالبك.",
+  "destCertificates": "محـرّك الشهادات",
+  "destCertificatesDesc": "تصميم شهادات أفقية (Landscape) من قالب قابل للتعديل.",
+  "destContracts": "محـرّك العقود",
+  "destContractsDesc": "صياغة عقود رأسية (Portrait) بحقول ديناميكية.",
+  "destBatch": "التوليد الجماعي",
+  "destBatchDesc": "قراءة ملف Excel محلياً وتوليد مئات الشهادات دفعة واحدة.",
+  "destTemplates": "مكتبة القوالب",
+  "destTemplatesDesc": "إدارة قوالبك المحفوظة وتصنيفها وإعادة استخدامها.",
+  "destAssets": "الأصول والتوقيعات",
+  "destAssetsDesc": "الشعار والختم والتوقيع والإطارات الخاصة بك.",
+  "dashUser": "مستخدم",
+  "dashLogoutSuccess": "تم تسجيل الخروج بنجاح.",
+  "dashLogoutError": "تعذّر تسجيل الخروج. حاول مرة أخرى.",
+  "commonSave": "حفظ",
+  "commonPreview": "معاينة",
+  "commonOptions": "خيارات",
+  "tplDelete": "حذف",
+  "tplSortRecentlyUpdated": "الأحدث تعديلاً",
+  "tplSortTitleAsc": "الاسم (أ - ي)",
+  "tplSortLabel": "الترتيب",
+  "tplSubtitle": "قوالب جاهزة احترافية + قوالبك المحفوظة — بحث وتصفية وفتح واستيراد، أوفلاين بالكامل.",
+  "tplRefreshTooltip": "تحديث القائمة",
+  "tplSearchHint": "بحث في القوالب…",
+  "tplNoResultsTitle": "لا نتائج مطابقة",
+  "tplNoResultsMessage": "جرّب كلمة بحث أخرى أو أعد ضبط عامل التصفية.",
+  "tplAddedToLocal": "أُضيف «{title}» إلى قوالبك المحلية.",
+  "@tplAddedToLocal": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplCloudRequiresConnection": "حفظ القوالب في السحابة يتطلب الاتصال بمشروع Supabase. احفظه محلياً بدل ذلك.",
+  "tplSavedToCloud": "حُفظ «{title}» في السحابة.",
+  "@tplSavedToCloud": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplRenamed": "أُعيد تسمية القالب.",
+  "tplCopySuffix": "{title} (نسخة)",
+  "@tplCopySuffix": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplCopyCreated": "أُنشئت نسخة من «{title}».",
+  "@tplCopyCreated": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplNowPrivate": "القالب الآن خاص.",
+  "tplNowPublic": "القالب الآن عام (قراءة فقط للآخرين).",
+  "tplConfirmCloudDelete": "سيُحذف «{title}» من السحابة نهائياً. لا يمكن التراجع.",
+  "@tplConfirmCloudDelete": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplCloudDeleted": "حُذف القالب «{title}».",
+  "@tplCloudDeleted": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplConfirmLocalDelete": "سيُحذف «{title}» من هذا الجهاز. القالب الجاهز الأصلي يبقى متاحاً في المكتبة.",
+  "@tplConfirmLocalDelete": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplLocalDeleted": "حُذف القالب المحلي «{title}».",
+  "@tplLocalDeleted": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplDeleteTitle": "حذف القالب",
+  "tplRenameTitle": "عنوان القالب",
+  "tplFieldTitle": "العنوان",
+  "tplPreviewLabel": "معاينة: {title}",
+  "@tplPreviewLabel": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tplCount": "{count} قالب",
+  "@tplCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "tplCloudLoadError": "تعذّر تحميل القوالب السحابية: {message}",
+  "@tplCloudLoadError": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+  "tplPublicBadge": "قالب عام",
+  "tplOrientationLandscape": "أفقي",
+  "tplOrientationPortrait": "رأسي",
+  "tplPresetOffline": "قالب جاهز • متاح أوفلاين",
+  "tplSchemaVersion": "مخطط v{version}",
+  "@tplSchemaVersion": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "tplOpenAsTemplate": "فتح كقالب",
+  "tplOpen": "فتح",
+  "tplUseInBatch": "استخدام في التوليد الجماعي",
+  "tplImportLocal": "استيراد محلياً",
+  "tplSaveToCloud": "حفظ في السحابة",
+  "tplDeleteLocal": "حذف محلياً",
+  "tplRename": "إعادة التسمية",
+  "tplMakePrivate": "جعله خاصاً",
+  "tplMakePublic": "جعله عاماً",
+  "tplNoDate": "بلا تاريخ",
+  "amSubtitle": "ارفع شعارك وختمك وتوقيعك مرة واحدة، ثم أدرجه في أي قالب — يُحفظ على جهازك ويُستعاد أوفلاين.",
+  "amSearchHint": "بحث في الأصول…",
+  "amTypeLabel": "النوع",
+  "amUploadTooltip": "رفع أصل جديد",
+  "amUpload": "رفع أصل",
+  "amEmptyTitle": "لا توجد أصول بعد",
+  "amEmptyMessage": "ارفع شعار مؤسستك أو توقيعك أو ختمك، ثم أدرجه في أي قالب من شريط خصائص الصورة.",
+  "amNoResultsMessage": "جرّب اسماً آخر أو أعد ضبط عامل التصفية.",
+  "amRenamed": "أُعيدت تسمية الأصل.",
+  "amMovedToType": "نُقل الأصل إلى «{type}».",
+  "@amMovedToType": {
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "amDeleteTitle": "حذف الأصل",
+  "amConfirmDelete": "سيُحذف «{name}» من هذا الجهاز. القوالب التي تستخدمه ستفقد الصورة (دون فشل الطباعة).",
+  "@amConfirmDelete": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "amDeleted": "حُذف الأصل «{name}».",
+  "@amDeleted": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "amRenameTitle": "إعادة تسمية الأصل",
+  "amCount": "{count} أصل",
+  "@amCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "amMakeType": "اجعل النوع: {type}",
+  "@amMakeType": {
+    "placeholders": {
+      "type": {}
+    }
+  }
 }

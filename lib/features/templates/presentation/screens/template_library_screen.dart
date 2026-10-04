@@ -11,6 +11,7 @@ import '../../../../core/templates/local_template_store.dart';
 import '../../../../core/templates/preset_template.dart';
 import '../../../../core/templates/template_library_controller.dart';
 import '../../../../core/templates/template_library_entry.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/templates/template_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -125,11 +126,13 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('مكتبة القوالب', style: text.titleMedium),
+                    Text(context.l10n?.destTemplates ?? 'مكتبة القوالب',
+                        style: text.titleMedium),
                     const SizedBox(height: 2),
                     Text(
-                      'قوالب جاهزة احترافية + قوالبك المحفوظة — بحث وتصفية '
-                      'وفتح واستيراد، أوفلاين بالكامل.',
+                      context.l10n?.tplSubtitle ??
+                          'قوالب جاهزة احترافية + قوالبك المحفوظة — بحث وتصفية '
+                              'وفتح واستيراد، أوفلاين بالكامل.',
                       style: text.bodySmall,
                     ),
                   ],
@@ -139,7 +142,7 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
               const SizedBox(width: AppTheme.space8),
               IconAction(
                 icon: Icons.refresh_rounded,
-                tooltip: 'تحديث القائمة',
+                tooltip: context.l10n?.tplRefreshTooltip ?? 'تحديث القائمة',
                 onPressed: _controller.isBusy
                     ? null
                     : () => unawaited(_controller.refresh()),
@@ -157,39 +160,49 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
                 child: TextField(
                   controller: _search,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     isDense: true,
-                    prefixIcon: Icon(Icons.search_rounded, size: 18),
-                    hintText: 'بحث في القوالب…',
-                    hintStyle: TextStyle(fontSize: 12.5),
+                    prefixIcon: const Icon(Icons.search_rounded, size: 18),
+                    hintText: context.l10n?.tplSearchHint ?? 'بحث في القوالب…',
+                    hintStyle: const TextStyle(fontSize: 12.5),
                   ),
                 ),
               ),
               DropdownField<TemplateSource?>(
-                label: 'المصدر',
+                label: context.l10n?.editorSource ?? 'المصدر',
                 value: _source,
                 items: <TemplateSource?>[null, ...TemplateSource.values],
-                labelOf: (TemplateSource? value) =>
-                    value == null ? 'الكل' : value.labelAr,
+                labelOf: (TemplateSource? value) => value == null
+                    ? (context.l10n?.alpFilterAll ?? 'الكل')
+                    : value.labelAr,
                 width: 150,
                 onChanged: (TemplateSource? value) =>
                     setState(() => _source = value),
               ),
               DropdownField<TemplateCollection?>(
-                label: 'المجموعة',
+                label: context.l10n?.editorGroup ?? 'المجموعة',
                 value: _collection,
                 items: <TemplateCollection?>[null, ...TemplateCollection.values],
                 labelOf: (TemplateCollection? value) =>
-                    value?.labelAr ?? 'الكل',
+                    value?.labelAr ?? context.l10n?.alpFilterAll ?? 'الكل',
                 width: 180,
                 onChanged: (TemplateCollection? value) =>
                     setState(() => _collection = value),
               ),
               DropdownField<TemplateLibrarySort>(
-                label: 'الترتيب',
+                label: context.l10n?.tplSortLabel ?? 'الترتيب',
                 value: _sort,
                 items: TemplateLibrarySort.values,
-                labelOf: (TemplateLibrarySort value) => value.labelAr,
+                labelOf: (TemplateLibrarySort value) => switch (value) {
+                  TemplateLibrarySort.recentlyUpdated =>
+                    context.l10n?.tplSortRecentlyUpdated ?? value.labelAr,
+                  TemplateLibrarySort.titleAsc =>
+                    context.l10n?.tplSortTitleAsc ?? value.labelAr,
+                  TemplateLibrarySort.collection =>
+                    context.l10n?.editorGroup ?? value.labelAr,
+                  TemplateLibrarySort.source =>
+                    context.l10n?.editorSource ?? value.labelAr,
+                },
                 width: 170,
                 onChanged: (TemplateLibrarySort value) =>
                     setState(() => _sort = value),
@@ -212,10 +225,11 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
 
     final List<TemplateLibraryEntry> visible = _visibleEntries();
     if (visible.isEmpty) {
-      return const _NoticeCard(
+      return _NoticeCard(
         icon: Icons.search_off_rounded,
-        title: 'لا نتائج مطابقة',
-        message: 'جرّب كلمة بحث أخرى أو أعد ضبط عامل التصفية.',
+        title: context.l10n?.tplNoResultsTitle ?? 'لا نتائج مطابقة',
+        message: context.l10n?.tplNoResultsMessage ??
+            'جرّب كلمة بحث أخرى أو أعد ضبط عامل التصفية.',
       );
     }
 
@@ -315,20 +329,29 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
     if (preset == null) return;
     await _controller.importPreset(preset);
     if (!mounted) return;
-    context.showSuccess('أُضيف «${preset.titleAr}» إلى قوالبك المحلية.');
+    context.showSuccess(
+      context.l10n?.tplAddedToLocal(preset.titleAr) ??
+          'أُضيف «${preset.titleAr}» إلى قوالبك المحلية.',
+    );
   }
 
   Future<void> _saveCloud(TemplateLibraryEntry entry) async {
     if (!_controller.isCloudAvailable) {
-      context.showWarning('حفظ القوالب في السحابة يتطلب الاتصال بمشروع '
-          'Supabase. احفظه محلياً بدل ذلك.');
+      context.showWarning(
+        context.l10n?.tplCloudRequiresConnection ??
+            'حفظ القوالب في السحابة يتطلب الاتصال بمشروع Supabase. احفظه محلياً بدل ذلك.',
+      );
       return;
     }
     final String? title = await _askTitle(context, initial: entry.title);
     if (title == null || !mounted) return;
     try {
       await _controller.saveAsCustom(title: title, entry: entry);
-      if (mounted) context.showSuccess('حُفظ «$title» في السحابة.');
+      if (mounted) {
+        context.showSuccess(
+          context.l10n?.tplSavedToCloud(title) ?? 'حُفظ «$title» في السحابة.',
+        );
+      }
     } on AppException catch (error) {
       if (mounted) context.showError(error.message);
     }
@@ -337,18 +360,27 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   Future<void> _rename(TemplateLibraryEntry entry) async {
     final String? title = await _askTitle(context, initial: entry.title);
     if (title == null || !mounted || title == entry.title) return;
-    await _updateCloud(entry, title: title, successAr: 'أُعيد تسمية القالب.');
+    await _updateCloud(
+      entry,
+      title: title,
+      successAr: context.l10n?.tplRenamed ?? 'أُعيد تسمية القالب.',
+    );
   }
 
   Future<void> _duplicate(TemplateLibraryEntry entry) async {
     try {
       await _controller.save(
-        title: '${entry.title} (نسخة)',
+        title: context.l10n?.tplCopySuffix(entry.title) ?? '${entry.title} (نسخة)',
         category: entry.category,
         orientation: entry.orientation,
         layoutData: entry.toDocument().toJson(),
       );
-      if (mounted) context.showSuccess('أُنشئت نسخة من «${entry.title}».');
+      if (mounted) {
+        context.showSuccess(
+          context.l10n?.tplCopyCreated(entry.title) ??
+              'أُنشئت نسخة من «${entry.title}».',
+        );
+      }
     } on AppException catch (error) {
       if (mounted) context.showError(error.message);
     }
@@ -359,8 +391,9 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
       entry,
       isPublic: !entry.record.isPublic,
       successAr: entry.record.isPublic
-          ? 'القالب الآن خاص.'
-          : 'القالب الآن عام (قراءة فقط للآخرين).',
+          ? (context.l10n?.tplNowPrivate ?? 'القالب الآن خاص.')
+          : (context.l10n?.tplNowPublic ??
+              'القالب الآن عام (قراءة فقط للآخرين).'),
     );
   }
 
@@ -388,12 +421,18 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   Future<void> _deleteCloud(TemplateLibraryEntry entry) async {
     final bool? confirmed = await _confirmDelete(
       context: context,
-      message: 'سيُحذف «${entry.title}» من السحابة نهائياً. لا يمكن التراجع.',
+      message: context.l10n?.tplConfirmCloudDelete(entry.title) ??
+          'سيُحذف «${entry.title}» من السحابة نهائياً. لا يمكن التراجع.',
     );
     if (confirmed != true || !mounted) return;
     try {
       await _controller.remove(entry.id);
-      if (mounted) context.showSuccess('حُذف القالب «${entry.title}».');
+      if (mounted) {
+        context.showSuccess(
+          context.l10n?.tplCloudDeleted(entry.title) ??
+              'حُذف القالب «${entry.title}».',
+        );
+      }
     } on AppException catch (error) {
       if (mounted) context.showError(error.message);
     }
@@ -402,12 +441,18 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   Future<void> _deleteLocal(TemplateLibraryEntry entry) async {
     final bool? confirmed = await _confirmDelete(
       context: context,
-      message: 'سيُحذف «${entry.title}» من هذا الجهاز. القالب الجاهز الأصلي '
-          'يبقى متاحاً في المكتبة.',
+      message: context.l10n?.tplConfirmLocalDelete(entry.title) ??
+          'سيُحذف «${entry.title}» من هذا الجهاز. القالب الجاهز الأصلي '
+              'يبقى متاحاً في المكتبة.',
     );
     if (confirmed != true || !mounted) return;
     await _controller.removeLocal(entry.id);
-    if (mounted) context.showSuccess('حُذف القالب المحلي «${entry.title}».');
+    if (mounted) {
+      context.showSuccess(
+        context.l10n?.tplLocalDeleted(entry.title) ??
+            'حُذف القالب المحلي «${entry.title}».',
+      );
+    }
   }
 
   /// نافذة طلب عنوان (تعيد `null` عند الإلغاء).
@@ -428,17 +473,17 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text('حذف القالب'),
+        title: Text(context.l10n?.tplDeleteTitle ?? 'حذف القالب'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('إلغاء'),
+            child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('حذف'),
+            child: Text(context.l10n?.tplDelete ?? 'حذف'),
           ),
         ],
       ),
@@ -469,23 +514,25 @@ class _TitleDialogState extends State<_TitleDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('عنوان القالب'),
+      title: Text(context.l10n?.tplRenameTitle ?? 'عنوان القالب'),
       content: TextField(
         controller: _field,
         autofocus: true,
         maxLength: AppConstants.maxNameLength,
-        decoration: const InputDecoration(labelText: 'العنوان'),
+        decoration: InputDecoration(
+          labelText: context.l10n?.tplFieldTitle ?? 'العنوان',
+        ),
         onSubmitted: (String value) =>
             Navigator.of(context).pop(value.trim()),
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('إلغاء'),
+          child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(_field.text.trim()),
-          child: const Text('حفظ'),
+          child: Text(context.l10n?.commonSave ?? 'حفظ'),
         ),
       ],
     );
@@ -516,12 +563,13 @@ class _PreviewDialog extends StatelessWidget {
                   const SizedBox(width: AppTheme.space8),
                   Expanded(
                     child: Text(
-                      'معاينة: ${entry.title}',
+                      context.l10n?.tplPreviewLabel(entry.title) ??
+                          'معاينة: ${entry.title}',
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
                   IconButton(
-                    tooltip: 'إغلاق',
+                    tooltip: context.l10n?.editorClose ?? 'إغلاق',
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded),
                   ),
@@ -558,7 +606,7 @@ class _CountChip extends StatelessWidget {
         border: Border.all(color: Theme.of(context).colorScheme.outline),
       ),
       child: Text(
-        '$count قالب',
+        context.l10n?.tplCount(count) ?? '$count قالب',
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w700,
@@ -590,7 +638,8 @@ class _SyncNote extends StatelessWidget {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              'تعذّر تحميل القوالب السحابية: $message',
+              context.l10n?.tplCloudLoadError(message) ??
+                  'تعذّر تحميل القوالب السحابية: $message',
               style: const TextStyle(fontSize: 11.5, color: AppColors.warning),
             ),
           ),
@@ -675,7 +724,7 @@ class _EntryCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 4),
                   child: Tooltip(
-                    message: 'قالب عام',
+                    message: context.l10n?.tplPublicBadge ?? 'قالب عام',
                     child: Icon(Icons.public_rounded,
                         size: 15, color: Theme.of(context).colorScheme.goldDeep),
                   ),
@@ -688,7 +737,11 @@ class _EntryCard extends StatelessWidget {
             runSpacing: 4,
             children: <Widget>[
               _Tag(label: entry.category.labelAr),
-              _Tag(label: entry.orientation.isLandscape ? 'أفقي' : 'رأسي'),
+              _Tag(
+                label: entry.orientation.isLandscape
+                    ? (context.l10n?.tplOrientationLandscape ?? 'أفقي')
+                    : (context.l10n?.tplOrientationPortrait ?? 'رأسي'),
+              ),
               if (entry.collection != null)
                 _Tag(label: entry.collection!.labelAr, gold: true),
             ],
@@ -696,9 +749,9 @@ class _EntryCard extends StatelessWidget {
           const SizedBox(height: AppTheme.space4),
           Text(
             entry.isPreset
-                ? 'قالب جاهز • متاح أوفلاين'
-                : '${_EntryCard._formatDate(entry.record.updatedAt)} • '
-                    'مخطط v${(entry.record.layoutData['schema_version'] as num?)?.toInt() ?? 1}',
+                ? (context.l10n?.tplPresetOffline ?? 'قالب جاهز • متاح أوفلاين')
+                : '${_EntryCard._formatDate(context, entry.record.updatedAt)} • '
+                    '${context.l10n?.tplSchemaVersion((entry.record.layoutData['schema_version'] as num?)?.toInt() ?? 1) ?? 'مخطط v${(entry.record.layoutData['schema_version'] as num?)?.toInt() ?? 1}'}',
             style: text.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -709,7 +762,11 @@ class _EntryCard extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () => onOpen(entry),
                 icon: const Icon(Icons.edit_note_rounded, size: 18),
-                label: Text(entry.isPreset ? 'فتح كقالب' : 'فتح'),
+                label: Text(
+                  entry.isPreset
+                      ? (context.l10n?.tplOpenAsTemplate ?? 'فتح كقالب')
+                      : (context.l10n?.tplOpen ?? 'فتح'),
+                ),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(118, 40),
                 ),
@@ -717,12 +774,12 @@ class _EntryCard extends StatelessWidget {
               const SizedBox(width: AppTheme.space4),
               IconAction(
                 icon: Icons.visibility_rounded,
-                tooltip: 'معاينة',
+                tooltip: context.l10n?.commonPreview ?? 'معاينة',
                 onPressed: () => onPreview(entry),
               ),
               const Spacer(),
               PopupMenuButton<_EntryAction>(
-                tooltip: 'خيارات',
+                tooltip: context.l10n?.commonOptions ?? 'خيارات',
                 onSelected: (_EntryAction action) {
                   switch (action) {
                     case _EntryAction.useInBatch:
@@ -761,60 +818,63 @@ class _EntryCard extends StatelessWidget {
 
   List<PopupMenuEntry<_EntryAction>> _menuItems(BuildContext context) {
     return <PopupMenuEntry<_EntryAction>>[
-      const PopupMenuItem<_EntryAction>(
+      PopupMenuItem<_EntryAction>(
         value: _EntryAction.useInBatch,
         child: _MenuRow(
           icon: Icons.table_view_rounded,
-          label: 'استخدام في التوليد الجماعي',
+          label: context.l10n?.tplUseInBatch ?? 'استخدام في التوليد الجماعي',
         ),
       ),
       const PopupMenuDivider(),
       if (entry.isPreset) ...<PopupMenuEntry<_EntryAction>>[
-        const PopupMenuItem<_EntryAction>(
+        PopupMenuItem<_EntryAction>(
           value: _EntryAction.importLocal,
           child: _MenuRow(
             icon: Icons.download_for_offline_rounded,
-            label: 'استيراد محلياً',
+            label: context.l10n?.tplImportLocal ?? 'استيراد محلياً',
           ),
         ),
         if (cloudAvailable)
-          const PopupMenuItem<_EntryAction>(
+          PopupMenuItem<_EntryAction>(
             value: _EntryAction.saveCloud,
             child: _MenuRow(
               icon: Icons.cloud_upload_rounded,
-              label: 'حفظ في السحابة',
+              label: context.l10n?.tplSaveToCloud ?? 'حفظ في السحابة',
             ),
           ),
       ],
       if (entry.isLocal) ...<PopupMenuEntry<_EntryAction>>[
         if (cloudAvailable)
-          const PopupMenuItem<_EntryAction>(
+          PopupMenuItem<_EntryAction>(
             value: _EntryAction.saveCloud,
             child: _MenuRow(
               icon: Icons.cloud_upload_rounded,
-              label: 'حفظ في السحابة',
+              label: context.l10n?.tplSaveToCloud ?? 'حفظ في السحابة',
             ),
           ),
-        const PopupMenuItem<_EntryAction>(
+        PopupMenuItem<_EntryAction>(
           value: _EntryAction.deleteLocal,
           child: _MenuRow(
             icon: Icons.delete_outline_rounded,
-            label: 'حذف محلياً',
+            label: context.l10n?.tplDeleteLocal ?? 'حذف محلياً',
             danger: true,
           ),
         ),
       ],
       if (entry.isCloud) ...<PopupMenuEntry<_EntryAction>>[
-        const PopupMenuItem<_EntryAction>(
+        PopupMenuItem<_EntryAction>(
           value: _EntryAction.rename,
           child: _MenuRow(
             icon: Icons.drive_file_rename_outline_rounded,
-            label: 'إعادة التسمية',
+            label: context.l10n?.tplRename ?? 'إعادة التسمية',
           ),
         ),
-        const PopupMenuItem<_EntryAction>(
+        PopupMenuItem<_EntryAction>(
           value: _EntryAction.duplicate,
-          child: _MenuRow(icon: Icons.copy_all_rounded, label: 'تكرار'),
+          child: _MenuRow(
+            icon: Icons.copy_all_rounded,
+            label: context.l10n?.editorDuplicate ?? 'تكرار',
+          ),
         ),
         PopupMenuItem<_EntryAction>(
           value: _EntryAction.togglePublic,
@@ -822,14 +882,16 @@ class _EntryCard extends StatelessWidget {
             icon: entry.record.isPublic
                 ? Icons.lock_outline_rounded
                 : Icons.public_rounded,
-            label: entry.record.isPublic ? 'جعله خاصاً' : 'جعله عاماً',
+            label: entry.record.isPublic
+                ? (context.l10n?.tplMakePrivate ?? 'جعله خاصاً')
+                : (context.l10n?.tplMakePublic ?? 'جعله عاماً'),
           ),
         ),
-        const PopupMenuItem<_EntryAction>(
+        PopupMenuItem<_EntryAction>(
           value: _EntryAction.deleteCloud,
           child: _MenuRow(
             icon: Icons.delete_forever_rounded,
-            label: 'حذف',
+            label: context.l10n?.tplDelete ?? 'حذف',
             danger: true,
           ),
         ),
@@ -837,8 +899,8 @@ class _EntryCard extends StatelessWidget {
     ];
   }
 
-  static String _formatDate(DateTime? value) {
-    if (value == null) return 'بلا تاريخ';
+  static String _formatDate(BuildContext context, DateTime? value) {
+    if (value == null) return context.l10n?.tplNoDate ?? 'بلا تاريخ';
     String two(int number) => number.toString().padLeft(2, '0');
     return '${value.year}/${two(value.month)}/${two(value.day)}';
   }

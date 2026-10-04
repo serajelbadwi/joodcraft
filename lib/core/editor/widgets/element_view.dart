@@ -8,6 +8,7 @@ import '../../models/template_document.dart';
 import '../../models/template_element.dart';
 import '../../models/text_flow.dart';
 import '../../pdf/pdf_font_catalog.dart';
+import '../../l10n/app_l10n.dart';
 import '../../utils/hex_color.dart';
 import 'element_painters.dart';
 
@@ -78,10 +79,10 @@ class ElementView extends StatelessWidget {
       final ShapeElement shape => _buildShape(shape),
       final SealElement seal => _buildSeal(seal),
       final DecorationElement decor => _buildDecoration(decor),
-      final SignatureElement signature => _buildSignature(signature),
-      final ImageElement image => _buildImage(image),
-      final QrElement qr => _buildQr(qr),
-      final UnknownElement unknown => _buildUnknown(unknown),
+      final SignatureElement signature => _buildSignature(context, signature),
+      final ImageElement image => _buildImage(context, image),
+      final QrElement qr => _buildQr(context, qr),
+      final UnknownElement unknown => _buildUnknown(context, unknown),
     };
   }
 
@@ -194,13 +195,13 @@ class ElementView extends StatelessWidget {
   // --------------------------------------------------------------------------
   //  التوقيعات المتعددة
   // --------------------------------------------------------------------------
-  Widget _buildSignature(SignatureElement signature) {
+  Widget _buildSignature(BuildContext context, SignatureElement signature) {
     final List<SignatureSlot> slots = signature.orderedSlots;
     if (slots.isEmpty) {
-      return const _MissingAssetHint(
+      return _MissingAssetHint(
         icon: Icons.draw_rounded,
-        label: 'توقيعات فارغة',
-        detail: 'أضف دوراً واسماً وصورة توقيع',
+        label: context.l10n?.evSignatureEmptyLabel ?? 'توقيعات فارغة',
+        detail: context.l10n?.evSignatureEmptyDetail ?? 'أضف دوراً واسماً وصورة توقيع',
       );
     }
 
@@ -229,7 +230,8 @@ class ElementView extends StatelessWidget {
                   top: 0,
                   width: rects[i].width * scale,
                   height: boundedHeight ? constraints.maxHeight : null,
-                  child: _signatureSlot(signature, slots[i], rects[i].width),
+                  child:
+                      _signatureSlot(context, signature, slots[i], rects[i].width),
                 ),
             ],
           );
@@ -243,6 +245,7 @@ class ElementView extends StatelessWidget {
   /// [slotWidth] عرض الخانة بالوحدات التصميمية (من `slotLayout`) — يُستخدم
   /// لحساب ارتفاع الصورة بنفس قاعدة الـ PDF تماماً.
   Widget _signatureSlot(
+    BuildContext context,
     SignatureElement element,
     SignatureSlot slot,
     double slotWidth,
@@ -280,7 +283,7 @@ class ElementView extends StatelessWidget {
             width: double.infinity,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 6 * scale),
-              child: _signatureImage(slot),
+              child: _signatureImage(context, slot),
             ),
           ),
         if (element.showDivider)
@@ -348,33 +351,34 @@ class ElementView extends StatelessWidget {
   }
 
   /// صورة توقيع خانة — نفس قواعد عرض [ImageElement] (أصل حيّ ← Base64 ← تنبيه).
-  Widget _signatureImage(SignatureSlot slot) {
+  Widget _signatureImage(BuildContext context, SignatureSlot slot) {
     const BoxFit fit = BoxFit.contain;
     if (slot.imageSource == ImageSourceKind.userAsset) {
       final UserAsset? asset = AssetsController.instance.byId(slot.imagePath);
       if (asset != null) {
         return _memoryImage(
+          context,
           AssetImageCache.instance.providerForAsset(asset),
           fit,
         );
       }
       final String? inline = inlineSlotBase64(slot, document);
       return inline == null
-          ? const _MissingAssetHint(
+          ? _MissingAssetHint(
               icon: Icons.image_not_supported_outlined,
-              label: 'توقيع محذوف',
-              detail: 'اختر صورة من مكتبة أصولي',
+              label: context.l10n?.evSignatureMissingLabel ?? 'توقيع محذوف',
+              detail: context.l10n?.assetPickerTitle ?? 'اختر صورة من مكتبة أصولي',
             )
-          : _imageFromBase64(inline, fit);
+          : _imageFromBase64(context, inline, fit);
     }
     if (slot.imageSource == ImageSourceKind.dataUri) {
-      return _imageFromBase64(slot.imagePath, fit);
+      return _imageFromBase64(context, slot.imagePath, fit);
     }
     if (slot.imageSource == ImageSourceKind.file) {
-      return const _MissingAssetHint(
+      return _MissingAssetHint(
         icon: Icons.link_off_rounded,
-        label: 'ملف محلي',
-        detail: 'ارفع الصورة إلى مكتبة الأصول',
+        label: context.l10n?.imageSourceLocalFile ?? 'ملف محلي',
+        detail: context.l10n?.evUploadToLibraryDetail ?? 'ارفع الصورة إلى مكتبة الأصول',
       );
     }
     return Image.asset(
@@ -387,7 +391,7 @@ class ElementView extends StatelessWidget {
       ) =>
           _MissingAssetHint(
         icon: Icons.broken_image_outlined,
-        label: 'صورة غير موجودة',
+        label: context.l10n?.evImageNotFoundLabel ?? 'صورة غير موجودة',
         detail: slot.imagePath,
       ),
     );
@@ -396,7 +400,7 @@ class ElementView extends StatelessWidget {
   // --------------------------------------------------------------------------
   //  الصورة
   // --------------------------------------------------------------------------
-  Widget _buildImage(ImageElement image) {
+  Widget _buildImage(BuildContext context, ImageElement image) {
     final BoxFit fit = switch (image.fit) {
       ImageFit.contain => BoxFit.contain,
       ImageFit.cover => BoxFit.cover,
@@ -405,10 +409,10 @@ class ElementView extends StatelessWidget {
 
     late final Widget child;
     if (image.path.trim().isEmpty) {
-      child = const _MissingAssetHint(
+      child = _MissingAssetHint(
         icon: Icons.add_photo_alternate_outlined,
-        label: 'لم يُحدَّد ملف',
-        detail: 'اختر صورة من مكتبة الأصول',
+        label: context.l10n?.evNoFileLabel ?? 'لم يُحدَّد ملف',
+        detail: context.l10n?.evChooseFromAssetsDetail ?? 'اختر صورة من مكتبة الأصول',
       );
     } else if (image.sourceKind == ImageSourceKind.userAsset) {
       final UserAsset? asset = AssetsController.instance.byId(image.path);
@@ -416,6 +420,7 @@ class ElementView extends StatelessWidget {
         // البايتات والموفّر مفكوكان ومخزّنان مرة واحدة — لا فكّ Base64 ولا
         // إعادة رَستَرة في كل إطار أثناء السحب.
         child = _memoryImage(
+          context,
           AssetImageCache.instance.providerForAsset(asset),
           fit,
         );
@@ -423,21 +428,22 @@ class ElementView extends StatelessWidget {
         // نسخة Base64 مضمّنة (احتياطية) تُعرض رغم غياب الأصل من المكتبة.
         final String? inline = inlineImageBase64(image, document);
         child = inline == null
-            ? const _MissingAssetHint(
+            ? _MissingAssetHint(
                 icon: Icons.image_not_supported_outlined,
-                label: 'أصل محذوف',
-                detail: 'أعد اختيار الإطار/الأصل من المكتبة',
+                label: context.l10n?.evAssetMissingLabel ?? 'أصل محذوف',
+                detail: context.l10n?.evReselectAssetDetail ??
+                    'أعد اختيار الإطار/الأصل من المكتبة',
               )
-            : _imageFromBase64(inline, fit);
+            : _imageFromBase64(context, inline, fit);
       }
     } else if (image.sourceKind == ImageSourceKind.dataUri) {
       // بيانات Base64 مضمّنة داخل `path` — تُعرض مباشرةً بلا مصدر خارجي.
-      child = _imageFromBase64(image.path, fit);
+      child = _imageFromBase64(context, image.path, fit);
     } else if (image.sourceKind == ImageSourceKind.file) {
-      child = const _MissingAssetHint(
+      child = _MissingAssetHint(
         icon: Icons.link_off_rounded,
-        label: 'ملف محلي',
-        detail: 'ارفع الصورة إلى مكتبة الأصول',
+        label: context.l10n?.imageSourceLocalFile ?? 'ملف محلي',
+        detail: context.l10n?.evUploadToLibraryDetail ?? 'ارفع الصورة إلى مكتبة الأصول',
       );
     } else {
       child = Image.asset(
@@ -450,7 +456,7 @@ class ElementView extends StatelessWidget {
         ) =>
             _MissingAssetHint(
           icon: Icons.broken_image_outlined,
-          label: 'صورة غير موجودة',
+          label: context.l10n?.evImageNotFoundLabel ?? 'صورة غير موجودة',
           detail: image.path,
         ),
       );
@@ -459,7 +465,12 @@ class ElementView extends StatelessWidget {
     return Opacity(opacity: image.opacity.clamp(0, 1), child: child);
   }
 
-  Widget _memoryImage(ImageProvider provider, BoxFit fit) => Image(
+  Widget _memoryImage(
+    BuildContext context,
+    ImageProvider provider,
+    BoxFit fit,
+  ) =>
+      Image(
         image: provider,
         fit: fit,
         gaplessPlayback: true,
@@ -468,25 +479,26 @@ class ElementView extends StatelessWidget {
           Object error,
           StackTrace? stackTrace,
         ) =>
-            const _MissingAssetHint(
+            _MissingAssetHint(
           icon: Icons.broken_image_outlined,
-          label: 'صورة غير صالحة',
-          detail: 'تعذّر عرض البيانات',
+          label: context.l10n?.evInvalidImageLabel ?? 'صورة غير صالحة',
+          detail: context.l10n?.evRenderDataFailedDetail ?? 'تعذّر عرض البيانات',
         ),
       );
 
   /// عرض صورة من بيانات Base64 — مع بطاقة تنبيه إن كانت البيانات تالفة.
-  Widget _imageFromBase64(String base64, BoxFit fit) {
+  Widget _imageFromBase64(BuildContext context, String base64, BoxFit fit) {
     try {
       return _memoryImage(
+        context,
         AssetImageCache.instance.providerForBase64(base64),
         fit,
       );
     } catch (_) {
-      return const _MissingAssetHint(
+      return _MissingAssetHint(
         icon: Icons.broken_image_outlined,
-        label: 'بيانات غير صالحة',
-        detail: 'تعذّر فك ترميز الصورة',
+        label: context.l10n?.evInvalidDataLabel ?? 'بيانات غير صالحة',
+        detail: context.l10n?.evDecodeFailedDetail ?? 'تعذّر فك ترميز الصورة',
       );
     }
   }
@@ -494,17 +506,17 @@ class ElementView extends StatelessWidget {
   // --------------------------------------------------------------------------
   //  رمز QR
   // --------------------------------------------------------------------------
-  Widget _buildQr(QrElement qr) {
+  Widget _buildQr(BuildContext context, QrElement qr) {
     final String resolved = document.resolveFields(
       qr.data,
       null,
       keepUnknownTokens: true,
     );
     if (resolved.trim().isEmpty) {
-      return const _MissingAssetHint(
+      return _MissingAssetHint(
         icon: Icons.qr_code_2_rounded,
-        label: 'رمز فارغ',
-        detail: 'أدخل قيمة الرمز في شريط الخصائص',
+        label: context.l10n?.evEmptyQrLabel ?? 'رمز فارغ',
+        detail: context.l10n?.evEmptyQrDetail ?? 'أدخل قيمة الرمز في شريط الخصائص',
       );
     }
     return CustomPaint(
@@ -519,7 +531,7 @@ class ElementView extends StatelessWidget {
   // --------------------------------------------------------------------------
   //  عنصر غير معروف (من إصدار أحدث) — يُحفظ ولا يُرسم
   // --------------------------------------------------------------------------
-  Widget _buildUnknown(UnknownElement unknown) {
+  Widget _buildUnknown(BuildContext context, UnknownElement unknown) {
     return CustomPaint(
       painter: const DashedRectPainter(color: EditorColors.unknown),
       child: Center(
@@ -533,7 +545,8 @@ class ElementView extends StatelessWidget {
                     size: 16, color: EditorColors.unknown),
                 const SizedBox(height: 2),
                 Text(
-                  'عنصر غير مدعوم: ${unknown.typeName}',
+                  context.l10n?.evUnknownElementLabel(unknown.typeName) ??
+                      'عنصر غير مدعوم: ${unknown.typeName}',
                   style: const TextStyle(
                     fontSize: 10,
                     color: EditorColors.unknown,

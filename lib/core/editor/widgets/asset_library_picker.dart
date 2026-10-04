@@ -5,6 +5,7 @@ import '../../assets/asset_type_ui.dart';
 import '../../assets/assets_controller.dart';
 import '../../assets/user_asset.dart';
 import '../../constants/app_constants.dart';
+import '../../l10n/app_l10n.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
@@ -15,7 +16,7 @@ import '../../theme/app_theme.dart';
 /// ([filterTypes]) مع فرز كل الأصول من النوع المطلوب — أوفلاين بالكامل.
 Future<UserAsset?> showAssetLibraryPicker(
   BuildContext context, {
-  String title = 'من مكتبة أصولي',
+  String? title,
   List<AssetType>? filterTypes,
   AssetsController? assets,
 }) {
@@ -36,7 +37,7 @@ class _AssetLibraryDialog extends StatefulWidget {
     required this.assets,
   });
 
-  final String title;
+  final String? title;
   final List<AssetType> filterTypes;
   final AssetsController assets;
 
@@ -56,7 +57,13 @@ class _AssetLibraryDialogState extends State<_AssetLibraryDialog> {
           Icon(Icons.collections_bookmark_rounded,
               size: 18, color: Theme.of(context).colorScheme.goldDeep),
           const SizedBox(width: 8),
-          Expanded(child: Text(widget.title)),
+          Expanded(
+            child: Text(
+              widget.title ??
+                  context.l10n?.editorFromMyLibrary ??
+                  'من مكتبة أصولي',
+            ),
+          ),
         ],
       ),
       content: SizedBox(
@@ -73,8 +80,8 @@ class _AssetLibraryDialogState extends State<_AssetLibraryDialog> {
             if (allowed.isEmpty) {
               return Center(
                 child: Text(
-                  'لا توجد أصول مرفوعة من الأنواع المطلوبة.\n'
-                  'ارفع إطاراً أو شعاراً من قسم «الأصول والتوقيعات» ثم أعد المحاولة.',
+                  context.l10n?.alpEmptyHint ??
+                      'لا توجد أصول مرفوعة من الأنواع المطلوبة. ارفع إطاراً أو شعاراً من قسم «الأصول والتوقيعات» ثم أعد المحاولة.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
@@ -96,7 +103,7 @@ class _AssetLibraryDialogState extends State<_AssetLibraryDialog> {
                   children: <Widget>[
                     ChoiceChip(
                       key: const ValueKey<String>('asset-filter-all'),
-                      label: const Text('الكل'),
+                      label: Text(context.l10n?.alpFilterAll ?? 'الكل'),
                       selected: _filter == null,
                       onSelected: (_) => setState(() => _filter = null),
                     ),
@@ -116,7 +123,9 @@ class _AssetLibraryDialogState extends State<_AssetLibraryDialog> {
                   child: visible.isEmpty
                       ? Center(
                           child: Text(
-                            'لا توجد أصول من النوع «${_filter!.labelAr}».',
+                            context.l10n
+                                    ?.alpNoFilteredAssets(_filter!.labelAr) ??
+                                'لا توجد أصول من النوع «${_filter!.labelAr}».',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         )
@@ -145,7 +154,7 @@ class _AssetLibraryDialogState extends State<_AssetLibraryDialog> {
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('إغلاق'),
+          child: Text(context.l10n?.editorClose ?? 'إغلاق'),
         ),
       ],
     );

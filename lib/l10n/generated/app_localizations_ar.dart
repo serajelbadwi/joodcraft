@@ -625,4 +625,502 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paletteLogo => 'شعار/توقيع';
+
+  @override
+  String get evSignatureEmptyLabel => 'توقيعات فارغة';
+
+  @override
+  String get evSignatureEmptyDetail => 'أضف دوراً واسماً وصورة توقيع';
+
+  @override
+  String get evSignatureMissingLabel => 'توقيع محذوف';
+
+  @override
+  String get evUploadToLibraryDetail => 'ارفع الصورة إلى مكتبة الأصول';
+
+  @override
+  String get evImageNotFoundLabel => 'صورة غير موجودة';
+
+  @override
+  String get evNoFileLabel => 'لم يُحدَّد ملف';
+
+  @override
+  String get evChooseFromAssetsDetail => 'اختر صورة من مكتبة الأصول';
+
+  @override
+  String get evAssetMissingLabel => 'أصل محذوف';
+
+  @override
+  String get evReselectAssetDetail => 'أعد اختيار الإطار/الأصل من المكتبة';
+
+  @override
+  String get evInvalidImageLabel => 'صورة غير صالحة';
+
+  @override
+  String get evRenderDataFailedDetail => 'تعذّر عرض البيانات';
+
+  @override
+  String get evInvalidDataLabel => 'بيانات غير صالحة';
+
+  @override
+  String get evDecodeFailedDetail => 'تعذّر فك ترميز الصورة';
+
+  @override
+  String get evEmptyQrLabel => 'رمز فارغ';
+
+  @override
+  String get evEmptyQrDetail => 'أدخل قيمة الرمز في شريط الخصائص';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return 'عنصر غير مدعوم: $type';
+  }
+
+  @override
+  String get alpFilterAll => 'الكل';
+
+  @override
+  String get alpEmptyHint =>
+      'لا توجد أصول مرفوعة من الأنواع المطلوبة. ارفع إطاراً أو شعاراً من قسم «الأصول والتوقيعات» ثم أعد المحاولة.';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return 'لا توجد أصول من النوع «$type».';
+  }
+
+  @override
+  String get authWelcomeBack => 'مرحباً بك في جودكرافت.';
+
+  @override
+  String get authResetLinkSent =>
+      'تم إرسال رابط الاستعادة. تحقّق من بريدك الإلكتروني.';
+
+  @override
+  String get authLogin => 'تسجيل الدخول';
+
+  @override
+  String get authLoginSubtitle =>
+      'بريدك الإلكتروني وكلمة المرور للمتابعة إلى لوحة التحكم.';
+
+  @override
+  String get authNoAccount => 'ليس لديك حساب؟';
+
+  @override
+  String get authCreateAccountLink => 'أنشئ حساباً جديداً';
+
+  @override
+  String get authConfirmEmailThenLogin =>
+      'تم إنشاء حسابك. يرجى تأكيد بريدك الإلكتروني أولاً ثم تسجيل الدخول.';
+
+  @override
+  String get authEmail => 'البريد الإلكتروني';
+
+  @override
+  String get authPassword => 'كلمة المرور';
+
+  @override
+  String get authForgotPassword => 'نسيت كلمة المرور؟';
+
+  @override
+  String get authEnterDashboard => 'دخول إلى اللوحة';
+
+  @override
+  String get authResetPassword => 'استعادة كلمة المرور';
+
+  @override
+  String get authResetPasswordHint =>
+      'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور.';
+
+  @override
+  String get authSendLink => 'إرسال الرابط';
+
+  @override
+  String get authConfirmEmailMessage =>
+      'تم إنشاء حسابك. تحقّق من بريدك الإلكتروني لتأكيد الحساب ثم سجّل الدخول.';
+
+  @override
+  String get authAccountCreatedWelcome =>
+      'تم إنشاء حسابك. أهلاً بك في جودكرافت.';
+
+  @override
+  String get authCreateAccount => 'إنشاء حساب';
+
+  @override
+  String get authRegisterSubtitle =>
+      'حسابك يحفظ قوالبك وأصولك (الشعار، التوقيع، الختم) لإعادة استخدامها في كل مشاريعك.';
+
+  @override
+  String get authHaveAccount => 'لديك حساب بالفعل؟';
+
+  @override
+  String get authFullName => 'الاسم الكامل';
+
+  @override
+  String get authFullNameHint => 'مثال: عبدالله الأحمد';
+
+  @override
+  String get authName => 'الاسم';
+
+  @override
+  String get authOrgName => 'اسم الجهة / المؤسسة (اختياري)';
+
+  @override
+  String get authOrgNameHint => 'مثال: جمعية جود الخيرية';
+
+  @override
+  String get authOrgHelper => 'يُطبع على الشهادات والعقود تلقائياً.';
+
+  @override
+  String get authOrgNameShort => 'اسم الجهة';
+
+  @override
+  String get authPasswordHint => '8 أحرف على الأقل';
+
+  @override
+  String authPasswordRule(Object min) {
+    return 'استخدم $min أحرف أو أكثر مع أرقام ورموز.';
+  }
+
+  @override
+  String get authConfirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get authCreateAccountButton => 'إنشاء الحساب';
+
+  @override
+  String get authFeatureLocalExcel =>
+      'معالجة محلية كاملة لملفات Excel — بياناتك لا تغادر جهازك';
+
+  @override
+  String get authFeaturePdf =>
+      'توليد PDF بخطوط عربية عالية الجودة مع دعم كامل للاتجاه RTL';
+
+  @override
+  String get authFeatureTemplates =>
+      'قوالبك محفوظة في حسابك وجاهزة لإعادة الاستخدام';
+
+  @override
+  String get authTagline => 'شهاداتك وعقودك الرسمية… بجودة تُطبع بثقة.';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • الإصدار $version';
+  }
+
+  @override
+  String get dashModules => 'وحدات المنصة';
+
+  @override
+  String dashWelcome(Object name) {
+    return 'أهلاً بك، $name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return 'الاشتراك: $tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return 'الجهة: $name';
+  }
+
+  @override
+  String get dashOrgMissing =>
+      'لم تُسجّل اسم جهتك بعد — سيُطبع تلقائياً على الشهادات والعقود.';
+
+  @override
+  String get dashOpenModule => 'فتح الوحدة';
+
+  @override
+  String get dashRoadmapSupabase =>
+      'تأسيس قاعدة بيانات Supabase (جداول + RLS + Triggers)';
+
+  @override
+  String get dashRoadmapModular => 'هيكل Modular Feature-First قابل للتوسّع';
+
+  @override
+  String get dashRoadmapTheme => 'الثيم البصري للهوية ودعم RTL بخط Cairo';
+
+  @override
+  String get dashRoadmapAuth =>
+      'المصادقة: تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور';
+
+  @override
+  String get dashPhaseOneDone => 'المرحلة الأولى مكتملة';
+
+  @override
+  String get dashNextPhase =>
+      'التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.';
+
+  @override
+  String get destDashboard => 'لوحة التحكم';
+
+  @override
+  String get destDashboardDesc => 'نظرة عامة على مشاريعك وقوالبك.';
+
+  @override
+  String get destCertificates => 'محـرّك الشهادات';
+
+  @override
+  String get destCertificatesDesc =>
+      'تصميم شهادات أفقية (Landscape) من قالب قابل للتعديل.';
+
+  @override
+  String get destContracts => 'محـرّك العقود';
+
+  @override
+  String get destContractsDesc =>
+      'صياغة عقود رأسية (Portrait) بحقول ديناميكية.';
+
+  @override
+  String get destBatch => 'التوليد الجماعي';
+
+  @override
+  String get destBatchDesc =>
+      'قراءة ملف Excel محلياً وتوليد مئات الشهادات دفعة واحدة.';
+
+  @override
+  String get destTemplates => 'مكتبة القوالب';
+
+  @override
+  String get destTemplatesDesc =>
+      'إدارة قوالبك المحفوظة وتصنيفها وإعادة استخدامها.';
+
+  @override
+  String get destAssets => 'الأصول والتوقيعات';
+
+  @override
+  String get destAssetsDesc => 'الشعار والختم والتوقيع والإطارات الخاصة بك.';
+
+  @override
+  String get dashUser => 'مستخدم';
+
+  @override
+  String get dashLogoutSuccess => 'تم تسجيل الخروج بنجاح.';
+
+  @override
+  String get dashLogoutError => 'تعذّر تسجيل الخروج. حاول مرة أخرى.';
+
+  @override
+  String get commonSave => 'حفظ';
+
+  @override
+  String get commonPreview => 'معاينة';
+
+  @override
+  String get commonOptions => 'خيارات';
+
+  @override
+  String get tplDelete => 'حذف';
+
+  @override
+  String get tplSortRecentlyUpdated => 'الأحدث تعديلاً';
+
+  @override
+  String get tplSortTitleAsc => 'الاسم (أ - ي)';
+
+  @override
+  String get tplSortLabel => 'الترتيب';
+
+  @override
+  String get tplSubtitle =>
+      'قوالب جاهزة احترافية + قوالبك المحفوظة — بحث وتصفية وفتح واستيراد، أوفلاين بالكامل.';
+
+  @override
+  String get tplRefreshTooltip => 'تحديث القائمة';
+
+  @override
+  String get tplSearchHint => 'بحث في القوالب…';
+
+  @override
+  String get tplNoResultsTitle => 'لا نتائج مطابقة';
+
+  @override
+  String get tplNoResultsMessage =>
+      'جرّب كلمة بحث أخرى أو أعد ضبط عامل التصفية.';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return 'أُضيف «$title» إلى قوالبك المحلية.';
+  }
+
+  @override
+  String get tplCloudRequiresConnection =>
+      'حفظ القوالب في السحابة يتطلب الاتصال بمشروع Supabase. احفظه محلياً بدل ذلك.';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return 'حُفظ «$title» في السحابة.';
+  }
+
+  @override
+  String get tplRenamed => 'أُعيد تسمية القالب.';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title (نسخة)';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return 'أُنشئت نسخة من «$title».';
+  }
+
+  @override
+  String get tplNowPrivate => 'القالب الآن خاص.';
+
+  @override
+  String get tplNowPublic => 'القالب الآن عام (قراءة فقط للآخرين).';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return 'سيُحذف «$title» من السحابة نهائياً. لا يمكن التراجع.';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return 'حُذف القالب «$title».';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return 'سيُحذف «$title» من هذا الجهاز. القالب الجاهز الأصلي يبقى متاحاً في المكتبة.';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return 'حُذف القالب المحلي «$title».';
+  }
+
+  @override
+  String get tplDeleteTitle => 'حذف القالب';
+
+  @override
+  String get tplRenameTitle => 'عنوان القالب';
+
+  @override
+  String get tplFieldTitle => 'العنوان';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return 'معاينة: $title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count قالب';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return 'تعذّر تحميل القوالب السحابية: $message';
+  }
+
+  @override
+  String get tplPublicBadge => 'قالب عام';
+
+  @override
+  String get tplOrientationLandscape => 'أفقي';
+
+  @override
+  String get tplOrientationPortrait => 'رأسي';
+
+  @override
+  String get tplPresetOffline => 'قالب جاهز • متاح أوفلاين';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return 'مخطط v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => 'فتح كقالب';
+
+  @override
+  String get tplOpen => 'فتح';
+
+  @override
+  String get tplUseInBatch => 'استخدام في التوليد الجماعي';
+
+  @override
+  String get tplImportLocal => 'استيراد محلياً';
+
+  @override
+  String get tplSaveToCloud => 'حفظ في السحابة';
+
+  @override
+  String get tplDeleteLocal => 'حذف محلياً';
+
+  @override
+  String get tplRename => 'إعادة التسمية';
+
+  @override
+  String get tplMakePrivate => 'جعله خاصاً';
+
+  @override
+  String get tplMakePublic => 'جعله عاماً';
+
+  @override
+  String get tplNoDate => 'بلا تاريخ';
+
+  @override
+  String get amSubtitle =>
+      'ارفع شعارك وختمك وتوقيعك مرة واحدة، ثم أدرجه في أي قالب — يُحفظ على جهازك ويُستعاد أوفلاين.';
+
+  @override
+  String get amSearchHint => 'بحث في الأصول…';
+
+  @override
+  String get amTypeLabel => 'النوع';
+
+  @override
+  String get amUploadTooltip => 'رفع أصل جديد';
+
+  @override
+  String get amUpload => 'رفع أصل';
+
+  @override
+  String get amEmptyTitle => 'لا توجد أصول بعد';
+
+  @override
+  String get amEmptyMessage =>
+      'ارفع شعار مؤسستك أو توقيعك أو ختمك، ثم أدرجه في أي قالب من شريط خصائص الصورة.';
+
+  @override
+  String get amNoResultsMessage => 'جرّب اسماً آخر أو أعد ضبط عامل التصفية.';
+
+  @override
+  String get amRenamed => 'أُعيدت تسمية الأصل.';
+
+  @override
+  String amMovedToType(Object type) {
+    return 'نُقل الأصل إلى «$type».';
+  }
+
+  @override
+  String get amDeleteTitle => 'حذف الأصل';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return 'سيُحذف «$name» من هذا الجهاز. القوالب التي تستخدمه ستفقد الصورة (دون فشل الطباعة).';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return 'حُذف الأصل «$name».';
+  }
+
+  @override
+  String get amRenameTitle => 'إعادة تسمية الأصل';
+
+  @override
+  String amCount(Object count) {
+    return '$count أصل';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return 'اجعل النوع: $type';
+  }
 }

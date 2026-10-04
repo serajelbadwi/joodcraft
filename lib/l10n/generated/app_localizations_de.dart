@@ -629,4 +629,515 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get paletteLogo => 'Logo / Signatur';
+
+  @override
+  String get evSignatureEmptyLabel => 'Leere Signatur';
+
+  @override
+  String get evSignatureEmptyDetail =>
+      'Rolle, Name und Signaturbild hinzufügen';
+
+  @override
+  String get evSignatureMissingLabel => 'Fehlende Signatur';
+
+  @override
+  String get evUploadToLibraryDetail =>
+      'Laden Sie das Bild in die Ressourcenbibliothek';
+
+  @override
+  String get evImageNotFoundLabel => 'Bild nicht gefunden';
+
+  @override
+  String get evNoFileLabel => 'Keine Datei ausgewählt';
+
+  @override
+  String get evChooseFromAssetsDetail =>
+      'Bild aus der Ressourcenbibliothek wählen';
+
+  @override
+  String get evAssetMissingLabel => 'Fehlende Ressource';
+
+  @override
+  String get evReselectAssetDetail =>
+      'Rahmen/Ressource erneut aus der Bibliothek wählen';
+
+  @override
+  String get evInvalidImageLabel => 'Ungültiges Bild';
+
+  @override
+  String get evRenderDataFailedDetail => 'Daten können nicht angezeigt werden';
+
+  @override
+  String get evInvalidDataLabel => 'Ungültige Daten';
+
+  @override
+  String get evDecodeFailedDetail => 'Bild kann nicht dekodiert werden';
+
+  @override
+  String get evEmptyQrLabel => 'Leerer Code';
+
+  @override
+  String get evEmptyQrDetail =>
+      'Geben Sie den Codewert in der Eigenschaftenleiste ein';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return 'Nicht unterstütztes Element: $type';
+  }
+
+  @override
+  String get alpFilterAll => 'Alle';
+
+  @override
+  String get alpEmptyHint =>
+      'Keine hochgeladenen Ressourcen der gewünschten Typen. Laden Sie einen Rahmen oder ein Logo im Bereich „Ressourcen & Signaturen“ hoch und versuchen Sie es erneut.';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return 'Keine Ressourcen vom Typ „$type“.';
+  }
+
+  @override
+  String get authWelcomeBack => 'Willkommen bei JoodCraft.';
+
+  @override
+  String get authResetLinkSent =>
+      'Der Link zum Zurücksetzen wurde gesendet. Prüfen Sie Ihre E-Mail.';
+
+  @override
+  String get authLogin => 'Anmelden';
+
+  @override
+  String get authLoginSubtitle =>
+      'Ihre E-Mail und Ihr Passwort für das Dashboard.';
+
+  @override
+  String get authNoAccount => 'Noch kein Konto?';
+
+  @override
+  String get authCreateAccountLink => 'Neues Konto erstellen';
+
+  @override
+  String get authConfirmEmailThenLogin =>
+      'Ihr Konto wurde erstellt. Bestätigen Sie zuerst Ihre E-Mail und melden Sie sich dann an.';
+
+  @override
+  String get authEmail => 'E-Mail';
+
+  @override
+  String get authPassword => 'Passwort';
+
+  @override
+  String get authForgotPassword => 'Passwort vergessen?';
+
+  @override
+  String get authEnterDashboard => 'Zum Dashboard';
+
+  @override
+  String get authResetPassword => 'Passwort zurücksetzen';
+
+  @override
+  String get authResetPasswordHint =>
+      'Geben Sie Ihre E-Mail ein, wir senden Ihnen einen Link zum Zurücksetzen.';
+
+  @override
+  String get authSendLink => 'Link senden';
+
+  @override
+  String get authConfirmEmailMessage =>
+      'Ihr Konto wurde erstellt. Bestätigen Sie es per E-Mail und melden Sie sich dann an.';
+
+  @override
+  String get authAccountCreatedWelcome =>
+      'Ihr Konto wurde erstellt. Willkommen bei JoodCraft.';
+
+  @override
+  String get authCreateAccount => 'Konto erstellen';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Ihr Konto speichert Ihre Vorlagen und Ressourcen (Logo, Signatur, Siegel) zur Wiederverwendung in allen Projekten.';
+
+  @override
+  String get authHaveAccount => 'Bereits ein Konto?';
+
+  @override
+  String get authFullName => 'Vollständiger Name';
+
+  @override
+  String get authFullNameHint => 'z. B. Abdullah Al-Ahmad';
+
+  @override
+  String get authName => 'Name';
+
+  @override
+  String get authOrgName => 'Name der Organisation (optional)';
+
+  @override
+  String get authOrgNameHint => 'z. B. Jood-Wohltätigkeitsverein';
+
+  @override
+  String get authOrgHelper =>
+      'Wird automatisch auf Zertifikaten und Verträgen gedruckt.';
+
+  @override
+  String get authOrgNameShort => 'Organisationsname';
+
+  @override
+  String get authPasswordHint => 'Mindestens 8 Zeichen';
+
+  @override
+  String authPasswordRule(Object min) {
+    return 'Verwenden Sie mindestens $min Zeichen mit Zahlen und Symbolen.';
+  }
+
+  @override
+  String get authConfirmPassword => 'Passwort bestätigen';
+
+  @override
+  String get authCreateAccountButton => 'Konto erstellen';
+
+  @override
+  String get authFeatureLocalExcel =>
+      'Vollständig lokale Verarbeitung von Excel-Dateien – Ihre Daten verlassen Ihr Gerät nicht';
+
+  @override
+  String get authFeaturePdf =>
+      'PDF-Erstellung mit hochwertigen arabischen Schriften und vollständiger RTL-Unterstützung';
+
+  @override
+  String get authFeatureTemplates =>
+      'Ihre Vorlagen sind in Ihrem Konto gespeichert und wiederverwendbar';
+
+  @override
+  String get authTagline =>
+      'Ihre offiziellen Zertifikate und Verträge… mit Vertrauen gedruckt.';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • Version $version';
+  }
+
+  @override
+  String get dashModules => 'Plattform-Module';
+
+  @override
+  String dashWelcome(Object name) {
+    return 'Willkommen, $name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return 'Abonnement: $tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return 'Organisation: $name';
+  }
+
+  @override
+  String get dashOrgMissing =>
+      'Sie haben noch keinen Organisationsnamen festgelegt – er wird automatisch auf Zertifikate und Verträge gedruckt.';
+
+  @override
+  String get dashOpenModule => 'Modul öffnen';
+
+  @override
+  String get dashRoadmapSupabase =>
+      'Supabase-Datenbank einrichten (Tabellen + RLS + Trigger)';
+
+  @override
+  String get dashRoadmapModular =>
+      'Eine skalierbare modulare Feature-First-Struktur';
+
+  @override
+  String get dashRoadmapTheme =>
+      'Das visuelle Markenthema mit RTL-Unterstützung in der Schrift Cairo';
+
+  @override
+  String get dashRoadmapAuth =>
+      'Authentifizierung: Anmeldung, Kontoerstellung und Passwort-Reset';
+
+  @override
+  String get dashPhaseOneDone => 'Erste Phase abgeschlossen';
+
+  @override
+  String get dashNextPhase =>
+      'Als Nächstes: die Offline-PDF-Engine und arabische Schriften, dann der visuelle Vorlageneditor.';
+
+  @override
+  String get destDashboard => 'Dashboard';
+
+  @override
+  String get destDashboardDesc =>
+      'Ein Überblick über Ihre Projekte und Vorlagen.';
+
+  @override
+  String get destCertificates => 'Zertifikats-Engine';
+
+  @override
+  String get destCertificatesDesc =>
+      'Entwerfen Sie Querformat-Zertifikate aus einer bearbeitbaren Vorlage.';
+
+  @override
+  String get destContracts => 'Vertrags-Engine';
+
+  @override
+  String get destContractsDesc =>
+      'Erstellen Sie Hochformat-Verträge mit dynamischen Feldern.';
+
+  @override
+  String get destBatch => 'Massen-Generierung';
+
+  @override
+  String get destBatchDesc =>
+      'Lesen Sie eine Excel-Datei lokal und erzeugen Sie Hunderte Zertifikate auf einmal.';
+
+  @override
+  String get destTemplates => 'Vorlagenbibliothek';
+
+  @override
+  String get destTemplatesDesc =>
+      'Verwalten, ordnen und verwenden Sie Ihre gespeicherten Vorlagen wieder.';
+
+  @override
+  String get destAssets => 'Ressourcen & Signaturen';
+
+  @override
+  String get destAssetsDesc => 'Ihr Logo, Siegel, Ihre Signatur und Rahmen.';
+
+  @override
+  String get dashUser => 'Benutzer';
+
+  @override
+  String get dashLogoutSuccess => 'Sie wurden erfolgreich abgemeldet.';
+
+  @override
+  String get dashLogoutError =>
+      'Abmelden fehlgeschlagen. Bitte erneut versuchen.';
+
+  @override
+  String get commonSave => 'Speichern';
+
+  @override
+  String get commonPreview => 'Vorschau';
+
+  @override
+  String get commonOptions => 'Optionen';
+
+  @override
+  String get tplDelete => 'Löschen';
+
+  @override
+  String get tplSortRecentlyUpdated => 'Zuletzt geändert';
+
+  @override
+  String get tplSortTitleAsc => 'Name (A–Z)';
+
+  @override
+  String get tplSortLabel => 'Sortierung';
+
+  @override
+  String get tplSubtitle =>
+      'Professionelle Fertigvorlagen + Ihre gespeicherten – Suchen, Filtern, Öffnen und Importieren, vollständig offline.';
+
+  @override
+  String get tplRefreshTooltip => 'Liste aktualisieren';
+
+  @override
+  String get tplSearchHint => 'Vorlagen suchen…';
+
+  @override
+  String get tplNoResultsTitle => 'Keine passenden Ergebnisse';
+
+  @override
+  String get tplNoResultsMessage =>
+      'Versuchen Sie einen anderen Suchbegriff oder setzen Sie den Filter zurück.';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return '„$title“ wurde zu Ihren lokalen Vorlagen hinzugefügt.';
+  }
+
+  @override
+  String get tplCloudRequiresConnection =>
+      'Das Speichern von Vorlagen in der Cloud erfordert eine Verbindung zu einem Supabase-Projekt. Speichern Sie sie stattdessen lokal.';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return '„$title“ wurde in der Cloud gespeichert.';
+  }
+
+  @override
+  String get tplRenamed => 'Die Vorlage wurde umbenannt.';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title (Kopie)';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return 'Eine Kopie von „$title“ wurde erstellt.';
+  }
+
+  @override
+  String get tplNowPrivate => 'Die Vorlage ist jetzt privat.';
+
+  @override
+  String get tplNowPublic =>
+      'Die Vorlage ist jetzt öffentlich (schreibgeschützt für andere).';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return '„$title“ wird endgültig aus der Cloud gelöscht. Keine Rücknahme möglich.';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return 'Die Vorlage „$title“ wurde gelöscht.';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return '„$title“ wird von diesem Gerät gelöscht. Die ursprüngliche Fertigvorlage bleibt in der Bibliothek verfügbar.';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return 'Die lokale Vorlage „$title“ wurde gelöscht.';
+  }
+
+  @override
+  String get tplDeleteTitle => 'Vorlage löschen';
+
+  @override
+  String get tplRenameTitle => 'Vorlagentitel';
+
+  @override
+  String get tplFieldTitle => 'Titel';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return 'Vorschau: $title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count Vorlage(n)';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return 'Cloud-Vorlagen konnten nicht geladen werden: $message';
+  }
+
+  @override
+  String get tplPublicBadge => 'Öffentliche Vorlage';
+
+  @override
+  String get tplOrientationLandscape => 'Querformat';
+
+  @override
+  String get tplOrientationPortrait => 'Hochformat';
+
+  @override
+  String get tplPresetOffline => 'Fertigvorlage • offline verfügbar';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return 'Schema v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => 'Als Vorlage öffnen';
+
+  @override
+  String get tplOpen => 'Öffnen';
+
+  @override
+  String get tplUseInBatch => 'In Massen-Generierung verwenden';
+
+  @override
+  String get tplImportLocal => 'Lokal importieren';
+
+  @override
+  String get tplSaveToCloud => 'In die Cloud speichern';
+
+  @override
+  String get tplDeleteLocal => 'Lokal löschen';
+
+  @override
+  String get tplRename => 'Umbenennen';
+
+  @override
+  String get tplMakePrivate => 'Privat machen';
+
+  @override
+  String get tplMakePublic => 'Öffentlich machen';
+
+  @override
+  String get tplNoDate => 'Kein Datum';
+
+  @override
+  String get amSubtitle =>
+      'Laden Sie Logo, Siegel und Signatur einmal hoch und fügen Sie sie in jede Vorlage ein – auf Ihrem Gerät gespeichert und offline wiederverwendbar.';
+
+  @override
+  String get amSearchHint => 'Ressourcen suchen…';
+
+  @override
+  String get amTypeLabel => 'Typ';
+
+  @override
+  String get amUploadTooltip => 'Neue Ressource hochladen';
+
+  @override
+  String get amUpload => 'Ressource hochladen';
+
+  @override
+  String get amEmptyTitle => 'Noch keine Ressourcen';
+
+  @override
+  String get amEmptyMessage =>
+      'Laden Sie Logo, Signatur oder Siegel Ihrer Organisation hoch und fügen Sie es über die Bild-Eigenschaftenleiste in jede Vorlage ein.';
+
+  @override
+  String get amNoResultsMessage =>
+      'Versuchen Sie einen anderen Namen oder setzen Sie den Filter zurück.';
+
+  @override
+  String get amRenamed => 'Die Ressource wurde umbenannt.';
+
+  @override
+  String amMovedToType(Object type) {
+    return 'Die Ressource wurde nach „$type“ verschoben.';
+  }
+
+  @override
+  String get amDeleteTitle => 'Ressource löschen';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return '„$name“ wird von diesem Gerät gelöscht. Vorlagen, die es verwenden, verlieren das Bild (ohne Druckfehler).';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return 'Die Ressource „$name“ wurde gelöscht.';
+  }
+
+  @override
+  String get amRenameTitle => 'Ressource umbenennen';
+
+  @override
+  String amCount(Object count) {
+    return '$count Ressource(n)';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return 'Typ festlegen: $type';
+  }
 }

@@ -630,4 +630,510 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get paletteLogo => 'Логотип / подпись';
+
+  @override
+  String get evSignatureEmptyLabel => 'Пустая подпись';
+
+  @override
+  String get evSignatureEmptyDetail =>
+      'Добавьте должность, имя и изображение подписи';
+
+  @override
+  String get evSignatureMissingLabel => 'Подпись отсутствует';
+
+  @override
+  String get evUploadToLibraryDetail =>
+      'Загрузите изображение в библиотеку ресурсов';
+
+  @override
+  String get evImageNotFoundLabel => 'Изображение не найдено';
+
+  @override
+  String get evNoFileLabel => 'Файл не выбран';
+
+  @override
+  String get evChooseFromAssetsDetail =>
+      'Выберите изображение из библиотеки ресурсов';
+
+  @override
+  String get evAssetMissingLabel => 'Ресурс отсутствует';
+
+  @override
+  String get evReselectAssetDetail =>
+      'Повторно выберите рамку/ресурс из библиотеки';
+
+  @override
+  String get evInvalidImageLabel => 'Недопустимое изображение';
+
+  @override
+  String get evRenderDataFailedDetail => 'Не удалось отобразить данные';
+
+  @override
+  String get evInvalidDataLabel => 'Недопустимые данные';
+
+  @override
+  String get evDecodeFailedDetail => 'Не удалось декодировать изображение';
+
+  @override
+  String get evEmptyQrLabel => 'Пустой код';
+
+  @override
+  String get evEmptyQrDetail => 'Введите значение кода в панели свойств';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return 'Неподдерживаемый элемент: $type';
+  }
+
+  @override
+  String get alpFilterAll => 'Все';
+
+  @override
+  String get alpEmptyHint =>
+      'Нет загруженных ресурсов нужных типов. Загрузите рамку или логотип в разделе «Ресурсы и подписи» и повторите попытку.';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return 'Нет ресурсов типа «$type».';
+  }
+
+  @override
+  String get authWelcomeBack => 'Добро пожаловать в JoodCraft.';
+
+  @override
+  String get authResetLinkSent =>
+      'Ссылка для сброса отправлена. Проверьте почту.';
+
+  @override
+  String get authLogin => 'Войти';
+
+  @override
+  String get authLoginSubtitle =>
+      'Ваш электронный адрес и пароль для входа в панель.';
+
+  @override
+  String get authNoAccount => 'Нет аккаунта?';
+
+  @override
+  String get authCreateAccountLink => 'Создать новый аккаунт';
+
+  @override
+  String get authConfirmEmailThenLogin =>
+      'Аккаунт создан. Сначала подтвердите почту, затем войдите.';
+
+  @override
+  String get authEmail => 'Электронная почта';
+
+  @override
+  String get authPassword => 'Пароль';
+
+  @override
+  String get authForgotPassword => 'Забыли пароль?';
+
+  @override
+  String get authEnterDashboard => 'Войти в панель';
+
+  @override
+  String get authResetPassword => 'Сбросить пароль';
+
+  @override
+  String get authResetPasswordHint =>
+      'Введите почту, и мы отправим ссылку для сброса пароля.';
+
+  @override
+  String get authSendLink => 'Отправить ссылку';
+
+  @override
+  String get authConfirmEmailMessage =>
+      'Аккаунт создан. Подтвердите его по почте, затем войдите.';
+
+  @override
+  String get authAccountCreatedWelcome =>
+      'Аккаунт создан. Добро пожаловать в JoodCraft.';
+
+  @override
+  String get authCreateAccount => 'Создать аккаунт';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Аккаунт сохраняет ваши шаблоны и ресурсы (логотип, подпись, печать) для повторного использования.';
+
+  @override
+  String get authHaveAccount => 'Уже есть аккаунт?';
+
+  @override
+  String get authFullName => 'Полное имя';
+
+  @override
+  String get authFullNameHint => 'напр. Абдулла Аль-Ахмад';
+
+  @override
+  String get authName => 'Имя';
+
+  @override
+  String get authOrgName => 'Название организации (необязательно)';
+
+  @override
+  String get authOrgNameHint => 'напр. Благотворительная ассоциация Jood';
+
+  @override
+  String get authOrgHelper =>
+      'Автоматически печатается на сертификатах и договорах.';
+
+  @override
+  String get authOrgNameShort => 'Название организации';
+
+  @override
+  String get authPasswordHint => 'Не менее 8 символов';
+
+  @override
+  String authPasswordRule(Object min) {
+    return 'Используйте не менее $min символов с цифрами и символами.';
+  }
+
+  @override
+  String get authConfirmPassword => 'Подтвердите пароль';
+
+  @override
+  String get authCreateAccountButton => 'Создать аккаунт';
+
+  @override
+  String get authFeatureLocalExcel =>
+      'Полностью локальная обработка файлов Excel — данные не покидают устройство';
+
+  @override
+  String get authFeaturePdf =>
+      'Создание PDF с качественными арабскими шрифтами и полной поддержкой RTL';
+
+  @override
+  String get authFeatureTemplates =>
+      'Ваши шаблоны хранятся в аккаунте и готовы к повторному использованию';
+
+  @override
+  String get authTagline =>
+      'Ваши официальные сертификаты и договоры… печатаются с уверенностью.';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • Версия $version';
+  }
+
+  @override
+  String get dashModules => 'Модули платформы';
+
+  @override
+  String dashWelcome(Object name) {
+    return 'Добро пожаловать, $name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return 'Подписка: $tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return 'Организация: $name';
+  }
+
+  @override
+  String get dashOrgMissing =>
+      'Вы ещё не указали название организации — оно будет автоматически печататься на сертификатах и договорах.';
+
+  @override
+  String get dashOpenModule => 'Открыть модуль';
+
+  @override
+  String get dashRoadmapSupabase =>
+      'Настройка базы данных Supabase (таблицы + RLS + триггеры)';
+
+  @override
+  String get dashRoadmapModular =>
+      'Масштабируемая модульная структура Feature-First';
+
+  @override
+  String get dashRoadmapTheme =>
+      'Визуальная тема бренда с поддержкой RTL в шрифте Cairo';
+
+  @override
+  String get dashRoadmapAuth =>
+      'Аутентификация: вход, создание аккаунта и сброс пароля';
+
+  @override
+  String get dashPhaseOneDone => 'Первый этап завершён';
+
+  @override
+  String get dashNextPhase =>
+      'Далее: офлайн-движок PDF и арабские шрифты, затем визуальный редактор шаблонов.';
+
+  @override
+  String get destDashboard => 'Панель управления';
+
+  @override
+  String get destDashboardDesc => 'Обзор ваших проектов и шаблонов.';
+
+  @override
+  String get destCertificates => 'Движок сертификатов';
+
+  @override
+  String get destCertificatesDesc =>
+      'Создавайте альбомные сертификаты из редактируемого шаблона.';
+
+  @override
+  String get destContracts => 'Движок договоров';
+
+  @override
+  String get destContractsDesc =>
+      'Составляйте книжные договоры с динамическими полями.';
+
+  @override
+  String get destBatch => 'Массовая генерация';
+
+  @override
+  String get destBatchDesc =>
+      'Читайте файл Excel локально и создавайте сотни сертификатов за раз.';
+
+  @override
+  String get destTemplates => 'Библиотека шаблонов';
+
+  @override
+  String get destTemplatesDesc =>
+      'Управляйте, сортируйте и повторно используйте сохранённые шаблоны.';
+
+  @override
+  String get destAssets => 'Ресурсы и подписи';
+
+  @override
+  String get destAssetsDesc => 'Ваши логотип, печать, подпись и рамки.';
+
+  @override
+  String get dashUser => 'Пользователь';
+
+  @override
+  String get dashLogoutSuccess => 'Вы успешно вышли.';
+
+  @override
+  String get dashLogoutError => 'Не удалось выйти. Повторите попытку.';
+
+  @override
+  String get commonSave => 'Сохранить';
+
+  @override
+  String get commonPreview => 'Предпросмотр';
+
+  @override
+  String get commonOptions => 'Параметры';
+
+  @override
+  String get tplDelete => 'Удалить';
+
+  @override
+  String get tplSortRecentlyUpdated => 'Недавно изменённые';
+
+  @override
+  String get tplSortTitleAsc => 'Имя (А–Я)';
+
+  @override
+  String get tplSortLabel => 'Сортировка';
+
+  @override
+  String get tplSubtitle =>
+      'Профессиональные готовые шаблоны + ваши сохранённые — поиск, фильтр, открытие и импорт полностью офлайн.';
+
+  @override
+  String get tplRefreshTooltip => 'Обновить список';
+
+  @override
+  String get tplSearchHint => 'Поиск шаблонов…';
+
+  @override
+  String get tplNoResultsTitle => 'Нет совпадающих результатов';
+
+  @override
+  String get tplNoResultsMessage =>
+      'Попробуйте другой запрос или сбросьте фильтр.';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return '«$title» добавлен в ваши локальные шаблоны.';
+  }
+
+  @override
+  String get tplCloudRequiresConnection =>
+      'Для сохранения шаблонов в облаке нужно подключение к проекту Supabase. Сохраните локально.';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return '«$title» сохранён в облаке.';
+  }
+
+  @override
+  String get tplRenamed => 'Шаблон переименован.';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title (копия)';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return 'Создана копия «$title».';
+  }
+
+  @override
+  String get tplNowPrivate => 'Шаблон теперь приватный.';
+
+  @override
+  String get tplNowPublic => 'Шаблон теперь публичный (только для чтения).';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return '«$title» будет окончательно удалён из облака. Отменить нельзя.';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return 'Шаблон «$title» удалён.';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return '«$title» будет удалён с этого устройства. Исходный готовый шаблон останется в библиотеке.';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return 'Локальный шаблон «$title» удалён.';
+  }
+
+  @override
+  String get tplDeleteTitle => 'Удалить шаблон';
+
+  @override
+  String get tplRenameTitle => 'Название шаблона';
+
+  @override
+  String get tplFieldTitle => 'Название';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return 'Предпросмотр: $title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count шаблон(ов)';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return 'Не удалось загрузить облачные шаблоны: $message';
+  }
+
+  @override
+  String get tplPublicBadge => 'Публичный шаблон';
+
+  @override
+  String get tplOrientationLandscape => 'Альбомная';
+
+  @override
+  String get tplOrientationPortrait => 'Книжная';
+
+  @override
+  String get tplPresetOffline => 'Готовый шаблон • доступен офлайн';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return 'Схема v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => 'Открыть как шаблон';
+
+  @override
+  String get tplOpen => 'Открыть';
+
+  @override
+  String get tplUseInBatch => 'Использовать в массовой генерации';
+
+  @override
+  String get tplImportLocal => 'Импортировать локально';
+
+  @override
+  String get tplSaveToCloud => 'Сохранить в облако';
+
+  @override
+  String get tplDeleteLocal => 'Удалить локально';
+
+  @override
+  String get tplRename => 'Переименовать';
+
+  @override
+  String get tplMakePrivate => 'Сделать приватным';
+
+  @override
+  String get tplMakePublic => 'Сделать публичным';
+
+  @override
+  String get tplNoDate => 'Без даты';
+
+  @override
+  String get amSubtitle =>
+      'Загрузите логотип, печать и подпись один раз, затем вставляйте в любой шаблон — сохраняются на устройстве и доступны офлайн.';
+
+  @override
+  String get amSearchHint => 'Поиск ресурсов…';
+
+  @override
+  String get amTypeLabel => 'Тип';
+
+  @override
+  String get amUploadTooltip => 'Загрузить новый ресурс';
+
+  @override
+  String get amUpload => 'Загрузить ресурс';
+
+  @override
+  String get amEmptyTitle => 'Ресурсов пока нет';
+
+  @override
+  String get amEmptyMessage =>
+      'Загрузите логотип, подпись или печать организации, затем вставляйте в любой шаблон из панели свойств изображения.';
+
+  @override
+  String get amNoResultsMessage => 'Попробуйте другое имя или сбросьте фильтр.';
+
+  @override
+  String get amRenamed => 'Ресурс переименован.';
+
+  @override
+  String amMovedToType(Object type) {
+    return 'Ресурс перемещён в «$type».';
+  }
+
+  @override
+  String get amDeleteTitle => 'Удалить ресурс';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return '«$name» будет удалён с этого устройства. Шаблоны, использующие его, потеряют изображение (без сбоя печати).';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return 'Ресурс «$name» удалён.';
+  }
+
+  @override
+  String get amRenameTitle => 'Переименовать ресурс';
+
+  @override
+  String amCount(Object count) {
+    return '$count ресурс(ов)';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return 'Сделать тип: $type';
+  }
 }

@@ -626,4 +626,509 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get paletteLogo => 'Logo / imza';
+
+  @override
+  String get evSignatureEmptyLabel => 'Boş imza';
+
+  @override
+  String get evSignatureEmptyDetail => 'Görev, ad ve imza görseli ekleyin';
+
+  @override
+  String get evSignatureMissingLabel => 'Eksik imza';
+
+  @override
+  String get evUploadToLibraryDetail => 'Görseli varlık kitaplığına yükleyin';
+
+  @override
+  String get evImageNotFoundLabel => 'Görsel bulunamadı';
+
+  @override
+  String get evNoFileLabel => 'Dosya seçilmedi';
+
+  @override
+  String get evChooseFromAssetsDetail => 'Varlık kitaplığından görsel seçin';
+
+  @override
+  String get evAssetMissingLabel => 'Eksik varlık';
+
+  @override
+  String get evReselectAssetDetail =>
+      'Çerçeveyi/varlığı kitaplıktan yeniden seçin';
+
+  @override
+  String get evInvalidImageLabel => 'Geçersiz görsel';
+
+  @override
+  String get evRenderDataFailedDetail => 'Veriler gösterilemedi';
+
+  @override
+  String get evInvalidDataLabel => 'Geçersiz veri';
+
+  @override
+  String get evDecodeFailedDetail => 'Görsel çözülemedi';
+
+  @override
+  String get evEmptyQrLabel => 'Boş kod';
+
+  @override
+  String get evEmptyQrDetail => 'Kod değerini özellikler çubuğuna girin';
+
+  @override
+  String evUnknownElementLabel(Object type) {
+    return 'Desteklenmeyen öğe: $type';
+  }
+
+  @override
+  String get alpFilterAll => 'Tümü';
+
+  @override
+  String get alpEmptyHint =>
+      'İstenen türlerde yüklenmiş varlık yok. “Varlıklar ve imzalar” bölümünden bir çerçeve veya logo yükleyin, sonra tekrar deneyin.';
+
+  @override
+  String alpNoFilteredAssets(Object type) {
+    return '“$type” türünde varlık yok.';
+  }
+
+  @override
+  String get authWelcomeBack => 'JoodCraft’a hoş geldiniz.';
+
+  @override
+  String get authResetLinkSent =>
+      'Sıfırlama bağlantısı gönderildi. E-postanızı kontrol edin.';
+
+  @override
+  String get authLogin => 'Giriş yap';
+
+  @override
+  String get authLoginSubtitle =>
+      'Kontrol paneline devam etmek için e-posta ve parolanız.';
+
+  @override
+  String get authNoAccount => 'Hesabınız yok mu?';
+
+  @override
+  String get authCreateAccountLink => 'Yeni hesap oluştur';
+
+  @override
+  String get authConfirmEmailThenLogin =>
+      'Hesabınız oluşturuldu. Lütfen önce e-postanızı doğrulayın, sonra giriş yapın.';
+
+  @override
+  String get authEmail => 'E-posta';
+
+  @override
+  String get authPassword => 'Parola';
+
+  @override
+  String get authForgotPassword => 'Parolanızı mı unuttunuz?';
+
+  @override
+  String get authEnterDashboard => 'Panoya gir';
+
+  @override
+  String get authResetPassword => 'Parolayı sıfırla';
+
+  @override
+  String get authResetPasswordHint =>
+      'E-postanızı girin, size bir parola sıfırlama bağlantısı göndereceğiz.';
+
+  @override
+  String get authSendLink => 'Bağlantıyı gönder';
+
+  @override
+  String get authConfirmEmailMessage =>
+      'Hesabınız oluşturuldu. Doğrulamak için e-postanızı kontrol edin, sonra giriş yapın.';
+
+  @override
+  String get authAccountCreatedWelcome =>
+      'Hesabınız oluşturuldu. JoodCraft’a hoş geldiniz.';
+
+  @override
+  String get authCreateAccount => 'Hesap oluştur';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Hesabınız şablonlarınızı ve varlıklarınızı (logo, imza, mühür) tüm projelerinizde yeniden kullanmak üzere saklar.';
+
+  @override
+  String get authHaveAccount => 'Hesabınız var mı?';
+
+  @override
+  String get authFullName => 'Ad soyad';
+
+  @override
+  String get authFullNameHint => 'örn. Abdullah Al-Ahmad';
+
+  @override
+  String get authName => 'Ad';
+
+  @override
+  String get authOrgName => 'Kurum adı (isteğe bağlı)';
+
+  @override
+  String get authOrgNameHint => 'örn. Jood Hayır Derneği';
+
+  @override
+  String get authOrgHelper =>
+      'Sertifikalara ve sözleşmelere otomatik olarak yazdırılır.';
+
+  @override
+  String get authOrgNameShort => 'Kurum adı';
+
+  @override
+  String get authPasswordHint => 'En az 8 karakter';
+
+  @override
+  String authPasswordRule(Object min) {
+    return 'En az $min karakter, sayı ve sembol kullanın.';
+  }
+
+  @override
+  String get authConfirmPassword => 'Parolayı doğrula';
+
+  @override
+  String get authCreateAccountButton => 'Hesabı oluştur';
+
+  @override
+  String get authFeatureLocalExcel =>
+      'Excel dosyalarının tamamen yerel işlenmesi — verileriniz cihazınızdan çıkmaz';
+
+  @override
+  String get authFeaturePdf =>
+      'Yüksek kaliteli Arapça yazı tipleriyle PDF üretimi ve tam RTL desteği';
+
+  @override
+  String get authFeatureTemplates =>
+      'Şablonlarınız hesabınızda saklanır ve yeniden kullanıma hazırdır';
+
+  @override
+  String get authTagline =>
+      'Resmî sertifika ve sözleşmeleriniz… güvenle bastırılır.';
+
+  @override
+  String authVersion(Object name, Object version) {
+    return '$name • Sürüm $version';
+  }
+
+  @override
+  String get dashModules => 'Platform modülleri';
+
+  @override
+  String dashWelcome(Object name) {
+    return 'Hoş geldiniz, $name';
+  }
+
+  @override
+  String dashSubscription(Object tier) {
+    return 'Abonelik: $tier';
+  }
+
+  @override
+  String dashOrg(Object name) {
+    return 'Kurum: $name';
+  }
+
+  @override
+  String get dashOrgMissing =>
+      'Kurum adınızı henüz ayarlamadınız — sertifika ve sözleşmelere otomatik yazdırılacaktır.';
+
+  @override
+  String get dashOpenModule => 'Modülü aç';
+
+  @override
+  String get dashRoadmapSupabase =>
+      'Supabase veritabanının kurulması (tablolar + RLS + trigger’lar)';
+
+  @override
+  String get dashRoadmapModular =>
+      'Ölçeklenebilir Modüler Feature-First yapısı';
+
+  @override
+  String get dashRoadmapTheme =>
+      'Cairo yazı tipiyle RTL destekli marka görsel teması';
+
+  @override
+  String get dashRoadmapAuth =>
+      'Kimlik doğrulama: giriş, hesap oluşturma ve parola sıfırlama';
+
+  @override
+  String get dashPhaseOneDone => 'Birinci aşama tamamlandı';
+
+  @override
+  String get dashNextPhase =>
+      'Sonraki: çevrimdışı PDF motoru ve Arapça yazı tipleri, ardından görsel şablon düzenleyici.';
+
+  @override
+  String get destDashboard => 'Kontrol paneli';
+
+  @override
+  String get destDashboardDesc =>
+      'Projelerinize ve şablonlarınıza genel bakış.';
+
+  @override
+  String get destCertificates => 'Sertifika motoru';
+
+  @override
+  String get destCertificatesDesc =>
+      'Düzenlenebilir bir şablondan yatay (Landscape) sertifikalar tasarlayın.';
+
+  @override
+  String get destContracts => 'Sözleşme motoru';
+
+  @override
+  String get destContractsDesc =>
+      'Dinamik alanlarla dikey (Portrait) sözleşmeler hazırlayın.';
+
+  @override
+  String get destBatch => 'Toplu üretim';
+
+  @override
+  String get destBatchDesc =>
+      'Bir Excel dosyasını yerel olarak okuyun ve yüzlerce sertifikayı tek seferde üretin.';
+
+  @override
+  String get destTemplates => 'Şablon kitaplığı';
+
+  @override
+  String get destTemplatesDesc =>
+      'Kaydedilen şablonlarınızı yönetin, sınıflandırın ve yeniden kullanın.';
+
+  @override
+  String get destAssets => 'Varlıklar ve imzalar';
+
+  @override
+  String get destAssetsDesc => 'Logonuz, mührünüz, imzanız ve çerçeveleriniz.';
+
+  @override
+  String get dashUser => 'Kullanıcı';
+
+  @override
+  String get dashLogoutSuccess => 'Başarıyla çıkış yaptınız.';
+
+  @override
+  String get dashLogoutError => 'Çıkış yapılamadı. Lütfen tekrar deneyin.';
+
+  @override
+  String get commonSave => 'Kaydet';
+
+  @override
+  String get commonPreview => 'Önizleme';
+
+  @override
+  String get commonOptions => 'Seçenekler';
+
+  @override
+  String get tplDelete => 'Sil';
+
+  @override
+  String get tplSortRecentlyUpdated => 'Son değiştirilenler';
+
+  @override
+  String get tplSortTitleAsc => 'Ad (A–Z)';
+
+  @override
+  String get tplSortLabel => 'Sırala';
+
+  @override
+  String get tplSubtitle =>
+      'Profesyonel hazır şablonlar + kaydedilenler — arama, filtreleme, açma ve içe aktarma, tamamen çevrimdışı.';
+
+  @override
+  String get tplRefreshTooltip => 'Listeyi yenile';
+
+  @override
+  String get tplSearchHint => 'Şablonlarda ara…';
+
+  @override
+  String get tplNoResultsTitle => 'Eşleşen sonuç yok';
+
+  @override
+  String get tplNoResultsMessage =>
+      'Başka bir arama terimi deneyin veya filtreyi sıfırlayın.';
+
+  @override
+  String tplAddedToLocal(Object title) {
+    return '“$title” yerel şablonlarınıza eklendi.';
+  }
+
+  @override
+  String get tplCloudRequiresConnection =>
+      'Şablonları buluta kaydetmek bir Supabase projesine bağlantı gerektirir. Bunun yerine yerel kaydedin.';
+
+  @override
+  String tplSavedToCloud(Object title) {
+    return '“$title” buluta kaydedildi.';
+  }
+
+  @override
+  String get tplRenamed => 'Şablon yeniden adlandırıldı.';
+
+  @override
+  String tplCopySuffix(Object title) {
+    return '$title (kopya)';
+  }
+
+  @override
+  String tplCopyCreated(Object title) {
+    return '“$title” kopyası oluşturuldu.';
+  }
+
+  @override
+  String get tplNowPrivate => 'Şablon artık özel.';
+
+  @override
+  String get tplNowPublic => 'Şablon artık genel (başkaları için salt okunur).';
+
+  @override
+  String tplConfirmCloudDelete(Object title) {
+    return '“$title” buluttan kalıcı olarak silinecek. Geri alınamaz.';
+  }
+
+  @override
+  String tplCloudDeleted(Object title) {
+    return '“$title” şablonu silindi.';
+  }
+
+  @override
+  String tplConfirmLocalDelete(Object title) {
+    return '“$title” bu cihazdan silinecek. Özgün hazır şablon kitaplıkta kullanılabilir kalır.';
+  }
+
+  @override
+  String tplLocalDeleted(Object title) {
+    return 'Yerel şablon “$title” silindi.';
+  }
+
+  @override
+  String get tplDeleteTitle => 'Şablonu sil';
+
+  @override
+  String get tplRenameTitle => 'Şablon başlığı';
+
+  @override
+  String get tplFieldTitle => 'Başlık';
+
+  @override
+  String tplPreviewLabel(Object title) {
+    return 'Önizleme: $title';
+  }
+
+  @override
+  String tplCount(Object count) {
+    return '$count şablon';
+  }
+
+  @override
+  String tplCloudLoadError(Object message) {
+    return 'Bulut şablonları yüklenemedi: $message';
+  }
+
+  @override
+  String get tplPublicBadge => 'Genel şablon';
+
+  @override
+  String get tplOrientationLandscape => 'Yatay';
+
+  @override
+  String get tplOrientationPortrait => 'Dikey';
+
+  @override
+  String get tplPresetOffline => 'Hazır şablon • çevrimdışı kullanılabilir';
+
+  @override
+  String tplSchemaVersion(Object version) {
+    return 'Şema v$version';
+  }
+
+  @override
+  String get tplOpenAsTemplate => 'Şablon olarak aç';
+
+  @override
+  String get tplOpen => 'Aç';
+
+  @override
+  String get tplUseInBatch => 'Toplu üretimde kullan';
+
+  @override
+  String get tplImportLocal => 'Yerel içe aktar';
+
+  @override
+  String get tplSaveToCloud => 'Buluta kaydet';
+
+  @override
+  String get tplDeleteLocal => 'Yerel sil';
+
+  @override
+  String get tplRename => 'Yeniden adlandır';
+
+  @override
+  String get tplMakePrivate => 'Özel yap';
+
+  @override
+  String get tplMakePublic => 'Genel yap';
+
+  @override
+  String get tplNoDate => 'Tarih yok';
+
+  @override
+  String get amSubtitle =>
+      'Logonuzu, mührünüzü ve imzanızı bir kez yükleyin, sonra herhangi bir şablona ekleyin — cihazınızda saklanır ve çevrimdışı kullanılır.';
+
+  @override
+  String get amSearchHint => 'Varlıklarda ara…';
+
+  @override
+  String get amTypeLabel => 'Tür';
+
+  @override
+  String get amUploadTooltip => 'Yeni varlık yükle';
+
+  @override
+  String get amUpload => 'Varlık yükle';
+
+  @override
+  String get amEmptyTitle => 'Henüz varlık yok';
+
+  @override
+  String get amEmptyMessage =>
+      'Kurumunuzun logosunu, imzasını veya mührünü yükleyin, sonra görsel özellikleri çubuğundan herhangi bir şablona ekleyin.';
+
+  @override
+  String get amNoResultsMessage =>
+      'Başka bir ad deneyin veya filtreyi sıfırlayın.';
+
+  @override
+  String get amRenamed => 'Varlık yeniden adlandırıldı.';
+
+  @override
+  String amMovedToType(Object type) {
+    return 'Varlık “$type” konumuna taşındı.';
+  }
+
+  @override
+  String get amDeleteTitle => 'Varlığı sil';
+
+  @override
+  String amConfirmDelete(Object name) {
+    return '“$name” bu cihazdan silinecek. Kullanan şablonlar görseli kaybeder (baskı hatası olmadan).';
+  }
+
+  @override
+  String amDeleted(Object name) {
+    return '“$name” varlığı silindi.';
+  }
+
+  @override
+  String get amRenameTitle => 'Varlığı yeniden adlandır';
+
+  @override
+  String amCount(Object count) {
+    return '$count varlık';
+  }
+
+  @override
+  String amMakeType(Object type) {
+    return 'Türü yap: $type';
+  }
 }

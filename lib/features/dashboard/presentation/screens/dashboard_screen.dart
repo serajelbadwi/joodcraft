@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../auth/domain/app_user.dart';
@@ -17,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AuthProvider auth = context.watch<AuthProvider>();
     final AppUser? user = auth.user;
-    final List<DashboardDestination> modules = dashboardDestinations
+    final List<DashboardDestination> modules = dashboardDestinations(context)
         .where((DashboardDestination item) => item.path != AppRoutes.dashboard)
         .toList();
 
@@ -29,7 +30,7 @@ class DashboardScreen extends StatelessWidget {
           _WelcomeCard(user: user),
           const SizedBox(height: AppTheme.space24),
           Text(
-            'وحدات المنصة',
+            context.l10n?.dashModules ?? 'وحدات المنصة',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: AppTheme.space12),
@@ -95,7 +96,10 @@ class _WelcomeCard extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  'أهلاً بك، ${user?.displayName ?? 'مستخدم جودكرافت'}',
+                  context.l10n?.dashWelcome(
+                        user?.displayName ?? 'مستخدم جودكرافت',
+                      ) ??
+                      'أهلاً بك، ${user?.displayName ?? 'مستخدم جودكرافت'}',
                   style: text.headlineSmall?.copyWith(
                     color: AppColors.onNavy,
                   ),
@@ -114,7 +118,10 @@ class _WelcomeCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'الاشتراك: ${user?.subscriptionTier.labelAr ?? 'مجاني'}',
+                  context.l10n?.dashSubscription(
+                        user?.subscriptionTier.labelAr ?? 'مجاني',
+                      ) ??
+                      'الاشتراك: ${user?.subscriptionTier.labelAr ?? 'مجاني'}',
                   style: text.labelSmall?.copyWith(color: AppColors.gold),
                 ),
               ),
@@ -123,8 +130,10 @@ class _WelcomeCard extends StatelessWidget {
           const SizedBox(height: AppTheme.space8),
           Text(
             user?.hasOrganization ?? false
-                ? 'الجهة: ${user!.organizationName}'
-                : 'لم تُسجّل اسم جهتك بعد — سيُطبع تلقائياً على الشهادات والعقود.',
+                ? (context.l10n?.dashOrg(user!.organizationName ?? '') ??
+                    'الجهة: ${user!.organizationName}')
+                : context.l10n?.dashOrgMissing ??
+                    'لم تُسجّل اسم جهتك بعد — سيُطبع تلقائياً على الشهادات والعقود.',
             style: text.bodyLarge?.copyWith(
               color: AppColors.onNavy.withValues(alpha: 0.78),
               fontSize: 14,
@@ -187,7 +196,7 @@ class _ModuleCard extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Text(
-                    'فتح الوحدة',
+                    context.l10n?.dashOpenModule ?? 'فتح الوحدة',
                     style: text.labelSmall?.copyWith(
                       color: Theme.of(context).colorScheme.goldDeep,
                     ),
@@ -214,16 +223,19 @@ class _ModuleCard extends StatelessWidget {
 class _FoundationCard extends StatelessWidget {
   const _FoundationCard();
 
-  static const List<String> _done = <String>[
-    'تأسيس قاعدة بيانات Supabase (جداول + RLS + Triggers)',
-    'هيكل Modular Feature-First قابل للتوسّع',
-    'الثيم البصري للهوية ودعم RTL بخط Cairo',
-    'المصادقة: تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final TextTheme text = Theme.of(context).textTheme;
+    final List<String> done = <String>[
+      context.l10n?.dashRoadmapSupabase ??
+          'تأسيس قاعدة بيانات Supabase (جداول + RLS + Triggers)',
+      context.l10n?.dashRoadmapModular ??
+          'هيكل Modular Feature-First قابل للتوسّع',
+      context.l10n?.dashRoadmapTheme ??
+          'الثيم البصري للهوية ودعم RTL بخط Cairo',
+      context.l10n?.dashRoadmapAuth ??
+          'المصادقة: تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور',
+    ];
 
     return Card(
       child: Padding(
@@ -239,11 +251,11 @@ class _FoundationCard extends StatelessWidget {
                   color: Theme.of(context).colorScheme.success,
                 ),
                 const SizedBox(width: AppTheme.space8),
-                Text('المرحلة الأولى مكتملة', style: text.titleMedium),
+                Text(context.l10n?.dashPhaseOneDone ?? 'المرحلة الأولى مكتملة', style: text.titleMedium),
               ],
             ),
             const SizedBox(height: AppTheme.space16),
-            for (final String item in _done)
+            for (final String item in done)
               Padding(
                 padding: const EdgeInsets.only(bottom: AppTheme.space8),
                 child: Row(
@@ -266,7 +278,7 @@ class _FoundationCard extends StatelessWidget {
             const Divider(),
             const SizedBox(height: AppTheme.space12),
             Text(
-              'التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.',
+              context.l10n?.dashNextPhase ?? 'التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.',
               style: text.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.goldDeep,
               ),
