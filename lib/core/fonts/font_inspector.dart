@@ -23,6 +23,7 @@ class FontInspection {
     this.unitsPerEm,
     this.presentationForms = const <int>{},
     this.lamAlefForms = const <int>{},
+    this.codePoints = const <int>{},
   });
 
   const FontInspection.invalid(String message)
@@ -51,6 +52,15 @@ class FontInspection {
 
   /// صور لام-ألف (U+FEF5..FEFC).
   final Set<int> lamAlefForms;
+
+  /// كل محارف BMP (‎U+0000..U+FFFF‎) الموجودة في `cmap` فعلاً.
+  ///
+  /// أساس فحص التغطية العام: به نضمن أن أي نص ترجمة يُرسم بلا مربعات فارغة
+  /// (□□□) — راجع `test/unit/cjk_font_coverage_test.dart`.
+  final Set<int> codePoints;
+
+  /// هل يرسم هذا الخط المحرف [codePoint]؟
+  bool covers(int codePoint) => codePoints.contains(codePoint);
 
   static const int presentationFormStart = 0xFE80;
   static const int presentationFormEnd = 0xFEF4;
@@ -214,6 +224,7 @@ abstract final class FontInspector {
         FontInspection.lamAlefStart,
         FontInspection.lamAlefEnd,
       ),
+      codePoints: _coveredCodePoints(data, tables['cmap'], 0x0000, 0xFFFF),
     );
   }
 

@@ -52,3 +52,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Temporary CJK source font re-downloaded by tool/subset_cjk_font.py
+tool/.cjk_src.ttf

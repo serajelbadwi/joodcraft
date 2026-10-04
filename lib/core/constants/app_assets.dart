@@ -22,18 +22,30 @@ abstract final class AppAssets {
   static const String tajawalFont = 'Tajawal';
   static const String notoArabicFont = 'NotoSansArabic';
 
+  /// خط الصينية الاحتياطي — **محزوم داخل الحزمة** (لا شبكة وقت التشغيل).
+  ///
+  /// ملف مُصغَّر من Noto Sans SC يغطي كل ترجمات `app_zh.arb` ورموز GB2312
+  /// كاملة. أعد توليده بـ `python tool/subset_cjk_font.py`.
+  static const String notoScFont = 'Noto Sans SC';
+
+  /// ملف خط الصينية داخل الحزمة (‎TrueType — يُقرأ بنفس بقية خطوط الواجهة).
+  static const String notoScFontFile =
+      'assets/fonts/noto_sans_sc/NotoSansSC-Regular.ttf';
+
   /// خطوط احتياطية عالمية للواجهة (`fontFamilyFallback`).
   /// الخط الافتراضي **Cairo** يغطي العربية واللاتينية، لكن أي محرف يغيب عنه قد
   /// يظهر مربعاً فارغاً (□□□)، فنمرّر خطوط نظام تغطي الحالتين: Tahoma/Arial
   /// للعربي واللاتيني، ثم خطوط CJK لأن فلاتر لا تحزم خطاً صينياً ولا نستطيع
   /// حزم خط كامل (‎~10MB‎) بلا شبكة.
   static const List<String> uiFontFallback = <String>[
+    // خط صيني محزوم داخل الحزمة — الوحيد المضمون على كل منصة بما فيها الويب،
+    // لذا يتصدّر القائمة فتُرسم ترجمات zh كلها بلا مربعات فارغة (□□□).
+    notoScFont,
     'Tahoma', // ويندوز/ماك — يغطي العربي واللاتيني
     'Arial',
-    'Microsoft YaHei', // ويندوز (CJK)
-    'PingFang SC', // ماك
-    'Noto Sans CJK SC', // لينكس
-    'Noto Sans SC',
+    'Microsoft YaHei', // ويندوز (CJK) إن وُجد
+    'PingFang SC', // ماك إن وجد
+    'Noto Sans CJK SC', // لينكس إن وجد
     'SimSun',
     'sans-serif',
   ];
