@@ -27,9 +27,9 @@ String editorFontFamilyOf(TextElement text) {
 TextStyle editorTextStyle(TextElement text, double scale) {
   return TextStyle(
     fontFamily: editorFontFamilyOf(text),
-    // خطوط نظام احتياطية للصينية/الآسيوية — فلا تظهر مربعات في معاينة القالب
-    // حتى لو كان الخط المختار عربياً لا يغطّي CJK. راجع AppAssets.cjkFontFallback.
-    fontFamilyFallback: AppAssets.cjkFontFallback,
+    // خطوط نظام احتياطية (عربي + CJK) — فلا تظهر مربعات في معاينة القالب
+    // حتى لو كان الخط المختار غير مغطٍّ. راجع AppAssets.uiFontFallback.
+    fontFamilyFallback: AppAssets.uiFontFallback,
     fontSize: text.fontSize * scale,
     fontWeight: switch (text.weight) {
       PdfFontWeight.regular => FontWeight.w400,
@@ -343,7 +343,7 @@ class ElementView extends StatelessWidget {
       fontFamily: custom != null && custom.trim().isNotEmpty
           ? custom.trim()
           : editorFontFamily(element.family),
-      fontFamilyFallback: AppAssets.cjkFontFallback,
+      fontFamilyFallback: AppAssets.uiFontFallback,
       fontSize: fontSize * scale,
       fontWeight: switch (weight) {
         PdfFontWeight.regular => FontWeight.w400,

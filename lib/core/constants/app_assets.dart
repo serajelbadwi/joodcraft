@@ -22,21 +22,15 @@ abstract final class AppAssets {
   static const String tajawalFont = 'Tajawal';
   static const String notoArabicFont = 'NotoSansArabic';
 
-  /// عائلات احتياطية لتغطية الكتابات غير العربية (الصينية/الآسيوية) في الواجهة.
-  ///
-  /// فلاتر لا تحزم خطاً صينياً، والخط الافتراضي (Cairo) لا يغطّي محارف CJK،
-  /// فتظهر مربعات فارغة (□□□). لا نستطيع حزم خط CJK كامل (‎~10MB‎) ولا جلبه
-  /// من الشبكة، لذا نُسنِد التغطية لخطوط النظام المتاحة على كل منصة:
-  /// ويندوز (Microsoft YaHei / SimSun)، ماك (PingFang SC)، لينكس
-  /// (Noto Sans CJK SC)، ثم `sans-serif` أخيراً.
-  ///
-  /// يُطبَّق على كل أنماط النصوص (راجع `AppTheme`) وعلى نمط نصوص المحرر
-  /// (راجع `element_view.dart`) حتى لا تظهر المربعات لا في الواجهة ولا في
-  /// معاينة القالب. **ملاحظة:** محرّك الـ PDF لا يستطيع استخدام خطوط النظام
-  /// (يحتاج ملف TTF محزوم) — لذا يبقى هناك تحذير تغطية واضح، راجع
-  /// `PdfScriptCoverage`.
-  static const List<String> cjkFontFallback = <String>[
-    'Microsoft YaHei', // ويندوز
+  /// خطوط احتياطية عالمية للواجهة (`fontFamilyFallback`).
+  /// الخط الافتراضي **Cairo** يغطي العربية واللاتينية، لكن أي محرف يغيب عنه قد
+  /// يظهر مربعاً فارغاً (□□□)، فنمرّر خطوط نظام تغطي الحالتين: Tahoma/Arial
+  /// للعربي واللاتيني، ثم خطوط CJK لأن فلاتر لا تحزم خطاً صينياً ولا نستطيع
+  /// حزم خط كامل (‎~10MB‎) بلا شبكة.
+  static const List<String> uiFontFallback = <String>[
+    'Tahoma', // ويندوز/ماك — يغطي العربي واللاتيني
+    'Arial',
+    'Microsoft YaHei', // ويندوز (CJK)
     'PingFang SC', // ماك
     'Noto Sans CJK SC', // لينكس
     'Noto Sans SC',
