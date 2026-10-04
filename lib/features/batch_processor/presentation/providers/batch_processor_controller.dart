@@ -25,6 +25,34 @@ enum BatchTemplateKind {
   final String assetPath;
 }
 
+/// رمز خطأ التوليد الجماعي — ليعرّبه النص في الواجهة.
+///
+/// المتحكّم لا يملك `BuildContext`، لذا يحمل الرمز والتفصيل وتترجمهما الشاشة
+/// عبر `context.l10n`، ويبقى [BatchProcessorController.errorAr] نصاً احتياطياً
+/// يظهر حين يتعذّر التصريح المحلي أو في الاختبارات.
+enum BatchErrorCode {
+  /// رسالة [AppException] كما هي (خطأ قراءة/دومين).
+  message,
+
+  /// تعذّر تحميل القالب النموذجي.
+  loadSample,
+
+  /// تعذّر قراءة ملف البيانات.
+  readFile,
+
+  /// تعذّر قراءة ورقة العمل.
+  readSheet,
+
+  /// تعذّر تحديث صف العناوين.
+  updateHeaderRow,
+
+  /// محاولة التوليد بلا قالب مُختار.
+  chooseTemplateFirst,
+
+  /// تعذّر تشغيل التوليد الجماعي.
+  generate,
+}
+
 /// منطق شاشة التوليد الجماعي: استيراد ← ربط ← توليد.
 ///
 /// لا يلمس الواجهة إطلاقاً: كل حالة قابلة للقراءة هنا، والشاشة ترسم فقط. هذا
@@ -128,9 +156,29 @@ class BatchProcessorController extends ChangeNotifier {
   BulkGenerationReport? _report;
   BulkGenerationReport? get report => _report;
 
-  /// آخر رسالة خطأ عربية (تُعرض في الواجهة).
+  /// آخر رسالة خطأ عربية — احتياط يُعرض حين يتعذّر التعريب في الواجهة.
   String? _errorAr;
   String? get errorAr => _errorAr;
+
+  /// رمز آخر خطأ لتحويله إلى نص محلي في الواجهة.
+  BatchErrorCode? _errorCode;
+  BatchErrorCode? get errorCode => _errorCode;
+
+  /// تفصيل آخر خطأ (نص/كائن) يُدرج في نص الرسالة المترجمة.
+  Object? _errorDetail;
+  Object? get errorDetail => _errorDetail;
+
+  void _setError(BatchErrorCode code, String message, {Object? detail}) {
+    _errorCode = code;
+    _errorDetail = detail;
+    _errorAr = message;
+  }
+
+  void _clearError() {
+    _errorCode = null;
+    _errorDetail = null;
+    _errorAr = null;
+  }
 
   /// المفاتيح المتاحة للربط: ما يستخدمه القالب فعلاً في نصوصه.
   ///
@@ -274,16 +322,20 @@ class BatchProcessorController extends ChangeNotifier {
   Future<void> selectTemplate(BatchTemplateKind kind) async {
     _kind = kind;
     _templateTitle = kind.labelAr;
-    _errorAr = null;
+    _clearError();
     notifyListeners();
     try {
       final String source = await _bundle.loadString(kind.assetPath);
       _document = TemplateDocument.fromJsonString(source);
       _autoMap();
     } on AppException catch (error) {
-      _errorAr = error.message;
+      _setError(BatchErrorCode.message, error.message);
     } catch (error) {
-      _errorAr = 'تعذّر تحميل القالب النموذجي: $error';
+      _setError(
+        BatchErrorCode.loadSample,
+        'تعذّر تحميل القالب النموذجي: $error',
+        detail: error,
+      );
     }
     notifyListeners();
   }
@@ -318,7 +370,7 @@ class BatchProcessorController extends ChangeNotifier {
   }) async {
     _bytes = bytes;
     _headerRowIndex = null;
-    _errorAr = null;
+    _clearError();
     _report = null;
 
     if (_shouldUseIsolate(fileName, bytes)) {
@@ -333,7 +385,11 @@ class BatchProcessorController extends ChangeNotifier {
         _applyFailure(error.message);
       } catch (error, stackTrace) {
         debugPrint('[التوليد الجماعي] تعذّر قراءة الملف: $error\n$stackTrace');
-        _applyFailure('تعذّر قراءة الملف: $error');
+        _applyFailure(
+          'تعذّر قراءة الملف: $error',
+          code: BatchErrorCode.readFile,
+          detail: error,
+        );
       } finally {
         _loadingFile = false;
         notifyListeners();
@@ -352,7 +408,7 @@ class BatchProcessorController extends ChangeNotifier {
     if (bytes == null || fileName == null) return;
     if (sheetName == _sheet.sheetName) return;
 
-    _errorAr = null;
+    _clearError();
     _report = null;
     if (_shouldUseIsolate(fileName, bytes)) {
       _loadingFile = true;
@@ -371,7 +427,11 @@ class BatchProcessorController extends ChangeNotifier {
         _applyFailure(error.message);
       } catch (error, stackTrace) {
         debugPrint('[التوليد الجماعي] تعذّر قراءة الورقة: $error\n$stackTrace');
-        _applyFailure('تعذّر قراءة الورقة: $error');
+        _applyFailure(
+          'تعذّر قراءة الورقة: $error',
+          code: BatchErrorCode.readSheet,
+          detail: error,
+        );
       } finally {
         _loadingFile = false;
         notifyListeners();
@@ -403,7 +463,7 @@ class BatchProcessorController extends ChangeNotifier {
     }
 
     _headerRowIndex = headerRowIndex;
-    _errorAr = null;
+    _clearError();
     _report = null;
     final String? sheetName = _sheet.sheetName.isEmpty ? null : _sheet.sheetName;
     if (_shouldUseIsolate(fileName, bytes)) {
@@ -423,7 +483,11 @@ class BatchProcessorController extends ChangeNotifier {
         _applyFailure(error.message);
       } catch (error, stackTrace) {
         debugPrint('[التوليد الجماعي] تعذّر تحديث صف العناوين: $error\n$stackTrace');
-        _applyFailure('تعذّر تحديث صف العناوين: $error');
+        _applyFailure(
+          'تعذّر تحديث صف العناوين: $error',
+          code: BatchErrorCode.updateHeaderRow,
+          detail: error,
+        );
       } finally {
         _loadingFile = false;
         notifyListeners();
@@ -461,7 +525,11 @@ class BatchProcessorController extends ChangeNotifier {
       _applyFailure(error.message);
     } catch (error, stackTrace) {
       debugPrint('[التوليد الجماعي] تعذّر قراءة الملف: $error\n$stackTrace');
-      _applyFailure('تعذّر قراءة الملف: $error');
+      _applyFailure(
+        'تعذّر قراءة الملف: $error',
+        code: BatchErrorCode.readFile,
+        detail: error,
+      );
     }
   }
 
@@ -479,13 +547,17 @@ class BatchProcessorController extends ChangeNotifier {
     _autoMap();
   }
 
-  void _applyFailure(String message) {
+  void _applyFailure(
+    String message, {
+    BatchErrorCode code = BatchErrorCode.message,
+    Object? detail,
+  }) {
     _sheet = SheetData.empty;
     _fileName = null;
     _sheetNames = const <String>[];
     _bytes = null;
     _mapping = ColumnMapping.empty;
-    _errorAr = message;
+    _setError(code, message, detail: detail);
   }
 
   void clearFile() {
@@ -497,7 +569,7 @@ class BatchProcessorController extends ChangeNotifier {
     _loadingFile = false;
     _mapping = ColumnMapping.empty;
     _report = null;
-    _errorAr = null;
+    _clearError();
     notifyListeners();
   }
 
@@ -581,13 +653,16 @@ class BatchProcessorController extends ChangeNotifier {
   Future<void> generate() async {
     final TemplateDocument? document = _document;
     if (document == null) {
-      _errorAr = 'اختر قالباً (شهادة أو عقد) قبل التوليد.';
+      _setError(
+        BatchErrorCode.chooseTemplateFirst,
+        'اختر قالباً (شهادة أو عقد) قبل التوليد.',
+      );
       notifyListeners();
       return;
     }
 
     _busy = true;
-    _errorAr = null;
+    _clearError();
     _report = null;
     _done = 0;
     _total = _sheet.rowCount;
@@ -617,9 +692,13 @@ class BatchProcessorController extends ChangeNotifier {
       );
       _report = report;
     } on AppException catch (error) {
-      _errorAr = error.message;
+      _setError(BatchErrorCode.message, error.message);
     } catch (error) {
-      _errorAr = 'تعذّر التوليد الجماعي: $error';
+      _setError(
+        BatchErrorCode.generate,
+        'تعذّر التوليد الجماعي: $error',
+        detail: error,
+      );
     } finally {
       _busy = false;
       notifyListeners();
@@ -636,7 +715,7 @@ class BatchProcessorController extends ChangeNotifier {
     _loadingFile = false;
     _mapping = ColumnMapping.empty;
     _report = null;
-    _errorAr = null;
+    _clearError();
     _done = 0;
     _total = 0;
     notifyListeners();

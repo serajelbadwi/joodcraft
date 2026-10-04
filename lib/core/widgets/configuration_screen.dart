@@ -96,7 +96,8 @@ class ConfigurationScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppTheme.space16),
                     Text(
-                      'بديل لبناء بقيم محددة يتفوق على الملف:\n$_override',
+                      context.l10n?.cfgOverride(_override) ??
+                          'بديل لبناء بقيم محددة يتفوق على الملف:\n$_override',
                       style: text.bodySmall,
                       textDirection: TextDirection.ltr,
                     ),

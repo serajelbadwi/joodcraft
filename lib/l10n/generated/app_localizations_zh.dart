@@ -1090,4 +1090,621 @@ class AppLocalizationsZh extends AppLocalizations {
   String amMakeType(Object type) {
     return '设为类型：$type';
   }
+
+  @override
+  String get commonRetry => '重试';
+
+  @override
+  String get commonPrint => '打印';
+
+  @override
+  String get commonExportPdf => '导出 PDF';
+
+  @override
+  String get commonExportFailed => '无法导出 PDF 文件。';
+
+  @override
+  String get commonPrintFailed => '无法将文件发送到打印机。';
+
+  @override
+  String commonExportReady(Object name) {
+    return '文件已准备好另存为 $name。';
+  }
+
+  @override
+  String get commonGenerating => '正在生成……';
+
+  @override
+  String get commonDataPanelTitle => '示例数据';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count 个元素';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • 动态字段';
+
+  @override
+  String get evStatusUnsaved => ' • 未保存的更改';
+
+  @override
+  String get tevNewTemplateTitle => '新模板';
+
+  @override
+  String get tevUnsavedTitle => '未保存的更改';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return '您对“$title”有未保存的更改。要在离开前保存吗？';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => '不保存离开';
+
+  @override
+  String get tevSaveAndLeave => '保存并离开';
+
+  @override
+  String get tevViewMode => '视图模式';
+
+  @override
+  String get tevModeEditor => '编辑器';
+
+  @override
+  String get tevModePreview => 'PDF 预览';
+
+  @override
+  String get tevPaperDirection => '纸张方向';
+
+  @override
+  String get tevWidthCm => '宽度 (cm)';
+
+  @override
+  String get tevHeightCm => '高度 (cm)';
+
+  @override
+  String get tevUndo => '撤销 (Ctrl+Z)';
+
+  @override
+  String get tevRedo => '重做 (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => '吸附网格';
+
+  @override
+  String get tevGuidesOn => '智能参考线：开启（关闭）';
+
+  @override
+  String get tevGuidesOff => '智能参考线：关闭（开启）';
+
+  @override
+  String get tevZoom => '缩放';
+
+  @override
+  String get tevDocumentBackground => '文档背景';
+
+  @override
+  String get tevFrameFromLibrary => '来自我的素材库的边框';
+
+  @override
+  String get tevChangeTitle => '更改模板标题';
+
+  @override
+  String get tevMyTemplates => '我的模板';
+
+  @override
+  String get tevSaveAs => '另存为';
+
+  @override
+  String get tevSaveTemplate => '保存模板';
+
+  @override
+  String get tevSaveUnavailable => '保存不可用';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      '保存需要连接 Supabase 项目。请使用项目密钥（env.json）运行应用以保存模板。';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return '缺少素材：$list——请从“我的素材库”重新选择边框/素材，以免空白。';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase => '模板库需要连接 Supabase 项目。';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '已打开“$title”。';
+  }
+
+  @override
+  String get tevTitleHint => '例如：项目管理课程结业证书';
+
+  @override
+  String get tevContinue => '继续';
+
+  @override
+  String get tevSavedTemplates => '我保存的模板';
+
+  @override
+  String get tevNoSavedTemplates => '还没有已保存的模板。请通过“保存模板”按钮保存。';
+
+  @override
+  String get ecIncrease => '增加';
+
+  @override
+  String get ecDecrease => '减少';
+
+  @override
+  String get ecQuickPalette => '快捷调色板';
+
+  @override
+  String get ecFullPicker => '完整取色器';
+
+  @override
+  String get ecRemoveColor => '移除颜色';
+
+  @override
+  String get ecNone => '无';
+
+  @override
+  String get ecPickColorTitle => '选择颜色';
+
+  @override
+  String get ecApply => '应用';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '已将“$name”添加为文档背景。';
+  }
+
+  @override
+  String get cfpUploadTooltip => '上传自定义字体（.ttf / .otf）';
+
+  @override
+  String get cfpManageTooltip => '管理已上传字体';
+
+  @override
+  String get cfpNotice => '上传的字体仅保存在您的设备上，并立即在此处和打印中使用——无需联网。';
+
+  @override
+  String get cfpMyFonts => '我的自定义字体';
+
+  @override
+  String get cfpNoFonts => '尚未上传字体';
+
+  @override
+  String get cfpBuiltinOption => '无（内置字体）';
+
+  @override
+  String get cfpPickTitle => '选择字体文件（TTF 或 OTF）';
+
+  @override
+  String cfpPickerError(Object error) {
+    return '无法打开文件选择器：$error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return '无法读取“$name”：$error';
+  }
+
+  @override
+  String get cfpFontAdded => '字体已添加并立即应用。';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return '已添加 $count 个字体。';
+  }
+
+  @override
+  String get cfpLibraryTitle => '我的自定义字体库';
+
+  @override
+  String get cfpLibraryNotice =>
+      '所有字体仅保存在您的设备上。警告：删除模板使用的字体会使该模板回退到内置字体，而不会失败。';
+
+  @override
+  String get cfpEmpty => '还没有上传的字体。';
+
+  @override
+  String get cfpCoverageFull => '完整阿拉伯语覆盖';
+
+  @override
+  String get cfpCoveragePartial => '部分阿拉伯语覆盖';
+
+  @override
+  String get cfpUploadNew => '上传新字体';
+
+  @override
+  String get ptpPrepError => '无法准备预览。请检查模板文件。';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms 毫秒 — $kb KB';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— 预览会自动更新';
+
+  @override
+  String get ptpGenerateFailedTitle => '无法生成预览';
+
+  @override
+  String get ptpPreparingTitle => '正在准备引擎……';
+
+  @override
+  String get ptpPreparingMessage => '正在加载内置字体并生成文件的第一版。';
+
+  @override
+  String get ptpShowFailedTitle => '无法显示预览';
+
+  @override
+  String cfgOverride(Object override) {
+    return '使用显式值的替代构建会覆盖该文件：$override';
+  }
+
+  @override
+  String get tevBackgroundTitle => '来自我的素材库的文档背景';
+
+  @override
+  String get tevAddElement => '添加元素';
+
+  @override
+  String get commonUndo => '撤销';
+
+  @override
+  String get bpTitle => '从 Excel 批量生成';
+
+  @override
+  String get bpSubtitle =>
+      '导入 .xlsx 或 .csv 文件，将其列映射到模板字段，然后生成每条记录一页的 PDF——全程在您的设备上离线完成。';
+
+  @override
+  String get bpStepTemplate => '1) 模板';
+
+  @override
+  String get bpLoadingSampleTemplate => '正在加载示例模板……';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return '模板：$name • 必填字段：';
+  }
+
+  @override
+  String get bpLoadingTemplates => '正在加载您的模板……';
+
+  @override
+  String get bpNoTemplates => '还没有已保存的模板——请在编辑器中创建或从模板库导入。';
+
+  @override
+  String get bpTemplateFromMine => '来自我的模板';
+
+  @override
+  String get bpSampleTemplatesHeader => '— 示例模板 —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => '云端';
+
+  @override
+  String get bpSourceLocal => '本地';
+
+  @override
+  String get bpStepDataFile => '2) 数据文件';
+
+  @override
+  String get bpReadingFile => '正在读取文件……';
+
+  @override
+  String get bpNoFileChosen => '尚未选择文件——支持的格式：';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows 行，$cols 列';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return '（工作表：$name）';
+  }
+
+  @override
+  String get bpChooseFile => '选择文件';
+
+  @override
+  String get bpRemove => '移除';
+
+  @override
+  String get bpHeaderRow => '标题行';
+
+  @override
+  String bpAutoRow(Object n) {
+    return '自动（第 $n 行）';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return '第 $n 行';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return '自动——第 $n 行';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return '第 $n 行：$preview';
+  }
+
+  @override
+  String get bpEmptyRow => '（空行）';
+
+  @override
+  String get bpWorksheet => '工作表';
+
+  @override
+  String get bpPickDataFile => '选择数据文件（Excel 或 CSV）';
+
+  @override
+  String bpReadFileError(Object error) {
+    return '无法读取文件：$error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return '文件已在本地读取：$rows 行，$cols 列。';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return '无法将更改保存到模板：$error';
+  }
+
+  @override
+  String get bpMapFieldTitle => '为此元素指定动态字段';
+
+  @override
+  String get bpMapFieldBody => '只有此元素的文本会被替换为字段，其他元素不受影响。';
+
+  @override
+  String get bpUndoConvert => '已撤销转换。';
+
+  @override
+  String get bpUndoConvertSaved => '已撤销转换并在模板中恢复文本。';
+
+  @override
+  String bpRestoreError(Object error) {
+    return '无法在模板中恢复文本：$error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return '已生成 $count 条记录';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' 并跳过 $count';
+  }
+
+  @override
+  String get bpReadyToSave => '文件已准备好保存。';
+
+  @override
+  String get bpStepMapping => '3) 将列映射到字段';
+
+  @override
+  String get bpChooseFileFirst => '请先选择文件以显示映射表。';
+
+  @override
+  String get bpNoDynamicFields => '当前模板中没有动态字段。';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return '已映射 $mapped/$total 列';
+  }
+
+  @override
+  String get bpAutoMapHint => '选择文件后会建议智能自动映射；您可以编辑每一列。';
+
+  @override
+  String get bpNoFieldsHelp =>
+      '所选模板没有动态字段，因此无可映射到文件列的内容。请在编辑器中打开模板，在姓名位置插入“动态字段”，保存后重试。';
+
+  @override
+  String get bpAutoMap => '自动映射';
+
+  @override
+  String get bpClearMapping => '清除映射';
+
+  @override
+  String get bpNameFieldWarning =>
+      '此模板没有动态姓名字段——请勿将姓名列映射到日期或编号字段，否则姓名可能打印在错误位置。请从列列表中选择姓名键，或在编辑器中将固定姓名文本转换为动态字段。';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return '看起来像姓名的固定文本：“$preview”——没有动态字段会替换它。';
+  }
+
+  @override
+  String get bpConvertToNameField => '将其转换为学员姓名字段';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return '字段“$field”映射到多列。请将每个字段映射到一列。';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count 列未映射——其数据不会用于证书。';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return '第 $n 列';
+  }
+
+  @override
+  String get bpEmptyCell => '（空）';
+
+  @override
+  String get bpUnmapped => '— 未映射 —';
+
+  @override
+  String get bpStepMissing => '4) 空单元格和缺失数据';
+
+  @override
+  String get bpNoNotes => '选择文件前没有备注。';
+
+  @override
+  String get bpStepGenerate => '5) 生成';
+
+  @override
+  String bpGenerating(Object progress) {
+    return '正在生成……$progress';
+  }
+
+  @override
+  String get bpGenerateHint => '单个 PDF 文件，每条生成记录一页。';
+
+  @override
+  String get bpGeneratePickFile => '请先选择数据文件以启用生成。';
+
+  @override
+  String get bpMappingInvalid => '映射无效——同一字段映射到两列。';
+
+  @override
+  String get bpMapAtLeastOne => '请至少将一列映射到模板字段以启用生成。';
+
+  @override
+  String get bpGenerateCertificates => '生成证书';
+
+  @override
+  String get bpRegenerate => '重新生成';
+
+  @override
+  String get bpStatGenerated => '已生成';
+
+  @override
+  String get bpStatSkipped => '已跳过';
+
+  @override
+  String get bpStatPages => '页数';
+
+  @override
+  String get bpStatSize => '大小';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value KB';
+  }
+
+  @override
+  String get bpStatTime => '时间';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value 毫秒';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return '已完成 $pct%/%$total 行。';
+  }
+
+  @override
+  String get bpSkippedRows => '未生成的行：';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return '第 $n 行：$reason';
+  }
+
+  @override
+  String get bpPreviewHere => '预览显示在此处';
+
+  @override
+  String get bpPreviewHint => '选择数据文件，调整映射，然后按“生成证书”——生成文件的第一页将直接显示在此处。';
+
+  @override
+  String get bpAssignByTapTitle => '点按指定字段';
+
+  @override
+  String get bpAssignByTapBody =>
+      '点按模板中的任意文本即可自行指定为动态字段。其他元素不受影响——无论是日期、管理者姓名还是任何固定文本。';
+
+  @override
+  String get bpNoTexts => '此模板中没有文本。';
+
+  @override
+  String get bpEmptyText => '（空文本）';
+
+  @override
+  String get bpDynamicFieldTap => '动态字段——点按以更改';
+
+  @override
+  String get bpStaticTextTap => '固定文本——点按以指定';
+
+  @override
+  String get bpAssignField => '指定字段';
+
+  @override
+  String get bpKindCertificate => '证书';
+
+  @override
+  String get bpKindContract => '合同';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return '无法加载示例模板：$error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return '无法读取工作表：$error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return '无法更新标题行：$error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst => '生成前请选择模板（证书或合同）。';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind 批量 — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return '无法运行批量生成：$error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      '此模板没有动态字段——记录之间数据不会变化。请从编辑器工具栏添加“学员姓名”字段，然后保存模板。';
+
+  @override
+  String get bpWarnNoNameField =>
+      '此模板没有动态姓名字段——姓名列可能映射到日期或编号字段，导致姓名打印在错误位置。请将固定姓名文本转换为字段，或重新设计模板。';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return '此元素已为当前生成指定到 $token——其他元素不受影响。保存模板以永久保留更改。';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return '此元素已指定到 $token，更改已保存到模板。其他元素不受影响。';
+  }
 }

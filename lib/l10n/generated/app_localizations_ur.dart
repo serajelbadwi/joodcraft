@@ -1129,4 +1129,637 @@ class AppLocalizationsUr extends AppLocalizations {
   String amMakeType(Object type) {
     return 'قسم بنائیں: $type';
   }
+
+  @override
+  String get commonRetry => 'دوبارہ کوشش کریں';
+
+  @override
+  String get commonPrint => 'پرنٹ کریں';
+
+  @override
+  String get commonExportPdf => 'PDF برآمد کریں';
+
+  @override
+  String get commonExportFailed => 'PDF فائل برآمد نہیں ہو سکی۔';
+
+  @override
+  String get commonPrintFailed => 'فائل پرنٹر کو نہیں بھیجی جا سکی۔';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'فائل «$name» کے طور پر محفوظ کرنے کے لیے تیار ہے۔';
+  }
+
+  @override
+  String get commonGenerating => 'پیداوار جاری…';
+
+  @override
+  String get commonDataPanelTitle => 'نمونہ ڈیٹا';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count عنصر';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • متحرک خانے';
+
+  @override
+  String get evStatusUnsaved => ' • غیر محفوظ تبدیلیاں';
+
+  @override
+  String get tevNewTemplateTitle => 'نیا ٹیمپلیٹ';
+
+  @override
+  String get tevUnsavedTitle => 'غیر محفوظ تبدیلیاں';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return '«$title» میں آپ کی غیر محفوظ تبدیلیاں ہیں۔ جانے سے پہلے محفوظ کرنا چاہیں گے؟';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'بغیر محفوظ کیے جائیں';
+
+  @override
+  String get tevSaveAndLeave => 'محفوظ کریں اور جائیں';
+
+  @override
+  String get tevViewMode => 'منظر کا انداز';
+
+  @override
+  String get tevModeEditor => 'ایڈیٹر';
+
+  @override
+  String get tevModePreview => 'PDF پیش نظارہ';
+
+  @override
+  String get tevPaperDirection => 'کاغذ کی سمت';
+
+  @override
+  String get tevWidthCm => 'چوڑائی (cm)';
+
+  @override
+  String get tevHeightCm => 'اونچائی (cm)';
+
+  @override
+  String get tevUndo => 'واپس (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'دوبارہ (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'سنیپ گرڈ';
+
+  @override
+  String get tevGuidesOn => 'سمارٹ گائیڈز: فعال (بند کریں)';
+
+  @override
+  String get tevGuidesOff => 'سمارٹ گائیڈز: غیر فعال (چالو کریں)';
+
+  @override
+  String get tevZoom => 'زوم';
+
+  @override
+  String get tevDocumentBackground => 'دستاویز کا پس منظر';
+
+  @override
+  String get tevFrameFromLibrary => 'میرے اثاثہ کتب خانے سے فریم';
+
+  @override
+  String get tevChangeTitle => 'ٹیمپلیٹ کا عنوان تبدیل کریں';
+
+  @override
+  String get tevMyTemplates => 'میرے ٹیمپلیٹس';
+
+  @override
+  String get tevSaveAs => 'بطور محفوظ کریں';
+
+  @override
+  String get tevSaveTemplate => 'ٹیمپلیٹ محفوظ کریں';
+
+  @override
+  String get tevSaveUnavailable => 'محفوظ کرنا دستیاب نہیں';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'محفوظ کرنے کے لیے Supabase پروجیکٹ سے رابطہ درکار ہے۔ ٹیمپلیٹس محفوظ کرنے کے لیے ایپ کو اپنی کلیدوں (env.json) کے ساتھ چلائیں۔';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'گمشدہ اثاثے: $list — خالی ظاہر ہونے سے بچنے کے لیے «میرا کتب خانہ» سے فریم/اثاثہ دوبارہ منتخب کریں۔';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'ٹیمپلیٹ کتب خانہ Supabase پروجیکٹ سے رابطہ درکار کرتا ہے۔';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '«$title» کھول دیا گیا۔';
+  }
+
+  @override
+  String get tevTitleHint => 'مثلاً: پروجیکٹ مینجمنٹ کورس کی تکمیل کا سرٹیفکیٹ';
+
+  @override
+  String get tevContinue => 'جاری رکھیں';
+
+  @override
+  String get tevSavedTemplates => 'میرے محفوظ شدہ ٹیمپلیٹس';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'ابھی کوئی محفوظ ٹیمپلیٹ نہیں۔ «ٹیمپلیٹ محفوظ کریں» بٹن سے ایک محفوظ کریں۔';
+
+  @override
+  String get ecIncrease => 'بڑھائیں';
+
+  @override
+  String get ecDecrease => 'کم کریں';
+
+  @override
+  String get ecQuickPalette => 'فوری پٹی';
+
+  @override
+  String get ecFullPicker => 'مکمل رنگ منتخب کنندہ';
+
+  @override
+  String get ecRemoveColor => 'رنگ ہٹائیں';
+
+  @override
+  String get ecNone => 'کوئی نہیں';
+
+  @override
+  String get ecPickColorTitle => 'رنگ منتخب کریں';
+
+  @override
+  String get ecApply => 'لاگو کریں';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '«$name» دستاویز کے پس منظر کے طور پر شامل کیا گیا۔';
+  }
+
+  @override
+  String get cfpUploadTooltip => 'حسب ضرورت فونٹ اپلوڈ کریں (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'اپلوڈ شدہ فونٹس کا انتظام';
+
+  @override
+  String get cfpNotice =>
+      'اپلوڈ شدہ فونٹس صرف آپ کے آلے پر محفوظ ہوتے ہیں اور یہاں اور پرنٹ میں فوراً استعمال ہوتے ہیں — بغیر انٹرنیٹ۔';
+
+  @override
+  String get cfpMyFonts => 'میرے حسب ضرورت فونٹس';
+
+  @override
+  String get cfpNoFonts => 'ابھی کوئی فونٹ اپلوڈ نہیں ہوا';
+
+  @override
+  String get cfpBuiltinOption => 'کوئی نہیں (بلٹ اِن فونٹ)';
+
+  @override
+  String get cfpPickTitle => 'فونٹ فائل منتخب کریں (TTF یا OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'فائل منتخب کنندہ نہیں کھل سکا: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return '«$name» پڑھی نہیں جا سکی: $error';
+  }
+
+  @override
+  String get cfpFontAdded => 'فونٹ شامل کر دیا گیا اور فوراً لاگو ہوا۔';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return '$count فونٹس شامل کیے گئے۔';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'میرے حسب ضرورت فونٹس کا کتب خانہ';
+
+  @override
+  String get cfpLibraryNotice =>
+      'تمام فونٹس صرف آپ کے آلے پر محفوظ ہیں۔ انتباہ: کسی ٹیمپلیٹ کا استعمال کرنے والا فونٹ حذف کرنا اُس ٹیمپلیٹ کو ناکامی کے بجائے بلٹ اِن فونٹ پر واپس لے جاتا ہے۔';
+
+  @override
+  String get cfpEmpty => 'ابھی کوئی اپلوڈ شدہ فونٹ نہیں۔';
+
+  @override
+  String get cfpCoverageFull => 'مکمل عربی کوریج';
+
+  @override
+  String get cfpCoveragePartial => 'جزوی عربی کوریج';
+
+  @override
+  String get cfpUploadNew => 'نیا فونٹ اپلوڈ کریں';
+
+  @override
+  String get ptpPrepError =>
+      'پیش نظارہ تیار نہیں ہو سکا۔ ٹیمپلیٹ فائل چیک کریں۔';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms م.ث — $kb ک.ب';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— پیش نظارہ خودکار طور پر اپ ڈیٹ ہوتا ہے';
+
+  @override
+  String get ptpGenerateFailedTitle => 'پیش نظارہ بنایا نہیں جا سکا';
+
+  @override
+  String get ptpPreparingTitle => 'انجن تیار ہو رہا ہے…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'بنڈل شدہ فونٹس لوڈ ہو رہے ہیں اور فائل کا پہلا ورژن بنایا جا رہا ہے۔';
+
+  @override
+  String get ptpShowFailedTitle => 'پیش نظارہ دکھایا نہیں جا سکا';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'واضح قدروں کے ساتھ متبادل بلڈ فائل کو اوور رائیڈ کرتا ہے: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'میرے اثاثہ کتب خانے سے دستاویز کا پس منظر';
+
+  @override
+  String get tevAddElement => 'عنصر شامل کریں';
+
+  @override
+  String get commonUndo => 'واپس';
+
+  @override
+  String get bpTitle => 'Excel سے اجتماعی پیداوار';
+
+  @override
+  String get bpSubtitle =>
+      'ایک .xlsx یا .csv فائل درآمد کریں، اس کے کالموں کو ٹیمپلیٹ خانوں سے منسلک کریں، پھر ہر ریکارڈ کے لیے ایک صفحے والا PDF بنائیں — سب آپ کے آلے پر، آف لائن۔';
+
+  @override
+  String get bpStepTemplate => '1) ٹیمپلیٹ';
+
+  @override
+  String get bpLoadingSampleTemplate => 'نمونہ ٹیمپلیٹ لوڈ ہو رہا ہے…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'ٹیمپلیٹ: $name • مطلوبہ خانے:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'آپ کے ٹیمپلیٹس لوڈ ہو رہے ہیں…';
+
+  @override
+  String get bpNoTemplates =>
+      'ابھی کوئی محفوظ ٹیمپلیٹ نہیں — ایڈیٹر میں بنائیں یا ٹیمپلیٹ کتب خانے سے درآمد کریں۔';
+
+  @override
+  String get bpTemplateFromMine => 'میرے ٹیمپلیٹس سے ٹیمپلیٹ';
+
+  @override
+  String get bpSampleTemplatesHeader => '— نمونہ ٹیمپلیٹس —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'کلاؤڈ';
+
+  @override
+  String get bpSourceLocal => 'مقامی';
+
+  @override
+  String get bpStepDataFile => '2) ڈیٹا فائل';
+
+  @override
+  String get bpReadingFile => 'فائل پڑھی جا رہی ہے…';
+
+  @override
+  String get bpNoFileChosen => 'ابھی کوئی فائل منتخب نہیں — معاون فارمیٹس:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows قطاریں، $cols کالم';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (ورقہ: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'فائل منتخب کریں';
+
+  @override
+  String get bpRemove => 'ہٹائیں';
+
+  @override
+  String get bpHeaderRow => 'ہیڈر قطار';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'خودکار (قطار $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'قطار $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'خودکار — قطار $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'قطار $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(خالی قطار)';
+
+  @override
+  String get bpWorksheet => 'ورک شیٹ';
+
+  @override
+  String get bpPickDataFile => 'ڈیٹا فائل منتخب کریں (Excel یا CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'فائل پڑھی نہیں جا سکی: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'فائل مقامی طور پر پڑھی گئی: $rows قطاریں اور $cols کالم۔';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'تبدیلی ٹیمپلیٹ میں محفوظ نہیں ہو سکی: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'اس عنصر کو متحرک خانہ تفویض کریں';
+
+  @override
+  String get bpMapFieldBody =>
+      'صرف اس عنصر کا متن ایک خانے سے بدلے گا؛ کوئی اور عنصر متاثر نہیں ہوگا۔';
+
+  @override
+  String get bpUndoConvert => 'تبدیلی واپس کر دی گئی۔';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'تبدیلی واپس کر دی گئی اور متن ٹیمپلیٹ میں بحال ہو گیا۔';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'متن ٹیمپلیٹ میں بحال نہیں ہو سکا: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return '$count ریکارڈ بنائے گئے';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' اور $count چھوڑے گئے';
+  }
+
+  @override
+  String get bpReadyToSave => 'فائل محفوظ کرنے کے لیے تیار ہے۔';
+
+  @override
+  String get bpStepMapping => '3) کالموں کو خانوں سے منسلک کریں';
+
+  @override
+  String get bpChooseFileFirst =>
+      'نقشہ جدول دکھانے کے لیے پہلے فائل منتخب کریں۔';
+
+  @override
+  String get bpNoDynamicFields => 'موجودہ ٹیمپلیٹ میں کوئی متحرک خانہ نہیں۔';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return '$total کالموں میں سے $mapped منسلک';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'فائل منتخب کرنے کے بعد ذہین خودکار نقشہ تجویز ہوگا؛ آپ ہر کالم میں ترمیم کر سکتے ہیں۔';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'منتخب ٹیمپلیٹ میں کوئی متحرک خانہ نہیں، اس لیے فائل کالموں سے منسلک کرنے کو کچھ نہیں۔ ٹیمپلیٹ ایڈیٹر میں کھولیں، نام کی جگہ میں «متحرک خانہ» درج کریں، محفوظ کریں، پھر دوبارہ کوشش کریں۔';
+
+  @override
+  String get bpAutoMap => 'خودکار نقشہ';
+
+  @override
+  String get bpClearMapping => 'نقشہ صاف کریں';
+
+  @override
+  String get bpNameFieldWarning =>
+      'اس ٹیمپلیٹ میں متحرک نام کا خانہ نہیں — نام کے کالم کو تاریخ یا حوالہ خانے سے نہ منسلک کریں، ورنہ نام غلط جگہ چھپ سکتا ہے۔ کالم فہرست سے نام کی کلید منتخب کریں، یا ایڈیٹر میں مستقل نام کے متن کو متحرک خانے میں بدلیں۔';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'نام جیسا مستقل متن: «$preview» — کوئی متحرک خانہ اسے تبدیل نہیں کرتا۔';
+  }
+
+  @override
+  String get bpConvertToNameField => 'اسے تربیت یافتہ کے نام کے خانے میں بدلیں';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return 'خانہ «$field» ایک سے زیادہ کالموں سے منسلک ہے۔ ہر خانے کو ایک کالم سے منسلک کریں۔';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count غیر منسلک کالم — ان کا ڈیٹا سرٹیفکیٹس میں استعمال نہیں ہوگا۔';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'کالم $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(خالی)';
+
+  @override
+  String get bpUnmapped => '— غیر منسلک —';
+
+  @override
+  String get bpStepMissing => '4) خالی خلیے اور غائب ڈیٹا';
+
+  @override
+  String get bpNoNotes => 'فائل منتخب کرنے سے پہلے کوئی نوٹ نہیں۔';
+
+  @override
+  String get bpStepGenerate => '5) پیداوار';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'پیداوار جاری… $progress';
+  }
+
+  @override
+  String get bpGenerateHint =>
+      'ایک PDF فائل، ہر بنائے گئے ریکارڈ کے لیے ایک صفحہ۔';
+
+  @override
+  String get bpGeneratePickFile =>
+      'پیداوار فعال کرنے کے لیے پہلے ڈیٹا فائل منتخب کریں۔';
+
+  @override
+  String get bpMappingInvalid =>
+      'نقشہ غلط ہے — ایک ہی خانہ دو کالموں سے منسلک ہے۔';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'پیداوار فعال کرنے کے لیے کم از کم ایک کالم ٹیمپلیٹ خانے سے منسلک کریں۔';
+
+  @override
+  String get bpGenerateCertificates => 'سرٹیفکیٹس بنائیں';
+
+  @override
+  String get bpRegenerate => 'دوبارہ بنائیں';
+
+  @override
+  String get bpStatGenerated => 'بنائے گئے';
+
+  @override
+  String get bpStatSkipped => 'چھوڑے گئے';
+
+  @override
+  String get bpStatPages => 'صفحات';
+
+  @override
+  String get bpStatSize => 'سائز';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value ک.ب';
+  }
+
+  @override
+  String get bpStatTime => 'وقت';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value م.ث';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return '$total قطاروں کا $pct% مکمل۔';
+  }
+
+  @override
+  String get bpSkippedRows => 'نہ بنائی گئی قطاریں:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'قطار $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'پیش نظارہ یہاں ظاہر ہوتا ہے';
+
+  @override
+  String get bpPreviewHint =>
+      'ڈیٹا فائل منتخب کریں، نقشہ درست کریں، پھر «سرٹیفکیٹس بنائیں» دبائیں — بنائی گئی فائل کا پہلا صفحہ یہاں نظر آئے گا۔';
+
+  @override
+  String get bpAssignByTapTitle => 'خانوں کو ٹیپ کر کے تفویض کریں';
+
+  @override
+  String get bpAssignByTapBody =>
+      'ٹیمپلیٹ میں کسی بھی متن کو ٹیپ کریں تاکہ خود اسے متحرک خانے سے منسلک کریں۔ کوئی اور عنصر متاثر نہیں — نہ تاریخ، نہ منیجر کا نام، نہ کوئی مستقل متن۔';
+
+  @override
+  String get bpNoTexts => 'اس ٹیمپلیٹ میں کوئی متن نہیں۔';
+
+  @override
+  String get bpEmptyText => '(خالی متن)';
+
+  @override
+  String get bpDynamicFieldTap => 'متحرک خانہ — تبدیل کرنے کے لیے ٹیپ کریں';
+
+  @override
+  String get bpStaticTextTap => 'مستقل متن — تفویض کے لیے ٹیپ کریں';
+
+  @override
+  String get bpAssignField => 'خانہ تفویض کریں';
+
+  @override
+  String get bpKindCertificate => 'سرٹیفکیٹ';
+
+  @override
+  String get bpKindContract => 'معاہدہ';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'نمونہ ٹیمپلیٹ لوڈ نہیں ہو سکا: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'ورقہ پڑھا نہیں جا سکا: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'ہیڈر قطار اپ ڈیٹ نہیں ہو سکی: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst =>
+      'پیداوار سے پہلے ٹیمپلیٹ (سرٹیفکیٹ یا معاہدہ) منتخب کریں۔';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind اجتماعی — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'اجتماعی پیداوار نہیں چل سکی: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'اس ٹیمپلیٹ میں متحرک خانہ نہیں — ریکارڈز کے درمیان ڈیٹا تبدیل نہیں ہوگا۔ ایڈیٹر پٹی سے «ٹرینی نام» کا خانہ شامل کریں، پھر ٹیمپلیٹ محفوظ کریں۔';
+
+  @override
+  String get bpWarnNoNameField =>
+      'اس ٹیمپلیٹ میں متحرک نام کا خانہ نہیں — نام کا کالم تاریخ یا حوالہ خانے سے منسلک ہو کر نام غلط جگہ چھپ سکتا ہے۔ مستقل نام کے متن کو خانے میں بدلیں یا ٹیمپلیٹ دوبارہ ڈیزائن کریں۔';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'یہ عنصر موجودہ پیداوار کے لیے $token سے منسلک کیا گیا — دیگر عناصر متاثر نہیں۔ تبدیلی مستقل رکھنے کے لیے ٹیمپلیٹ محفوظ کریں۔';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'یہ عنصر $token سے منسلک کیا گیا اور تبدیلی ٹیمپلیٹ میں محفوظ کر دی گئی۔ دیگر عناصر متاثر نہیں۔';
+  }
 }

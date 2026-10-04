@@ -11,6 +11,7 @@ import '../../assets/user_asset.dart';
 import '../../constants/app_assets.dart';
 import '../../constants/app_constants.dart';
 import '../../errors/app_exception.dart';
+import '../../l10n/app_l10n.dart';
 import '../../models/template_document.dart';
 import '../../models/template_element.dart';
 import '../../services/pdf_generator_service.dart';
@@ -50,7 +51,7 @@ class TemplateEditorView extends StatefulWidget {
     required this.initialTemplateAsset,
     required this.exportFileName,
     this.repository,
-    this.title = 'قالب جديد',
+    this.title,
     this.document,
     this.initialSelectionId,
     this.initialRecordId,
@@ -66,7 +67,8 @@ class TemplateEditorView extends StatefulWidget {
   /// `null` يعني أن الحفظ غير متاح (التطبيق غير مربوط بـ Supabase).
   final TemplateRepository? repository;
 
-  final String title;
+  /// عنوان القالب الابتدائي — `null` يعني العنوان الافتراضي المترجم.
+  final String? title;
 
   /// مستند ابتدائي جاهز (للفتح من المكتبة أو للاختبارات) — يتقدّم على الأصل.
   final TemplateDocument? document;
@@ -108,6 +110,10 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   /// مدة التوقف التي تفصل بين ضغطتين مستقلتين في سجل التراجع.
   static const Duration _nudgeSettleDelay = Duration(milliseconds: 350);
 
+  /// عنوان قالب جديد الاحتياطي — يُستبدل بالترجمة بعد `initState` في
+  /// [didChangeDependencies] لأن قراءة الترجمة قبل اكتماله غير مسموحة.
+  static const String defaultTitleFallback = 'قالب جديد';
+
   /// معالج المغادرة المسجَّل في [UnsavedChangesGuard] — نحتفظ به كحقل لضمان
   /// أن إزالته عند التخلّص تُطابق نسخة التسجيل نفسها.
   late final Future<bool> Function() _leaveHandler = _confirmLeave;
@@ -122,6 +128,10 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   int _previewRevision = 0;
   bool _isExporting = false;
 
+  /// هل طُبّق عنوان «قالب جديد» المترجم مرة واحدة؟ (يُقرأ السياق بعد تهيئة
+  /// الحالة فقط، لا في `initState`.)
+  bool _titleLocalized = false;
+
   @override
   void initState() {
     super.initState();
@@ -133,7 +143,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
           ),
       category: widget.category,
       repository: widget.repository,
-      title: widget.title,
+      title: widget.title ?? defaultTitleFallback,
       recordId: widget.initialRecordId,
     );
     _controller.addListener(_onControllerChanged);
@@ -152,6 +162,24 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       unawaited(_bootstrapFromAsset());
     } else {
       _applyInitialSelection();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_titleLocalized) return;
+    _titleLocalized = true;
+    // لا يمكن قراءة التوطين في `initState` (قبل اكتماله)، فنُطبّق العنوان
+    // الافتراضي المترجم هنا مرة واحدة بعد توفّر مندوبي الترجمة — بلا وسم
+    // المستند كمتغيّر.
+    if (widget.title != null) return;
+    final String? localized = context.l10n?.tevNewTemplateTitle;
+    if (localized != null) {
+      _controller.localizeDefaultTitle(
+        localized,
+        defaultTitle: defaultTitleFallback,
+      );
     }
   }
 
@@ -238,27 +266,28 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
     final _LeaveChoice? choice = await showDialog<_LeaveChoice>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text('تعديلات غير محفوظة'),
+        title: Text(context.l10n?.tevUnsavedTitle ?? 'تعديلات غير محفوظة'),
         content: Text(
-          'لديك تعديلات على «${_controller.title}» لم تُحفَظ بعد. '
-          'هل تريد حفظها قبل المغادرة؟',
+          context.l10n?.tevUnsavedMessage(_controller.title) ??
+              'لديك تعديلات على «${_controller.title}» لم تُحفَظ بعد. '
+                  'هل تريد حفظها قبل المغادرة؟',
         ),
         actions: <Widget>[
           TextButton(
             onPressed: () =>
                 Navigator.of(dialogContext).pop(_LeaveChoice.cancel),
-            child: const Text('إلغاء'),
+            child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
           ),
           TextButton(
             onPressed: () =>
                 Navigator.of(dialogContext).pop(_LeaveChoice.discard),
-            child: const Text('المغادرة دون حفظ'),
+            child: Text(context.l10n?.tevLeaveWithoutSaving ?? 'المغادرة دون حفظ'),
           ),
           if (_controller.canPersist)
             FilledButton(
               onPressed: () =>
                   Navigator.of(dialogContext).pop(_LeaveChoice.save),
-              child: const Text('حفظ والمغادرة'),
+              child: Text(context.l10n?.tevSaveAndLeave ?? 'حفظ والمغادرة'),
             ),
         ],
       ),
@@ -300,22 +329,22 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                 children: <Widget>[
                   _titleChip(context),
                   SegmentedField<EditorViewMode>(
-                    label: 'طريقة العرض',
+                    label: context.l10n?.tevViewMode ?? 'طريقة العرض',
                     value: _mode,
                     options: EditorViewMode.values,
                     labelOf: (EditorViewMode mode) =>
-                        mode == EditorViewMode.editor ? 'المحرر' : 'معاينة PDF',
+                        mode == EditorViewMode.editor ? context.l10n?.tevModeEditor ?? 'المحرر' : context.l10n?.tevModePreview ?? 'معاينة PDF',
                     iconOf: (EditorViewMode mode) => mode == EditorViewMode.editor
                         ? Icons.design_services_rounded
                         : Icons.picture_as_pdf_rounded,
                     onChanged: _setMode,
                   ),
                   SegmentedField<PageOrientation>(
-                    label: 'اتجاه الورقة',
+                    label: context.l10n?.tevPaperDirection ?? 'اتجاه الورقة',
                     value: _controller.document.orientation,
                     options: PageOrientation.values,
                     labelOf: (PageOrientation orientation) =>
-                        orientation.isLandscape ? 'أفقي' : 'رأسي',
+                        orientation.isLandscape ? context.l10n?.tplOrientationLandscape ?? 'أفقي' : context.l10n?.tplOrientationPortrait ?? 'رأسي',
                     iconOf: (PageOrientation orientation) =>
                         orientation.isLandscape
                             ? Icons.crop_landscape_rounded
@@ -330,7 +359,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       runSpacing: AppTheme.space8,
       children: <Widget>[
         DropdownField<PaperSize>(
-          label: 'المقاس',
+          label: context.l10n?.editorPageSize ?? 'المقاس',
           value: _controller.document.paperSize,
           items: PaperSize.values,
           labelOf: (PaperSize size) => size.labelAr,
@@ -347,7 +376,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
           children: <Widget>[
             Expanded(
               child: DropdownField<MeasurementUnit>(
-                label: 'الوحدة',
+                label: context.l10n?.editorUnit ?? 'الوحدة',
                 value: _controller.document.customPageSize!.unit,
                 items: MeasurementUnit.values,
                 labelOf: (MeasurementUnit unit) => unit.labelAr,
@@ -362,7 +391,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
             const SizedBox(width: 8),
             Expanded(
               child: NumberField(
-                label: 'العرض (cm)',
+                label: context.l10n?.tevWidthCm ?? 'العرض (cm)',
                 value: _controller.document.customPageSize!.width,
                 min: 1,
                 max: 500,
@@ -377,7 +406,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
             const SizedBox(width: 8),
             Expanded(
               child: NumberField(
-                label: 'الارتفاع (cm)',
+                label: context.l10n?.tevHeightCm ?? 'الارتفاع (cm)',
                 value: _controller.document.customPageSize!.height,
                 min: 1,
                 max: 500,
@@ -403,17 +432,17 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
     ),
                   IconAction(
                     icon: Icons.undo_rounded,
-                    tooltip: 'تراجع (Ctrl+Z)',
+                    tooltip: context.l10n?.tevUndo ?? 'تراجع (Ctrl+Z)',
                     onPressed: _controller.canUndo ? _controller.undo : null,
                   ),
                   IconAction(
                     icon: Icons.redo_rounded,
-                    tooltip: 'إعادة (Ctrl+Y)',
+                    tooltip: context.l10n?.tevRedo ?? 'إعادة (Ctrl+Y)',
                     onPressed: _controller.canRedo ? _controller.redo : null,
                   ),
                   IconAction(
                     icon: Icons.grid_on_rounded,
-                    tooltip: 'شبكة التوجيه',
+                    tooltip: context.l10n?.tevSnapGrid ?? 'شبكة التوجيه',
                     selected: _showGrid,
                     onPressed: () => setState(() => _showGrid = !_showGrid),
                   ),
@@ -421,15 +450,15 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                     key: const ValueKey<String>('toggle-snap-guides'),
                     icon: Icons.align_vertical_center_rounded,
                     tooltip: _snapToGuides
-                        ? 'خطوط الإرشاد الذكية: مُفعّلة (إيقاف)'
-                        : 'خطوط الإرشاد الذكية: معطّلة (تشغيل)',
+                        ? context.l10n?.tevGuidesOn ?? 'خطوط الإرشاد الذكية: مُفعّلة (إيقاف)'
+                        : context.l10n?.tevGuidesOff ?? 'خطوط الإرشاد الذكية: معطّلة (تشغيل)',
                     selected: _snapToGuides,
                     onPressed: () =>
                         setState(() => _snapToGuides = !_snapToGuides),
                   ),
                   if (_mode == EditorViewMode.editor)
                     SliderField(
-                      label: 'التكبير',
+                      label: context.l10n?.tevZoom ?? 'التكبير',
                       value: _zoom,
                       min: 0.5,
                       max: 3,
@@ -446,7 +475,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                 crossAxisAlignment: WrapCrossAlignment.end,
                 children: <Widget>[
                   ColorField(
-                    label: 'خلفية المستند',
+                    label: context.l10n?.tevDocumentBackground ?? 'خلفية المستند',
                     hex: _controller.document.backgroundHex,
                     width: 200,
                     onChanged: _controller.setBackgroundHex,
@@ -456,16 +485,16 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                     onPressed: _pickBackgroundFromLibrary,
                     icon: const Icon(Icons.collections_bookmark_rounded,
                         size: 16),
-                    label: const Text('إطار من مكتبة أصولي'),
+                    label: Text(context.l10n?.tevFrameFromLibrary ?? 'إطار من مكتبة أصولي'),
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(0, 44),
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                     ),
                   ),
                   Text(
-                    '${_controller.document.drawableElementCount} عنصراً'
-                    '${_controller.hasDynamicFields ? ' • حقول ديناميكية' : ''}'
-                    '${_controller.hasUnsavedChanges ? ' • تعديلات غير محفوظة' : ''}',
+                    '${context.l10n?.evElementCount(_controller.document.drawableElementCount) ?? '${_controller.document.drawableElementCount} عنصراً'}'
+                    '${_controller.hasDynamicFields ? (context.l10n?.evStatusDynamicFields ?? ' • حقول ديناميكية') : ''}'
+                    '${_controller.hasUnsavedChanges ? (context.l10n?.evStatusUnsaved ?? ' • تعديلات غير محفوظة') : ''}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(width: AppTheme.space8),
@@ -482,7 +511,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   Widget _titleChip(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     return Tooltip(
-      message: 'تغيير عنوان القالب',
+      message: context.l10n?.tevChangeTitle ?? 'تغيير عنوان القالب',
       child: InkWell(
         onTap: () async {
           final String? title = await _askTitle(initial: _controller.title);
@@ -527,13 +556,13 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
         OutlinedButton.icon(
           onPressed: _openLibrary,
           icon: const Icon(Icons.folder_open_rounded, size: 17),
-          label: const Text('قوالبي'),
+          label: Text(context.l10n?.tevMyTemplates ?? 'قوالبي'),
           style: OutlinedButton.styleFrom(minimumSize: const Size(120, 44)),
         ),
         OutlinedButton.icon(
           onPressed: () => _save(saveAs: true),
           icon: const Icon(Icons.save_as_rounded, size: 17),
-          label: const Text('حفظ باسم'),
+          label: Text(context.l10n?.tevSaveAs ?? 'حفظ باسم'),
           style: OutlinedButton.styleFrom(minimumSize: const Size(130, 44)),
         ),
         FilledButton.icon(
@@ -544,7 +573,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.save_rounded, size: 17),
-          label: Text(persist ? 'حفظ القالب' : 'الحفظ غير متاح'),
+          label: Text(persist ? context.l10n?.tevSaveTemplate ?? 'حفظ القالب' : context.l10n?.tevSaveUnavailable ?? 'الحفظ غير متاح'),
           style: FilledButton.styleFrom(minimumSize: const Size(150, 44)),
         ),
         FilledButton.icon(
@@ -556,7 +585,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.picture_as_pdf_rounded, size: 17),
-          label: const Text('تصدير PDF'),
+          label: Text(context.l10n?.commonExportPdf ?? 'تصدير PDF'),
           style: FilledButton.styleFrom(
             minimumSize: const Size(140, 44),
             backgroundColor: AppColors.goldDeep,
@@ -588,7 +617,8 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       );
       if (!mounted) return;
       context.showSuccess(
-        'تم تجهيز الملف للحفظ باسم ${widget.exportFileName}.',
+        context.l10n?.commonExportReady(widget.exportFileName) ??
+            'تم تجهيز الملف للحفظ باسم ${widget.exportFileName}.',
       );
     } on AppException catch (error) {
       if (!mounted) return;
@@ -608,7 +638,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   Future<void> _pickBackgroundFromLibrary() async {
     final UserAsset? asset = await showAssetLibraryPicker(
       context,
-      title: 'خلفية المستند من مكتبة أصولي',
+      title: context.l10n?.tevBackgroundTitle ?? 'خلفية المستند من مكتبة أصولي',
       filterTypes: const <AssetType>[AssetType.border, AssetType.logo],
     );
     if (asset == null || !mounted) return;
@@ -619,7 +649,10 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       asBackground: true,
     );
     _controller.insertElement(element, index: 0);
-    context.showSuccess('أُضيف «${asset.name}» كخلفية للمستند.');
+    context.showSuccess(
+      context.l10n?.tevBackgroundAdded(asset.name) ??
+          'أُضيف «${asset.name}» كخلفية للمستند.',
+    );
   }
 
   // ==========================================================================
@@ -737,7 +770,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
                   size: 15, color: scheme.goldDeep),
               const SizedBox(width: 6),
               Text(
-                'إضافة عنصر',
+                context.l10n?.tevAddElement ?? 'إضافة عنصر',
                 style: Theme.of(context).textTheme.labelSmall,
               ),
             ],
@@ -760,7 +793,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
         document: _controller.document,
         revision: _previewRevision,
         exportFileName: widget.exportFileName,
-        dataPanelTitle: 'بيانات تجريبية',
+        dataPanelTitle: context.l10n?.commonDataPanelTitle ?? 'بيانات تجريبية',
       ),
     );
   }
@@ -779,8 +812,9 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
   Future<void> _save({bool saveAs = false}) async {
     if (!_controller.canPersist) {
       context.showWarning(
-        'الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك '
-        '(env.json) لتتمكن من حفظ القوالب.',
+        context.l10n?.tevSaveNeedsSupabase ??
+            'الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك '
+                '(env.json) لتتمكن من حفظ القوالب.',
       );
       return;
     }
@@ -789,8 +823,9 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
     final List<String> missing = missingAssetReferences(_controller.document);
     if (missing.isNotEmpty) {
       context.showWarning(
-        'أصول مفقودة: ${missing.join('، ')} — أعد اختيار الإطار/الأصل من '
-        '«مكتبة أصولي» لتفادي ظهورها فارغة.',
+        context.l10n?.tevMissingAssets(missing.join('، ')) ??
+            'أصول مفقودة: ${missing.join('، ')} — أعد اختيار الإطار/الأصل من '
+                '«مكتبة أصولي» لتفادي ظهورها فارغة.',
       );
     }
 
@@ -810,7 +845,10 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
 
   Future<void> _openLibrary() async {
     if (!_library.isAvailable) {
-      context.showWarning('مكتبة القوالب تتطلب الاتصال بمشروع Supabase.');
+      context.showWarning(
+        context.l10n?.tevTemplateLibraryNeedsSupabase ??
+            'مكتبة القوالب تتطلب الاتصال بمشروع Supabase.',
+      );
       return;
     }
     unawaited(_library.refresh());
@@ -829,7 +867,10 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       recordId: record.id,
       title: record.title,
     );
-    context.showSuccess('تم فتح «${record.title}».');
+    context.showSuccess(
+      context.l10n?.tevOpenedTemplate(record.title) ??
+          'تم فتح «${record.title}».',
+    );
   }
 
   /// نافذة عنوان القالب.
@@ -1030,25 +1071,26 @@ class _TemplateTitleDialogState extends State<_TemplateTitleDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('عنوان القالب'),
+      title: Text(context.l10n?.tplRenameTitle ?? 'عنوان القالب'),
       content: TextField(
         controller: _controller,
         autofocus: true,
         textDirection: TextDirection.rtl,
-        decoration: const InputDecoration(
-          labelText: 'العنوان',
-          hintText: 'مثال: شهادة إتمام دورة إدارة المشاريع',
+        decoration: InputDecoration(
+          labelText: context.l10n?.tplFieldTitle ?? 'العنوان',
+          hintText: context.l10n?.tevTitleHint ??
+              'مثال: شهادة إتمام دورة إدارة المشاريع',
         ),
         onSubmitted: (String value) => _submit(),
       ),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('إلغاء'),
+          child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
         ),
         FilledButton(
           onPressed: _submit,
-          child: const Text('متابعة'),
+          child: Text(context.l10n?.tevContinue ?? 'متابعة'),
         ),
       ],
     );
@@ -1069,7 +1111,7 @@ class _TemplateLibraryDialog extends StatelessWidget {
           Icon(Icons.collections_bookmark_rounded,
               size: 18, color: Theme.of(context).colorScheme.goldDeep),
           const SizedBox(width: 8),
-          Text('قوالبي المحفوظة'),
+          Text(context.l10n?.tevSavedTemplates ?? 'قوالبي المحفوظة'),
         ],
       ),
       content: SizedBox(
@@ -1088,9 +1130,10 @@ class _TemplateLibraryDialog extends StatelessWidget {
               );
             }
             if (library.templates.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  'لا توجد قوالب محفوظة بعد.\nاحفظ قالباً من الزر «حفظ القالب».',
+                  context.l10n?.tevNoSavedTemplates ??
+                      'لا توجد قوالب محفوظة بعد.\nاحفظ قالباً من الزر «حفظ القالب».',
                   textAlign: TextAlign.center,
                 ),
               );
@@ -1112,7 +1155,7 @@ class _TemplateLibraryDialog extends StatelessWidget {
                   leading: Icon(Icons.description_outlined,
                       color: Theme.of(context).colorScheme.primary),
                   trailing: IconButton(
-                    tooltip: 'حذف',
+                    tooltip: context.l10n?.tplDelete ?? 'حذف',
                     icon: Icon(Icons.delete_outline_rounded,
                         color: Theme.of(context).colorScheme.danger, size: 18),
                     onPressed: () async {
@@ -1134,7 +1177,7 @@ class _TemplateLibraryDialog extends StatelessWidget {
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('إغلاق'),
+          child: Text(context.l10n?.editorClose ?? 'إغلاق'),
         ),
       ],
     );

@@ -6,6 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../errors/app_exception.dart';
+import '../l10n/app_l10n.dart';
 import '../models/template_document.dart';
 import '../services/pdf_generator_service.dart';
 import '../theme/app_colors.dart';
@@ -23,7 +24,7 @@ class PdfTemplatePreview extends StatefulWidget {
     this.templateAssetPath,
     this.document,
     this.revision = 0,
-    this.dataPanelTitle = 'بيانات تجريبية',
+    this.dataPanelTitle,
     this.emptyStateHint,
   }) : assert(
           templateAssetPath != null || document != null,
@@ -45,7 +46,7 @@ class PdfTemplatePreview extends StatefulWidget {
   /// اسم الملف المُصدَّر.
   final String exportFileName;
 
-  final String dataPanelTitle;
+  final String? dataPanelTitle;
   final String? emptyStateHint;
 
   @override
@@ -120,7 +121,8 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     } on Object {
       if (!mounted) return;
       setState(() {
-        _error = 'تعذّر تحضير المعاينة. تحقّق من ملف القالب.';
+        _error = context.l10n?.ptpPrepError ??
+            'تعذّر تحضير المعاينة. تحقّق من ملف القالب.';
         _busy = false;
       });
     }
@@ -209,7 +211,9 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
       );
     } on Object {
       if (!mounted) return;
-      context.showError('تعذّر إرسال الملف إلى الطابعة.');
+      context.showError(
+        context.l10n?.commonPrintFailed ?? 'تعذّر إرسال الملف إلى الطابعة.',
+      );
     }
   }
 
@@ -219,10 +223,15 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     try {
       await Printing.sharePdf(bytes: bytes, filename: widget.exportFileName);
       if (!mounted) return;
-      context.showSuccess('تم تجهيز الملف للحفظ باسم ${widget.exportFileName}.');
+      context.showSuccess(
+        context.l10n?.commonExportReady(widget.exportFileName) ??
+            'تم تجهيز الملف للحفظ باسم ${widget.exportFileName}.',
+      );
     } on Object {
       if (!mounted) return;
-      context.showError('تعذّر تصدير ملف PDF.');
+      context.showError(
+        context.l10n?.commonExportFailed ?? 'تعذّر تصدير ملف PDF.',
+      );
     }
   }
 
@@ -273,13 +282,17 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
             ),
             _Chip(
               icon: Icons.layers_outlined,
-              label: '${document.drawableElementCount} عنصراً',
+              label: context.l10n?.evElementCount(document.drawableElementCount) ??
+                  '${document.drawableElementCount} عنصراً',
             ),
             if (report != null)
               _Chip(
                 icon: Icons.memory_rounded,
-                label: '${report.elapsed.inMilliseconds} م.ث — '
-                    '${(report.byteSize / 1024).toStringAsFixed(1)} ك.ب',
+                label: context.l10n?.ptpElapsedSize(
+                      report.elapsed.inMilliseconds,
+                      (report.byteSize / 1024).toStringAsFixed(1),
+                    ) ??
+                    '${report.elapsed.inMilliseconds} م.ث — ${(report.byteSize / 1024).toStringAsFixed(1)} ك.ب',
               ),
           ],
           if (_busy)
@@ -291,7 +304,10 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 const SizedBox(width: AppTheme.space8),
-                Text('جارٍ التوليد…', style: text.bodySmall),
+                Text(
+                  context.l10n?.commonGenerating ?? 'جارٍ التوليد…',
+                  style: text.bodySmall,
+                ),
               ],
             ),
           Row(
@@ -300,7 +316,7 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
               OutlinedButton.icon(
                 onPressed: _bytes == null ? null : _print,
                 icon: const Icon(Icons.print_outlined, size: 18),
-                label: const Text('طباعة'),
+                label: Text(context.l10n?.commonPrint ?? 'طباعة'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(120, 42),
                 ),
@@ -309,7 +325,7 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
               FilledButton.icon(
                 onPressed: _bytes == null || _busy ? null : _export,
                 icon: const Icon(Icons.download_rounded, size: 18),
-                label: const Text('تصدير PDF'),
+                label: Text(context.l10n?.commonExportPdf ?? 'تصدير PDF'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(150, 42),
                 ),
@@ -345,10 +361,14 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
               Icon(Icons.edit_note_rounded,
                   size: 18, color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: AppTheme.space8),
-              Text(widget.dataPanelTitle, style: text.titleSmall),
+              Text(
+                widget.dataPanelTitle ??
+                    context.l10n?.commonDataPanelTitle ?? 'بيانات تجريبية',
+                style: text.titleSmall,
+              ),
               const SizedBox(width: AppTheme.space8),
               Text(
-                '— تُحدَّث المعاينة تلقائياً',
+                context.l10n?.ptpGeneratingNote ?? '— تُحدَّث المعاينة تلقائياً',
                 style: text.bodySmall?.copyWith(fontSize: 11.5),
               ),
             ],
@@ -424,12 +444,12 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
       return _centeredMessage(
         icon: Icons.error_outline_rounded,
         color: Theme.of(context).colorScheme.danger,
-        title: 'تعذّر توليد المعاينة',
+        title: context.l10n?.ptpGenerateFailedTitle ?? 'تعذّر توليد المعاينة',
         message: error,
         action: FilledButton.icon(
           onPressed: _bootstrap,
           icon: const Icon(Icons.refresh_rounded, size: 18),
-          label: const Text('إعادة المحاولة'),
+          label: Text(context.l10n?.commonRetry ?? 'إعادة المحاولة'),
           style: FilledButton.styleFrom(minimumSize: const Size(180, 44)),
         ),
       );
@@ -440,8 +460,9 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
       return _centeredMessage(
         icon: Icons.picture_as_pdf_outlined,
         color: Theme.of(context).colorScheme.primary,
-        title: 'جارٍ تحضير المحرك…',
+        title: context.l10n?.ptpPreparingTitle ?? 'جارٍ تحضير المحرك…',
         message: widget.emptyStateHint ??
+            context.l10n?.ptpPreparingMessage ??
             'يتم تحميل الخطوط المحزومة وتوليد أول نسخة من الملف.',
       );
     }    return PdfPreview(
@@ -463,7 +484,7 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
       onError: (BuildContext context, Object error) => _centeredMessage(
         icon: Icons.error_outline_rounded,
         color: Theme.of(context).colorScheme.danger,
-        title: 'تعذّر عرض المعاينة',
+        title: context.l10n?.ptpShowFailedTitle ?? 'تعذّر عرض المعاينة',
         message: '$error',
       ),
     );

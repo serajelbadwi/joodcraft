@@ -1130,4 +1130,640 @@ class AppLocalizationsId extends AppLocalizations {
   String amMakeType(Object type) {
     return 'Jadikan jenis: $type';
   }
+
+  @override
+  String get commonRetry => 'Coba lagi';
+
+  @override
+  String get commonPrint => 'Cetak';
+
+  @override
+  String get commonExportPdf => 'Ekspor PDF';
+
+  @override
+  String get commonExportFailed => 'Tidak dapat mengekspor berkas PDF.';
+
+  @override
+  String get commonPrintFailed => 'Tidak dapat mengirim berkas ke printer.';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'Berkas siap disimpan sebagai $name.';
+  }
+
+  @override
+  String get commonGenerating => 'Menghasilkan…';
+
+  @override
+  String get commonDataPanelTitle => 'Data contoh';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count elemen';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • bidang dinamis';
+
+  @override
+  String get evStatusUnsaved => ' • perubahan belum disimpan';
+
+  @override
+  String get tevNewTemplateTitle => 'Templat baru';
+
+  @override
+  String get tevUnsavedTitle => 'Perubahan belum disimpan';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return 'Anda memiliki perubahan belum disimpan pada “$title”. Simpan sebelum keluar?';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'Keluar tanpa menyimpan';
+
+  @override
+  String get tevSaveAndLeave => 'Simpan dan keluar';
+
+  @override
+  String get tevViewMode => 'Mode tampilan';
+
+  @override
+  String get tevModeEditor => 'Editor';
+
+  @override
+  String get tevModePreview => 'Pratinjau PDF';
+
+  @override
+  String get tevPaperDirection => 'Orientasi kertas';
+
+  @override
+  String get tevWidthCm => 'Lebar (cm)';
+
+  @override
+  String get tevHeightCm => 'Tinggi (cm)';
+
+  @override
+  String get tevUndo => 'Urungkan (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'Ulangi (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'Kisi penjajaran';
+
+  @override
+  String get tevGuidesOn => 'Panduan pintar: aktif (matikan)';
+
+  @override
+  String get tevGuidesOff => 'Panduan pintar: nonaktif (nyalakan)';
+
+  @override
+  String get tevZoom => 'Zoom';
+
+  @override
+  String get tevDocumentBackground => 'Latar dokumen';
+
+  @override
+  String get tevFrameFromLibrary => 'Bingkai dari pustaka aset saya';
+
+  @override
+  String get tevChangeTitle => 'Ubah judul templat';
+
+  @override
+  String get tevMyTemplates => 'Templat saya';
+
+  @override
+  String get tevSaveAs => 'Simpan sebagai';
+
+  @override
+  String get tevSaveTemplate => 'Simpan templat';
+
+  @override
+  String get tevSaveUnavailable => 'Penyimpanan tidak tersedia';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'Menyimpan memerlukan koneksi ke proyek Supabase. Jalankan aplikasi dengan kunci proyek Anda (env.json) untuk menyimpan templat.';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'Aset hilang: $list — pilih ulang bingkai/aset dari “Pustaka aset saya” agar tidak kosong.';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'Pustaka templat memerlukan koneksi ke proyek Supabase.';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '“$title” dibuka.';
+  }
+
+  @override
+  String get tevTitleHint =>
+      'mis. sertifikat penyelesaian kursus Manajemen Proyek';
+
+  @override
+  String get tevContinue => 'Lanjutkan';
+
+  @override
+  String get tevSavedTemplates => 'Templat tersimpan saya';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'Belum ada templat tersimpan. Simpan dari tombol “Simpan templat”.';
+
+  @override
+  String get ecIncrease => 'Tambah';
+
+  @override
+  String get ecDecrease => 'Kurangi';
+
+  @override
+  String get ecQuickPalette => 'Palet cepat';
+
+  @override
+  String get ecFullPicker => 'Pemilih warna lengkap';
+
+  @override
+  String get ecRemoveColor => 'Hapus warna';
+
+  @override
+  String get ecNone => 'Tidak ada';
+
+  @override
+  String get ecPickColorTitle => 'Pilih warna';
+
+  @override
+  String get ecApply => 'Terapkan';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '“$name” ditambahkan sebagai latar dokumen.';
+  }
+
+  @override
+  String get cfpUploadTooltip => 'Unggah font khusus (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'Kelola font yang diunggah';
+
+  @override
+  String get cfpNotice =>
+      'Font yang diunggah hanya disimpan di perangkat Anda dan langsung digunakan di sini dan saat mencetak — tanpa internet.';
+
+  @override
+  String get cfpMyFonts => 'Font khusus saya';
+
+  @override
+  String get cfpNoFonts => 'Belum ada font diunggah';
+
+  @override
+  String get cfpBuiltinOption => 'Tidak ada (font bawaan)';
+
+  @override
+  String get cfpPickTitle => 'Pilih berkas font (TTF atau OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'Tidak dapat membuka pemilih berkas: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return 'Tidak dapat membaca \"$name\": $error';
+  }
+
+  @override
+  String get cfpFontAdded => 'Font ditambahkan dan langsung diterapkan.';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return '$count font ditambahkan.';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'Pustaka font khusus saya';
+
+  @override
+  String get cfpLibraryNotice =>
+      'Semua font hanya disimpan di perangkat Anda. Peringatan: menghapus font yang dipakai templat mengembalikan templat itu ke font bawaan alih-alih gagal.';
+
+  @override
+  String get cfpEmpty => 'Belum ada font yang diunggah.';
+
+  @override
+  String get cfpCoverageFull => 'Cakupan Arab penuh';
+
+  @override
+  String get cfpCoveragePartial => 'Cakupan Arab sebagian';
+
+  @override
+  String get cfpUploadNew => 'Unggah font baru';
+
+  @override
+  String get ptpPrepError =>
+      'Tidak dapat menyiapkan pratinjau. Periksa berkas templat.';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms ms — $kb KB';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— pratinjau diperbarui otomatis';
+
+  @override
+  String get ptpGenerateFailedTitle => 'Tidak dapat membuat pratinjau';
+
+  @override
+  String get ptpPreparingTitle => 'Menyiapkan mesin…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'Font bawaan dimuat dan versi pertama berkas dibuat.';
+
+  @override
+  String get ptpShowFailedTitle => 'Tidak dapat menampilkan pratinjau';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'Build alternatif dengan nilai eksplisit mengalahkan berkas: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'Latar dokumen dari pustaka aset saya';
+
+  @override
+  String get tevAddElement => 'Tambah elemen';
+
+  @override
+  String get commonUndo => 'Urungkan';
+
+  @override
+  String get bpTitle => 'Pembuatan massal dari Excel';
+
+  @override
+  String get bpSubtitle =>
+      'Impor berkas .xlsx atau .csv, petakan kolomnya ke bidang templat, lalu buat PDF dengan satu halaman per catatan — semua di perangkat Anda, offline.';
+
+  @override
+  String get bpStepTemplate => '1) Templat';
+
+  @override
+  String get bpLoadingSampleTemplate => 'Memuat templat contoh…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'Templat: $name • bidang wajib:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'Memuat templat Anda…';
+
+  @override
+  String get bpNoTemplates =>
+      'Belum ada templat tersimpan — buat di editor atau impor dari pustaka templat.';
+
+  @override
+  String get bpTemplateFromMine => 'Templat dari templat saya';
+
+  @override
+  String get bpSampleTemplatesHeader => '— templat contoh —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'Cloud';
+
+  @override
+  String get bpSourceLocal => 'Lokal';
+
+  @override
+  String get bpStepDataFile => '2) Berkas data';
+
+  @override
+  String get bpReadingFile => 'Membaca berkas…';
+
+  @override
+  String get bpNoFileChosen =>
+      'Belum ada berkas dipilih — format yang didukung:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows baris, $cols kolom';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (lembar: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'Pilih berkas';
+
+  @override
+  String get bpRemove => 'Hapus';
+
+  @override
+  String get bpHeaderRow => 'Baris tajuk';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'Otomatis (baris $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'Baris $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'Otomatis — baris $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'Baris $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(baris kosong)';
+
+  @override
+  String get bpWorksheet => 'Lembar kerja';
+
+  @override
+  String get bpPickDataFile => 'Pilih berkas data (Excel atau CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'Tidak dapat membaca berkas: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'Berkas dibaca secara lokal: $rows baris dan $cols kolom.';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'Tidak dapat menyimpan perubahan ke templat: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'Tetapkan bidang dinamis ke elemen ini';
+
+  @override
+  String get bpMapFieldBody =>
+      'Hanya teks elemen ini yang diganti dengan bidang; elemen lain tidak terpengaruh.';
+
+  @override
+  String get bpUndoConvert => 'Konversi dibatalkan.';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'Konversi dibatalkan dan teks dipulihkan di templat.';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'Tidak dapat memulihkan teks di templat: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return '$count catatan dibuat';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' dan $count dilewati';
+  }
+
+  @override
+  String get bpReadyToSave => 'Berkas siap disimpan.';
+
+  @override
+  String get bpStepMapping => '3) Petakan kolom ke bidang';
+
+  @override
+  String get bpChooseFileFirst =>
+      'Pilih berkas dulu untuk menampilkan tabel pemetaan.';
+
+  @override
+  String get bpNoDynamicFields =>
+      'Tidak ada bidang dinamis di templat saat ini.';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return '$mapped dari $total kolom dipetakan';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'Setelah memilih berkas, pemetaan otomatis pintar disarankan; Anda dapat mengedit tiap kolom.';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'Templat terpilih tidak punya bidang dinamis, jadi tidak ada yang dipetakan ke kolom berkas. Buka templat di editor, sisipkan “bidang dinamis” di slot nama, simpan, lalu coba lagi.';
+
+  @override
+  String get bpAutoMap => 'Pemetaan otomatis';
+
+  @override
+  String get bpClearMapping => 'Hapus pemetaan';
+
+  @override
+  String get bpNameFieldWarning =>
+      'Templat ini tidak punya bidang nama dinamis — jangan petakan kolom nama ke bidang tanggal atau referensi, atau nama bisa tercetak di tempat yang salah. Pilih kunci nama dari daftar kolom, atau ubah teks nama tetap di editor menjadi bidang dinamis.';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'Teks tetap yang mirip nama: “$preview” — tidak ada bidang dinamis yang menggantinya.';
+  }
+
+  @override
+  String get bpConvertToNameField => 'Ubah menjadi bidang nama peserta';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return 'Bidang “$field” dipetakan ke lebih dari satu kolom. Petakan tiap bidang ke satu kolom.';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count kolom tak dipetakan — datanya tidak dipakai di sertifikat.';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'Kolom $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(kosong)';
+
+  @override
+  String get bpUnmapped => '— tidak dipetakan —';
+
+  @override
+  String get bpStepMissing => '4) Sel kosong dan data hilang';
+
+  @override
+  String get bpNoNotes => 'Tidak ada catatan sebelum memilih berkas.';
+
+  @override
+  String get bpStepGenerate => '5) Hasilkan';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'Menghasilkan… $progress';
+  }
+
+  @override
+  String get bpGenerateHint =>
+      'Satu berkas PDF, satu halaman per catatan yang dibuat.';
+
+  @override
+  String get bpGeneratePickFile =>
+      'Pilih berkas data dulu untuk mengaktifkan pembuatan.';
+
+  @override
+  String get bpMappingInvalid =>
+      'Pemetaan tidak valid — bidang yang sama dipetakan ke dua kolom.';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'Petakan minimal satu kolom ke bidang templat untuk mengaktifkan pembuatan.';
+
+  @override
+  String get bpGenerateCertificates => 'Buat sertifikat';
+
+  @override
+  String get bpRegenerate => 'Buat ulang';
+
+  @override
+  String get bpStatGenerated => 'Dibuat';
+
+  @override
+  String get bpStatSkipped => 'Dilewati';
+
+  @override
+  String get bpStatPages => 'Halaman';
+
+  @override
+  String get bpStatSize => 'Ukuran';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value KB';
+  }
+
+  @override
+  String get bpStatTime => 'Waktu';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value ms';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return '$pct% selesai dari $total baris.';
+  }
+
+  @override
+  String get bpSkippedRows => 'Baris yang tidak dibuat:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'Baris $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'Pratinjau muncul di sini';
+
+  @override
+  String get bpPreviewHint =>
+      'Pilih berkas data, sesuaikan pemetaan, lalu tekan “Buat sertifikat” — halaman pertama berkas yang dibuat muncul di sini.';
+
+  @override
+  String get bpAssignByTapTitle => 'Tetapkan bidang dengan mengetuk';
+
+  @override
+  String get bpAssignByTapBody =>
+      'Ketuk teks mana pun di templat untuk menetapkannya ke bidang dinamis sendiri. Elemen lain tidak terpengaruh — bukan tanggal, nama manajer, atau teks tetap apa pun.';
+
+  @override
+  String get bpNoTexts => 'Tidak ada teks di templat ini.';
+
+  @override
+  String get bpEmptyText => '(teks kosong)';
+
+  @override
+  String get bpDynamicFieldTap => 'Bidang dinamis — ketuk untuk mengubah';
+
+  @override
+  String get bpStaticTextTap => 'Teks tetap — ketuk untuk menetapkan';
+
+  @override
+  String get bpAssignField => 'Tetapkan bidang';
+
+  @override
+  String get bpKindCertificate => 'Sertifikat';
+
+  @override
+  String get bpKindContract => 'Kontrak';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'Tidak dapat memuat templat contoh: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'Tidak dapat membaca lembar: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'Tidak dapat memperbarui baris tajuk: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst =>
+      'Pilih templat (sertifikat atau kontrak) sebelum membuat.';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind massal — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'Tidak dapat menjalankan pembuatan massal: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'Templat ini tidak punya bidang dinamis — data tidak berubah antar catatan. Tambahkan bidang “nama peserta” dari bilah editor, lalu simpan templat.';
+
+  @override
+  String get bpWarnNoNameField =>
+      'Templat ini tidak punya bidang nama dinamis — kolom nama bisa dipetakan ke bidang tanggal atau referensi dan nama tercetak di tempat yang salah. Ubah teks nama tetap menjadi bidang atau rancang ulang templat.';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'Elemen ini ditetapkan ke $token untuk pembuatan saat ini — elemen lain tidak terpengaruh. Simpan templat agar perubahan permanen.';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'Elemen ini ditetapkan ke $token dan perubahan disimpan ke templat. Elemen lain tidak terpengaruh.';
+  }
 }

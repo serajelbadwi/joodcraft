@@ -1140,4 +1140,645 @@ class AppLocalizationsDe extends AppLocalizations {
   String amMakeType(Object type) {
     return 'Typ festlegen: $type';
   }
+
+  @override
+  String get commonRetry => 'Erneut versuchen';
+
+  @override
+  String get commonPrint => 'Drucken';
+
+  @override
+  String get commonExportPdf => 'PDF exportieren';
+
+  @override
+  String get commonExportFailed =>
+      'Die PDF-Datei konnte nicht exportiert werden.';
+
+  @override
+  String get commonPrintFailed =>
+      'Die Datei konnte nicht an den Drucker gesendet werden.';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'Die Datei ist bereit zum Speichern als $name.';
+  }
+
+  @override
+  String get commonGenerating => 'Wird generiert…';
+
+  @override
+  String get commonDataPanelTitle => 'Beispieldaten';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count Element(e)';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • dynamische Felder';
+
+  @override
+  String get evStatusUnsaved => ' • ungespeicherte Änderungen';
+
+  @override
+  String get tevNewTemplateTitle => 'Neue Vorlage';
+
+  @override
+  String get tevUnsavedTitle => 'Ungespeicherte Änderungen';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return 'Sie haben ungespeicherte Änderungen an „$title“. Möchten Sie sie vor dem Verlassen speichern?';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'Ohne Speichern verlassen';
+
+  @override
+  String get tevSaveAndLeave => 'Speichern und verlassen';
+
+  @override
+  String get tevViewMode => 'Ansichtsmodus';
+
+  @override
+  String get tevModeEditor => 'Editor';
+
+  @override
+  String get tevModePreview => 'PDF-Vorschau';
+
+  @override
+  String get tevPaperDirection => 'Papierausrichtung';
+
+  @override
+  String get tevWidthCm => 'Breite (cm)';
+
+  @override
+  String get tevHeightCm => 'Höhe (cm)';
+
+  @override
+  String get tevUndo => 'Rückgängig (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'Wiederholen (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'Einrastraster';
+
+  @override
+  String get tevGuidesOn => 'Intelligente Hilfslinien: an (ausschalten)';
+
+  @override
+  String get tevGuidesOff => 'Intelligente Hilfslinien: aus (einschalten)';
+
+  @override
+  String get tevZoom => 'Zoom';
+
+  @override
+  String get tevDocumentBackground => 'Dokumenthintergrund';
+
+  @override
+  String get tevFrameFromLibrary => 'Rahmen aus meiner Bibliothek';
+
+  @override
+  String get tevChangeTitle => 'Vorlagentitel ändern';
+
+  @override
+  String get tevMyTemplates => 'Meine Vorlagen';
+
+  @override
+  String get tevSaveAs => 'Speichern unter';
+
+  @override
+  String get tevSaveTemplate => 'Vorlage speichern';
+
+  @override
+  String get tevSaveUnavailable => 'Speichern nicht verfügbar';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'Speichern erfordert eine Verbindung zu einem Supabase-Projekt. Starten Sie die App mit Ihren Projektschlüsseln (env.json), um Vorlagen zu speichern.';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'Fehlende Ressourcen: $list – wählen Sie Rahmen/Ressource erneut in „Meine Bibliothek“, um leere Stellen zu vermeiden.';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'Die Vorlagenbibliothek erfordert eine Verbindung zu einem Supabase-Projekt.';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '„$title“ wurde geöffnet.';
+  }
+
+  @override
+  String get tevTitleHint => 'z. B. Abschlusszertifikat Projektmanagement-Kurs';
+
+  @override
+  String get tevContinue => 'Weiter';
+
+  @override
+  String get tevSavedTemplates => 'Meine gespeicherten Vorlagen';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'Noch keine gespeicherten Vorlagen. Speichern Sie eine über „Vorlage speichern“.';
+
+  @override
+  String get ecIncrease => 'Erhöhen';
+
+  @override
+  String get ecDecrease => 'Verringern';
+
+  @override
+  String get ecQuickPalette => 'Schnellpalette';
+
+  @override
+  String get ecFullPicker => 'Vollständige Farbauswahl';
+
+  @override
+  String get ecRemoveColor => 'Farbe entfernen';
+
+  @override
+  String get ecNone => 'Keine';
+
+  @override
+  String get ecPickColorTitle => 'Farbe wählen';
+
+  @override
+  String get ecApply => 'Anwenden';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '„$name“ wurde als Dokumenthintergrund hinzugefügt.';
+  }
+
+  @override
+  String get cfpUploadTooltip =>
+      'Benutzerdefinierte Schrift hochladen (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'Hochgeladene Schriften verwalten';
+
+  @override
+  String get cfpNotice =>
+      'Hochgeladene Schriften werden nur auf Ihrem Gerät gespeichert und sofort hier und beim Drucken verwendet – ohne Internet.';
+
+  @override
+  String get cfpMyFonts => 'Meine benutzerdefinierten Schriften';
+
+  @override
+  String get cfpNoFonts => 'Noch keine Schriften hochgeladen';
+
+  @override
+  String get cfpBuiltinOption => 'Keine (integrierte Schrift)';
+
+  @override
+  String get cfpPickTitle => 'Schriftdatei wählen (TTF oder OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'Dateiauswahl konnte nicht geöffnet werden: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return '\"$name\" konnte nicht gelesen werden: $error';
+  }
+
+  @override
+  String get cfpFontAdded =>
+      'Die Schrift wurde hinzugefügt und sofort angewendet.';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return '$count Schriften wurden hinzugefügt.';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'Meine Schriftbibliothek';
+
+  @override
+  String get cfpLibraryNotice =>
+      'Alle Schriften werden nur auf Ihrem Gerät gespeichert. Warnung: Das Löschen einer von einer Vorlage verwendeten Schrift setzt diese auf die integrierte Schrift zurück, statt fehlzuschlagen.';
+
+  @override
+  String get cfpEmpty => 'Noch keine hochgeladenen Schriften.';
+
+  @override
+  String get cfpCoverageFull => 'Vollständige arabische Abdeckung';
+
+  @override
+  String get cfpCoveragePartial => 'Teilweise arabische Abdeckung';
+
+  @override
+  String get cfpUploadNew => 'Neue Schrift hochladen';
+
+  @override
+  String get ptpPrepError =>
+      'Die Vorschau konnte nicht vorbereitet werden. Prüfen Sie die Vorlagendatei.';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms ms — $kb KB';
+  }
+
+  @override
+  String get ptpGeneratingNote =>
+      '— die Vorschau wird automatisch aktualisiert';
+
+  @override
+  String get ptpGenerateFailedTitle =>
+      'Die Vorschau konnte nicht erzeugt werden';
+
+  @override
+  String get ptpPreparingTitle => 'Engine wird vorbereitet…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'Integrierte Schriften werden geladen und die erste Dateiversion erzeugt.';
+
+  @override
+  String get ptpShowFailedTitle => 'Die Vorschau konnte nicht angezeigt werden';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'Ein alternativer Build mit expliziten Werten überschreibt die Datei: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'Dokumenthintergrund aus meiner Bibliothek';
+
+  @override
+  String get tevAddElement => 'Element hinzufügen';
+
+  @override
+  String get commonUndo => 'Rückgängig';
+
+  @override
+  String get bpTitle => 'Massen-Generierung aus Excel';
+
+  @override
+  String get bpSubtitle =>
+      'Importieren Sie eine .xlsx- oder .csv-Datei, ordnen Sie ihre Spalten den Vorlagenfeldern zu und erzeugen Sie ein PDF mit einer Seite pro Datensatz – alles auf Ihrem Gerät, offline.';
+
+  @override
+  String get bpStepTemplate => '1) Vorlage';
+
+  @override
+  String get bpLoadingSampleTemplate => 'Beispielvorlage wird geladen…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'Vorlage: $name • erforderliche Felder:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'Ihre Vorlagen werden geladen…';
+
+  @override
+  String get bpNoTemplates =>
+      'Noch keine gespeicherten Vorlagen – erstellen Sie eine im Editor oder importieren Sie sie aus der Vorlagenbibliothek.';
+
+  @override
+  String get bpTemplateFromMine => 'Vorlage aus meinen Vorlagen';
+
+  @override
+  String get bpSampleTemplatesHeader => '— Beispielvorlagen —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'Cloud';
+
+  @override
+  String get bpSourceLocal => 'Lokal';
+
+  @override
+  String get bpStepDataFile => '2) Datendatei';
+
+  @override
+  String get bpReadingFile => 'Datei wird gelesen…';
+
+  @override
+  String get bpNoFileChosen =>
+      'Noch keine Datei gewählt – unterstützte Formate:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows Zeilen, $cols Spalten';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (Blatt: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'Datei wählen';
+
+  @override
+  String get bpRemove => 'Entfernen';
+
+  @override
+  String get bpHeaderRow => 'Kopfzeile';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'Automatisch (Zeile $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'Zeile $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'Automatisch — Zeile $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'Zeile $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(leere Zeile)';
+
+  @override
+  String get bpWorksheet => 'Arbeitsblatt';
+
+  @override
+  String get bpPickDataFile => 'Datendatei wählen (Excel oder CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'Die Datei konnte nicht gelesen werden: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'Die Datei wurde lokal gelesen: $rows Zeilen und $cols Spalten.';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'Die Änderung konnte nicht in der Vorlage gespeichert werden: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'Diesem Element ein dynamisches Feld zuweisen';
+
+  @override
+  String get bpMapFieldBody =>
+      'Nur der Text dieses Elements wird durch ein Feld ersetzt; kein anderes Element wird verändert.';
+
+  @override
+  String get bpUndoConvert => 'Die Umwandlung wurde rückgängig gemacht.';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'Die Umwandlung wurde rückgängig gemacht und der Text in der Vorlage wiederhergestellt.';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'Der Text konnte in der Vorlage nicht wiederhergestellt werden: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return '$count Datensatz/Datensätze erzeugt';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' und $count übersprungen';
+  }
+
+  @override
+  String get bpReadyToSave => 'Die Datei ist bereit zum Speichern.';
+
+  @override
+  String get bpStepMapping => '3) Spalten Feldern zuordnen';
+
+  @override
+  String get bpChooseFileFirst =>
+      'Wählen Sie zuerst eine Datei, um die Zuordnungstabelle anzuzeigen.';
+
+  @override
+  String get bpNoDynamicFields =>
+      'Keine dynamischen Felder in der aktuellen Vorlage.';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return '$mapped von $total Spalten zugeordnet';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'Nach Auswahl der Datei wird eine intelligente Auto-Zuordnung vorgeschlagen; Sie können jede Spalte bearbeiten.';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'Die gewählte Vorlage hat keine dynamischen Felder, es gibt also nichts den Dateispalten zuzuordnen. Öffnen Sie die Vorlage im Editor, fügen Sie ein „dynamisches Feld“ in das Namensfeld ein, speichern Sie und versuchen Sie es erneut.';
+
+  @override
+  String get bpAutoMap => 'Automatisch zuordnen';
+
+  @override
+  String get bpClearMapping => 'Zuordnung löschen';
+
+  @override
+  String get bpNameFieldWarning =>
+      'Diese Vorlage hat kein dynamisches Namensfeld – ordnen Sie die Namensspalte keinem Datums- oder Referenzfeld zu, sonst könnte der Name an der falschen Stelle gedruckt werden. Wählen Sie den Namensschlüssel aus der Spaltenliste oder wandeln Sie den festen Namenstext im Editor in ein dynamisches Feld um.';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'Fester Text, der wie ein Name aussieht: „$preview“ – kein dynamisches Feld ersetzt ihn.';
+  }
+
+  @override
+  String get bpConvertToNameField => 'In ein Teilnehmernamen-Feld umwandeln';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return 'Das Feld „$field“ ist mehreren Spalten zugeordnet. Ordnen Sie jedem Feld eine Spalte zu.';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count nicht zugeordnete Spalte(n) – ihre Daten werden in den Zertifikaten nicht verwendet.';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'Spalte $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(leer)';
+
+  @override
+  String get bpUnmapped => '— nicht zugeordnet —';
+
+  @override
+  String get bpStepMissing => '4) Leere Zellen und fehlende Daten';
+
+  @override
+  String get bpNoNotes => 'Keine Hinweise vor Auswahl der Datei.';
+
+  @override
+  String get bpStepGenerate => '5) Generieren';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'Wird generiert… $progress';
+  }
+
+  @override
+  String get bpGenerateHint =>
+      'Eine PDF-Datei, eine Seite pro erzeugtem Datensatz.';
+
+  @override
+  String get bpGeneratePickFile =>
+      'Wählen Sie zuerst eine Datendatei, um die Generierung zu aktivieren.';
+
+  @override
+  String get bpMappingInvalid =>
+      'Die Zuordnung ist ungültig – dasselbe Feld ist zwei Spalten zugeordnet.';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'Ordnen Sie mindestens eine Spalte einem Vorlagenfeld zu, um die Generierung zu aktivieren.';
+
+  @override
+  String get bpGenerateCertificates => 'Zertifikate erstellen';
+
+  @override
+  String get bpRegenerate => 'Neu generieren';
+
+  @override
+  String get bpStatGenerated => 'Erzeugt';
+
+  @override
+  String get bpStatSkipped => 'Übersprungen';
+
+  @override
+  String get bpStatPages => 'Seiten';
+
+  @override
+  String get bpStatSize => 'Größe';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value KB';
+  }
+
+  @override
+  String get bpStatTime => 'Zeit';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value ms';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return '$pct% von $total Zeilen abgeschlossen.';
+  }
+
+  @override
+  String get bpSkippedRows => 'Nicht erzeugte Zeilen:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'Zeile $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'Die Vorschau erscheint hier';
+
+  @override
+  String get bpPreviewHint =>
+      'Wählen Sie die Datendatei, passen Sie die Zuordnung an und drücken Sie „Zertifikate erstellen“ – die erste Seite der erzeugten Datei erscheint hier.';
+
+  @override
+  String get bpAssignByTapTitle => 'Felder per Tippen zuweisen';
+
+  @override
+  String get bpAssignByTapBody =>
+      'Tippen Sie auf einen beliebigen Text in der Vorlage, um ihn selbst einem dynamischen Feld zuzuweisen. Kein anderes Element wird verändert – weder Datum noch Name der Leitung noch fester Text.';
+
+  @override
+  String get bpNoTexts => 'Keine Texte in dieser Vorlage.';
+
+  @override
+  String get bpEmptyText => '(leerer Text)';
+
+  @override
+  String get bpDynamicFieldTap => 'Dynamisches Feld – zum Ändern tippen';
+
+  @override
+  String get bpStaticTextTap => 'Fester Text – zum Zuweisen tippen';
+
+  @override
+  String get bpAssignField => 'Feld zuweisen';
+
+  @override
+  String get bpKindCertificate => 'Zertifikat';
+
+  @override
+  String get bpKindContract => 'Vertrag';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'Die Beispielvorlage konnte nicht geladen werden: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'Das Blatt konnte nicht gelesen werden: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'Die Kopfzeile konnte nicht aktualisiert werden: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst =>
+      'Wählen Sie vor dem Generieren eine Vorlage (Zertifikat oder Vertrag).';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind Massen — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'Die Massen-Generierung konnte nicht ausgeführt werden: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'Diese Vorlage hat keine dynamischen Felder – die Daten ändern sich nicht zwischen Datensätzen. Fügen Sie ein Feld „Name des Teilnehmers“ über die Editorleiste hinzu und speichern Sie die Vorlage.';
+
+  @override
+  String get bpWarnNoNameField =>
+      'Diese Vorlage hat kein dynamisches Namensfeld – die Namensspalte könnte einem Datums- oder Referenzfeld zugeordnet werden und der Name an der falschen Stelle gedruckt werden. Wandeln Sie den festen Namenstext in ein Feld um oder gestalten Sie die Vorlage neu.';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'Dieses Element wurde für die aktuelle Generierung $token zugewiesen – die anderen Elemente bleiben unberührt. Speichern Sie die Vorlage, um die Änderung dauerhaft zu machen.';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'Dieses Element wurde $token zugewiesen und die Änderung in der Vorlage gespeichert. Die anderen Elemente bleiben unberührt.';
+  }
 }

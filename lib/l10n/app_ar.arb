@@ -490,5 +490,400 @@
     "placeholders": {
       "type": {}
     }
+  },
+  "commonRetry": "إعادة المحاولة",
+  "commonPrint": "طباعة",
+  "commonExportPdf": "تصدير PDF",
+  "commonExportFailed": "تعذّر تصدير ملف PDF.",
+  "commonPrintFailed": "تعذّر إرسال الملف إلى الطابعة.",
+  "commonExportReady": "تم تجهيز الملف للحفظ باسم {name}.",
+  "@commonExportReady": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "commonGenerating": "جارٍ التوليد…",
+  "commonDataPanelTitle": "بيانات تجريبية",
+  "evElementCount": "{count} عنصراً",
+  "@evElementCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "evStatusDynamicFields": " • حقول ديناميكية",
+  "evStatusUnsaved": " • تعديلات غير محفوظة",
+  "tevNewTemplateTitle": "قالب جديد",
+  "tevUnsavedTitle": "تعديلات غير محفوظة",
+  "tevUnsavedMessage": "لديك تعديلات على «{title}» لم تُحفَظ بعد. هل تريد حفظها قبل المغادرة؟",
+  "@tevUnsavedMessage": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tevLeaveWithoutSaving": "المغادرة دون حفظ",
+  "tevSaveAndLeave": "حفظ والمغادرة",
+  "tevViewMode": "طريقة العرض",
+  "tevModeEditor": "المحرر",
+  "tevModePreview": "معاينة PDF",
+  "tevPaperDirection": "اتجاه الورقة",
+  "tevWidthCm": "العرض (cm)",
+  "tevHeightCm": "الارتفاع (cm)",
+  "tevUndo": "تراجع (Ctrl+Z)",
+  "tevRedo": "إعادة (Ctrl+Y)",
+  "tevSnapGrid": "شبكة التوجيه",
+  "tevGuidesOn": "خطوط الإرشاد الذكية: مُفعّلة (إيقاف)",
+  "tevGuidesOff": "خطوط الإرشاد الذكية: معطّلة (تشغيل)",
+  "tevZoom": "التكبير",
+  "tevDocumentBackground": "خلفية المستند",
+  "tevFrameFromLibrary": "إطار من مكتبة أصولي",
+  "tevChangeTitle": "تغيير عنوان القالب",
+  "tevMyTemplates": "قوالبي",
+  "tevSaveAs": "حفظ باسم",
+  "tevSaveTemplate": "حفظ القالب",
+  "tevSaveUnavailable": "الحفظ غير متاح",
+  "tevSaveNeedsSupabase": "الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك (env.json) لتتمكن من حفظ القوالب.",
+  "tevMissingAssets": "أصول مفقودة: {list} — أعد اختيار الإطار/الأصل من «مكتبة أصولي» لتفادي ظهورها فارغة.",
+  "@tevMissingAssets": {
+    "placeholders": {
+      "list": {}
+    }
+  },
+  "tevTemplateLibraryNeedsSupabase": "مكتبة القوالب تتطلب الاتصال بمشروع Supabase.",
+  "tevOpenedTemplate": "تم فتح «{title}».",
+  "@tevOpenedTemplate": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "tevTitleHint": "مثال: شهادة إتمام دورة إدارة المشاريع",
+  "tevContinue": "متابعة",
+  "tevSavedTemplates": "قوالبي المحفوظة",
+  "tevNoSavedTemplates": "لا توجد قوالب محفوظة بعد. احفظ قالباً من الزر «حفظ القالب».",
+  "ecIncrease": "زيادة",
+  "ecDecrease": "إنقاص",
+  "ecQuickPalette": "لوحة سريعة",
+  "ecFullPicker": "منتقي ألوان كامل",
+  "ecRemoveColor": "إزالة اللون",
+  "ecNone": "بلا",
+  "ecPickColorTitle": "اختيار لون",
+  "ecApply": "تطبيق",
+  "tevBackgroundAdded": "أُضيف «{name}» كخلفية للمستند.",
+  "@tevBackgroundAdded": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "cfpUploadTooltip": "رفع خط مخصص (.ttf / .otf)",
+  "cfpManageTooltip": "إدارة الخطوط المرفوعة",
+  "cfpNotice": "الخطوط المرفوعة تُحفظ على جهازك فقط وتُستخدم فوراً هنا وفي الطباعة — بلا إنترنت.",
+  "cfpMyFonts": "خطوطي المخصصة",
+  "cfpNoFonts": "لم ترفع خطوطاً بعد",
+  "cfpBuiltinOption": "بلا (الخط المضمّن)",
+  "cfpPickTitle": "اختر ملف خط (TTF أو OTF)",
+  "cfpPickerError": "تعذّر فتح منتقي الملفات: {error}",
+  "@cfpPickerError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "cfpReadError": "تعذّر قراءة \"{name}\": {error}",
+  "@cfpReadError": {
+    "placeholders": {
+      "name": {},
+      "error": {}
+    }
+  },
+  "cfpFontAdded": "أُضيف الخط واستُخدم فوراً.",
+  "cfpFontsAdded": "أُضيف {count} خطوط.",
+  "@cfpFontsAdded": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "cfpLibraryTitle": "مكتبة خطوطي المخصصة",
+  "cfpLibraryNotice": "كل الخطوط محفوظة على جهازك فقط. تحذير: حذف خط يستخدمه قالب يُرجع ذلك القالب إلى الخط المضمّن بدل الفشل.",
+  "cfpEmpty": "لا توجد خطوط مرفوعة بعد.",
+  "cfpCoverageFull": "تغطية عربية كاملة",
+  "cfpCoveragePartial": "تغطية عربية ناقصة",
+  "cfpUploadNew": "رفع خط جديد",
+  "ptpPrepError": "تعذّر تحضير المعاينة. تحقّق من ملف القالب.",
+  "ptpElapsedSize": "{ms} م.ث — {kb} ك.ب",
+  "@ptpElapsedSize": {
+    "placeholders": {
+      "ms": {},
+      "kb": {}
+    }
+  },
+  "ptpGeneratingNote": "— تُحدَّث المعاينة تلقائياً",
+  "ptpGenerateFailedTitle": "تعذّر توليد المعاينة",
+  "ptpPreparingTitle": "جارٍ تحضير المحرك…",
+  "ptpPreparingMessage": "يتم تحميل الخطوط المحزومة وتوليد أول نسخة من الملف.",
+  "ptpShowFailedTitle": "تعذّر عرض المعاينة",
+  "cfgOverride": "بديل لبناء بقيم محددة يتفوق على الملف: {override}",
+  "@cfgOverride": {
+    "placeholders": {
+      "override": {}
+    }
+  },
+  "tevBackgroundTitle": "خلفية المستند من مكتبة أصولي",
+  "tevAddElement": "إضافة عنصر",
+  "commonUndo": "تراجع",
+  "bpTitle": "التوليد الجماعي من Excel",
+  "bpSubtitle": "استورد ملف .xlsx أو .csv، اربط أعمدته بحقول القالب، ثم ولّد ملف PDF بصفحة لكل سجل — كل ذلك على جهازك بلا إنترنت.",
+  "bpStepTemplate": "1) القالب",
+  "bpLoadingSampleTemplate": "جارٍ تحميل القالب النموذجي…",
+  "bpTemplateInfo": "القالب: {name} • الحقول المطلوبة:",
+  "@bpTemplateInfo": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "bpLoadingTemplates": "جارٍ تحميل قوالبك…",
+  "bpNoTemplates": "لا توجد قوالب محفوظة بعد — أنشئ قالباً في المحرّر أو استورده من مكتبة القوالب ليظهر هنا.",
+  "bpTemplateFromMine": "قالب من قوالبي",
+  "bpSampleTemplatesHeader": "— القوالب النموذجية —",
+  "bpTemplateEntry": "{title}  •  {source}",
+  "@bpTemplateEntry": {
+    "placeholders": {
+      "title": {},
+      "source": {}
+    }
+  },
+  "bpSourceCloud": "سحابي",
+  "bpSourceLocal": "محلي",
+  "bpStepDataFile": "2) ملف البيانات",
+  "bpReadingFile": "جارٍ قراءة الملف…",
+  "bpNoFileChosen": "لم يُختَر ملف بعد — الصيغ المدعومة:",
+  "bpFileSummary": "{name} — {rows} صفاً، {cols} عموداً",
+  "@bpFileSummary": {
+    "placeholders": {
+      "name": {},
+      "rows": {},
+      "cols": {}
+    }
+  },
+  "bpSheetSuffix": " (ورقة: {name})",
+  "@bpSheetSuffix": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "bpChooseFile": "اختيار ملف",
+  "bpRemove": "إزالة",
+  "bpHeaderRow": "صف العناوين",
+  "bpAutoRow": "تلقائي (الصف {n})",
+  "@bpAutoRow": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "bpRow": "الصف {n}",
+  "@bpRow": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "bpAutoRowLong": "تلقائي — الصف {n}",
+  "@bpAutoRowLong": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "bpRowPreview": "الصف {n}: {preview}",
+  "@bpRowPreview": {
+    "placeholders": {
+      "n": {},
+      "preview": {}
+    }
+  },
+  "bpEmptyRow": "(صف فارغ)",
+  "bpWorksheet": "ورقة العمل",
+  "bpPickDataFile": "اختر ملف البيانات (Excel أو CSV)",
+  "bpReadFileError": "تعذّر قراءة الملف: {error}",
+  "@bpReadFileError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpFileReadRows": "قُرئ الملف محلياً: {rows} صفاً و{cols} عموداً.",
+  "@bpFileReadRows": {
+    "placeholders": {
+      "rows": {},
+      "cols": {}
+    }
+  },
+  "bpSaveError": "تعذّر حفظ التعديل في القالب: {error}",
+  "@bpSaveError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpMapFieldTitle": "تعيين حقل ديناميكي لهذا العنصر",
+  "bpMapFieldBody": "سيُستبدل نص هذا العنصر وحده بحقل، ولن يُمسّ أي عنصر آخر.",
+  "bpUndoConvert": "تم التراجع عن التحويل.",
+  "bpUndoConvertSaved": "تم التراجع عن التحويل واستعادة النص في القالب.",
+  "bpRestoreError": "تعذّر استعادة النص في القالب: {error}",
+  "@bpRestoreError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpGeneratedReport": "تم توليد {count} سجل",
+  "@bpGeneratedReport": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "bpSkippedSuffix": " وتخطّي {count}",
+  "@bpSkippedSuffix": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "bpReadyToSave": "تم تجهيز الملف للحفظ.",
+  "bpStepMapping": "3) ربط الأعمدة بالحقول",
+  "bpChooseFileFirst": "اختر ملفاً أولاً ليظهر جدول الربط.",
+  "bpNoDynamicFields": "لا حقول ديناميكية في القالب الحالي.",
+  "bpMappedCount": "مرتبط {mapped} من {total} عموداً",
+  "@bpMappedCount": {
+    "placeholders": {
+      "mapped": {},
+      "total": {}
+    }
+  },
+  "bpAutoMapHint": "بعد اختيار الملف سيُقترح ربط تلقائي ذكي، ويمكنك تعديل كل عمود.",
+  "bpNoFieldsHelp": "القالب المختار لا يحتوي حقولاً ديناميكية، فلا شيء ليُربط بأعمدة الملف. افتح القالب في المحرّر وأدرج «حقل ديناميكي» في خانة الاسم ثم احفظ القالب ثم أعد المحاولة.",
+  "bpAutoMap": "ربط تلقائي",
+  "bpClearMapping": "مسح الربط",
+  "bpNameFieldWarning": "هذا القالب لا يحتوي على حقل اسم ديناميكي — لا تربط عمود الاسم بحقل تاريخ أو رقم إشعار، فقد يُطبع الاسم في مكانه الخطأ. اختر مفتاح الاسم من قائمة العمود، أو حوّل نص الاسم الثابت من المحرّر إلى حقل ديناميكي.",
+  "bpStaticNameHints": "نصّ ثابت يشبه الاسم: «{preview}» — لا يستبدله أي حقل ديناميكي.",
+  "@bpStaticNameHints": {
+    "placeholders": {
+      "preview": {}
+    }
+  },
+  "bpConvertToNameField": "حوّله إلى حقل اسم المتدرب",
+  "bpDuplicateField": "الحقل «{field}» مرتبط بأكثر من عمود. اجعل كل حقل بعمود واحد.",
+  "@bpDuplicateField": {
+    "placeholders": {
+      "field": {}
+    }
+  },
+  "bpUnmappedColumns": "{count} عموداً بلا ربط — لن تُستخدم بياناته في الشهادات.",
+  "@bpUnmappedColumns": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "bpColumn": "عمود {n}",
+  "@bpColumn": {
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "bpEmptyCell": "(فارغ)",
+  "bpUnmapped": "— غير مربوط —",
+  "bpStepMissing": "4) الخلايا الفارغة والبيانات الناقصة",
+  "bpNoNotes": "لا ملاحظات قبل اختيار الملف.",
+  "bpStepGenerate": "5) التوليد",
+  "bpGenerating": "جارٍ التوليد… {progress}",
+  "@bpGenerating": {
+    "placeholders": {
+      "progress": {}
+    }
+  },
+  "bpGenerateHint": "ملف PDF واحد، صفحة لكل سجل مُصدر.",
+  "bpGeneratePickFile": "اختر ملف بيانات أولاً ليُفعَّل التوليد.",
+  "bpMappingInvalid": "الربط غير صالح — لا تُربط الحقل نفسه بعمودين.",
+  "bpMapAtLeastOne": "اربط عموداً واحداً على الأقل بحقل من القالب ليُفعَّل التوليد.",
+  "bpGenerateCertificates": "توليد الشهادات",
+  "bpRegenerate": "إعادة التوليد",
+  "bpStatGenerated": "مُصدرة",
+  "bpStatSkipped": "متخطّاة",
+  "bpStatPages": "صفحات",
+  "bpStatSize": "الحجم",
+  "bpKilobytes": "{value} ك.ب",
+  "@bpKilobytes": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "bpStatTime": "الزمن",
+  "bpMilliseconds": "{value} م.ث",
+  "@bpMilliseconds": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "bpCompletion": "اكتمال {pct}% من {total} صفاً.",
+  "@bpCompletion": {
+    "placeholders": {
+      "pct": {},
+      "total": {}
+    }
+  },
+  "bpSkippedRows": "صفوف لم تُصدر:",
+  "bpRowSkipReason": "صف {n}: {reason}",
+  "@bpRowSkipReason": {
+    "placeholders": {
+      "n": {},
+      "reason": {}
+    }
+  },
+  "bpPreviewHere": "المعاينة تظهر هنا",
+  "bpPreviewHint": "اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — سترى أول صفحة من الملف الناتج هنا مباشرة.",
+  "bpAssignByTapTitle": "تعيين الحقول بالنقر",
+  "bpAssignByTapBody": "انقر أي نص في القالب لتعيينه إلى حقل ديناميكي بنفسك. لن يُمسّ أي عنصر آخر — لا التاريخ ولا اسم المدير ولا أي نص ثابت.",
+  "bpNoTexts": "لا نصوص في هذا القالب.",
+  "bpEmptyText": "(نص فارغ)",
+  "bpDynamicFieldTap": "حقل ديناميكي — انقر لتغييره",
+  "bpStaticTextTap": "نص ثابت — انقر للتعيين",
+  "bpAssignField": "تعيين حقل",
+  "bpKindCertificate": "شهادة",
+  "bpKindContract": "عقد",
+  "bpLoadSampleError": "تعذّر تحميل القالب النموذجي: {error}",
+  "@bpLoadSampleError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpReadSheetError": "تعذّر قراءة الورقة: {error}",
+  "@bpReadSheetError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpUpdateHeaderRowError": "تعذّر تحديث صف العناوين: {error}",
+  "@bpUpdateHeaderRowError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpChooseTemplateFirst": "اختر قالباً (شهادة أو عقد) قبل التوليد.",
+  "bpBatchTitle": "{kind} جماعية — JoodCraft",
+  "@bpBatchTitle": {
+    "placeholders": {
+      "kind": {}
+    }
+  },
+  "bpGenerateError": "تعذّر التوليد الجماعي: {error}",
+  "@bpGenerateError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "bpWarnNoDynamicFields": "هذا القالب بلا حقول ديناميكية — لن تتغيّر البيانات بين السجلات. أضف حقل «اسم المتدرب» من شريط المحرّر ثم احفظ القالب.",
+  "bpWarnNoNameField": "هذا القالب لا يحتوي على حقل اسم ديناميكي — قد يربط عمود الاسم بحقل تاريخ أو رقم إشعار فيظهر الاسم في مكانه الخطأ. حوّل نص الاسم الثابت إلى حقل أو أعد تصميم القالب.",
+  "bpAssignedTemp": "عُيّن هذا العنصر إلى {token} للتوليد الحالي — بقية العناصر لم تُمسّ. احفظ القالب لتثبيت التعديل دائماً.",
+  "@bpAssignedTemp": {
+    "placeholders": {
+      "token": {}
+    }
+  },
+  "bpAssignedSaved": "عُيّن هذا العنصر إلى {token} وحُفظ التعديل في القالب. بقية العناصر لم تُمسّ.",
+  "@bpAssignedSaved": {
+    "placeholders": {
+      "token": {}
+    }
   }
 }

@@ -1123,4 +1123,632 @@ class AppLocalizationsAr extends AppLocalizations {
   String amMakeType(Object type) {
     return 'اجعل النوع: $type';
   }
+
+  @override
+  String get commonRetry => 'إعادة المحاولة';
+
+  @override
+  String get commonPrint => 'طباعة';
+
+  @override
+  String get commonExportPdf => 'تصدير PDF';
+
+  @override
+  String get commonExportFailed => 'تعذّر تصدير ملف PDF.';
+
+  @override
+  String get commonPrintFailed => 'تعذّر إرسال الملف إلى الطابعة.';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'تم تجهيز الملف للحفظ باسم $name.';
+  }
+
+  @override
+  String get commonGenerating => 'جارٍ التوليد…';
+
+  @override
+  String get commonDataPanelTitle => 'بيانات تجريبية';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count عنصراً';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • حقول ديناميكية';
+
+  @override
+  String get evStatusUnsaved => ' • تعديلات غير محفوظة';
+
+  @override
+  String get tevNewTemplateTitle => 'قالب جديد';
+
+  @override
+  String get tevUnsavedTitle => 'تعديلات غير محفوظة';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return 'لديك تعديلات على «$title» لم تُحفَظ بعد. هل تريد حفظها قبل المغادرة؟';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'المغادرة دون حفظ';
+
+  @override
+  String get tevSaveAndLeave => 'حفظ والمغادرة';
+
+  @override
+  String get tevViewMode => 'طريقة العرض';
+
+  @override
+  String get tevModeEditor => 'المحرر';
+
+  @override
+  String get tevModePreview => 'معاينة PDF';
+
+  @override
+  String get tevPaperDirection => 'اتجاه الورقة';
+
+  @override
+  String get tevWidthCm => 'العرض (cm)';
+
+  @override
+  String get tevHeightCm => 'الارتفاع (cm)';
+
+  @override
+  String get tevUndo => 'تراجع (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'إعادة (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'شبكة التوجيه';
+
+  @override
+  String get tevGuidesOn => 'خطوط الإرشاد الذكية: مُفعّلة (إيقاف)';
+
+  @override
+  String get tevGuidesOff => 'خطوط الإرشاد الذكية: معطّلة (تشغيل)';
+
+  @override
+  String get tevZoom => 'التكبير';
+
+  @override
+  String get tevDocumentBackground => 'خلفية المستند';
+
+  @override
+  String get tevFrameFromLibrary => 'إطار من مكتبة أصولي';
+
+  @override
+  String get tevChangeTitle => 'تغيير عنوان القالب';
+
+  @override
+  String get tevMyTemplates => 'قوالبي';
+
+  @override
+  String get tevSaveAs => 'حفظ باسم';
+
+  @override
+  String get tevSaveTemplate => 'حفظ القالب';
+
+  @override
+  String get tevSaveUnavailable => 'الحفظ غير متاح';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك (env.json) لتتمكن من حفظ القوالب.';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'أصول مفقودة: $list — أعد اختيار الإطار/الأصل من «مكتبة أصولي» لتفادي ظهورها فارغة.';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'مكتبة القوالب تتطلب الاتصال بمشروع Supabase.';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return 'تم فتح «$title».';
+  }
+
+  @override
+  String get tevTitleHint => 'مثال: شهادة إتمام دورة إدارة المشاريع';
+
+  @override
+  String get tevContinue => 'متابعة';
+
+  @override
+  String get tevSavedTemplates => 'قوالبي المحفوظة';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'لا توجد قوالب محفوظة بعد. احفظ قالباً من الزر «حفظ القالب».';
+
+  @override
+  String get ecIncrease => 'زيادة';
+
+  @override
+  String get ecDecrease => 'إنقاص';
+
+  @override
+  String get ecQuickPalette => 'لوحة سريعة';
+
+  @override
+  String get ecFullPicker => 'منتقي ألوان كامل';
+
+  @override
+  String get ecRemoveColor => 'إزالة اللون';
+
+  @override
+  String get ecNone => 'بلا';
+
+  @override
+  String get ecPickColorTitle => 'اختيار لون';
+
+  @override
+  String get ecApply => 'تطبيق';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return 'أُضيف «$name» كخلفية للمستند.';
+  }
+
+  @override
+  String get cfpUploadTooltip => 'رفع خط مخصص (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'إدارة الخطوط المرفوعة';
+
+  @override
+  String get cfpNotice =>
+      'الخطوط المرفوعة تُحفظ على جهازك فقط وتُستخدم فوراً هنا وفي الطباعة — بلا إنترنت.';
+
+  @override
+  String get cfpMyFonts => 'خطوطي المخصصة';
+
+  @override
+  String get cfpNoFonts => 'لم ترفع خطوطاً بعد';
+
+  @override
+  String get cfpBuiltinOption => 'بلا (الخط المضمّن)';
+
+  @override
+  String get cfpPickTitle => 'اختر ملف خط (TTF أو OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'تعذّر فتح منتقي الملفات: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return 'تعذّر قراءة \"$name\": $error';
+  }
+
+  @override
+  String get cfpFontAdded => 'أُضيف الخط واستُخدم فوراً.';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return 'أُضيف $count خطوط.';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'مكتبة خطوطي المخصصة';
+
+  @override
+  String get cfpLibraryNotice =>
+      'كل الخطوط محفوظة على جهازك فقط. تحذير: حذف خط يستخدمه قالب يُرجع ذلك القالب إلى الخط المضمّن بدل الفشل.';
+
+  @override
+  String get cfpEmpty => 'لا توجد خطوط مرفوعة بعد.';
+
+  @override
+  String get cfpCoverageFull => 'تغطية عربية كاملة';
+
+  @override
+  String get cfpCoveragePartial => 'تغطية عربية ناقصة';
+
+  @override
+  String get cfpUploadNew => 'رفع خط جديد';
+
+  @override
+  String get ptpPrepError => 'تعذّر تحضير المعاينة. تحقّق من ملف القالب.';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms م.ث — $kb ك.ب';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— تُحدَّث المعاينة تلقائياً';
+
+  @override
+  String get ptpGenerateFailedTitle => 'تعذّر توليد المعاينة';
+
+  @override
+  String get ptpPreparingTitle => 'جارٍ تحضير المحرك…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'يتم تحميل الخطوط المحزومة وتوليد أول نسخة من الملف.';
+
+  @override
+  String get ptpShowFailedTitle => 'تعذّر عرض المعاينة';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'بديل لبناء بقيم محددة يتفوق على الملف: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'خلفية المستند من مكتبة أصولي';
+
+  @override
+  String get tevAddElement => 'إضافة عنصر';
+
+  @override
+  String get commonUndo => 'تراجع';
+
+  @override
+  String get bpTitle => 'التوليد الجماعي من Excel';
+
+  @override
+  String get bpSubtitle =>
+      'استورد ملف .xlsx أو .csv، اربط أعمدته بحقول القالب، ثم ولّد ملف PDF بصفحة لكل سجل — كل ذلك على جهازك بلا إنترنت.';
+
+  @override
+  String get bpStepTemplate => '1) القالب';
+
+  @override
+  String get bpLoadingSampleTemplate => 'جارٍ تحميل القالب النموذجي…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'القالب: $name • الحقول المطلوبة:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'جارٍ تحميل قوالبك…';
+
+  @override
+  String get bpNoTemplates =>
+      'لا توجد قوالب محفوظة بعد — أنشئ قالباً في المحرّر أو استورده من مكتبة القوالب ليظهر هنا.';
+
+  @override
+  String get bpTemplateFromMine => 'قالب من قوالبي';
+
+  @override
+  String get bpSampleTemplatesHeader => '— القوالب النموذجية —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'سحابي';
+
+  @override
+  String get bpSourceLocal => 'محلي';
+
+  @override
+  String get bpStepDataFile => '2) ملف البيانات';
+
+  @override
+  String get bpReadingFile => 'جارٍ قراءة الملف…';
+
+  @override
+  String get bpNoFileChosen => 'لم يُختَر ملف بعد — الصيغ المدعومة:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows صفاً، $cols عموداً';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (ورقة: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'اختيار ملف';
+
+  @override
+  String get bpRemove => 'إزالة';
+
+  @override
+  String get bpHeaderRow => 'صف العناوين';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'تلقائي (الصف $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'الصف $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'تلقائي — الصف $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'الصف $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(صف فارغ)';
+
+  @override
+  String get bpWorksheet => 'ورقة العمل';
+
+  @override
+  String get bpPickDataFile => 'اختر ملف البيانات (Excel أو CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'تعذّر قراءة الملف: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'قُرئ الملف محلياً: $rows صفاً و$cols عموداً.';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'تعذّر حفظ التعديل في القالب: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'تعيين حقل ديناميكي لهذا العنصر';
+
+  @override
+  String get bpMapFieldBody =>
+      'سيُستبدل نص هذا العنصر وحده بحقل، ولن يُمسّ أي عنصر آخر.';
+
+  @override
+  String get bpUndoConvert => 'تم التراجع عن التحويل.';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'تم التراجع عن التحويل واستعادة النص في القالب.';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'تعذّر استعادة النص في القالب: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return 'تم توليد $count سجل';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' وتخطّي $count';
+  }
+
+  @override
+  String get bpReadyToSave => 'تم تجهيز الملف للحفظ.';
+
+  @override
+  String get bpStepMapping => '3) ربط الأعمدة بالحقول';
+
+  @override
+  String get bpChooseFileFirst => 'اختر ملفاً أولاً ليظهر جدول الربط.';
+
+  @override
+  String get bpNoDynamicFields => 'لا حقول ديناميكية في القالب الحالي.';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return 'مرتبط $mapped من $total عموداً';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'بعد اختيار الملف سيُقترح ربط تلقائي ذكي، ويمكنك تعديل كل عمود.';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'القالب المختار لا يحتوي حقولاً ديناميكية، فلا شيء ليُربط بأعمدة الملف. افتح القالب في المحرّر وأدرج «حقل ديناميكي» في خانة الاسم ثم احفظ القالب ثم أعد المحاولة.';
+
+  @override
+  String get bpAutoMap => 'ربط تلقائي';
+
+  @override
+  String get bpClearMapping => 'مسح الربط';
+
+  @override
+  String get bpNameFieldWarning =>
+      'هذا القالب لا يحتوي على حقل اسم ديناميكي — لا تربط عمود الاسم بحقل تاريخ أو رقم إشعار، فقد يُطبع الاسم في مكانه الخطأ. اختر مفتاح الاسم من قائمة العمود، أو حوّل نص الاسم الثابت من المحرّر إلى حقل ديناميكي.';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'نصّ ثابت يشبه الاسم: «$preview» — لا يستبدله أي حقل ديناميكي.';
+  }
+
+  @override
+  String get bpConvertToNameField => 'حوّله إلى حقل اسم المتدرب';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return 'الحقل «$field» مرتبط بأكثر من عمود. اجعل كل حقل بعمود واحد.';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count عموداً بلا ربط — لن تُستخدم بياناته في الشهادات.';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'عمود $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(فارغ)';
+
+  @override
+  String get bpUnmapped => '— غير مربوط —';
+
+  @override
+  String get bpStepMissing => '4) الخلايا الفارغة والبيانات الناقصة';
+
+  @override
+  String get bpNoNotes => 'لا ملاحظات قبل اختيار الملف.';
+
+  @override
+  String get bpStepGenerate => '5) التوليد';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'جارٍ التوليد… $progress';
+  }
+
+  @override
+  String get bpGenerateHint => 'ملف PDF واحد، صفحة لكل سجل مُصدر.';
+
+  @override
+  String get bpGeneratePickFile => 'اختر ملف بيانات أولاً ليُفعَّل التوليد.';
+
+  @override
+  String get bpMappingInvalid =>
+      'الربط غير صالح — لا تُربط الحقل نفسه بعمودين.';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'اربط عموداً واحداً على الأقل بحقل من القالب ليُفعَّل التوليد.';
+
+  @override
+  String get bpGenerateCertificates => 'توليد الشهادات';
+
+  @override
+  String get bpRegenerate => 'إعادة التوليد';
+
+  @override
+  String get bpStatGenerated => 'مُصدرة';
+
+  @override
+  String get bpStatSkipped => 'متخطّاة';
+
+  @override
+  String get bpStatPages => 'صفحات';
+
+  @override
+  String get bpStatSize => 'الحجم';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value ك.ب';
+  }
+
+  @override
+  String get bpStatTime => 'الزمن';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value م.ث';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return 'اكتمال $pct% من $total صفاً.';
+  }
+
+  @override
+  String get bpSkippedRows => 'صفوف لم تُصدر:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'صف $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'المعاينة تظهر هنا';
+
+  @override
+  String get bpPreviewHint =>
+      'اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — سترى أول صفحة من الملف الناتج هنا مباشرة.';
+
+  @override
+  String get bpAssignByTapTitle => 'تعيين الحقول بالنقر';
+
+  @override
+  String get bpAssignByTapBody =>
+      'انقر أي نص في القالب لتعيينه إلى حقل ديناميكي بنفسك. لن يُمسّ أي عنصر آخر — لا التاريخ ولا اسم المدير ولا أي نص ثابت.';
+
+  @override
+  String get bpNoTexts => 'لا نصوص في هذا القالب.';
+
+  @override
+  String get bpEmptyText => '(نص فارغ)';
+
+  @override
+  String get bpDynamicFieldTap => 'حقل ديناميكي — انقر لتغييره';
+
+  @override
+  String get bpStaticTextTap => 'نص ثابت — انقر للتعيين';
+
+  @override
+  String get bpAssignField => 'تعيين حقل';
+
+  @override
+  String get bpKindCertificate => 'شهادة';
+
+  @override
+  String get bpKindContract => 'عقد';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'تعذّر تحميل القالب النموذجي: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'تعذّر قراءة الورقة: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'تعذّر تحديث صف العناوين: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst => 'اختر قالباً (شهادة أو عقد) قبل التوليد.';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind جماعية — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'تعذّر التوليد الجماعي: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'هذا القالب بلا حقول ديناميكية — لن تتغيّر البيانات بين السجلات. أضف حقل «اسم المتدرب» من شريط المحرّر ثم احفظ القالب.';
+
+  @override
+  String get bpWarnNoNameField =>
+      'هذا القالب لا يحتوي على حقل اسم ديناميكي — قد يربط عمود الاسم بحقل تاريخ أو رقم إشعار فيظهر الاسم في مكانه الخطأ. حوّل نص الاسم الثابت إلى حقل أو أعد تصميم القالب.';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'عُيّن هذا العنصر إلى $token للتوليد الحالي — بقية العناصر لم تُمسّ. احفظ القالب لتثبيت التعديل دائماً.';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'عُيّن هذا العنصر إلى $token وحُفظ التعديل في القالب. بقية العناصر لم تُمسّ.';
+  }
 }

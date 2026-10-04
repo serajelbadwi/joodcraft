@@ -2153,6 +2153,1056 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اجعل النوع: {type}'**
   String amMakeType(Object type);
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get commonRetry;
+
+  /// No description provided for @commonPrint.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة'**
+  String get commonPrint;
+
+  /// No description provided for @commonExportPdf.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PDF'**
+  String get commonExportPdf;
+
+  /// No description provided for @commonExportFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تصدير ملف PDF.'**
+  String get commonExportFailed;
+
+  /// No description provided for @commonPrintFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إرسال الملف إلى الطابعة.'**
+  String get commonPrintFailed;
+
+  /// No description provided for @commonExportReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تجهيز الملف للحفظ باسم {name}.'**
+  String commonExportReady(Object name);
+
+  /// No description provided for @commonGenerating.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ التوليد…'**
+  String get commonGenerating;
+
+  /// No description provided for @commonDataPanelTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات تجريبية'**
+  String get commonDataPanelTitle;
+
+  /// No description provided for @evElementCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} عنصراً'**
+  String evElementCount(Object count);
+
+  /// No description provided for @evStatusDynamicFields.
+  ///
+  /// In ar, this message translates to:
+  /// **' • حقول ديناميكية'**
+  String get evStatusDynamicFields;
+
+  /// No description provided for @evStatusUnsaved.
+  ///
+  /// In ar, this message translates to:
+  /// **' • تعديلات غير محفوظة'**
+  String get evStatusUnsaved;
+
+  /// No description provided for @tevNewTemplateTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب جديد'**
+  String get tevNewTemplateTitle;
+
+  /// No description provided for @tevUnsavedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديلات غير محفوظة'**
+  String get tevUnsavedTitle;
+
+  /// No description provided for @tevUnsavedMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك تعديلات على «{title}» لم تُحفَظ بعد. هل تريد حفظها قبل المغادرة؟'**
+  String tevUnsavedMessage(Object title);
+
+  /// No description provided for @tevLeaveWithoutSaving.
+  ///
+  /// In ar, this message translates to:
+  /// **'المغادرة دون حفظ'**
+  String get tevLeaveWithoutSaving;
+
+  /// No description provided for @tevSaveAndLeave.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ والمغادرة'**
+  String get tevSaveAndLeave;
+
+  /// No description provided for @tevViewMode.
+  ///
+  /// In ar, this message translates to:
+  /// **'طريقة العرض'**
+  String get tevViewMode;
+
+  /// No description provided for @tevModeEditor.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحرر'**
+  String get tevModeEditor;
+
+  /// No description provided for @tevModePreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة PDF'**
+  String get tevModePreview;
+
+  /// No description provided for @tevPaperDirection.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه الورقة'**
+  String get tevPaperDirection;
+
+  /// No description provided for @tevWidthCm.
+  ///
+  /// In ar, this message translates to:
+  /// **'العرض (cm)'**
+  String get tevWidthCm;
+
+  /// No description provided for @tevHeightCm.
+  ///
+  /// In ar, this message translates to:
+  /// **'الارتفاع (cm)'**
+  String get tevHeightCm;
+
+  /// No description provided for @tevUndo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع (Ctrl+Z)'**
+  String get tevUndo;
+
+  /// No description provided for @tevRedo.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة (Ctrl+Y)'**
+  String get tevRedo;
+
+  /// No description provided for @tevSnapGrid.
+  ///
+  /// In ar, this message translates to:
+  /// **'شبكة التوجيه'**
+  String get tevSnapGrid;
+
+  /// No description provided for @tevGuidesOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوط الإرشاد الذكية: مُفعّلة (إيقاف)'**
+  String get tevGuidesOn;
+
+  /// No description provided for @tevGuidesOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوط الإرشاد الذكية: معطّلة (تشغيل)'**
+  String get tevGuidesOff;
+
+  /// No description provided for @tevZoom.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكبير'**
+  String get tevZoom;
+
+  /// No description provided for @tevDocumentBackground.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلفية المستند'**
+  String get tevDocumentBackground;
+
+  /// No description provided for @tevFrameFromLibrary.
+  ///
+  /// In ar, this message translates to:
+  /// **'إطار من مكتبة أصولي'**
+  String get tevFrameFromLibrary;
+
+  /// No description provided for @tevChangeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير عنوان القالب'**
+  String get tevChangeTitle;
+
+  /// No description provided for @tevMyTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'قوالبي'**
+  String get tevMyTemplates;
+
+  /// No description provided for @tevSaveAs.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ باسم'**
+  String get tevSaveAs;
+
+  /// No description provided for @tevSaveTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ القالب'**
+  String get tevSaveTemplate;
+
+  /// No description provided for @tevSaveUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحفظ غير متاح'**
+  String get tevSaveUnavailable;
+
+  /// No description provided for @tevSaveNeedsSupabase.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك (env.json) لتتمكن من حفظ القوالب.'**
+  String get tevSaveNeedsSupabase;
+
+  /// No description provided for @tevMissingAssets.
+  ///
+  /// In ar, this message translates to:
+  /// **'أصول مفقودة: {list} — أعد اختيار الإطار/الأصل من «مكتبة أصولي» لتفادي ظهورها فارغة.'**
+  String tevMissingAssets(Object list);
+
+  /// No description provided for @tevTemplateLibraryNeedsSupabase.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتبة القوالب تتطلب الاتصال بمشروع Supabase.'**
+  String get tevTemplateLibraryNeedsSupabase;
+
+  /// No description provided for @tevOpenedTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم فتح «{title}».'**
+  String tevOpenedTemplate(Object title);
+
+  /// No description provided for @tevTitleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: شهادة إتمام دورة إدارة المشاريع'**
+  String get tevTitleHint;
+
+  /// No description provided for @tevContinue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متابعة'**
+  String get tevContinue;
+
+  /// No description provided for @tevSavedTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'قوالبي المحفوظة'**
+  String get tevSavedTemplates;
+
+  /// No description provided for @tevNoSavedTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد قوالب محفوظة بعد. احفظ قالباً من الزر «حفظ القالب».'**
+  String get tevNoSavedTemplates;
+
+  /// No description provided for @ecIncrease.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة'**
+  String get ecIncrease;
+
+  /// No description provided for @ecDecrease.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنقاص'**
+  String get ecDecrease;
+
+  /// No description provided for @ecQuickPalette.
+  ///
+  /// In ar, this message translates to:
+  /// **'لوحة سريعة'**
+  String get ecQuickPalette;
+
+  /// No description provided for @ecFullPicker.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتقي ألوان كامل'**
+  String get ecFullPicker;
+
+  /// No description provided for @ecRemoveColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة اللون'**
+  String get ecRemoveColor;
+
+  /// No description provided for @ecNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا'**
+  String get ecNone;
+
+  /// No description provided for @ecPickColorTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار لون'**
+  String get ecPickColorTitle;
+
+  /// No description provided for @ecApply.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق'**
+  String get ecApply;
+
+  /// No description provided for @tevBackgroundAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُضيف «{name}» كخلفية للمستند.'**
+  String tevBackgroundAdded(Object name);
+
+  /// No description provided for @cfpUploadTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفع خط مخصص (.ttf / .otf)'**
+  String get cfpUploadTooltip;
+
+  /// No description provided for @cfpManageTooltip.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة الخطوط المرفوعة'**
+  String get cfpManageTooltip;
+
+  /// No description provided for @cfpNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطوط المرفوعة تُحفظ على جهازك فقط وتُستخدم فوراً هنا وفي الطباعة — بلا إنترنت.'**
+  String get cfpNotice;
+
+  /// No description provided for @cfpMyFonts.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوطي المخصصة'**
+  String get cfpMyFonts;
+
+  /// No description provided for @cfpNoFonts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم ترفع خطوطاً بعد'**
+  String get cfpNoFonts;
+
+  /// No description provided for @cfpBuiltinOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا (الخط المضمّن)'**
+  String get cfpBuiltinOption;
+
+  /// No description provided for @cfpPickTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر ملف خط (TTF أو OTF)'**
+  String get cfpPickTitle;
+
+  /// No description provided for @cfpPickerError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر فتح منتقي الملفات: {error}'**
+  String cfpPickerError(Object error);
+
+  /// No description provided for @cfpReadError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر قراءة \"{name}\": {error}'**
+  String cfpReadError(Object name, Object error);
+
+  /// No description provided for @cfpFontAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُضيف الخط واستُخدم فوراً.'**
+  String get cfpFontAdded;
+
+  /// No description provided for @cfpFontsAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُضيف {count} خطوط.'**
+  String cfpFontsAdded(Object count);
+
+  /// No description provided for @cfpLibraryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مكتبة خطوطي المخصصة'**
+  String get cfpLibraryTitle;
+
+  /// No description provided for @cfpLibraryNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل الخطوط محفوظة على جهازك فقط. تحذير: حذف خط يستخدمه قالب يُرجع ذلك القالب إلى الخط المضمّن بدل الفشل.'**
+  String get cfpLibraryNotice;
+
+  /// No description provided for @cfpEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد خطوط مرفوعة بعد.'**
+  String get cfpEmpty;
+
+  /// No description provided for @cfpCoverageFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغطية عربية كاملة'**
+  String get cfpCoverageFull;
+
+  /// No description provided for @cfpCoveragePartial.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغطية عربية ناقصة'**
+  String get cfpCoveragePartial;
+
+  /// No description provided for @cfpUploadNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفع خط جديد'**
+  String get cfpUploadNew;
+
+  /// No description provided for @ptpPrepError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحضير المعاينة. تحقّق من ملف القالب.'**
+  String get ptpPrepError;
+
+  /// No description provided for @ptpElapsedSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'{ms} م.ث — {kb} ك.ب'**
+  String ptpElapsedSize(Object ms, Object kb);
+
+  /// No description provided for @ptpGeneratingNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'— تُحدَّث المعاينة تلقائياً'**
+  String get ptpGeneratingNote;
+
+  /// No description provided for @ptpGenerateFailedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر توليد المعاينة'**
+  String get ptpGenerateFailedTitle;
+
+  /// No description provided for @ptpPreparingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ تحضير المحرك…'**
+  String get ptpPreparingTitle;
+
+  /// No description provided for @ptpPreparingMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'يتم تحميل الخطوط المحزومة وتوليد أول نسخة من الملف.'**
+  String get ptpPreparingMessage;
+
+  /// No description provided for @ptpShowFailedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر عرض المعاينة'**
+  String get ptpShowFailedTitle;
+
+  /// No description provided for @cfgOverride.
+  ///
+  /// In ar, this message translates to:
+  /// **'بديل لبناء بقيم محددة يتفوق على الملف: {override}'**
+  String cfgOverride(Object override);
+
+  /// No description provided for @tevBackgroundTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلفية المستند من مكتبة أصولي'**
+  String get tevBackgroundTitle;
+
+  /// No description provided for @tevAddElement.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة عنصر'**
+  String get tevAddElement;
+
+  /// No description provided for @commonUndo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع'**
+  String get commonUndo;
+
+  /// No description provided for @bpTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التوليد الجماعي من Excel'**
+  String get bpTitle;
+
+  /// No description provided for @bpSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استورد ملف .xlsx أو .csv، اربط أعمدته بحقول القالب، ثم ولّد ملف PDF بصفحة لكل سجل — كل ذلك على جهازك بلا إنترنت.'**
+  String get bpSubtitle;
+
+  /// No description provided for @bpStepTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'1) القالب'**
+  String get bpStepTemplate;
+
+  /// No description provided for @bpLoadingSampleTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ تحميل القالب النموذجي…'**
+  String get bpLoadingSampleTemplate;
+
+  /// No description provided for @bpTemplateInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'القالب: {name} • الحقول المطلوبة:'**
+  String bpTemplateInfo(Object name);
+
+  /// No description provided for @bpLoadingTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ تحميل قوالبك…'**
+  String get bpLoadingTemplates;
+
+  /// No description provided for @bpNoTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد قوالب محفوظة بعد — أنشئ قالباً في المحرّر أو استورده من مكتبة القوالب ليظهر هنا.'**
+  String get bpNoTemplates;
+
+  /// No description provided for @bpTemplateFromMine.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب من قوالبي'**
+  String get bpTemplateFromMine;
+
+  /// No description provided for @bpSampleTemplatesHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'— القوالب النموذجية —'**
+  String get bpSampleTemplatesHeader;
+
+  /// No description provided for @bpTemplateEntry.
+  ///
+  /// In ar, this message translates to:
+  /// **'{title}  •  {source}'**
+  String bpTemplateEntry(Object title, Object source);
+
+  /// No description provided for @bpSourceCloud.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحابي'**
+  String get bpSourceCloud;
+
+  /// No description provided for @bpSourceLocal.
+  ///
+  /// In ar, this message translates to:
+  /// **'محلي'**
+  String get bpSourceLocal;
+
+  /// No description provided for @bpStepDataFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'2) ملف البيانات'**
+  String get bpStepDataFile;
+
+  /// No description provided for @bpReadingFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ قراءة الملف…'**
+  String get bpReadingFile;
+
+  /// No description provided for @bpNoFileChosen.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُختَر ملف بعد — الصيغ المدعومة:'**
+  String get bpNoFileChosen;
+
+  /// No description provided for @bpFileSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} — {rows} صفاً، {cols} عموداً'**
+  String bpFileSummary(Object name, Object rows, Object cols);
+
+  /// No description provided for @bpSheetSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **' (ورقة: {name})'**
+  String bpSheetSuffix(Object name);
+
+  /// No description provided for @bpChooseFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار ملف'**
+  String get bpChooseFile;
+
+  /// No description provided for @bpRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة'**
+  String get bpRemove;
+
+  /// No description provided for @bpHeaderRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'صف العناوين'**
+  String get bpHeaderRow;
+
+  /// No description provided for @bpAutoRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلقائي (الصف {n})'**
+  String bpAutoRow(Object n);
+
+  /// No description provided for @bpRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصف {n}'**
+  String bpRow(Object n);
+
+  /// No description provided for @bpAutoRowLong.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلقائي — الصف {n}'**
+  String bpAutoRowLong(Object n);
+
+  /// No description provided for @bpRowPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصف {n}: {preview}'**
+  String bpRowPreview(Object n, Object preview);
+
+  /// No description provided for @bpEmptyRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'(صف فارغ)'**
+  String get bpEmptyRow;
+
+  /// No description provided for @bpWorksheet.
+  ///
+  /// In ar, this message translates to:
+  /// **'ورقة العمل'**
+  String get bpWorksheet;
+
+  /// No description provided for @bpPickDataFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر ملف البيانات (Excel أو CSV)'**
+  String get bpPickDataFile;
+
+  /// No description provided for @bpReadFileError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر قراءة الملف: {error}'**
+  String bpReadFileError(Object error);
+
+  /// No description provided for @bpFileReadRows.
+  ///
+  /// In ar, this message translates to:
+  /// **'قُرئ الملف محلياً: {rows} صفاً و{cols} عموداً.'**
+  String bpFileReadRows(Object rows, Object cols);
+
+  /// No description provided for @bpSaveError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر حفظ التعديل في القالب: {error}'**
+  String bpSaveError(Object error);
+
+  /// No description provided for @bpMapFieldTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين حقل ديناميكي لهذا العنصر'**
+  String get bpMapFieldTitle;
+
+  /// No description provided for @bpMapFieldBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُستبدل نص هذا العنصر وحده بحقل، ولن يُمسّ أي عنصر آخر.'**
+  String get bpMapFieldBody;
+
+  /// No description provided for @bpUndoConvert.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التراجع عن التحويل.'**
+  String get bpUndoConvert;
+
+  /// No description provided for @bpUndoConvertSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التراجع عن التحويل واستعادة النص في القالب.'**
+  String get bpUndoConvertSaved;
+
+  /// No description provided for @bpRestoreError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر استعادة النص في القالب: {error}'**
+  String bpRestoreError(Object error);
+
+  /// No description provided for @bpGeneratedReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم توليد {count} سجل'**
+  String bpGeneratedReport(Object count);
+
+  /// No description provided for @bpSkippedSuffix.
+  ///
+  /// In ar, this message translates to:
+  /// **' وتخطّي {count}'**
+  String bpSkippedSuffix(Object count);
+
+  /// No description provided for @bpReadyToSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تجهيز الملف للحفظ.'**
+  String get bpReadyToSave;
+
+  /// No description provided for @bpStepMapping.
+  ///
+  /// In ar, this message translates to:
+  /// **'3) ربط الأعمدة بالحقول'**
+  String get bpStepMapping;
+
+  /// No description provided for @bpChooseFileFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر ملفاً أولاً ليظهر جدول الربط.'**
+  String get bpChooseFileFirst;
+
+  /// No description provided for @bpNoDynamicFields.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا حقول ديناميكية في القالب الحالي.'**
+  String get bpNoDynamicFields;
+
+  /// No description provided for @bpMappedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتبط {mapped} من {total} عموداً'**
+  String bpMappedCount(Object mapped, Object total);
+
+  /// No description provided for @bpAutoMapHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعد اختيار الملف سيُقترح ربط تلقائي ذكي، ويمكنك تعديل كل عمود.'**
+  String get bpAutoMapHint;
+
+  /// No description provided for @bpNoFieldsHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'القالب المختار لا يحتوي حقولاً ديناميكية، فلا شيء ليُربط بأعمدة الملف. افتح القالب في المحرّر وأدرج «حقل ديناميكي» في خانة الاسم ثم احفظ القالب ثم أعد المحاولة.'**
+  String get bpNoFieldsHelp;
+
+  /// No description provided for @bpAutoMap.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربط تلقائي'**
+  String get bpAutoMap;
+
+  /// No description provided for @bpClearMapping.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح الربط'**
+  String get bpClearMapping;
+
+  /// No description provided for @bpNameFieldWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا القالب لا يحتوي على حقل اسم ديناميكي — لا تربط عمود الاسم بحقل تاريخ أو رقم إشعار، فقد يُطبع الاسم في مكانه الخطأ. اختر مفتاح الاسم من قائمة العمود، أو حوّل نص الاسم الثابت من المحرّر إلى حقل ديناميكي.'**
+  String get bpNameFieldWarning;
+
+  /// No description provided for @bpStaticNameHints.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصّ ثابت يشبه الاسم: «{preview}» — لا يستبدله أي حقل ديناميكي.'**
+  String bpStaticNameHints(Object preview);
+
+  /// No description provided for @bpConvertToNameField.
+  ///
+  /// In ar, this message translates to:
+  /// **'حوّله إلى حقل اسم المتدرب'**
+  String get bpConvertToNameField;
+
+  /// No description provided for @bpDuplicateField.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحقل «{field}» مرتبط بأكثر من عمود. اجعل كل حقل بعمود واحد.'**
+  String bpDuplicateField(Object field);
+
+  /// No description provided for @bpUnmappedColumns.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} عموداً بلا ربط — لن تُستخدم بياناته في الشهادات.'**
+  String bpUnmappedColumns(Object count);
+
+  /// No description provided for @bpColumn.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمود {n}'**
+  String bpColumn(Object n);
+
+  /// No description provided for @bpEmptyCell.
+  ///
+  /// In ar, this message translates to:
+  /// **'(فارغ)'**
+  String get bpEmptyCell;
+
+  /// No description provided for @bpUnmapped.
+  ///
+  /// In ar, this message translates to:
+  /// **'— غير مربوط —'**
+  String get bpUnmapped;
+
+  /// No description provided for @bpStepMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'4) الخلايا الفارغة والبيانات الناقصة'**
+  String get bpStepMissing;
+
+  /// No description provided for @bpNoNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا ملاحظات قبل اختيار الملف.'**
+  String get bpNoNotes;
+
+  /// No description provided for @bpStepGenerate.
+  ///
+  /// In ar, this message translates to:
+  /// **'5) التوليد'**
+  String get bpStepGenerate;
+
+  /// No description provided for @bpGenerating.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ التوليد… {progress}'**
+  String bpGenerating(Object progress);
+
+  /// No description provided for @bpGenerateHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف PDF واحد، صفحة لكل سجل مُصدر.'**
+  String get bpGenerateHint;
+
+  /// No description provided for @bpGeneratePickFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر ملف بيانات أولاً ليُفعَّل التوليد.'**
+  String get bpGeneratePickFile;
+
+  /// No description provided for @bpMappingInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'الربط غير صالح — لا تُربط الحقل نفسه بعمودين.'**
+  String get bpMappingInvalid;
+
+  /// No description provided for @bpMapAtLeastOne.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط عموداً واحداً على الأقل بحقل من القالب ليُفعَّل التوليد.'**
+  String get bpMapAtLeastOne;
+
+  /// No description provided for @bpGenerateCertificates.
+  ///
+  /// In ar, this message translates to:
+  /// **'توليد الشهادات'**
+  String get bpGenerateCertificates;
+
+  /// No description provided for @bpRegenerate.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة التوليد'**
+  String get bpRegenerate;
+
+  /// No description provided for @bpStatGenerated.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُصدرة'**
+  String get bpStatGenerated;
+
+  /// No description provided for @bpStatSkipped.
+  ///
+  /// In ar, this message translates to:
+  /// **'متخطّاة'**
+  String get bpStatSkipped;
+
+  /// No description provided for @bpStatPages.
+  ///
+  /// In ar, this message translates to:
+  /// **'صفحات'**
+  String get bpStatPages;
+
+  /// No description provided for @bpStatSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحجم'**
+  String get bpStatSize;
+
+  /// No description provided for @bpKilobytes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} ك.ب'**
+  String bpKilobytes(Object value);
+
+  /// No description provided for @bpStatTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الزمن'**
+  String get bpStatTime;
+
+  /// No description provided for @bpMilliseconds.
+  ///
+  /// In ar, this message translates to:
+  /// **'{value} م.ث'**
+  String bpMilliseconds(Object value);
+
+  /// No description provided for @bpCompletion.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتمال {pct}% من {total} صفاً.'**
+  String bpCompletion(Object pct, Object total);
+
+  /// No description provided for @bpSkippedRows.
+  ///
+  /// In ar, this message translates to:
+  /// **'صفوف لم تُصدر:'**
+  String get bpSkippedRows;
+
+  /// No description provided for @bpRowSkipReason.
+  ///
+  /// In ar, this message translates to:
+  /// **'صف {n}: {reason}'**
+  String bpRowSkipReason(Object n, Object reason);
+
+  /// No description provided for @bpPreviewHere.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعاينة تظهر هنا'**
+  String get bpPreviewHere;
+
+  /// No description provided for @bpPreviewHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — سترى أول صفحة من الملف الناتج هنا مباشرة.'**
+  String get bpPreviewHint;
+
+  /// No description provided for @bpAssignByTapTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين الحقول بالنقر'**
+  String get bpAssignByTapTitle;
+
+  /// No description provided for @bpAssignByTapBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'انقر أي نص في القالب لتعيينه إلى حقل ديناميكي بنفسك. لن يُمسّ أي عنصر آخر — لا التاريخ ولا اسم المدير ولا أي نص ثابت.'**
+  String get bpAssignByTapBody;
+
+  /// No description provided for @bpNoTexts.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا نصوص في هذا القالب.'**
+  String get bpNoTexts;
+
+  /// No description provided for @bpEmptyText.
+  ///
+  /// In ar, this message translates to:
+  /// **'(نص فارغ)'**
+  String get bpEmptyText;
+
+  /// No description provided for @bpDynamicFieldTap.
+  ///
+  /// In ar, this message translates to:
+  /// **'حقل ديناميكي — انقر لتغييره'**
+  String get bpDynamicFieldTap;
+
+  /// No description provided for @bpStaticTextTap.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص ثابت — انقر للتعيين'**
+  String get bpStaticTextTap;
+
+  /// No description provided for @bpAssignField.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين حقل'**
+  String get bpAssignField;
+
+  /// No description provided for @bpKindCertificate.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة'**
+  String get bpKindCertificate;
+
+  /// No description provided for @bpKindContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد'**
+  String get bpKindContract;
+
+  /// No description provided for @bpLoadSampleError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحميل القالب النموذجي: {error}'**
+  String bpLoadSampleError(Object error);
+
+  /// No description provided for @bpReadSheetError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر قراءة الورقة: {error}'**
+  String bpReadSheetError(Object error);
+
+  /// No description provided for @bpUpdateHeaderRowError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحديث صف العناوين: {error}'**
+  String bpUpdateHeaderRowError(Object error);
+
+  /// No description provided for @bpChooseTemplateFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر قالباً (شهادة أو عقد) قبل التوليد.'**
+  String get bpChooseTemplateFirst;
+
+  /// No description provided for @bpBatchTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'{kind} جماعية — JoodCraft'**
+  String bpBatchTitle(Object kind);
+
+  /// No description provided for @bpGenerateError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر التوليد الجماعي: {error}'**
+  String bpGenerateError(Object error);
+
+  /// No description provided for @bpWarnNoDynamicFields.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا القالب بلا حقول ديناميكية — لن تتغيّر البيانات بين السجلات. أضف حقل «اسم المتدرب» من شريط المحرّر ثم احفظ القالب.'**
+  String get bpWarnNoDynamicFields;
+
+  /// No description provided for @bpWarnNoNameField.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا القالب لا يحتوي على حقل اسم ديناميكي — قد يربط عمود الاسم بحقل تاريخ أو رقم إشعار فيظهر الاسم في مكانه الخطأ. حوّل نص الاسم الثابت إلى حقل أو أعد تصميم القالب.'**
+  String get bpWarnNoNameField;
+
+  /// No description provided for @bpAssignedTemp.
+  ///
+  /// In ar, this message translates to:
+  /// **'عُيّن هذا العنصر إلى {token} للتوليد الحالي — بقية العناصر لم تُمسّ. احفظ القالب لتثبيت التعديل دائماً.'**
+  String bpAssignedTemp(Object token);
+
+  /// No description provided for @bpAssignedSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'عُيّن هذا العنصر إلى {token} وحُفظ التعديل في القالب. بقية العناصر لم تُمسّ.'**
+  String bpAssignedSaved(Object token);
 }
 
 class _AppLocalizationsDelegate

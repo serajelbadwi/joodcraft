@@ -136,6 +136,18 @@ class TemplateEditorController extends ChangeNotifier {
   /// هل يحتوي القالب على حقول ديناميكية؟
   bool get hasDynamicFields => _document.hasDynamicFields;
 
+  /// يستبدل العنوان الافتراضي بعنوان مترجم **بلا** وسم المستند كمتغيّر.
+  ///
+  /// يُستدعى من الواجهة بعد `initState` (حيث يتوفّر مندوبي الترجمة) وعندما
+  /// يكون عنوان القالب لا يزال الافتراضي، فلا يُبطل حالة «بلا تعديلات» ولا
+  /// يُلوّث عنوان قالب مُحمَّل.
+  void localizeDefaultTitle(String localized, {required String defaultTitle}) {
+    if (_title != defaultTitle) return;
+    final String trimmed = localized.trim();
+    if (trimmed.isEmpty) return;
+    _title = trimmed;
+  }
+
   /// تغيير عنوان القالب (يُثبَّت في قاعدة البيانات عند الحفظ التالي).
   void rename(String title) {
     final String trimmed = title.trim();

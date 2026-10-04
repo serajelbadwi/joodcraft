@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 // مع أداة الألوان الخاصة بالمشروع (نفس الاسم وترتيب معاملات مختلف).
 import 'package:flutter_colorpicker/flutter_colorpicker.dart' as picker;
 
+import '../../l10n/app_l10n.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/hex_color.dart';
@@ -228,7 +229,7 @@ class _StepButton extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints.tightFor(width: 26, height: 30),
-      tooltip: icon == Icons.add_rounded ? 'زيادة' : 'إنقاص',
+      tooltip: icon == Icons.add_rounded ? context.l10n?.ecIncrease ?? 'زيادة' : context.l10n?.ecDecrease ?? 'إنقاص',
     );
   }
 }
@@ -523,9 +524,9 @@ class ColorField extends StatelessWidget {
           Row(
             children: <Widget>[
               Tooltip(
-                message: 'لوحة سريعة',
+                message: context.l10n?.ecQuickPalette ?? 'لوحة سريعة',
                 child: PopupMenuButton<Color>(
-                  tooltip: 'لوحة سريعة',
+                  tooltip: context.l10n?.ecQuickPalette ?? 'لوحة سريعة',
                   onSelected: (Color color) => onChanged(hexFromColor(color)),
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<Color>>[
                     for (final Color color in kEditorPalette)
@@ -569,7 +570,7 @@ class ColorField extends StatelessWidget {
               ),
               const SizedBox(width: 5),
               Tooltip(
-                message: 'منتقي ألوان كامل',
+                message: context.l10n?.ecFullPicker ?? 'منتقي ألوان كامل',
                 child: InkWell(
                   onTap: () async {
                     final String? picked = await showEditorColorPicker(
@@ -595,7 +596,7 @@ class ColorField extends StatelessWidget {
               if (onClear != null) ...<Widget>[
                 const SizedBox(width: 5),
                 Tooltip(
-                  message: 'إزالة اللون',
+                  message: context.l10n?.ecRemoveColor ?? 'إزالة اللون',
                   child: InkWell(
                     onTap: onClear,
                     borderRadius: BorderRadius.circular(AppTheme.radiusSm),
@@ -607,7 +608,7 @@ class ColorField extends StatelessWidget {
                         border: Border.all(color: scheme.outline),
                       ),
                       child: Text(
-                        'بلا',
+                        context.l10n?.ecNone ?? 'بلا',
                         style: TextStyle(
                           fontSize: 11,
                           color: scheme.onSurfaceVariant,
@@ -692,7 +693,7 @@ Future<String?> showEditorColorPicker(
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: const Text('اختيار لون'),
+            title: Text(context.l10n?.ecPickColorTitle ?? 'اختيار لون'),
             contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
             content: SingleChildScrollView(
               child: Column(
@@ -737,12 +738,12 @@ Future<String?> showEditorColorPicker(
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('إلغاء'),
+                child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
               ),
               FilledButton(
                 onPressed: () =>
                     Navigator.of(dialogContext).pop(hexFromColor(picked)),
-                child: const Text('تطبيق'),
+                child: Text(context.l10n?.ecApply ?? 'تطبيق'),
               ),
             ],
           );

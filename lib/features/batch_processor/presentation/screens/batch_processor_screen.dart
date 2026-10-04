@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/dynamic_fields.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/models/template_element.dart';
 import '../../../../core/templates/local_template_store.dart';
@@ -120,6 +121,51 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
           ? BatchTemplateKind.contract
           : BatchTemplateKind.certificate;
 
+  /// تسمية نوع التوليد (شهادة/عقد) — نص محلي مع احتياط من المتحكّم.
+  String _kindLabel(BatchTemplateKind kind) =>
+      kind == BatchTemplateKind.certificate
+          ? context.l10n?.bpKindCertificate ?? kind.labelAr
+          : context.l10n?.bpKindContract ?? kind.labelAr;
+
+  /// تحذير القالب النشط — نص محلي مع احتياط عربي من المتحكّم.
+  String? _templateWarning() {
+    if (_controller.document == null) return null;
+    if (!_controller.templateHasDynamicFields) {
+      return context.l10n?.bpWarnNoDynamicFields ??
+          _controller.templateWarningAr;
+    }
+    if (!_controller.hasNameField) {
+      return context.l10n?.bpWarnNoNameField ?? _controller.templateWarningAr;
+    }
+    return null;
+  }
+
+  /// رسالة آخر خطأ من المتحكّم — معرّبة حسب رمزه مع احتياط عربي.
+  String? _errorText() {
+    final String? fallback = _controller.errorAr;
+    if (fallback == null) return null;
+    final l10n = context.l10n;
+    if (l10n == null) return fallback;
+    final Object detail = _controller.errorDetail ?? '';
+    switch (_controller.errorCode) {
+      case BatchErrorCode.loadSample:
+        return l10n.bpLoadSampleError(detail);
+      case BatchErrorCode.readFile:
+        return l10n.bpReadFileError(detail);
+      case BatchErrorCode.readSheet:
+        return l10n.bpReadSheetError(detail);
+      case BatchErrorCode.updateHeaderRow:
+        return l10n.bpUpdateHeaderRowError(detail);
+      case BatchErrorCode.chooseTemplateFirst:
+        return l10n.bpChooseTemplateFirst;
+      case BatchErrorCode.generate:
+        return l10n.bpGenerateError(detail);
+      case BatchErrorCode.message:
+      case null:
+        return fallback;
+    }
+  }
+
   /// قوالب المستخدم (المحلية والسحابية) — بلا القوالب الجاهزة المحزومة.
   List<TemplateLibraryEntry> _userTemplates() {
     final List<TemplateLibraryEntry> mine = _library.entries
@@ -195,9 +241,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       // قالب جاهز غير قابل للتعديل: التحويل للتوليد الحالي فقط، والتراجع
       // يُلغي أثره في الذاكرة.
       context.showSuccessAction(
-        'عُيّن هذا العنصر إلى $token للتوليد الحالي — بقية العناصر لم تُمسّ. '
-        'احفظ القالب لتثبيت التعديل دائماً.',
-        actionLabel: 'تراجع',
+        context.l10n?.bpAssignedTemp(token) ??
+            'عُيّن هذا العنصر إلى $token للتوليد الحالي — بقية العناصر لم تُمسّ. '
+                'احفظ القالب لتثبيت التعديل دائماً.',
+        actionLabel: context.l10n?.commonUndo ?? 'تراجع',
         onAction: undo,
       );
       return;
@@ -207,14 +254,17 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       await _library.updateDocument(entry: entry, document: document);
       if (!mounted) return;
       context.showSuccessAction(
-        'عُيّن هذا العنصر إلى $token وحُفظ التعديل في القالب. '
-        'بقية العناصر لم تُمسّ.',
-        actionLabel: 'تراجع',
+        context.l10n?.bpAssignedSaved(token) ??
+            'عُيّن هذا العنصر إلى $token وحُفظ التعديل في القالب. '
+                'بقية العناصر لم تُمسّ.',
+        actionLabel: context.l10n?.commonUndo ?? 'تراجع',
         onAction: undo,
       );
     } catch (error) {
       if (!mounted) return;
-      context.showError('تعذّر حفظ التعديل في القالب: $error');
+      context.showError(
+        context.l10n?.bpSaveError(error) ?? 'تعذّر حفظ التعديل في القالب: $error',
+      );
     }
   }
 
@@ -240,12 +290,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     final String? picked = await showDialog<String>(
       context: context,
       builder: (BuildContext context) => SimpleDialog(
-        title: const Text('تعيين حقل ديناميكي لهذا العنصر'),
+        title: Text(context.l10n?.bpMapFieldTitle ?? 'تعيين حقل ديناميكي لهذا العنصر'),
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
             child: Text(
-              'سيُستبدل نص هذا العنصر وحده بحقل، ولن يُمسّ أي عنصر آخر.',
+              context.l10n?.bpMapFieldBody ?? 'سيُستبدل نص هذا العنصر وحده بحقل، ولن يُمسّ أي عنصر آخر.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -285,17 +335,20 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     if (!mounted || document == null) return;
 
     if (entry == null) {
-      context.showSuccess('تم التراجع عن التحويل.');
+      context.showSuccess(context.l10n?.bpUndoConvert ?? 'تم التراجع عن التحويل.');
       return;
     }
 
     try {
       await _library.updateDocument(entry: entry, document: document);
       if (!mounted) return;
-      context.showSuccess('تم التراجع عن التحويل واستعادة النص في القالب.');
+      context.showSuccess(context.l10n?.bpUndoConvertSaved ?? 'تم التراجع عن التحويل واستعادة النص في القالب.');
     } catch (error) {
       if (!mounted) return;
-      context.showError('تعذّر استعادة النص في القالب: $error');
+      context.showError(
+        context.l10n?.bpRestoreError(error) ??
+            'تعذّر استعادة النص في القالب: $error',
+      );
     }
   }
 
@@ -308,11 +361,13 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       picked = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: BatchProcessorScreen.acceptedExtensions,
-        dialogTitle: 'اختر ملف البيانات (Excel أو CSV)',
+        dialogTitle: context.l10n?.bpPickDataFile ?? 'اختر ملف البيانات (Excel أو CSV)',
       );
     } catch (error) {
       if (!mounted) return;
-      context.showError('تعذّر فتح منتقي الملفات: $error');
+      context.showError(
+        context.l10n?.cfpPickerError(error) ?? 'تعذّر فتح منتقي الملفات: $error',
+      );
       return;
     }
     if (picked.isEmpty) return;
@@ -325,18 +380,24 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     } catch (error, stackTrace) {
       debugPrint('[استيراد الملف] تعذّرت قراءة الملف: $error\n$stackTrace');
       if (!mounted) return;
-      context.showError('تعذّر قراءة الملف: $error');
+      context.showError(
+        context.l10n?.bpReadFileError(error) ?? 'تعذّر قراءة الملف: $error',
+      );
       return;
     }
 
     if (!mounted) return;
-    final String? error = _controller.errorAr;
+    final String? error = _errorText();
     if (error != null) {
       context.showError(error);
     } else {
       context.showSuccess(
-        'قُرئ الملف محلياً: ${_controller.sheet.rowCount} صفاً '
-        'و${_controller.sheet.columnCount} عموداً.',
+        context.l10n?.bpFileReadRows(
+              _controller.sheet.rowCount,
+              _controller.sheet.columnCount,
+            ) ??
+            'قُرئ الملف محلياً: ${_controller.sheet.rowCount} صفاً '
+                'و${_controller.sheet.columnCount} عموداً.',
       );
     }
   }
@@ -344,17 +405,21 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   Future<void> _generate() async {
     await _controller.generate();
     if (!mounted) return;
-    final String? error = _controller.errorAr;
+    final String? error = _errorText();
     if (error != null) {
       context.showError(error);
       return;
     }
     final BulkGenerationReport? report = _controller.report;
     if (report == null) return;
-    context.showSuccess(
-      'تم توليد ${report.generatedCount} سجل'
-      '${report.skippedCount > 0 ? ' وتخطّي ${report.skippedCount}' : ''}.',
-    );
+    final String generated =
+        context.l10n?.bpGeneratedReport(report.generatedCount) ??
+            'تم توليد ${report.generatedCount} سجل';
+    final String skippedSuffix = report.skippedCount > 0
+        ? context.l10n?.bpSkippedSuffix(report.skippedCount) ??
+            ' وتخطّي ${report.skippedCount}'
+        : '';
+    context.showSuccess('$generated$skippedSuffix.');
   }
 
   Future<void> _print() async {
@@ -367,7 +432,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       );
     } on Object {
       if (!mounted) return;
-      context.showError('تعذّر إرسال الملف إلى الطابعة.');
+      context.showError(context.l10n?.commonPrintFailed ?? 'تعذّر إرسال الملف إلى الطابعة.');
     }
   }
 
@@ -377,10 +442,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     try {
       await Printing.sharePdf(bytes: bytes, filename: 'joodcraft-batch.pdf');
       if (!mounted) return;
-      context.showSuccess('تم تجهيز الملف للحفظ.');
+      context.showSuccess(context.l10n?.bpReadyToSave ?? 'تم تجهيز الملف للحفظ.');
     } on Object {
       if (!mounted) return;
-      context.showError('تعذّر تصدير ملف PDF.');
+      context.showError(context.l10n?.commonExportFailed ?? 'تعذّر تصدير ملف PDF.');
     }
   }
 
@@ -461,10 +526,11 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('التوليد الجماعي من Excel', style: text.titleMedium),
+                Text(context.l10n?.bpTitle ?? 'التوليد الجماعي من Excel', style: text.titleMedium),
                 Text(
-                  'استورد ملف .xlsx أو .csv، اربط أعمدته بحقول القالب، ثم ولّد '
-                  'ملف PDF بصفحة لكل سجل — كل ذلك على جهازك بلا إنترنت.',
+                  context.l10n?.bpSubtitle ??
+                      'استورد ملف .xlsx أو .csv، اربط أعمدته بحقول القالب، ثم ولّد '
+                          'ملف PDF بصفحة لكل سجل — كل ذلك على جهازك بلا إنترنت.',
                   style: text.bodySmall,
                 ),
               ],
@@ -484,17 +550,17 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       builder: (BuildContext context, Widget? _) {
         final String activeTemplate = _selectedTemplateTitle ??
             _controller.templateTitle ??
-            _controller.kind.labelAr;
+            _kindLabel(_controller.kind);
         return _Card(
           icon: Icons.school_outlined,
-          title: '1) القالب',
+          title: context.l10n?.bpStepTemplate ?? '1) القالب',
           subtitle: _controller.document == null
-              ? 'جارٍ تحميل القالب النموذجي…'
-              : 'القالب: $activeTemplate • الحقول المطلوبة: '
+              ? context.l10n?.bpLoadingSampleTemplate ?? 'جارٍ تحميل القالب النموذجي…'
+              : '${context.l10n?.bpTemplateInfo(activeTemplate) ?? 'القالب: $activeTemplate • الحقول المطلوبة:'} '
                   '${_controller.availableFields.length}',
           // تحذير صريح: إمّا قالب بلا حقول `{{...}}` إطلاقاً، أو قالب فيه حقول
           // لكن بلا حقل اسم (فيُربط عمود الاسم بحقل تاريخ/رقم خطأً).
-          warning: _controller.templateWarningAr,
+          warning: _templateWarning(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -504,7 +570,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                       in BatchTemplateKind.values)
                     ButtonSegment<BatchTemplateKind>(
                       value: kind,
-                      label: Text(kind.labelAr),
+                      label: Text(_kindLabel(kind)),
                       icon: Icon(
                         kind == BatchTemplateKind.certificate
                             ? Icons.workspace_premium_outlined
@@ -546,9 +612,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
           Expanded(
             child: Text(
               _library.isBusy
-                  ? 'جارٍ تحميل قوالبك…'
-                  : 'لا توجد قوالب محفوظة بعد — أنشئ قالباً في المحرّر أو '
-                      'استورده من مكتبة القوالب ليظهر هنا.',
+                  ? context.l10n?.bpLoadingTemplates ?? 'جارٍ تحميل قوالبك…'
+                  : context.l10n?.bpNoTemplates ??
+                      'لا توجد قوالب محفوظة بعد — أنشئ قالباً في المحرّر أو '
+                          'استورده من مكتبة القوالب ليظهر هنا.',
               style: TextStyle(fontSize: 11.5, color: hintColor),
             ),
           ),
@@ -573,25 +640,31 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             initialValue: hasSelected ? _selectedTemplateId : '',
             isDense: true,
             isExpanded: true,
-            decoration: const InputDecoration(
-              labelText: 'قالب من قوالبي',
+            decoration: InputDecoration(
+              labelText: context.l10n?.bpTemplateFromMine ?? 'قالب من قوالبي',
               isDense: true,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             ),
             items: <DropdownMenuItem<String>>[
-              const DropdownMenuItem<String>(
+              DropdownMenuItem<String>(
                 value: '',
                 child: Text(
-                  '— القوالب النموذجية —',
-                  style: TextStyle(fontSize: 12),
+                  context.l10n?.bpSampleTemplatesHeader ?? '— القوالب النموذجية —',
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
               for (final TemplateLibraryEntry entry in mine)
                 DropdownMenuItem<String>(
                   value: entry.id,
                   child: Text(
-                    '${entry.title}  •  ${entry.isCloud ? 'سحابي' : 'محلي'}',
+                    context.l10n?.bpTemplateEntry(
+                          entry.title,
+                          entry.isCloud
+                              ? context.l10n?.bpSourceCloud ?? 'سحابي'
+                              : context.l10n?.bpSourceLocal ?? 'محلي',
+                        ) ??
+                        '${entry.title}  •  ${entry.isCloud ? 'سحابي' : 'محلي'}',
                     style: const TextStyle(fontSize: 12),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -620,14 +693,14 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
 
     return _Card(
       icon: Icons.upload_file_outlined,
-      title: '2) ملف البيانات',
+      title: context.l10n?.bpStepDataFile ?? '2) ملف البيانات',
       subtitle: _controller.loadingFile
-          ? 'جارٍ قراءة الملف…'
+          ? context.l10n?.bpReadingFile ?? 'جارٍ قراءة الملف…'
           : fileName == null
-              ? 'لم يُختَر ملف بعد — الصيغ المدعومة: '
+              ? '${context.l10n?.bpNoFileChosen ?? 'لم يُختَر ملف بعد — الصيغ المدعومة:'} '
                   '${SheetReaders.supportedLabel}'
-              : '$fileName — ${sheet.rowCount} صفاً، ${sheet.columnCount} عموداً'
-                  '${sheet.sheetName.isEmpty ? '' : ' (ورقة: ${sheet.sheetName})'}',
+              : '${context.l10n?.bpFileSummary(fileName, sheet.rowCount, sheet.columnCount) ?? '$fileName — ${sheet.rowCount} صفاً، ${sheet.columnCount} عموداً'}'
+                  '${sheet.sheetName.isEmpty ? '' : context.l10n?.bpSheetSuffix(sheet.sheetName) ?? ' (ورقة: ${sheet.sheetName})'}',
       // الأزرار داخل صف/التفاف تحتاج `minimumSize` منتهياً: الثيم العام يضبط
       // العرض الأدنى على ما لا نهاية (Size.fromHeight)، وهو صحيح داخل عمود
       // ممتدّ لكنه غير صالح داخل صف.
@@ -642,7 +715,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               FilledButton.icon(
                 onPressed: _controller.loadingFile ? null : _pickFile,
                 icon: const Icon(Icons.folder_open_rounded, size: 18),
-                label: const Text('اختيار ملف'),
+                label: Text(context.l10n?.bpChooseFile ?? 'اختيار ملف'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(150, 44),
                 ),
@@ -651,7 +724,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                 OutlinedButton.icon(
                   onPressed: _controller.clearFile,
                   icon: const Icon(Icons.close_rounded, size: 18),
-                  label: const Text('إزالة'),
+                  label: Text(context.l10n?.bpRemove ?? 'إزالة'),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(100, 44),
                   ),
@@ -699,8 +772,8 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             initialValue: selected,
             isDense: true,
             isExpanded: true,
-            decoration: const InputDecoration(
-              labelText: 'صف العناوين',
+            decoration: InputDecoration(
+              labelText: context.l10n?.bpHeaderRow ?? 'صف العناوين',
               isDense: true,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -709,7 +782,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               DropdownMenuItem<int>(
                 value: autoValue,
                 child: Text(
-                  'تلقائي (الصف ${_controller.effectiveHeaderRowIndex + 1})',
+                  context.l10n?.bpAutoRow(
+                        _controller.effectiveHeaderRowIndex + 1,
+                      ) ??
+                      'تلقائي (الصف ${_controller.effectiveHeaderRowIndex + 1})',
                   style: const TextStyle(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -718,7 +794,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                 DropdownMenuItem<int>(
                   value: i,
                   child: Text(
-                    'الصف ${i + 1}',
+                    context.l10n?.bpRow(i + 1) ?? 'الصف ${i + 1}',
                     style: const TextStyle(fontSize: 12),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -728,7 +804,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               DropdownMenuItem<int>(
                 value: autoValue,
                 child: Text(
-                  'تلقائي — الصف ${_controller.effectiveHeaderRowIndex + 1}',
+                  context.l10n?.bpAutoRowLong(
+                        _controller.effectiveHeaderRowIndex + 1,
+                      ) ??
+                      'تلقائي — الصف ${_controller.effectiveHeaderRowIndex + 1}',
                   style: const TextStyle(fontSize: 12),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -738,7 +817,11 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                   DropdownMenuItem<int>(
                     value: i,
                     child: Text(
-                      'الصف ${i + 1}: ${_rowPreview(samples[i])}',
+                      context.l10n?.bpRowPreview(
+                            i + 1,
+                            _rowPreview(samples[i]),
+                          ) ??
+                          'الصف ${i + 1}: ${_rowPreview(samples[i])}',
                       style: const TextStyle(fontSize: 12),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -762,7 +845,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   String _rowPreview(List<String> row) {
     final List<String> filled =
         row.where((String cell) => cell.isNotEmpty).toList(growable: false);
-    if (filled.isEmpty) return '(صف فارغ)';
+    if (filled.isEmpty) return context.l10n?.bpEmptyRow ?? '(صف فارغ)';
     final String text = filled.take(4).join(' • ');
     return text.length > 48 ? '${text.substring(0, 48)}…' : text;
   }
@@ -787,8 +870,8 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             initialValue: selected,
             isDense: true,
             isExpanded: true,
-            decoration: const InputDecoration(
-              labelText: 'ورقة العمل',
+            decoration: InputDecoration(
+              labelText: context.l10n?.bpWorksheet ?? 'ورقة العمل',
               isDense: true,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -823,25 +906,30 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
 
     return _Card(
       icon: Icons.alt_route_rounded,
-      title: '3) ربط الأعمدة بالحقول',
+      title: context.l10n?.bpStepMapping ?? '3) ربط الأعمدة بالحقول',
       subtitle: sheet.isEmpty
-          ? 'اختر ملفاً أولاً ليظهر جدول الربط.'
+          ? context.l10n?.bpChooseFileFirst ?? 'اختر ملفاً أولاً ليظهر جدول الربط.'
           : _controller.availableFields.isEmpty
                   && _controller.document != null
-              ? 'لا حقول ديناميكية في القالب الحالي.'
-              : 'مرتبط ${_controller.mapping.mappedCount} من '
-                  '${_controller.visibleColumns.length} عموداً',
+              ? context.l10n?.bpNoDynamicFields ?? 'لا حقول ديناميكية في القالب الحالي.'
+              : context.l10n?.bpMappedCount(
+                    _controller.mapping.mappedCount,
+                    _controller.visibleColumns.length,
+                  ) ??
+                  'مرتبط ${_controller.mapping.mappedCount} من '
+                      '${_controller.visibleColumns.length} عموداً',
       child: sheet.isEmpty
           ? Text(
-              'بعد اختيار الملف سيُقترح ربط تلقائي ذكي، ويمكنك تعديل كل عمود.',
+              context.l10n?.bpAutoMapHint ?? 'بعد اختيار الملف سيُقترح ربط تلقائي ذكي، ويمكنك تعديل كل عمود.',
               style: text.bodySmall,
             )
           : _controller.availableFields.isEmpty
               ? Text(
-                  'القالب المختار لا يحتوي حقولاً ديناميكية `{{...}}`، فلا شيء '
-                  'ليُربط بأعمدة الملف. افتح القالب في المحرّر وأدرج حقل '
-                  '«حقل ديناميكي» في خانة الاسم (مثل `{{اسم_المتدرب}}`) ثم '
-                  'احفظ القالب ثم أعد المحاولة.',
+                  context.l10n?.bpNoFieldsHelp ??
+                      'القالب المختار لا يحتوي حقولاً ديناميكية `{{...}}`، فلا شيء '
+                          'ليُربط بأعمدة الملف. افتح القالب في المحرّر وأدرج حقل '
+                          '«حقل ديناميكي» في خانة الاسم (مثل `{{اسم_المتدرب}}`) ثم '
+                          'احفظ القالب ثم أعد المحاولة.',
                   style: text.bodySmall,
                 )
               : Column(
@@ -854,7 +942,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                     TextButton.icon(
                       onPressed: _controller.autoMap,
                       icon: const Icon(Icons.auto_fix_high_rounded, size: 16),
-                      label: const Text('ربط تلقائي'),
+                      label: Text(context.l10n?.bpAutoMap ?? 'ربط تلقائي'),
                       style: TextButton.styleFrom(
                         minimumSize: const Size(130, 40),
                       ),
@@ -862,7 +950,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                     TextButton.icon(
                       onPressed: _controller.clearMapping,
                       icon: const Icon(Icons.link_off_rounded, size: 16),
-                      label: const Text('مسح الربط'),
+                      label: Text(context.l10n?.bpClearMapping ?? 'مسح الربط'),
                       style: TextButton.styleFrom(
                         minimumSize: const Size(120, 40),
                       ),
@@ -876,11 +964,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                     color: AppColors.warning,
                     soft: AppColors.warningSoft,
                     icon: Icons.person_search_rounded,
-                    text: 'هذا القالب لا يحتوي على حقل اسم ديناميكي '
-                        '{{اسم_المتدرب}} — لا تربط عمود الاسم بحقل تاريخ أو رقم '
-                        'إشعار، فقد يُطبع الاسم في مكانه الخطأ.\n'
-                        'اختر المفتاح {{اسم_المتدرب}} من قائمة العمود، أو '
-                        'حوّل نص الاسم الثابت من المحرّر إلى حقل ديناميكي.',
+                    text: context.l10n?.bpNameFieldWarning ??
+                        'هذا القالب لا يحتوي على حقل اسم ديناميكي '
+                            '{{اسم_المتدرب}} — لا تربط عمود الاسم بحقل تاريخ أو رقم '
+                            'إشعار، فقد يُطبع الاسم في مكانه الخطأ.\n'
+                            'اختر المفتاح {{اسم_المتدرب}} من قائمة العمود، أو '
+                            'حوّل نص الاسم الثابت من المحرّر إلى حقل ديناميكي.',
                   ),
                 // ربط سريع بضغطة واحدة: النصوص الثابتة التي تبدو أسماءً — هذه
                 // هي اللحظة التي كان المستخدم يعلق فيها بلا حقل اسم فيُجبر على
@@ -891,8 +980,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                       in _controller.nameFieldCandidates) ...<Widget>[
                   const SizedBox(height: AppTheme.space4),
                   Text(
-                    'نصّ ثابت يشبه الاسم: «${candidate.preview}» — لا يستبدله أي '
-                    'حقل ديناميكي.',
+                    context.l10n?.bpStaticNameHints(candidate.preview) ??
+                        'نصّ ثابت يشبه الاسم: «${candidate.preview}» — لا يستبدله أي '
+                            'حقل ديناميكي.',
                     style: TextStyle(
                       fontSize: 11.5,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -903,9 +993,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                     onPressed: () =>
                         unawaited(_convertTextToField(candidate.index)),
                     icon: const Icon(Icons.add_link_rounded, size: 16),
-                    label: const Text(
-                      'حوّله إلى حقل {{اسم_المتدرب}}',
-                      style: TextStyle(fontSize: 12),
+                    label: Text(
+                      context.l10n?.bpConvertToNameField ??
+                          'حوّله إلى حقل {{اسم_المتدرب}}',
+                      style: const TextStyle(fontSize: 12),
                     ),
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(0, 38),
@@ -920,16 +1011,22 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                     color: AppColors.danger,
                     soft: AppColors.dangerSoft,
                     icon: Icons.error_outline_rounded,
-                    text: 'الحقل «${_controller.mapping.duplicateFields.first}» '
-                        'مرتبط بأكثر من عمود. اجعل كل حقل بعمود واحد.',
+                    text: context.l10n?.bpDuplicateField(
+                          _controller.mapping.duplicateFields.first,
+                        ) ??
+                        'الحقل «${_controller.mapping.duplicateFields.first}» '
+                            'مرتبط بأكثر من عمود. اجعل كل حقل بعمود واحد.',
                   ),
                 if (_controller.unmappedColumnCount > 0)
                   _Note(
                     color: AppColors.warning,
                     soft: AppColors.warningSoft,
                     icon: Icons.info_outline_rounded,
-                    text: '${_controller.unmappedColumnCount} عموداً بلا ربط — '
-                        'لن تُستخدم بياناته في الشهادات.',
+                    text: context.l10n?.bpUnmappedColumns(
+                          _controller.unmappedColumnCount,
+                        ) ??
+                        '${_controller.unmappedColumnCount} عموداً بلا ربط — '
+                            'لن تُستخدم بياناته في الشهادات.',
                   ),
               ],
             ),
@@ -940,7 +1037,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     final SheetData sheet = _controller.sheet;
     final String header = column < sheet.headers.length
         ? sheet.headers[column]
-        : 'عمود ${column + 1}';
+        : context.l10n?.bpColumn(column + 1) ?? 'عمود ${column + 1}';
     final String preview = sheet.rowCount == 0
         ? ''
         : sheet.rowAt(0).cellAt(column);
@@ -969,7 +1066,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  preview.isEmpty ? '(فارغ)' : preview,
+                  preview.isEmpty
+                      ? context.l10n?.bpEmptyCell ?? '(فارغ)'
+                      : preview,
                   style: TextStyle(
                     fontSize: 11,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -1004,7 +1103,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(
-                      key.isEmpty ? '— غير مربوط —' : key,
+                      key.isEmpty
+                          ? context.l10n?.bpUnmapped ?? '— غير مربوط —'
+                          : key,
                       style: const TextStyle(fontSize: 12),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1016,7 +1117,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                     value: key,
                     child: Text(
                       key.isEmpty
-                          ? '— غير مربوط —'
+                          ? context.l10n?.bpUnmapped ?? '— غير مربوط —'
                           : '$key  •  ${_controller.sampleOf(key)}',
                       style: const TextStyle(fontSize: 12),
                       overflow: TextOverflow.ellipsis,
@@ -1038,7 +1139,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
 
     return _Card(
       icon: Icons.rule_folder_outlined,
-      title: '4) الخلايا الفارغة والبيانات الناقصة',
+      title: context.l10n?.bpStepMissing ?? '4) الخلايا الفارغة والبيانات الناقصة',
       subtitle: _controller.policy.descriptionAr,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1076,7 +1177,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               ),
           ],
           if (sheet.isEmpty)
-            Text('لا ملاحظات قبل اختيار الملف.', style: text.bodySmall),
+            Text(context.l10n?.bpNoNotes ?? 'لا ملاحظات قبل اختيار الملف.', style: text.bodySmall),
         ],
       ),
     );
@@ -1086,13 +1187,15 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     final BulkGenerationReport? report = _controller.report;
     final ColorScheme scheme = Theme.of(context).colorScheme;
     final TextTheme text = Theme.of(context).textTheme;
+    final String? errorText = _errorText();
 
     return _Card(
       icon: Icons.play_circle_outline_rounded,
-      title: '5) التوليد',
+      title: context.l10n?.bpStepGenerate ?? '5) التوليد',
       subtitle: _controller.busy
-          ? 'جارٍ التوليد… ${_controller.progressLabelAr}'
-          : 'ملف PDF واحد، صفحة لكل سجل مُصدر.',
+          ? context.l10n?.bpGenerating(_controller.progressLabelAr) ??
+              'جارٍ التوليد… ${_controller.progressLabelAr}'
+          : context.l10n?.bpGenerateHint ?? 'ملف PDF واحد، صفحة لكل سجل مُصدر.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -1100,12 +1203,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             LinearProgressIndicator(value: _controller.progress),
             const SizedBox(height: AppTheme.space8),
           ],
-          if (_controller.errorAr != null)
+          if (errorText != null)
             _Note(
               color: AppColors.danger,
               soft: AppColors.dangerSoft,
               icon: Icons.error_outline_rounded,
-              text: _controller.errorAr!,
+              text: errorText,
             ),
           // شرح سبب تعطيل الزر: الغموض هنا هو ما دفع المستخدم لربط عمود
           // الاسم بحقل تاريخ «ليتفعّل الزر».
@@ -1115,17 +1218,18 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               soft: AppColors.warningSoft,
               icon: Icons.info_outline_rounded,
               text: _controller.sheet.isEmpty
-                  ? 'اختر ملف بيانات أولاً ليُفعَّل التوليد.'
+                  ? context.l10n?.bpGeneratePickFile ?? 'اختر ملف بيانات أولاً ليُفعَّل التوليد.'
                   : _controller.mapping.isNotEmpty
-                      ? 'الربط غير صالح — لا تُربط الحقول الحقل نفسه بعمودين.'
-                      : 'اربط عموداً واحداً على الأقل بحقل من القالب ليُفعَّل '
-                          'التوليد.',
+                      ? context.l10n?.bpMappingInvalid ?? 'الربط غير صالح — لا تُربط الحقول الحقل نفسه بعمودين.'
+                      : context.l10n?.bpMapAtLeastOne ??
+                          'اربط عموداً واحداً على الأقل بحقل من القالب ليُفعَّل '
+                              'التوليد.',
             ),
           FilledButton.icon(
             onPressed: _controller.canGenerate ? _generate : null,
             icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
             label: Text(
-              report == null ? 'توليد الشهادات' : 'إعادة التوليد',
+              report == null ? context.l10n?.bpGenerateCertificates ?? 'توليد الشهادات' : context.l10n?.bpRegenerate ?? 'إعادة التوليد',
             ),
           ),
           if (report != null) ...<Widget>[
@@ -1135,38 +1239,48 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               runSpacing: AppTheme.space8,
               children: <Widget>[
                 _Stat(
-                  label: 'مُصدرة',
+                  label: context.l10n?.bpStatGenerated ?? 'مُصدرة',
                   value: '${report.generatedCount}',
                   color: scheme.success,
                 ),
                 _Stat(
-                  label: 'متخطّاة',
+                  label: context.l10n?.bpStatSkipped ?? 'متخطّاة',
                   value: '${report.skippedCount}',
                   color: report.skippedCount == 0
                       ? scheme.onSurfaceVariant
                       : scheme.warning,
                 ),
                 _Stat(
-                  label: 'صفحات',
+                  label: context.l10n?.bpStatPages ?? 'صفحات',
                   value: '${report.pageCount}',
                   color: scheme.primary,
                 ),
                 _Stat(
-                  label: 'الحجم',
-                  value: '${(report.byteSize / 1024).toStringAsFixed(0)} ك.ب',
+                  label: context.l10n?.bpStatSize ?? 'الحجم',
+                  value: context.l10n?.bpKilobytes(
+                        (report.byteSize / 1024).toStringAsFixed(0),
+                      ) ??
+                      '${(report.byteSize / 1024).toStringAsFixed(0)} ك.ب',
                   color: scheme.onSurfaceVariant,
                 ),
                 _Stat(
-                  label: 'الزمن',
-                  value: '${report.elapsed.inMilliseconds} م.ث',
+                  label: context.l10n?.bpStatTime ?? 'الزمن',
+                  value: context.l10n?.bpMilliseconds(
+                        report.elapsed.inMilliseconds,
+                      ) ??
+                      '${report.elapsed.inMilliseconds} م.ث',
                   color: scheme.onSurfaceVariant,
                 ),
               ],
             ),
             const SizedBox(height: AppTheme.space8),
             Text(
-              'اكتمال ${(report.successRate * 100).round()}% من '
-              '${report.totalRows} صفاً.',
+              context.l10n?.bpCompletion(
+                    (report.successRate * 100).round(),
+                    report.totalRows,
+                  ) ??
+                  'اكتمال ${(report.successRate * 100).round()}% من '
+                      '${report.totalRows} صفاً.',
               style: text.bodySmall,
             ),
             const SizedBox(height: AppTheme.space8),
@@ -1175,7 +1289,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                 OutlinedButton.icon(
                   onPressed: report.hasOutput ? _print : null,
                   icon: const Icon(Icons.print_outlined, size: 18),
-                  label: const Text('طباعة'),
+                  label: Text(context.l10n?.commonPrint ?? 'طباعة'),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(120, 44),
                   ),
@@ -1184,7 +1298,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                 FilledButton.icon(
                   onPressed: report.hasOutput ? _export : null,
                   icon: const Icon(Icons.download_rounded, size: 18),
-                  label: const Text('تصدير PDF'),
+                  label: Text(context.l10n?.commonExportPdf ?? 'تصدير PDF'),
                   style: FilledButton.styleFrom(
                     minimumSize: const Size(150, 44),
                   ),
@@ -1203,12 +1317,16 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             ],
             if (report.skipped.isNotEmpty) ...<Widget>[
               const SizedBox(height: AppTheme.space8),
-              Text('صفوف لم تُصدر:', style: text.titleSmall),
+              Text(context.l10n?.bpSkippedRows ?? 'صفوف لم تُصدر:', style: text.titleSmall),
               for (final BulkRowResult row in report.skipped)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    'صف ${row.rowNumber}: ${row.skipReasonAr ?? ''}',
+                    context.l10n?.bpRowSkipReason(
+                          row.rowNumber,
+                          row.skipReasonAr ?? '',
+                        ) ??
+                        'صف ${row.rowNumber}: ${row.skipReasonAr ?? ''}',
                     style: text.bodySmall?.copyWith(color: scheme.danger),
                   ),
                 ),
@@ -1253,11 +1371,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             Icon(Icons.picture_as_pdf_outlined,
                 size: 40, color: Theme.of(context).colorScheme.primary),
             const SizedBox(height: AppTheme.space12),
-            Text('المعاينة تظهر هنا', style: text.titleMedium),
+            Text(context.l10n?.bpPreviewHere ?? 'المعاينة تظهر هنا', style: text.titleMedium),
             const SizedBox(height: AppTheme.space8),
             Text(
-              'اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — '
-              'سترى أول صفحة من الملف الناتج هنا مباشرة.',
+              context.l10n?.bpPreviewHint ??
+                  'اختر ملف البيانات، اضبط الربط، ثم اضغط «توليد الشهادات» — '
+                      'سترى أول صفحة من الملف الناتج هنا مباشرة.',
               style: text.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -1291,19 +1410,20 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               Icon(Icons.touch_app_outlined, size: 20, color: scheme.primary),
               const SizedBox(width: 8),
               Expanded(
-                child: Text('تعيين الحقول بالنقر', style: text.titleMedium),
+                child: Text(context.l10n?.bpAssignByTapTitle ?? 'تعيين الحقول بالنقر', style: text.titleMedium),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            'انقر أي نص في القالب لتعيينه إلى حقل ديناميكي بنفسك. لن يُمسّ أي '
-            'عنصر آخر — لا التاريخ ولا اسم المدير ولا أي نص ثابت.',
+            context.l10n?.bpAssignByTapBody ??
+                'انقر أي نص في القالب لتعيينه إلى حقل ديناميكي بنفسك. لن يُمسّ أي '
+                    'عنصر آخر — لا التاريخ ولا اسم المدير ولا أي نص ثابت.',
             style: text.bodySmall,
           ),
           const SizedBox(height: AppTheme.space12),
           if (texts.isEmpty)
-            Text('لا نصوص في هذا القالب.', style: text.bodySmall)
+            Text(context.l10n?.bpNoTexts ?? 'لا نصوص في هذا القالب.', style: text.bodySmall)
           else
             for (final MapEntry<int, TextElement> entry in texts)
               _assignableElementRow(entry.key, entry.value),
@@ -1316,8 +1436,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   Widget _assignableElementRow(int index, TextElement element) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     final bool hasField = element.hasDynamicFields;
-    final String preview =
-        element.text.trim().isEmpty ? '(نص فارغ)' : element.text.trim();
+    final String preview = element.text.trim().isEmpty
+        ? context.l10n?.bpEmptyText ?? '(نص فارغ)'
+        : element.text.trim();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTheme.space8),
@@ -1356,8 +1477,10 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                       const SizedBox(height: 2),
                       Text(
                         hasField
-                            ? 'حقل ديناميكي — انقر لتغييره'
-                            : 'نص ثابت — انقر للتعيين',
+                            ? context.l10n?.bpDynamicFieldTap ??
+                                'حقل ديناميكي — انقر لتغييره'
+                            : context.l10n?.bpStaticTextTap ??
+                                'نص ثابت — انقر للتعيين',
                         style: TextStyle(
                           fontSize: 10.5,
                           color: scheme.onSurfaceVariant,
@@ -1369,9 +1492,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                 const SizedBox(width: 8),
                 TextButton(
                   onPressed: () => unawaited(_assignFieldToElement(index)),
-                  child: const Text(
-                    'تعيين حقل',
-                    style: TextStyle(fontSize: 12),
+                  child: Text(
+                    context.l10n?.bpAssignField ?? 'تعيين حقل',
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
               ],

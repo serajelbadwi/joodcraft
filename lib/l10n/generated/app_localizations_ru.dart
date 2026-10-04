@@ -1136,4 +1136,638 @@ class AppLocalizationsRu extends AppLocalizations {
   String amMakeType(Object type) {
     return 'Сделать тип: $type';
   }
+
+  @override
+  String get commonRetry => 'Повторить';
+
+  @override
+  String get commonPrint => 'Печать';
+
+  @override
+  String get commonExportPdf => 'Экспорт PDF';
+
+  @override
+  String get commonExportFailed => 'Не удалось экспортировать PDF-файл.';
+
+  @override
+  String get commonPrintFailed => 'Не удалось отправить файл на печать.';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'Файл готов к сохранению как $name.';
+  }
+
+  @override
+  String get commonGenerating => 'Генерация…';
+
+  @override
+  String get commonDataPanelTitle => 'Пример данных';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count элемент(ов)';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • динамические поля';
+
+  @override
+  String get evStatusUnsaved => ' • несохранённые изменения';
+
+  @override
+  String get tevNewTemplateTitle => 'Новый шаблон';
+
+  @override
+  String get tevUnsavedTitle => 'Несохранённые изменения';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return 'У вас есть несохранённые изменения в «$title». Сохранить их перед выходом?';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'Выйти без сохранения';
+
+  @override
+  String get tevSaveAndLeave => 'Сохранить и выйти';
+
+  @override
+  String get tevViewMode => 'Режим просмотра';
+
+  @override
+  String get tevModeEditor => 'Редактор';
+
+  @override
+  String get tevModePreview => 'Предпросмотр PDF';
+
+  @override
+  String get tevPaperDirection => 'Ориентация листа';
+
+  @override
+  String get tevWidthCm => 'Ширина (см)';
+
+  @override
+  String get tevHeightCm => 'Высота (см)';
+
+  @override
+  String get tevUndo => 'Отменить (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'Повторить (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'Сетка привязки';
+
+  @override
+  String get tevGuidesOn => 'Умные направляющие: вкл. (отключить)';
+
+  @override
+  String get tevGuidesOff => 'Умные направляющие: выкл. (включить)';
+
+  @override
+  String get tevZoom => 'Масштаб';
+
+  @override
+  String get tevDocumentBackground => 'Фон документа';
+
+  @override
+  String get tevFrameFromLibrary => 'Рамка из моей библиотеки';
+
+  @override
+  String get tevChangeTitle => 'Изменить название шаблона';
+
+  @override
+  String get tevMyTemplates => 'Мои шаблоны';
+
+  @override
+  String get tevSaveAs => 'Сохранить как';
+
+  @override
+  String get tevSaveTemplate => 'Сохранить шаблон';
+
+  @override
+  String get tevSaveUnavailable => 'Сохранение недоступно';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'Для сохранения нужно подключение к проекту Supabase. Запустите приложение с ключами проекта (env.json).';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'Отсутствующие ресурсы: $list — выберите рамку/ресурс заново в «Моя библиотека».';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'Библиотека шаблонов требует подключения к проекту Supabase.';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '«$title» открыт.';
+  }
+
+  @override
+  String get tevTitleHint =>
+      'напр. сертификат об окончании курса управления проектами';
+
+  @override
+  String get tevContinue => 'Продолжить';
+
+  @override
+  String get tevSavedTemplates => 'Мои сохранённые шаблоны';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'Сохранённых шаблонов пока нет. Сохраните через кнопку «Сохранить шаблон».';
+
+  @override
+  String get ecIncrease => 'Увеличить';
+
+  @override
+  String get ecDecrease => 'Уменьшить';
+
+  @override
+  String get ecQuickPalette => 'Быстрая палитра';
+
+  @override
+  String get ecFullPicker => 'Полный выбор цвета';
+
+  @override
+  String get ecRemoveColor => 'Убрать цвет';
+
+  @override
+  String get ecNone => 'Нет';
+
+  @override
+  String get ecPickColorTitle => 'Выбрать цвет';
+
+  @override
+  String get ecApply => 'Применить';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '«$name» добавлен как фон документа.';
+  }
+
+  @override
+  String get cfpUploadTooltip => 'Загрузить свой шрифт (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'Управление загруженными шрифтами';
+
+  @override
+  String get cfpNotice =>
+      'Загруженные шрифты хранятся только на устройстве и сразу используются здесь и при печати — без интернета.';
+
+  @override
+  String get cfpMyFonts => 'Мои шрифты';
+
+  @override
+  String get cfpNoFonts => 'Шрифты ещё не загружены';
+
+  @override
+  String get cfpBuiltinOption => 'Нет (встроенный шрифт)';
+
+  @override
+  String get cfpPickTitle => 'Выберите файл шрифта (TTF или OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'Не удалось открыть выбор файлов: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return 'Не удалось прочитать \"$name\": $error';
+  }
+
+  @override
+  String get cfpFontAdded => 'Шрифт добавлен и сразу применён.';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return 'Добавлено шрифтов: $count.';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'Моя библиотека шрифтов';
+
+  @override
+  String get cfpLibraryNotice =>
+      'Все шрифты хранятся только на устройстве. Внимание: удаление используемого шаблоном шрифта вернёт шаблон к встроенному шрифту, а не приведёт к ошибке.';
+
+  @override
+  String get cfpEmpty => 'Загруженных шрифтов пока нет.';
+
+  @override
+  String get cfpCoverageFull => 'Полное покрытие арабского';
+
+  @override
+  String get cfpCoveragePartial => 'Частичное покрытие арабского';
+
+  @override
+  String get cfpUploadNew => 'Загрузить новый шрифт';
+
+  @override
+  String get ptpPrepError =>
+      'Не удалось подготовить предпросмотр. Проверьте файл шаблона.';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms мс — $kb КБ';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— предпросмотр обновляется автоматически';
+
+  @override
+  String get ptpGenerateFailedTitle => 'Не удалось создать предпросмотр';
+
+  @override
+  String get ptpPreparingTitle => 'Подготовка движка…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'Загружаются встроенные шрифты и создаётся первая версия файла.';
+
+  @override
+  String get ptpShowFailedTitle => 'Не удалось показать предпросмотр';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'Сборка с явными значениями переопределяет файл: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'Фон документа из моей библиотеки';
+
+  @override
+  String get tevAddElement => 'Добавить элемент';
+
+  @override
+  String get commonUndo => 'Отменить';
+
+  @override
+  String get bpTitle => 'Массовая генерация из Excel';
+
+  @override
+  String get bpSubtitle =>
+      'Импортируйте файл .xlsx или .csv, сопоставьте столбцы с полями шаблона и создайте PDF со страницей на запись — всё на устройстве, офлайн.';
+
+  @override
+  String get bpStepTemplate => '1) Шаблон';
+
+  @override
+  String get bpLoadingSampleTemplate => 'Загрузка шаблона-образца…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'Шаблон: $name • обязательные поля:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'Загрузка ваших шаблонов…';
+
+  @override
+  String get bpNoTemplates =>
+      'Сохранённых шаблонов пока нет — создайте в редакторе или импортируйте из библиотеки.';
+
+  @override
+  String get bpTemplateFromMine => 'Шаблон из моих шаблонов';
+
+  @override
+  String get bpSampleTemplatesHeader => '— шаблоны-образцы —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'Облако';
+
+  @override
+  String get bpSourceLocal => 'Локальный';
+
+  @override
+  String get bpStepDataFile => '2) Файл данных';
+
+  @override
+  String get bpReadingFile => 'Чтение файла…';
+
+  @override
+  String get bpNoFileChosen => 'Файл ещё не выбран — поддерживаемые форматы:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows строк, $cols столбцов';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (лист: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'Выбрать файл';
+
+  @override
+  String get bpRemove => 'Убрать';
+
+  @override
+  String get bpHeaderRow => 'Строка заголовков';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'Автоматически (строка $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'Строка $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'Автоматически — строка $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'Строка $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(пустая строка)';
+
+  @override
+  String get bpWorksheet => 'Лист';
+
+  @override
+  String get bpPickDataFile => 'Выберите файл данных (Excel или CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'Не удалось прочитать файл: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'Файл прочитан локально: $rows строк и $cols столбцов.';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'Не удалось сохранить изменение в шаблоне: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'Назначить динамическое поле этому элементу';
+
+  @override
+  String get bpMapFieldBody =>
+      'Заменится только текст этого элемента; другие элементы не затрагиваются.';
+
+  @override
+  String get bpUndoConvert => 'Преобразование отменено.';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'Преобразование отменено, текст восстановлен в шаблоне.';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'Не удалось восстановить текст в шаблоне: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return 'Создано записей: $count';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' и пропущено $count';
+  }
+
+  @override
+  String get bpReadyToSave => 'Файл готов к сохранению.';
+
+  @override
+  String get bpStepMapping => '3) Сопоставить столбцы с полями';
+
+  @override
+  String get bpChooseFileFirst =>
+      'Сначала выберите файл, чтобы показать таблицу сопоставления.';
+
+  @override
+  String get bpNoDynamicFields => 'В текущем шаблоне нет динамических полей.';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return 'Сопоставлено $mapped из $total столбцов';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'После выбора файла предлагается умное автосопоставление; каждый столбец можно изменить.';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'В выбранном шаблоне нет динамических полей, поэтому сопоставлять нечего. Откройте шаблон в редакторе, вставьте «динамическое поле» в слот имени, сохраните и повторите.';
+
+  @override
+  String get bpAutoMap => 'Автосопоставление';
+
+  @override
+  String get bpClearMapping => 'Очистить сопоставление';
+
+  @override
+  String get bpNameFieldWarning =>
+      'В этом шаблоне нет динамического поля имени — не сопоставляйте столбец имени с полем даты или номера, иначе имя может напечататься не там. Выберите ключ имени из списка столбца или преобразуйте фиксированный текст имени в редакторе в динамическое поле.';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'Фиксированный текст, похожий на имя: «$preview» — ни одно динамическое поле его не заменяет.';
+  }
+
+  @override
+  String get bpConvertToNameField => 'Преобразовать в поле имени участника';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return 'Поле «$field» сопоставлено нескольким столбцам. Сопоставьте каждое поле одному столбцу.';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count столбцов без сопоставления — их данные не будут использованы.';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'Столбец $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(пусто)';
+
+  @override
+  String get bpUnmapped => '— не сопоставлено —';
+
+  @override
+  String get bpStepMissing => '4) Пустые ячейки и недостающие данные';
+
+  @override
+  String get bpNoNotes => 'Нет замечаний до выбора файла.';
+
+  @override
+  String get bpStepGenerate => '5) Генерация';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'Генерация… $progress';
+  }
+
+  @override
+  String get bpGenerateHint => 'Один PDF-файл, страница на каждую запись.';
+
+  @override
+  String get bpGeneratePickFile =>
+      'Сначала выберите файл данных, чтобы включить генерацию.';
+
+  @override
+  String get bpMappingInvalid =>
+      'Сопоставление неверно — одно поле сопоставлено двум столбцам.';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'Сопоставьте хотя бы один столбец с полем шаблона, чтобы включить генерацию.';
+
+  @override
+  String get bpGenerateCertificates => 'Создать сертификаты';
+
+  @override
+  String get bpRegenerate => 'Перегенерировать';
+
+  @override
+  String get bpStatGenerated => 'Создано';
+
+  @override
+  String get bpStatSkipped => 'Пропущено';
+
+  @override
+  String get bpStatPages => 'Страницы';
+
+  @override
+  String get bpStatSize => 'Размер';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value КБ';
+  }
+
+  @override
+  String get bpStatTime => 'Время';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value мс';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return 'Завершено $pct% из $total строк.';
+  }
+
+  @override
+  String get bpSkippedRows => 'Строки без генерации:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'Строка $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'Предпросмотр появится здесь';
+
+  @override
+  String get bpPreviewHint =>
+      'Выберите файл данных, настройте сопоставление и нажмите «Создать сертификаты» — первая страница появится здесь.';
+
+  @override
+  String get bpAssignByTapTitle => 'Назначайте поля касанием';
+
+  @override
+  String get bpAssignByTapBody =>
+      'Нажмите любой текст в шаблоне, чтобы назначить его динамическому полю. Другие элементы не затрагиваются — ни дата, ни имя руководителя, ни фиксированный текст.';
+
+  @override
+  String get bpNoTexts => 'В этом шаблоне нет текстов.';
+
+  @override
+  String get bpEmptyText => '(пустой текст)';
+
+  @override
+  String get bpDynamicFieldTap => 'Динамическое поле — нажмите, чтобы изменить';
+
+  @override
+  String get bpStaticTextTap =>
+      'Фиксированный текст — нажмите, чтобы назначить';
+
+  @override
+  String get bpAssignField => 'Назначить поле';
+
+  @override
+  String get bpKindCertificate => 'Сертификат';
+
+  @override
+  String get bpKindContract => 'Договор';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'Не удалось загрузить шаблон-образец: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'Не удалось прочитать лист: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'Не удалось обновить строку заголовков: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst =>
+      'Выберите шаблон (сертификат или договор) перед генерацией.';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind массово — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'Не удалось выполнить массовую генерацию: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'В этом шаблоне нет динамических полей — данные не будут меняться между записями. Добавьте поле «имя участника» из панели редактора и сохраните шаблон.';
+
+  @override
+  String get bpWarnNoNameField =>
+      'В этом шаблоне нет динамического поля имени — столбец имени может сопоставиться с полем даты или номера, и имя напечатается не там. Преобразуйте фиксированный текст в поле или измените шаблон.';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'Этот элемент назначен $token для текущей генерации — остальные элементы не затронуты. Сохраните шаблон, чтобы закрепить изменение.';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'Этот элемент назначен $token, изменение сохранено в шаблоне. Остальные элементы не затронуты.';
+  }
 }

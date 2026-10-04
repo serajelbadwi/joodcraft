@@ -1133,4 +1133,637 @@ class AppLocalizationsEn extends AppLocalizations {
   String amMakeType(Object type) {
     return 'Make type: $type';
   }
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get commonPrint => 'Print';
+
+  @override
+  String get commonExportPdf => 'Export PDF';
+
+  @override
+  String get commonExportFailed => 'Couldn’t export the PDF file.';
+
+  @override
+  String get commonPrintFailed => 'Couldn’t send the file to the printer.';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'The file is ready to save as $name.';
+  }
+
+  @override
+  String get commonGenerating => 'Generating…';
+
+  @override
+  String get commonDataPanelTitle => 'Sample data';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count element(s)';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • dynamic fields';
+
+  @override
+  String get evStatusUnsaved => ' • unsaved changes';
+
+  @override
+  String get tevNewTemplateTitle => 'New template';
+
+  @override
+  String get tevUnsavedTitle => 'Unsaved changes';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return 'You have unsaved changes to “$title”. Do you want to save them before leaving?';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'Leave without saving';
+
+  @override
+  String get tevSaveAndLeave => 'Save and leave';
+
+  @override
+  String get tevViewMode => 'View mode';
+
+  @override
+  String get tevModeEditor => 'Editor';
+
+  @override
+  String get tevModePreview => 'PDF preview';
+
+  @override
+  String get tevPaperDirection => 'Paper orientation';
+
+  @override
+  String get tevWidthCm => 'Width (cm)';
+
+  @override
+  String get tevHeightCm => 'Height (cm)';
+
+  @override
+  String get tevUndo => 'Undo (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'Redo (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'Snap grid';
+
+  @override
+  String get tevGuidesOn => 'Smart guides: on (turn off)';
+
+  @override
+  String get tevGuidesOff => 'Smart guides: off (turn on)';
+
+  @override
+  String get tevZoom => 'Zoom';
+
+  @override
+  String get tevDocumentBackground => 'Document background';
+
+  @override
+  String get tevFrameFromLibrary => 'Frame from my asset library';
+
+  @override
+  String get tevChangeTitle => 'Change template title';
+
+  @override
+  String get tevMyTemplates => 'My templates';
+
+  @override
+  String get tevSaveAs => 'Save as';
+
+  @override
+  String get tevSaveTemplate => 'Save template';
+
+  @override
+  String get tevSaveUnavailable => 'Saving unavailable';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'Saving requires a connection to a Supabase project. Run the app with your project keys (env.json) to save templates.';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'Missing assets: $list — re-select the frame/asset from “My asset library” to avoid blanks.';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'The template library requires a connection to a Supabase project.';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '“$title” was opened.';
+  }
+
+  @override
+  String get tevTitleHint =>
+      'e.g. Project Management course completion certificate';
+
+  @override
+  String get tevContinue => 'Continue';
+
+  @override
+  String get tevSavedTemplates => 'My saved templates';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'No saved templates yet. Save one from the “Save template” button.';
+
+  @override
+  String get ecIncrease => 'Increase';
+
+  @override
+  String get ecDecrease => 'Decrease';
+
+  @override
+  String get ecQuickPalette => 'Quick palette';
+
+  @override
+  String get ecFullPicker => 'Full colour picker';
+
+  @override
+  String get ecRemoveColor => 'Remove colour';
+
+  @override
+  String get ecNone => 'None';
+
+  @override
+  String get ecPickColorTitle => 'Pick a colour';
+
+  @override
+  String get ecApply => 'Apply';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '“$name” was added as the document background.';
+  }
+
+  @override
+  String get cfpUploadTooltip => 'Upload a custom font (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'Manage uploaded fonts';
+
+  @override
+  String get cfpNotice =>
+      'Uploaded fonts are saved on your device only and used immediately here and in printing — without internet.';
+
+  @override
+  String get cfpMyFonts => 'My custom fonts';
+
+  @override
+  String get cfpNoFonts => 'No fonts uploaded yet';
+
+  @override
+  String get cfpBuiltinOption => 'None (built-in font)';
+
+  @override
+  String get cfpPickTitle => 'Pick a font file (TTF or OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'Couldn’t open the file picker: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return 'Couldn’t read \"$name\": $error';
+  }
+
+  @override
+  String get cfpFontAdded => 'The font was added and applied immediately.';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return '$count fonts were added.';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'My custom fonts library';
+
+  @override
+  String get cfpLibraryNotice =>
+      'All fonts are saved on your device only. Warning: deleting a font used by a template reverts that template to the built-in font instead of failing.';
+
+  @override
+  String get cfpEmpty => 'No uploaded fonts yet.';
+
+  @override
+  String get cfpCoverageFull => 'Full Arabic coverage';
+
+  @override
+  String get cfpCoveragePartial => 'Partial Arabic coverage';
+
+  @override
+  String get cfpUploadNew => 'Upload a new font';
+
+  @override
+  String get ptpPrepError =>
+      'Couldn’t prepare the preview. Check the template file.';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms ms — $kb KB';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— the preview updates automatically';
+
+  @override
+  String get ptpGenerateFailedTitle => 'Couldn’t generate the preview';
+
+  @override
+  String get ptpPreparingTitle => 'Preparing the engine…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'Bundled fonts are being loaded and the first file version generated.';
+
+  @override
+  String get ptpShowFailedTitle => 'Couldn’t display the preview';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'An alternative build with explicit values overrides the file: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'Document background from my asset library';
+
+  @override
+  String get tevAddElement => 'Add element';
+
+  @override
+  String get commonUndo => 'Undo';
+
+  @override
+  String get bpTitle => 'Batch generation from Excel';
+
+  @override
+  String get bpSubtitle =>
+      'Import an .xlsx or .csv file, map its columns to template fields, then generate a PDF with a page per record — all on your device, offline.';
+
+  @override
+  String get bpStepTemplate => '1) Template';
+
+  @override
+  String get bpLoadingSampleTemplate => 'Loading the sample template…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'Template: $name • required fields:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'Loading your templates…';
+
+  @override
+  String get bpNoTemplates =>
+      'No saved templates yet — create one in the editor or import it from the template library to show it here.';
+
+  @override
+  String get bpTemplateFromMine => 'Template from my templates';
+
+  @override
+  String get bpSampleTemplatesHeader => '— sample templates —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'Cloud';
+
+  @override
+  String get bpSourceLocal => 'Local';
+
+  @override
+  String get bpStepDataFile => '2) Data file';
+
+  @override
+  String get bpReadingFile => 'Reading the file…';
+
+  @override
+  String get bpNoFileChosen => 'No file chosen yet — supported formats:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows rows, $cols columns';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (sheet: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'Choose file';
+
+  @override
+  String get bpRemove => 'Remove';
+
+  @override
+  String get bpHeaderRow => 'Header row';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'Automatic (row $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'Row $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'Automatic — row $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'Row $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(empty row)';
+
+  @override
+  String get bpWorksheet => 'Worksheet';
+
+  @override
+  String get bpPickDataFile => 'Choose the data file (Excel or CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'Couldn’t read the file: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'The file was read locally: $rows rows and $cols columns.';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'Couldn’t save the change to the template: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'Assign a dynamic field to this element';
+
+  @override
+  String get bpMapFieldBody =>
+      'Only this element’s text will be replaced by a field; no other element is affected.';
+
+  @override
+  String get bpUndoConvert => 'The conversion was undone.';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'The conversion was undone and the text restored in the template.';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'Couldn’t restore the text in the template: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return 'Generated $count record(s)';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' and skipped $count';
+  }
+
+  @override
+  String get bpReadyToSave => 'The file is ready to save.';
+
+  @override
+  String get bpStepMapping => '3) Map columns to fields';
+
+  @override
+  String get bpChooseFileFirst =>
+      'Choose a file first to show the mapping table.';
+
+  @override
+  String get bpNoDynamicFields => 'No dynamic fields in the current template.';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return 'Mapped $mapped of $total columns';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'After choosing the file, a smart auto-mapping is suggested; you can edit each column.';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'The chosen template has no dynamic fields, so there is nothing to map to the file columns. Open the template in the editor, insert a “dynamic field” in the name slot, save the template, then try again.';
+
+  @override
+  String get bpAutoMap => 'Auto-map';
+
+  @override
+  String get bpClearMapping => 'Clear mapping';
+
+  @override
+  String get bpNameFieldWarning =>
+      'This template has no dynamic name field — don’t map the name column to a date or reference field, or the name may print in the wrong place. Pick the name key from the column list, or convert the fixed name text in the editor into a dynamic field.';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'Fixed text that looks like a name: “$preview” — no dynamic field replaces it.';
+  }
+
+  @override
+  String get bpConvertToNameField => 'Convert it to a trainee-name field';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return 'The field “$field” is mapped to more than one column. Map each field to one column.';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count unmapped column(s) — their data won’t be used in the certificates.';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'Column $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(empty)';
+
+  @override
+  String get bpUnmapped => '— unmapped —';
+
+  @override
+  String get bpStepMissing => '4) Empty cells and missing data';
+
+  @override
+  String get bpNoNotes => 'No notes before choosing the file.';
+
+  @override
+  String get bpStepGenerate => '5) Generate';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'Generating… $progress';
+  }
+
+  @override
+  String get bpGenerateHint => 'One PDF file, a page per generated record.';
+
+  @override
+  String get bpGeneratePickFile =>
+      'Choose a data file first to enable generation.';
+
+  @override
+  String get bpMappingInvalid =>
+      'The mapping is invalid — the same field is mapped to two columns.';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'Map at least one column to a template field to enable generation.';
+
+  @override
+  String get bpGenerateCertificates => 'Generate certificates';
+
+  @override
+  String get bpRegenerate => 'Regenerate';
+
+  @override
+  String get bpStatGenerated => 'Generated';
+
+  @override
+  String get bpStatSkipped => 'Skipped';
+
+  @override
+  String get bpStatPages => 'Pages';
+
+  @override
+  String get bpStatSize => 'Size';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value KB';
+  }
+
+  @override
+  String get bpStatTime => 'Time';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value ms';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return '$pct% complete of $total rows.';
+  }
+
+  @override
+  String get bpSkippedRows => 'Rows not generated:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'Row $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'The preview appears here';
+
+  @override
+  String get bpPreviewHint =>
+      'Choose the data file, adjust the mapping, then press “Generate certificates” — you’ll see the first page of the generated file here directly.';
+
+  @override
+  String get bpAssignByTapTitle => 'Assign fields by tapping';
+
+  @override
+  String get bpAssignByTapBody =>
+      'Tap any text in the template to assign it to a dynamic field yourself. No other element is affected — not the date, the manager name, or any fixed text.';
+
+  @override
+  String get bpNoTexts => 'No texts in this template.';
+
+  @override
+  String get bpEmptyText => '(empty text)';
+
+  @override
+  String get bpDynamicFieldTap => 'Dynamic field — tap to change';
+
+  @override
+  String get bpStaticTextTap => 'Fixed text — tap to assign';
+
+  @override
+  String get bpAssignField => 'Assign field';
+
+  @override
+  String get bpKindCertificate => 'Certificate';
+
+  @override
+  String get bpKindContract => 'Contract';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'Couldn’t load the sample template: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'Couldn’t read the sheet: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'Couldn’t update the header row: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst =>
+      'Choose a template (certificate or contract) before generating.';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind batch — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'Couldn’t run batch generation: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'This template has no dynamic fields — data won’t change between records. Add a “trainee name” field from the editor toolbar, then save the template.';
+
+  @override
+  String get bpWarnNoNameField =>
+      'This template has no dynamic name field — the name column may map to a date or reference field and the name prints in the wrong place. Convert the fixed name text into a field or redesign the template.';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'This element was assigned to $token for the current generation — the other elements are untouched. Save the template to keep the change permanently.';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'This element was assigned to $token and the change was saved to the template. The other elements are untouched.';
+  }
 }

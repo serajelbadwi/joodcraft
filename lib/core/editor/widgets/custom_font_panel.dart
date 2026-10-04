@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../errors/app_exception.dart';
 import '../../fonts/custom_font_controller.dart';
 import '../../fonts/custom_font_face.dart';
+import '../../l10n/app_l10n.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 import 'editor_controls.dart';
@@ -40,10 +41,11 @@ class CustomFontSection extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Expanded(child: _picker(fonts)),
+                Expanded(child: _picker(context, fonts)),
                 const SizedBox(width: AppTheme.space8),
                 Tooltip(
-                  message: 'رفع خط مخصص (.ttf / .otf)',
+                  message: context.l10n?.cfpUploadTooltip ??
+                      'رفع خط مخصص (.ttf / .otf)',
                   child: IconButton.filledTonal(
                     onPressed: () => uploadCustomFonts(context),
                     icon: const Icon(Icons.upload_file_rounded, size: 18),
@@ -51,7 +53,8 @@ class CustomFontSection extends StatelessWidget {
                   ),
                 ),
                 Tooltip(
-                  message: 'إدارة الخطوط المرفوعة',
+                  message: context.l10n?.cfpManageTooltip ??
+                      'إدارة الخطوط المرفوعة',
                   child: IconButton(
                     onPressed: fonts.isEmpty
                         ? null
@@ -66,8 +69,9 @@ class CustomFontSection extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  'الخطوط المرفوعة تُحفظ على جهازك فقط وتُستخدم فوراً هنا وفي '
-                  'الطباعة — بلا إنترنت.',
+                  context.l10n?.cfpNotice ??
+                      'الخطوط المرفوعة تُحفظ على جهازك فقط وتُستخدم فوراً هنا وفي '
+                          'الطباعة — بلا إنترنت.',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -77,7 +81,7 @@ class CustomFontSection extends StatelessWidget {
     );
   }
 
-  Widget _picker(CustomFontController fonts) {
+  Widget _picker(BuildContext context, CustomFontController fonts) {
     final List<String> keys = <String>['', ...fonts.families];
     if (selected != null &&
         selected!.trim().isNotEmpty &&
@@ -86,22 +90,22 @@ class CustomFontSection extends StatelessWidget {
     }
     if (keys.length == 1) {
       return DropdownField<String>(
-        label: 'خطوطي المخصصة',
+        label: context.l10n?.cfpMyFonts ?? 'خطوطي المخصصة',
         value: '',
         items: keys,
-        labelOf: (String _) => 'لم ترفع خطوطاً بعد',
+        labelOf: (String _) => context.l10n?.cfpNoFonts ?? 'لم ترفع خطوطاً بعد',
         onChanged: (String value) => onChanged(value.isEmpty ? null : value),
       );
     }
     return DropdownField<String>(
       key: const ValueKey<String>('custom-font-picker'),
-      label: 'خطوطي المخصصة',
+      label: context.l10n?.cfpMyFonts ?? 'خطوطي المخصصة',
       value: selected?.trim().isNotEmpty == true && keys.contains(selected)
           ? selected!
           : '',
       items: keys,
       labelOf: (String key) => key.isEmpty
-          ? 'بلا (الخط المضمّن)'
+          ? (context.l10n?.cfpBuiltinOption ?? 'بلا (الخط المضمّن)')
           : fonts.displayNameOf(key),
       onChanged: (String value) => onChanged(value.isEmpty ? null : value),
     );
@@ -114,17 +118,23 @@ class CustomFontSection extends StatelessWidget {
 Future<int> uploadCustomFonts(BuildContext context) async {
   final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
   final CustomFontController fonts = CustomFontController.instance;
+  final l10n = context.l10n;
 
   final List<PlatformFile> picked;
   try {
     picked = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: kCustomFontExtensions,
-      dialogTitle: 'اختر ملف خط (TTF أو OTF)',
+      dialogTitle: context.l10n?.cfpPickTitle ?? 'اختر ملف خط (TTF أو OTF)',
     );
   } catch (error) {
     messenger.showSnackBar(
-      SnackBar(content: Text('تعذّر فتح منتقي الملفات: $error')),
+      SnackBar(
+        content: Text(
+          l10n?.cfpPickerError(error.toString()) ??
+              'تعذّر فتح منتقي الملفات: $error',
+        ),
+      ),
     );
     return 0;
   }
@@ -137,7 +147,10 @@ Future<int> uploadCustomFonts(BuildContext context) async {
     try {
       bytes = await file.readAsBytes();
     } catch (error) {
-      warnings.add('تعذّر قراءة "${file.name}": $error');
+      warnings.add(
+        l10n?.cfpReadError(file.name, error.toString()) ??
+            'تعذّر قراءة "${file.name}": $error',
+      );
       continue;
     }
     try {
@@ -161,7 +174,9 @@ Future<int> uploadCustomFonts(BuildContext context) async {
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          added == 1 ? 'أُضيف الخط واستُخدم فوراً.' : 'أُضيف $added خطوط.',
+          added == 1
+              ? (l10n?.cfpFontAdded ?? 'أُضيف الخط واستُخدم فوراً.')
+              : (l10n?.cfpFontsAdded(added) ?? 'أُضيف $added خطوط.'),
         ),
       ),
     );
@@ -197,7 +212,7 @@ class _CustomFontManagerDialog extends StatelessWidget {
       builder: (BuildContext context, Widget? _) {
         final CustomFontController fonts = CustomFontController.instance;
         return AlertDialog(
-          title: const Text('مكتبة خطوطي المخصصة'),
+          title: Text(context.l10n?.cfpLibraryTitle ?? 'مكتبة خطوطي المخصصة'),
           content: SizedBox(
             width: 460,
             child: Column(
@@ -205,13 +220,17 @@ class _CustomFontManagerDialog extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'كل الخطوط محفوظة على جهازك فقط. تحذير: حذف خط يستخدمه قالب '
-                  'يُرجع ذلك القالب إلى الخط المضمّن بدل الفشل.',
+                  context.l10n?.cfpLibraryNotice ??
+                      'كل الخطوط محفوظة على جهازك فقط. تحذير: حذف خط يستخدمه قالب '
+                          'يُرجع ذلك القالب إلى الخط المضمّن بدل الفشل.',
                   style: text.bodySmall,
                 ),
                 const SizedBox(height: AppTheme.space12),
                 if (fonts.isEmpty)
-                  Text('لا توجد خطوط مرفوعة بعد.', style: text.bodyMedium)
+                  Text(
+                    context.l10n?.cfpEmpty ?? 'لا توجد خطوط مرفوعة بعد.',
+                    style: text.bodyMedium,
+                  )
                 else
                   Flexible(
                     child: ListView.separated(
@@ -231,11 +250,11 @@ class _CustomFontManagerDialog extends StatelessWidget {
                           ),
                           subtitle: Text(
                             '${face.fileName} • ${face.sizeLabel} • '
-                            '${face.arabicReady ? 'تغطية عربية كاملة' : 'تغطية عربية ناقصة'}',
+                            '${face.arabicReady ? (context.l10n?.cfpCoverageFull ?? 'تغطية عربية كاملة') : (context.l10n?.cfpCoveragePartial ?? 'تغطية عربية ناقصة')}',
                             style: const TextStyle(fontSize: 11),
                           ),
                           trailing: IconButton(
-                            tooltip: 'حذف',
+                            tooltip: context.l10n?.tplDelete ?? 'حذف',
                             icon: const Icon(Icons.delete_outline_rounded,
                                 size: 18),
                             onPressed: () => fonts.removeFont(face.family),
@@ -251,11 +270,11 @@ class _CustomFontManagerDialog extends StatelessWidget {
             TextButton.icon(
               onPressed: () => uploadCustomFonts(context),
               icon: const Icon(Icons.upload_file_rounded, size: 16),
-              label: const Text('رفع خط جديد'),
+              label: Text(context.l10n?.cfpUploadNew ?? 'رفع خط جديد'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('إغلاق'),
+              child: Text(context.l10n?.editorClose ?? 'إغلاق'),
             ),
           ],
         );

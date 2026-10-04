@@ -1131,4 +1131,636 @@ class AppLocalizationsTr extends AppLocalizations {
   String amMakeType(Object type) {
     return 'Türü yap: $type';
   }
+
+  @override
+  String get commonRetry => 'Yeniden dene';
+
+  @override
+  String get commonPrint => 'Yazdır';
+
+  @override
+  String get commonExportPdf => 'PDF dışa aktar';
+
+  @override
+  String get commonExportFailed => 'PDF dosyası dışa aktarılamadı.';
+
+  @override
+  String get commonPrintFailed => 'Dosya yazıcıya gönderilemedi.';
+
+  @override
+  String commonExportReady(Object name) {
+    return 'Dosya $name olarak kaydedilmeye hazır.';
+  }
+
+  @override
+  String get commonGenerating => 'Üretiliyor…';
+
+  @override
+  String get commonDataPanelTitle => 'Örnek veriler';
+
+  @override
+  String evElementCount(Object count) {
+    return '$count öğe';
+  }
+
+  @override
+  String get evStatusDynamicFields => ' • dinamik alanlar';
+
+  @override
+  String get evStatusUnsaved => ' • kaydedilmemiş değişiklikler';
+
+  @override
+  String get tevNewTemplateTitle => 'Yeni şablon';
+
+  @override
+  String get tevUnsavedTitle => 'Kaydedilmemiş değişiklikler';
+
+  @override
+  String tevUnsavedMessage(Object title) {
+    return '“$title” üzerinde kaydedilmemiş değişiklikleriniz var. Ayrılmadan önce kaydetmek ister misiniz?';
+  }
+
+  @override
+  String get tevLeaveWithoutSaving => 'Kaydetmeden çık';
+
+  @override
+  String get tevSaveAndLeave => 'Kaydet ve çık';
+
+  @override
+  String get tevViewMode => 'Görünüm modu';
+
+  @override
+  String get tevModeEditor => 'Düzenleyici';
+
+  @override
+  String get tevModePreview => 'PDF önizleme';
+
+  @override
+  String get tevPaperDirection => 'Kâğıt yönü';
+
+  @override
+  String get tevWidthCm => 'Genişlik (cm)';
+
+  @override
+  String get tevHeightCm => 'Yükseklik (cm)';
+
+  @override
+  String get tevUndo => 'Geri al (Ctrl+Z)';
+
+  @override
+  String get tevRedo => 'Yinele (Ctrl+Y)';
+
+  @override
+  String get tevSnapGrid => 'Hizalama ızgarası';
+
+  @override
+  String get tevGuidesOn => 'Akıllı kılavuzlar: açık (kapat)';
+
+  @override
+  String get tevGuidesOff => 'Akıllı kılavuzlar: kapalı (aç)';
+
+  @override
+  String get tevZoom => 'Yakınlaştırma';
+
+  @override
+  String get tevDocumentBackground => 'Belge arka planı';
+
+  @override
+  String get tevFrameFromLibrary => 'Varlık kitaplığımdan çerçeve';
+
+  @override
+  String get tevChangeTitle => 'Şablon başlığını değiştir';
+
+  @override
+  String get tevMyTemplates => 'Şablonlarım';
+
+  @override
+  String get tevSaveAs => 'Farklı kaydet';
+
+  @override
+  String get tevSaveTemplate => 'Şablonu kaydet';
+
+  @override
+  String get tevSaveUnavailable => 'Kaydetme kullanılamıyor';
+
+  @override
+  String get tevSaveNeedsSupabase =>
+      'Kaydetmek bir Supabase projesine bağlantı gerektirir. Şablonları kaydetmek için uygulamayı anahtarlarınızla (env.json) çalıştırın.';
+
+  @override
+  String tevMissingAssets(Object list) {
+    return 'Eksik varlıklar: $list — boş görünmemesi için çerçeveyi/varlığı “Varlık kitaplığım”dan yeniden seçin.';
+  }
+
+  @override
+  String get tevTemplateLibraryNeedsSupabase =>
+      'Şablon kitaplığı bir Supabase projesine bağlantı gerektirir.';
+
+  @override
+  String tevOpenedTemplate(Object title) {
+    return '“$title” açıldı.';
+  }
+
+  @override
+  String get tevTitleHint => 'örn. Proje Yönetimi kursu tamamlama sertifikası';
+
+  @override
+  String get tevContinue => 'Devam';
+
+  @override
+  String get tevSavedTemplates => 'Kaydedilen şablonlarım';
+
+  @override
+  String get tevNoSavedTemplates =>
+      'Henüz kaydedilmiş şablon yok. “Şablonu kaydet” düğmesinden bir tane kaydedin.';
+
+  @override
+  String get ecIncrease => 'Artır';
+
+  @override
+  String get ecDecrease => 'Azalt';
+
+  @override
+  String get ecQuickPalette => 'Hızlı palet';
+
+  @override
+  String get ecFullPicker => 'Tam renk seçici';
+
+  @override
+  String get ecRemoveColor => 'Rengi kaldır';
+
+  @override
+  String get ecNone => 'Yok';
+
+  @override
+  String get ecPickColorTitle => 'Renk seç';
+
+  @override
+  String get ecApply => 'Uygula';
+
+  @override
+  String tevBackgroundAdded(Object name) {
+    return '“$name” belge arka planı olarak eklendi.';
+  }
+
+  @override
+  String get cfpUploadTooltip => 'Özel yazı tipi yükle (.ttf / .otf)';
+
+  @override
+  String get cfpManageTooltip => 'Yüklenen yazı tiplerini yönet';
+
+  @override
+  String get cfpNotice =>
+      'Yüklenen yazı tipleri yalnızca cihazınızda saklanır ve burada ve baskıda anında kullanılır — internetsiz.';
+
+  @override
+  String get cfpMyFonts => 'Özel yazı tiplerim';
+
+  @override
+  String get cfpNoFonts => 'Henüz yazı tipi yüklenmedi';
+
+  @override
+  String get cfpBuiltinOption => 'Yok (dahili yazı tipi)';
+
+  @override
+  String get cfpPickTitle => 'Bir yazı tipi dosyası seç (TTF veya OTF)';
+
+  @override
+  String cfpPickerError(Object error) {
+    return 'Dosya seçici açılamadı: $error';
+  }
+
+  @override
+  String cfpReadError(Object name, Object error) {
+    return '\"$name\" okunamadı: $error';
+  }
+
+  @override
+  String get cfpFontAdded => 'Yazı tipi eklendi ve anında uygulandı.';
+
+  @override
+  String cfpFontsAdded(Object count) {
+    return '$count yazı tipi eklendi.';
+  }
+
+  @override
+  String get cfpLibraryTitle => 'Özel yazı tipi kitaplığım';
+
+  @override
+  String get cfpLibraryNotice =>
+      'Tüm yazı tipleri yalnızca cihazınızda saklanır. Uyarı: bir şablonun kullandığı yazı tipini silmek, hata vermek yerine o şablonu dahili yazı tipine döndürür.';
+
+  @override
+  String get cfpEmpty => 'Henüz yüklenmiş yazı tipi yok.';
+
+  @override
+  String get cfpCoverageFull => 'Tam Arapça kapsam';
+
+  @override
+  String get cfpCoveragePartial => 'Kısmi Arapça kapsam';
+
+  @override
+  String get cfpUploadNew => 'Yeni yazı tipi yükle';
+
+  @override
+  String get ptpPrepError =>
+      'Önizleme hazırlanamadı. Şablon dosyasını kontrol edin.';
+
+  @override
+  String ptpElapsedSize(Object ms, Object kb) {
+    return '$ms ms — $kb KB';
+  }
+
+  @override
+  String get ptpGeneratingNote => '— önizleme otomatik güncellenir';
+
+  @override
+  String get ptpGenerateFailedTitle => 'Önizleme oluşturulamadı';
+
+  @override
+  String get ptpPreparingTitle => 'Motor hazırlanıyor…';
+
+  @override
+  String get ptpPreparingMessage =>
+      'Paketlenmiş yazı tipleri yükleniyor ve dosyanın ilk sürümü oluşturuluyor.';
+
+  @override
+  String get ptpShowFailedTitle => 'Önizleme gösterilemedi';
+
+  @override
+  String cfgOverride(Object override) {
+    return 'Açık değerlerle alternatif derleme dosyayı geçersiz kılar: $override';
+  }
+
+  @override
+  String get tevBackgroundTitle => 'Varlık kitaplığımdan belge arka planı';
+
+  @override
+  String get tevAddElement => 'Öğe ekle';
+
+  @override
+  String get commonUndo => 'Geri al';
+
+  @override
+  String get bpTitle => 'Excel’den toplu üretim';
+
+  @override
+  String get bpSubtitle =>
+      'Bir .xlsx veya .csv dosyası içe aktarın, sütunlarını şablon alanlarıyla eşleştirin, sonra kayıt başına bir sayfa içeren bir PDF üretin — hepsi cihazınızda, çevrimdışı.';
+
+  @override
+  String get bpStepTemplate => '1) Şablon';
+
+  @override
+  String get bpLoadingSampleTemplate => 'Örnek şablon yükleniyor…';
+
+  @override
+  String bpTemplateInfo(Object name) {
+    return 'Şablon: $name • gerekli alanlar:';
+  }
+
+  @override
+  String get bpLoadingTemplates => 'Şablonlarınız yükleniyor…';
+
+  @override
+  String get bpNoTemplates =>
+      'Henüz kaydedilmiş şablon yok — düzenleyicide oluşturun veya şablon kitaplığından içe aktarın.';
+
+  @override
+  String get bpTemplateFromMine => 'Şablonlarımdan şablon';
+
+  @override
+  String get bpSampleTemplatesHeader => '— örnek şablonlar —';
+
+  @override
+  String bpTemplateEntry(Object title, Object source) {
+    return '$title  •  $source';
+  }
+
+  @override
+  String get bpSourceCloud => 'Bulut';
+
+  @override
+  String get bpSourceLocal => 'Yerel';
+
+  @override
+  String get bpStepDataFile => '2) Veri dosyası';
+
+  @override
+  String get bpReadingFile => 'Dosya okunuyor…';
+
+  @override
+  String get bpNoFileChosen => 'Henüz dosya seçilmedi — desteklenen biçimler:';
+
+  @override
+  String bpFileSummary(Object name, Object rows, Object cols) {
+    return '$name — $rows satır, $cols sütun';
+  }
+
+  @override
+  String bpSheetSuffix(Object name) {
+    return ' (sayfa: $name)';
+  }
+
+  @override
+  String get bpChooseFile => 'Dosya seç';
+
+  @override
+  String get bpRemove => 'Kaldır';
+
+  @override
+  String get bpHeaderRow => 'Başlık satırı';
+
+  @override
+  String bpAutoRow(Object n) {
+    return 'Otomatik (satır $n)';
+  }
+
+  @override
+  String bpRow(Object n) {
+    return 'Satır $n';
+  }
+
+  @override
+  String bpAutoRowLong(Object n) {
+    return 'Otomatik — satır $n';
+  }
+
+  @override
+  String bpRowPreview(Object n, Object preview) {
+    return 'Satır $n: $preview';
+  }
+
+  @override
+  String get bpEmptyRow => '(boş satır)';
+
+  @override
+  String get bpWorksheet => 'Çalışma sayfası';
+
+  @override
+  String get bpPickDataFile => 'Veri dosyasını seç (Excel veya CSV)';
+
+  @override
+  String bpReadFileError(Object error) {
+    return 'Dosya okunamadı: $error';
+  }
+
+  @override
+  String bpFileReadRows(Object rows, Object cols) {
+    return 'Dosya yerel olarak okundu: $rows satır ve $cols sütun.';
+  }
+
+  @override
+  String bpSaveError(Object error) {
+    return 'Değişiklik şablona kaydedilemedi: $error';
+  }
+
+  @override
+  String get bpMapFieldTitle => 'Bu öğeye dinamik alan ata';
+
+  @override
+  String get bpMapFieldBody =>
+      'Yalnızca bu öğenin metni bir alanla değiştirilir; başka hiçbir öğe etkilenmez.';
+
+  @override
+  String get bpUndoConvert => 'Dönüştürme geri alındı.';
+
+  @override
+  String get bpUndoConvertSaved =>
+      'Dönüştürme geri alındı ve metin şablonda geri yüklendi.';
+
+  @override
+  String bpRestoreError(Object error) {
+    return 'Metin şablonda geri yüklenemedi: $error';
+  }
+
+  @override
+  String bpGeneratedReport(Object count) {
+    return '$count kayıt üretildi';
+  }
+
+  @override
+  String bpSkippedSuffix(Object count) {
+    return ' ve $count atlandı';
+  }
+
+  @override
+  String get bpReadyToSave => 'Dosya kaydedilmeye hazır.';
+
+  @override
+  String get bpStepMapping => '3) Sütunları alanlara eşle';
+
+  @override
+  String get bpChooseFileFirst => 'Eşleme tablosu için önce bir dosya seçin.';
+
+  @override
+  String get bpNoDynamicFields => 'Geçerli şablonda dinamik alan yok.';
+
+  @override
+  String bpMappedCount(Object mapped, Object total) {
+    return '$total sütundan $mapped eşlendi';
+  }
+
+  @override
+  String get bpAutoMapHint =>
+      'Dosya seçildikten sonra akıllı otomatik eşleme önerilir; her sütunu düzenleyebilirsiniz.';
+
+  @override
+  String get bpNoFieldsHelp =>
+      'Seçilen şablonda dinamik alan yok, bu yüzden dosya sütunlarına eşlenecek bir şey yok. Şablonu düzenleyicide açın, ad alanına “dinamik alan” ekleyin, kaydedin ve tekrar deneyin.';
+
+  @override
+  String get bpAutoMap => 'Otomatik eşle';
+
+  @override
+  String get bpClearMapping => 'Eşlemeyi temizle';
+
+  @override
+  String get bpNameFieldWarning =>
+      'Bu şablonda dinamik ad alanı yok — ad sütununu tarih veya referans alanına eşlemeyin, yoksa ad yanlış yere basılabilir. Sütun listesinden ad anahtarını seçin veya düzenleyicideki sabit ad metnini dinamik alana dönüştürün.';
+
+  @override
+  String bpStaticNameHints(Object preview) {
+    return 'İsme benzeyen sabit metin: “$preview” — hiçbir dinamik alan onu değiştirmez.';
+  }
+
+  @override
+  String get bpConvertToNameField => 'Eğitmen adı alanına dönüştür';
+
+  @override
+  String bpDuplicateField(Object field) {
+    return '“$field” alanı birden fazla sütuna eşlendi. Her alanı tek sütuna eşleyin.';
+  }
+
+  @override
+  String bpUnmappedColumns(Object count) {
+    return '$count eşlenmemiş sütun — verileri sertifikalarda kullanılmayacak.';
+  }
+
+  @override
+  String bpColumn(Object n) {
+    return 'Sütun $n';
+  }
+
+  @override
+  String get bpEmptyCell => '(boş)';
+
+  @override
+  String get bpUnmapped => '— eşlenmemiş —';
+
+  @override
+  String get bpStepMissing => '4) Boş hücreler ve eksik veriler';
+
+  @override
+  String get bpNoNotes => 'Dosya seçilmeden önce not yok.';
+
+  @override
+  String get bpStepGenerate => '5) Üret';
+
+  @override
+  String bpGenerating(Object progress) {
+    return 'Üretiliyor… $progress';
+  }
+
+  @override
+  String get bpGenerateHint =>
+      'Tek PDF dosyası, üretilen her kayıt için bir sayfa.';
+
+  @override
+  String get bpGeneratePickFile =>
+      'Üretimi etkinleştirmek için önce bir veri dosyası seçin.';
+
+  @override
+  String get bpMappingInvalid =>
+      'Eşleme geçersiz — aynı alan iki sütuna eşlendi.';
+
+  @override
+  String get bpMapAtLeastOne =>
+      'Üretimi etkinleştirmek için en az bir sütunu bir şablon alanına eşleyin.';
+
+  @override
+  String get bpGenerateCertificates => 'Sertifikaları üret';
+
+  @override
+  String get bpRegenerate => 'Yeniden üret';
+
+  @override
+  String get bpStatGenerated => 'Üretilen';
+
+  @override
+  String get bpStatSkipped => 'Atlanan';
+
+  @override
+  String get bpStatPages => 'Sayfalar';
+
+  @override
+  String get bpStatSize => 'Boyut';
+
+  @override
+  String bpKilobytes(Object value) {
+    return '$value KB';
+  }
+
+  @override
+  String get bpStatTime => 'Süre';
+
+  @override
+  String bpMilliseconds(Object value) {
+    return '$value ms';
+  }
+
+  @override
+  String bpCompletion(Object pct, Object total) {
+    return '$total satırın %$pct’i tamamlandı.';
+  }
+
+  @override
+  String get bpSkippedRows => 'Üretilmeyen satırlar:';
+
+  @override
+  String bpRowSkipReason(Object n, Object reason) {
+    return 'Satır $n: $reason';
+  }
+
+  @override
+  String get bpPreviewHere => 'Önizleme burada görünür';
+
+  @override
+  String get bpPreviewHint =>
+      'Veri dosyasını seçin, eşlemeyi ayarlayın, sonra “Sertifikaları üret”e basın — üretilen dosyanın ilk sayfasını burada göreceksiniz.';
+
+  @override
+  String get bpAssignByTapTitle => 'Alanları dokunarak ata';
+
+  @override
+  String get bpAssignByTapBody =>
+      'Şablondaki herhangi bir metne dokunarak onu kendiniz bir dinamik alana atayın. Başka hiçbir öğe etkilenmez — ne tarih, ne müdür adı, ne de sabit metin.';
+
+  @override
+  String get bpNoTexts => 'Bu şablonda metin yok.';
+
+  @override
+  String get bpEmptyText => '(boş metin)';
+
+  @override
+  String get bpDynamicFieldTap => 'Dinamik alan — değiştirmek için dokun';
+
+  @override
+  String get bpStaticTextTap => 'Sabit metin — atamak için dokun';
+
+  @override
+  String get bpAssignField => 'Alan ata';
+
+  @override
+  String get bpKindCertificate => 'Sertifika';
+
+  @override
+  String get bpKindContract => 'Sözleşme';
+
+  @override
+  String bpLoadSampleError(Object error) {
+    return 'Örnek şablon yüklenemedi: $error';
+  }
+
+  @override
+  String bpReadSheetError(Object error) {
+    return 'Sayfa okunamadı: $error';
+  }
+
+  @override
+  String bpUpdateHeaderRowError(Object error) {
+    return 'Başlık satırı güncellenemedi: $error';
+  }
+
+  @override
+  String get bpChooseTemplateFirst =>
+      'Üretmeden önce bir şablon (sertifika veya sözleşme) seçin.';
+
+  @override
+  String bpBatchTitle(Object kind) {
+    return '$kind toplu — JoodCraft';
+  }
+
+  @override
+  String bpGenerateError(Object error) {
+    return 'Toplu üretim çalıştırılamadı: $error';
+  }
+
+  @override
+  String get bpWarnNoDynamicFields =>
+      'Bu şablonda dinamik alan yok — veriler kayıtlar arasında değişmez. Düzenleyici çubuğundan “eğitmen adı” alanı ekleyin, sonra şablonu kaydedin.';
+
+  @override
+  String get bpWarnNoNameField =>
+      'Bu şablonda dinamik ad alanı yok — ad sütunu bir tarih veya referans alanına eşlenip ad yanlış yere basılabilir. Sabit ad metnini bir alana dönüştürün veya şablonu yeniden tasarlayın.';
+
+  @override
+  String bpAssignedTemp(Object token) {
+    return 'Bu öğe geçerli üretim için $token ile eşlendi — diğer öğeler etkilenmedi. Değişikliği kalıcı kılmak için şablonu kaydedin.';
+  }
+
+  @override
+  String bpAssignedSaved(Object token) {
+    return 'Bu öğe $token ile eşlendi ve değişiklik şablona kaydedildi. Diğer öğeler etkilenmedi.';
+  }
 }
