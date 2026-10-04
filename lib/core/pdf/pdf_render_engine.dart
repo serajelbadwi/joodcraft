@@ -187,6 +187,27 @@ class PdfRenderer {
           ),
         );
 
+      case final SignatureElement signature:
+        final List<SignatureSlot> slots = signature.orderedSlots;
+        if (slots.isEmpty) return null;
+        return _positioned(
+          left: left,
+          top: top,
+          width: width,
+          rotation: signature.rotation,
+          child: pw.Opacity(
+            opacity: signature.opacity.clamp(0, 1),
+            child: _signatureWidget(
+              element: signature,
+              slots: slots,
+              document: document,
+              data: data,
+              images: images,
+              width: width,
+            ),
+          ),
+        );
+
       case final ImageElement image:
         final pw.ImageProvider? resolved =
             images['${image.sourceKind.jsonValue}:${image.path}'];
@@ -246,6 +267,145 @@ class PdfRenderer {
           pageHeight: pageHeight,
         );
     }
+  }
+
+  // ==========================================================================
+  //                    التوقيعات المتعددة (رؤية PDF)
+  // ==========================================================================
+
+  /// كتلة التوقيعات: خانات متساوية العرض بفاصل [SignatureElement.spacing].
+  ///
+  /// تستخدم `element.slotLayout` نفسها التي يستخدمها المحرر (مصدر حساب وحيد)
+  /// فلا يختلف التوزيع بين المعاينة والطباعة. تُبنى كـ`Row` بأعراض صريحة
+  /// (مجموعها = عرض العنصر) بدل `Stack/Positioned` لأن موضع PDF النسبي يحتاج
+  /// ارتفاعاً مؤكّداً لكل خانة، وهو غير معروف قبل قياس النص.
+  pw.Widget _signatureWidget({
+    required SignatureElement element,
+    required List<SignatureSlot> slots,
+    required TemplateDocument document,
+    required Map<String, String> data,
+    required Map<String, pw.ImageProvider?> images,
+    required double width,
+  }) {
+    final double s = document.scale;
+    final double designWidth =
+        element.box.width > 0 ? element.box.width : (s > 0 ? width / s : width);
+    final List<SignatureSlotRect> rects =
+        element.slotLayout(designWidth, slotCountOverride: slots.length);
+    final double blockHeight =
+        element.box.height > 0 ? element.box.height * s : 0;
+
+    return pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.center,
+      children: <pw.Widget>[
+        for (int i = 0; i < rects.length && i < slots.length; i++) ...<pw.Widget>[
+          if (i > 0) pw.SizedBox(width: element.spacing * s),
+          pw.SizedBox(
+            width: rects[i].width * s,
+            height: blockHeight > 0 ? blockHeight : null,
+            child: _signatureSlotWidget(
+              element: element,
+              slot: slots[i],
+              document: document,
+              data: data,
+              images: images,
+              slotWidth: rects[i].width,
+              scale: s,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// خانة توقيع واحدة: الصورة ← الخط ← الاسم ← الدور.
+  pw.Widget _signatureSlotWidget({
+    required SignatureElement element,
+    required SignatureSlot slot,
+    required TemplateDocument document,
+    required Map<String, String> data,
+    required Map<String, pw.ImageProvider?> images,
+    required double slotWidth,
+    required double scale,
+  }) {
+    final String role = document.resolveFields(slot.role, data);
+    final String name = document.resolveFields(slot.name, data);
+    final bool rtl = TextFlow.resolvesRtl(element.direction, '$name $role');
+    final pw.TextAlign align = switch (element.align) {
+      SignatureAlign.start => rtl ? pw.TextAlign.right : pw.TextAlign.left,
+      SignatureAlign.end => rtl ? pw.TextAlign.left : pw.TextAlign.right,
+      SignatureAlign.center => pw.TextAlign.center,
+    };
+
+    final pw.ImageProvider? provider = slot.hasImage
+        ? images['${slot.imageSource.jsonValue}:${slot.imagePath}']
+        : null;
+    final double imageHeight = element.imageHeightFor(
+      slotWidth,
+      boxHeight: element.box.height,
+    );
+    final pw.Font nameFont = fonts.resolve(
+      element.family,
+      PdfFontWeight.semiBold,
+      element.customFont,
+    );
+    final pw.Font roleFont = fonts.resolve(
+      element.family,
+      PdfFontWeight.regular,
+      element.customFont,
+    );
+
+    return pw.Column(
+      mainAxisSize: pw.MainAxisSize.min,
+      mainAxisAlignment: pw.MainAxisAlignment.center,
+      children: <pw.Widget>[
+        if (provider != null)
+          pw.SizedBox(
+            height: imageHeight * scale,
+            child: pw.Padding(
+              padding: pw.EdgeInsets.symmetric(horizontal: 6 * scale),
+              child: pw.Image(provider, fit: pw.BoxFit.contain),
+            ),
+          ),
+        if (element.showDivider)
+          pw.Padding(
+            padding: pw.EdgeInsets.only(
+              top: (provider != null ? 4 : 0) * scale,
+              left: 12 * scale,
+              right: 12 * scale,
+              bottom: 5 * scale,
+            ),
+            child: pw.Container(
+              height: 1,
+              color: PdfColor.fromInt(0xFF6B7280),
+            ),
+          ),
+        if (name.trim().isNotEmpty)
+          pw.Text(
+            ArabicTextEngine.toVisual(name),
+            textAlign: align,
+            textDirection: pw.TextDirection.ltr,
+            style: pw.TextStyle(
+              font: nameFont,
+              fontSize: element.nameFontSize * scale,
+              color: pdfColorFromHex(element.nameColorHex),
+              height: 1.3,
+            ),
+          ),
+        if (role.trim().isNotEmpty)
+          pw.Text(
+            ArabicTextEngine.toVisual(role),
+            textAlign: align,
+            textDirection: pw.TextDirection.ltr,
+            style: pw.TextStyle(
+              font: roleFont,
+              fontSize: element.roleFontSize * scale,
+              color: pdfColorFromHex(element.roleColorHex),
+              height: 1.3,
+            ),
+          ),
+      ],
+    );
   }
 
   /// وضع العنصر بإحداثيات مطلقة مع تطبيق الدوران حول **مركز العنصر**.

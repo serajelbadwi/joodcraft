@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // مُستورَد باسم مستعار لأن الحزمة تُصدّر `colorFromHex` أيضاً، وهو ما يتعارض
@@ -102,6 +103,9 @@ class _NumberFieldState extends State<NumberField> {
       TextEditingController(text: _format(widget.value));
   late final FocusNode _focusNode = FocusNode();
 
+  /// هل المؤشر فوق الحقل الآن؟ (عجلة الفأرة تُعدّل القيمة عند التحويم فقط.)
+  bool _hovered = false;
+
   String _format(double value) => widget.decimals == 0
       ? value.round().toString()
       : value.toStringAsFixed(widget.decimals);
@@ -137,14 +141,37 @@ class _NumberFieldState extends State<NumberField> {
     _emit(parsed);
   }
 
+  /// عجلة الفأرة فوق الحقل = خطوة واحدة للأعلى/الأسفل (ضبط دقيق سريع).
+  ///
+  /// تُستهلك إشارة التمرير عبر `PointerSignalResolver` حتى لا تُمرَّر أيضاً إلى
+  /// القائمة القابلة للتمرير خلف الحقل فيتحرّك الشريط بدل تعديل الرقم.
+  void _onPointerSignal(PointerSignalEvent event) {
+    if (!_hovered || event is! PointerScrollEvent) return;
+    final double delta = event.scrollDelta.dy;
+    if (delta == 0) return;
+    GestureBinding.instance.pointerSignalResolver.register(
+      event,
+      (PointerSignalEvent resolved) {
+        if (resolved is! PointerScrollEvent) return;
+        final double direction = resolved.scrollDelta.dy < 0 ? 1 : -1;
+        _emit(widget.value + direction * widget.step);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width,
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: TextField(
+    return MouseRegion(
+      onEnter: (PointerEnterEvent _) => _hovered = true,
+      onExit: (PointerExitEvent _) => _hovered = false,
+      child: Listener(
+        onPointerSignal: _onPointerSignal,
+        child: SizedBox(
+          width: widget.width,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: TextField(
               controller: _controller,
               focusNode: _focusNode,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -168,17 +195,19 @@ class _NumberFieldState extends State<NumberField> {
               onEditingComplete: () => _commitText(_controller.text),
               onTapOutside: (_) => _commitText(_controller.text),
             ),
+              ),
+              const SizedBox(width: 4),
+              _StepButton(
+                icon: Icons.remove_rounded,
+                onTap: () => _emit(widget.value - widget.step),
+              ),
+              _StepButton(
+                icon: Icons.add_rounded,
+                onTap: () => _emit(widget.value + widget.step),
+              ),
+            ],
           ),
-          const SizedBox(width: 4),
-          _StepButton(
-            icon: Icons.remove_rounded,
-            onTap: () => _emit(widget.value - widget.step),
-          ),
-          _StepButton(
-            icon: Icons.add_rounded,
-            onTap: () => _emit(widget.value + widget.step),
-          ),
-        ],
+        ),
       ),
     );
   }

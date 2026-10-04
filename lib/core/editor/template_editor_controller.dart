@@ -7,6 +7,7 @@ import '../assets/user_asset.dart';
 import '../constants/app_constants.dart';
 import '../errors/app_error_code.dart';
 import '../errors/app_exception.dart';
+import '../models/decoration.dart';
 import '../models/template_document.dart';
 import '../models/template_element.dart';
 import '../models/text_flow.dart';
@@ -546,6 +547,45 @@ class TemplateEditorController extends ChangeNotifier {
     _mutate(_document.copyWith(elements: elements));
   }
 
+  /// تحجيم العناصر المحددة حول مركزها بمعامل واحد (‎1 = بلا تغيير).
+  ///
+  /// يُحجَّم الصندوق (عرضاً وارتفاعاً) بالنسبة نفسها، وتُحجَّم معه الأدوات
+  /// المرتبطة بالحجم (حجم خط النص، سماكة/استدارة الشكل) فتبقى النِسب البصرية
+  /// ثابتة، ثم يُقصّ الصندوق على حدود الورقة.
+  void scaleSelected(double factor) {
+    if (factor <= 0 || factor == 1 || _selectedIds.isEmpty) return;
+    final List<TemplateElement> elements = _document.elements.map(
+      (TemplateElement element) {
+        if (!_selectedIds.contains(element.id)) return element;
+        final ElementBox box = element.box;
+        final double width = box.width > 0 ? box.width * factor : box.width;
+        final double height = box.height > 0 ? box.height * factor : box.height;
+        // التحجيم حول المركز: يُزاح الركن الأيسر العلوي بنصف النمو.
+        ElementBox next = box.copyWith(
+          x: box.x + (box.width - width) / 2,
+          y: box.y + (box.height - height) / 2,
+          width: width,
+          height: height,
+        );
+        next = _clampToPage(next);
+        final TemplateElement scaled = element.withBox(next);
+        if (scaled is TextElement) {
+          return scaled.copyWith(
+            fontSize: (scaled.fontSize * factor).clamp(1, 400).toDouble(),
+          );
+        }
+        if (scaled is ShapeElement) {
+          return scaled.copyWith(
+            strokeWidth: scaled.strokeWidth * factor,
+            radius: scaled.radius * factor,
+          );
+        }
+        return scaled;
+      },
+    ).toList(growable: false);
+    _mutate(_document.copyWith(elements: elements));
+  }
+
   /// تدوير العناصر المحددة إلى زاوية مطلقة (داخل المدى ‎-180..180‎).
   void setSelectedRotation(double degrees) {
     if (_selectedIds.isEmpty) return;
@@ -734,12 +774,13 @@ class TemplateEditorController extends ChangeNotifier {
     final double safe = opacity.clamp(0.0, 1.0);
     final List<TemplateElement> elements = _document.elements
         .map((TemplateElement element) => !_selectedIds.contains(element.id)
-            ? element
-            : switch (element) {
+            ? element              : switch (element) {
                 TextElement() => element.copyWith(opacity: safe),
                 ShapeElement() => element.copyWith(opacity: safe),
                 SealElement() => element.copyWith(opacity: safe),
                 ImageElement() => element.copyWith(opacity: safe),
+                DecorationElement() => element.copyWith(opacity: safe),
+                SignatureElement() => element.copyWith(opacity: safe),
                 _ => element,
               })
         .toList(growable: false);
@@ -786,6 +827,65 @@ class TemplateEditorController extends ChangeNotifier {
   }
 
   /// ألوان الختم المحدد.
+  /// وصف الزخرفة المتجهية المحددة (النوع والألوان والطبقات).
+  void setSelectedDecorSpec(DecorSpec spec) {
+    updateSelected(
+      (TemplateElement element) =>
+          element is DecorationElement ? element.copyWith(spec: spec) : element,
+    );
+  }
+
+  /// عدد خانات عنصر التوقيعات المحدد (1..3).
+  void setSelectedSignatureSlotCount(int count) {
+    updateSelected(
+      (TemplateElement element) => element is SignatureElement
+          ? element.withSlotCount(count)
+          : element,
+    );
+  }
+
+  /// تعديل خانة توقيع واحدة في العنصر المحدد.
+  void updateSelectedSignatureSlot(int index, SignatureSlot slot) {
+    updateSelected(
+      (TemplateElement element) => element is SignatureElement
+          ? element.withSlot(index, slot)
+          : element,
+    );
+  }
+
+  /// خصائص عرض كتلة التوقيعات (الخطوط والألوان والتباعد).
+  void setSelectedSignatureStyle({
+    double? roleFontSize,
+    double? nameFontSize,
+    String? roleColorHex,
+    String? nameColorHex,
+    PdfFontFamily? family,
+    Object? customFont = _unset,
+    double? spacing,
+    double? imageScale,
+    SignatureAlign? align,
+    bool? showDivider,
+    ElementDirection? direction,
+  }) {
+    updateSelected(
+      (TemplateElement element) => element is SignatureElement
+          ? element.copyWith(
+              roleFontSize: roleFontSize,
+              nameFontSize: nameFontSize,
+              roleColorHex: roleColorHex,
+              nameColorHex: nameColorHex,
+              family: family,
+              customFont: customFont,
+              spacing: spacing,
+              imageScale: imageScale,
+              align: align,
+              showDivider: showDivider,
+              direction: direction,
+            )
+          : element,
+    );
+  }
+
   void setSelectedSealColors({
     String? fillHex,
     String? ringHex,
@@ -1019,14 +1119,38 @@ class TemplateEditorController extends ChangeNotifier {
     bool changed = false;
     final List<TemplateElement> elements = document.elements.map(
       (TemplateElement element) {
-        if (element is! ImageElement) return element;
-        if (element.sourceKind != ImageSourceKind.userAsset) return element;
-        if (element.hasEmbeddedData) return element;
-        final UserAsset? asset = assets.byId(element.path);
-        final String base64 = stripBase64DataUri(asset?.base64Data ?? '');
-        if (base64.isEmpty) return element;
-        changed = true;
-        return element.copyWith(data: base64);
+        if (element is ImageElement) {
+          if (element.sourceKind != ImageSourceKind.userAsset) return element;
+          if (element.hasEmbeddedData) return element;
+          final UserAsset? asset = assets.byId(element.path);
+          final String base64 = stripBase64DataUri(asset?.base64Data ?? '');
+          if (base64.isEmpty) return element;
+          changed = true;
+          return element.copyWith(data: base64);
+        }
+        // صور خانات التوقيع تحتاج النسخة المضمّنة نفسها — وإلا ابيضّ التوقيع
+        // في الـ PDF لو حُذف الأصل من المكتبة لاحقاً.
+        if (element is SignatureElement) {
+          bool slotChanged = false;
+          final List<SignatureSlot> slots = element.slots.map(
+            (SignatureSlot slot) {
+              if (slot.imageSource != ImageSourceKind.userAsset) return slot;
+              if (slot.imageData != null && slot.imageData!.trim().isNotEmpty) {
+                return slot;
+              }
+              final UserAsset? asset = assets.byId(slot.imagePath);
+              final String base64 =
+                  stripBase64DataUri(asset?.base64Data ?? '');
+              if (base64.isEmpty) return slot;
+              slotChanged = true;
+              return slot.copyWith(imageData: base64);
+            },
+          ).toList(growable: false);
+          if (!slotChanged) return element;
+          changed = true;
+          return element.copyWith(slots: slots);
+        }
+        return element;
       },
     ).toList(growable: false);
     return changed ? document.copyWith(elements: elements) : document;
@@ -1099,6 +1223,25 @@ class TemplateEditorController extends ChangeNotifier {
           box: element.box,
           rotation: element.rotation,
           spec: element.spec,
+          opacity: element.opacity,
+        ),
+      SignatureElement() => SignatureElement(
+          id: id,
+          box: element.box,
+          rotation: element.rotation,
+          slots: element.slots,
+          slotCount: element.slotCount,
+          roleFontSize: element.roleFontSize,
+          nameFontSize: element.nameFontSize,
+          roleColorHex: element.roleColorHex,
+          nameColorHex: element.nameColorHex,
+          family: element.family,
+          customFont: element.customFont,
+          spacing: element.spacing,
+          imageScale: element.imageScale,
+          align: element.align,
+          showDivider: element.showDivider,
+          direction: element.direction,
           opacity: element.opacity,
         ),
       UnknownElement() => UnknownElement(

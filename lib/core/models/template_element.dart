@@ -231,6 +231,8 @@ sealed class TemplateElement {
       'seal' || 'stamp' => SealElement.fromJson(json, id),
       'decoration' || 'decor' || 'ornament' =>
         DecorationElement.fromJson(json, id),
+      'signature' || 'signatures' || 'signature_block' || 'signatures_block' =>
+        SignatureElement.fromJson(json, id),
       'image' || 'picture' || 'logo' => ImageElement.fromJson(json, id),
       'qr' || 'qrcode' => QrElement.fromJson(json, id),
       _ => UnknownElement(
@@ -652,6 +654,415 @@ final class DecorationElement extends TemplateElement {
         if (opacity != 1) 'opacity': opacity,
         if (rotation != 0) 'rotation': rotation,
       };
+}
+
+// ===========================================================================
+//  التوقيعات المتعددة (حتى 3 خانات جنباً إلى جنب)
+// ===========================================================================
+
+/// خانات التوقيع المتراصة أفقياً.
+///
+/// ثلاث خانات هي الحد العملي لشهادات/على عقود A4: توزيع متساوٍ يبقي كل خانة
+/// واسعة بما يكفي لصورة التوقيع واسم صاحبها تحتها.
+enum SignatureSlots {
+  one(1, 'توقيع واحد'),
+  two(2, 'توقيعان'),
+  three(3, 'ثلاثة توقيعات');
+
+  const SignatureSlots(this.count, this.labelAr);
+
+  /// عدد الخانات المعروضة (تُرسم الخانات الممتلئة فقط).
+  final int count;
+
+  final String labelAr;
+
+  /// أقصى عدد خانات يدعمه المحرّك.
+  static const int max = 3;
+
+  /// من رقم مطلق إلى أقرب وضع مدعوم (1..3).
+  static SignatureSlots fromCount(Object? value) {
+    final int count = switch (value) {
+      final num n => n.toInt(),
+      final String s => int.tryParse(s.trim()) ?? 1,
+      _ => 1,
+    };
+    return values.firstWhere(
+      (SignatureSlots slot) => slot.count == count.clamp(1, max),
+      orElse: () => SignatureSlots.one,
+    );
+  }
+}
+
+/// محاذاة صورة التوقيع داخل خانتها.
+enum SignatureAlign {
+  start('start'),
+  center('center'),
+  end('end');
+
+  const SignatureAlign(this.jsonValue);
+
+  final String jsonValue;
+
+  static SignatureAlign fromJson(Object? value) {
+    final String needle = '${value ?? ''}'.trim().toLowerCase();
+    return switch (needle) {
+      'start' || 'right' => SignatureAlign.start,
+      'end' || 'left' => SignatureAlign.end,
+      _ => SignatureAlign.center,
+    };
+  }
+}
+
+/// خانة توقيع واحدة: الدور + اسم صاحبها + صورة التوقيع.
+///
+/// الصورة تُخزَّن بنفس نموذج [ImageElement] (مرجع حيّ + نسخة Base64 احتياطية)
+/// حتى يعمل الرسم في المحرر وفي الـ PDF بعدّاد واحد بلا منطق مكرّر.
+class SignatureSlot {
+  const SignatureSlot({
+    this.role = '',
+    this.name = '',
+    this.imagePath = '',
+    this.imageSource = ImageSourceKind.userAsset,
+    this.imageData,
+  });
+
+  /// الدور/المسمى الوظيفي (مثل: «المدير العام»، «الموارد البشرية»).
+  final String role;
+
+  /// اسم صاحب التوقيع (مثل: «أحمد حمدي»)؛ يقبل الحقول الديناميكية `{{...}}`.
+  final String name;
+
+  /// مسار/معرّف صورة التوقيع (بلا صورة إن كان فراغاً).
+  final String imagePath;
+
+  final ImageSourceKind imageSource;
+
+  /// نسخة Base64 احتياطية للصورة (بلا بادئة data URI).
+  final String? imageData;
+
+  bool get isEmpty =>
+      role.trim().isEmpty &&
+      name.trim().isEmpty &&
+      imagePath.trim().isEmpty;
+
+  bool get hasImage => imagePath.trim().isNotEmpty;
+
+  /// هل يحمل النص حقولاً ديناميكية `{{...}}`؟
+  bool get hasDynamicFields => role.contains('{{') || name.contains('{{');
+
+  SignatureSlot copyWith({
+    String? role,
+    String? name,
+    String? imagePath,
+    ImageSourceKind? imageSource,
+    Object? imageData = _unset,
+  }) =>
+      SignatureSlot(
+        role: role ?? this.role,
+        name: name ?? this.name,
+        imagePath: imagePath ?? this.imagePath,
+        imageSource: imageSource ?? this.imageSource,
+        imageData: imageData == _unset ? this.imageData : imageData as String?,
+      );
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        if (role.trim().isNotEmpty) 'role': role,
+        if (name.trim().isNotEmpty) 'name': name,
+        if (imagePath.trim().isNotEmpty) 'imagePath': imagePath,
+        if (imagePath.trim().isNotEmpty) 'imageSource': imageSource.jsonValue,
+        if (imageData != null && imageData!.trim().isNotEmpty)
+          'imageData': imageData,
+      };
+
+  factory SignatureSlot.fromJson(Map<String, dynamic> json) {
+    final String? embedded = json['imageData'] as String?;
+    final String clean = stripBase64DataUri(embedded ?? '');
+    return SignatureSlot(
+      role: '${json['role'] ?? json['title'] ?? json['label'] ?? ''}',
+      name: '${json['name'] ?? json['assignee'] ?? json['person'] ?? ''}',
+      imagePath:
+          '${json['imagePath'] ?? json['image'] ?? json['path'] ?? ''}'.trim(),
+      imageSource: ImageSourceKind.fromJson(
+        json['imageSource'] ?? json['source'],
+      ),
+      imageData: clean.isEmpty ? null : clean,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is SignatureSlot &&
+      other.role == role &&
+      other.name == name &&
+      other.imagePath == imagePath &&
+      other.imageSource == imageSource &&
+      other.imageData == imageData;
+
+  @override
+  int get hashCode =>
+      Object.hash(role, name, imagePath, imageSource, imageData);
+}
+
+/// عنصر توقيعات متعددة: حتى ثلاث خانات جنباً إلى جنب مع محاذاة وتباعد
+/// وتحجيم تلقائي.
+///
+/// يحلّ محلّ «العمل بالصور الخام»: خانة واحدة تحتوي صورة التوقيع ومسمى الدور
+/// واسم صاحب التوقيع، ويوزّعها المحرّك بالتساوي داخل صندوق العنصر فيتطابق
+/// المحرر والـ PDF (نفس القاعدة الحسابية `slotLayout`).
+final class SignatureElement extends TemplateElement {
+  const SignatureElement({
+    required super.id,
+    required super.box,
+    super.rotation,
+    this.slots = const <SignatureSlot>[],
+    this.slotCount = SignatureSlots.max,
+    this.roleFontSize = 12,
+    this.nameFontSize = 15,
+    this.roleColorHex = '#5B6779',
+    this.nameColorHex = '#1B2539',
+    this.family = PdfFontFamily.plex,
+    this.customFont,
+    this.spacing = 24,
+    this.imageScale = 1,
+    this.align = SignatureAlign.center,
+    this.showDivider = true,
+    this.direction = ElementDirection.rtl,
+    this.opacity = 1,
+  });
+
+  /// الخانات بترتيبها المنطقي (الخانة الأولى هي الأهم).
+  ///
+  /// الترتيب الفيزيائي يتبع [direction]: في الوضع العربي (rtl) تقع الخانة
+  /// الأولى في أقصى **اليمين** كما هو معتاد في المستندات العربية.
+  final List<SignatureSlot> slots;
+
+  /// عدد الخانات المعروضة (1..3) — مستقلّ عن طول [slots] حتى لا يُفقَد محتوى
+  /// خانة عند تصغير العدد ثم تكبيره من جديد.
+  final int slotCount;
+
+  /// حجم خط مسمى الدور (وحدات تصميم).
+  final double roleFontSize;
+
+  /// حجم خط اسم صاحب التوقيع (وحدات تصميم).
+  final double nameFontSize;
+
+  final String roleColorHex;
+  final String nameColorHex;
+  final PdfFontFamily family;
+
+  /// خط مخصص (يتقدّم على [family] إن كان مسجَّلاً على هذا الجهاز).
+  final String? customFont;
+
+  /// الفراغ الأفقي بين الخانات (وحدات تصميم).
+  final double spacing;
+
+  /// معامل تحجيم صورة التوقيع داخل خانتتها (1 = الملاءمة الكاملة).
+  final double imageScale;
+
+  final SignatureAlign align;
+
+  /// رسم خط رقيق فوق اسم كل صاحب توقيع (خط التوقيع الكتابي).
+  final bool showDivider;
+
+  /// اتجاه ترتيب الخانات (عربي = الأولى يميناً).
+  final ElementDirection direction;
+
+  final double opacity;
+
+  /// الخانات المعروضة والمملوءة (بلا خانات فارغة) بترتيبها المنطقي.
+  List<SignatureSlot> get activeSlots => slots
+      .take(slotCount.clamp(0, SignatureSlots.max))
+      .where((SignatureSlot slot) => !slot.isEmpty)
+      .toList(growable: false);
+
+  /// الخانات مرتبة فيزيائياً حسب [direction] — مصدر وحيد للمحرر والـ PDF.
+  List<SignatureSlot> get orderedSlots {
+    final List<SignatureSlot> active = activeSlots;
+    return direction == ElementDirection.ltr
+        ? active
+        : active.reversed.toList(growable: false);
+  }
+
+  /// خانة برقمها مع إرجاع خانة فارغة إن لم تكن مضبوطة بعد.
+  SignatureSlot slotAt(int index) => index >= 0 && index < slots.length
+      ? slots[index]
+      : const SignatureSlot();
+
+  /// هل يحمل أي خانة حقولاً ديناميكية؟
+  bool get hasDynamicFields =>
+      slots.any((SignatureSlot slot) => slot.hasDynamicFields);
+
+  /// ارتفاع صورة التوقيع (وحدات تصميم) بحسب عرض خانتتها ومعامل التحجيم.
+  ///
+  /// قاعدة مشتركة بين المحرر والـ PDF: الصورة تحتل ~42% من عرض الخانة مضروباً
+  /// في [imageScale]، ولا تتجاوز عرض الخانة أو ارتفاع صندوق العنصر.
+  double imageHeightFor(double slotWidth, {double boxHeight = 0}) {
+    final double base = slotWidth * 0.42 * imageScale;
+    final double cap = boxHeight > 0 ? boxHeight * 0.7 : slotWidth;
+    return base.clamp(0, slotWidth < cap ? slotWidth : cap);
+  }
+
+  /// توزيع الخانات على عرض متاح — **مصدر الحساب الوحيد** المشترك بين المحرر
+  /// والـ PDF حتى لا يترحّل التوزيع بينهما.
+  ///
+  /// يعيد عرض كل خانة وإزاحتها الأفقية داخل [width].
+  List<SignatureSlotRect> slotLayout(double width, {int? slotCountOverride}) {
+    final int count = (slotCountOverride ?? activeSlots.length)
+        .clamp(0, SignatureSlots.max);
+    if (count <= 0 || width <= 0) return const <SignatureSlotRect>[];
+    final double gap = spacing.clamp(0, width);
+    final double usable = (width - gap * (count - 1)).clamp(0, width);
+    final double each = usable / count;
+    return <SignatureSlotRect>[
+      for (int i = 0; i < count; i++)
+        SignatureSlotRect(
+          index: i,
+          left: i * (each + gap),
+          width: each,
+        ),
+    ];
+  }
+
+  static SignatureElement fromJson(Map<String, dynamic> json, String id) {
+    double num_(String key, double fallback) {
+      final Object? value = json[key];
+      if (value is num) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? fallback;
+      return fallback;
+    }
+
+    final Object? rawSlots = json['slots'] ?? json['signatures'];
+    final List<SignatureSlot> slots = <SignatureSlot>[];
+    if (rawSlots is List) {
+      for (final Object? raw in rawSlots) {
+        if (raw is! Map) continue;
+        slots.add(SignatureSlot.fromJson(raw.cast<String, dynamic>()));
+        if (slots.length >= SignatureSlots.max) break;
+      }
+    }
+
+    return SignatureElement(
+      id: id,
+      box: ElementBox.fromJson(json),
+      rotation: TemplateElement.readRotation(json),
+      slots: slots,
+      slotCount: SignatureSlots.fromCount(
+        json['slotCount'] ?? (slots.isEmpty ? SignatureSlots.max : slots.length),
+      ).count,
+      roleFontSize: num_('roleFontSize', 12),
+      nameFontSize: num_('nameFontSize', 15),
+      roleColorHex: '${json['roleColor'] ?? '#5B6779'}',
+      nameColorHex: '${json['nameColor'] ?? '#1B2539'}',
+      family: PdfFontFamily.fromJson(json['font'] as String?),
+      customFont: (json['font_custom'] as String?)?.trim().isEmpty ?? true
+          ? null
+          : (json['font_custom'] as String).trim(),
+      spacing: num_('spacing', 24),
+      imageScale: num_('imageScale', 1),
+      align: SignatureAlign.fromJson(json['align']),
+      showDivider: json['showDivider'] as bool? ?? true,
+      direction: ElementDirection.fromJson(json['direction']),
+      opacity: num_('opacity', 1),
+    );
+  }
+
+  SignatureElement copyWith({
+    ElementBox? box,
+    double? rotation,
+    List<SignatureSlot>? slots,
+    int? slotCount,
+    double? roleFontSize,
+    double? nameFontSize,
+    String? roleColorHex,
+    String? nameColorHex,
+    PdfFontFamily? family,
+    Object? customFont = _unset,
+    double? spacing,
+    double? imageScale,
+    SignatureAlign? align,
+    bool? showDivider,
+    ElementDirection? direction,
+    double? opacity,
+  }) =>
+      SignatureElement(
+        id: id,
+        box: box ?? this.box,
+        rotation: rotation ?? this.rotation,
+        slots: slots ?? this.slots,
+        slotCount: slotCount ?? this.slotCount,
+        roleFontSize: roleFontSize ?? this.roleFontSize,
+        nameFontSize: nameFontSize ?? this.nameFontSize,
+        roleColorHex: roleColorHex ?? this.roleColorHex,
+        nameColorHex: nameColorHex ?? this.nameColorHex,
+        family: family ?? this.family,
+        customFont:
+            customFont == _unset ? this.customFont : customFont as String?,
+        spacing: spacing ?? this.spacing,
+        imageScale: imageScale ?? this.imageScale,
+        align: align ?? this.align,
+        showDivider: showDivider ?? this.showDivider,
+        direction: direction ?? this.direction,
+        opacity: opacity ?? this.opacity,
+      );
+
+  /// نسخة بخانة واحدة معدّلة (توسّع القائمة تلقائياً عند الحاجة).
+  SignatureElement withSlot(int index, SignatureSlot slot) {
+    if (index < 0 || index >= SignatureSlots.max) return this;
+    final List<SignatureSlot> next = <SignatureSlot>[...slots];
+    while (next.length <= index) {
+      next.add(const SignatureSlot());
+    }
+    next[index] = slot;
+    return copyWith(slots: next);
+  }
+
+  /// ضبط عدد الخانات المعروضة (1..3) بلا حذف محتوى أي خانة.
+  SignatureElement withSlotCount(int count) =>
+      copyWith(slotCount: count.clamp(1, SignatureSlots.max));
+
+  @override
+  SignatureElement withBox(ElementBox box) => copyWith(box: box);
+
+  @override
+  SignatureElement withRotation(double rotation) => copyWith(rotation: rotation);
+
+  @override
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'type': 'signature',
+        ...box.toJson(),
+        'slots': slots
+            .take(SignatureSlots.max)
+            .map((SignatureSlot slot) => slot.toJson())
+            .toList(growable: false),
+        'slotCount': slotCount.clamp(1, SignatureSlots.max),
+        'roleFontSize': roleFontSize,
+        'nameFontSize': nameFontSize,
+        'roleColor': roleColorHex,
+        'nameColor': nameColorHex,
+        'font': family.jsonValue,
+        if (customFont != null) 'font_custom': customFont,
+        'spacing': spacing,
+        if (imageScale != 1) 'imageScale': imageScale,
+        'align': align.jsonValue,
+        if (!showDivider) 'showDivider': showDivider,
+        'direction': direction.jsonValue,
+        if (opacity != 1) 'opacity': opacity,
+        if (rotation != 0) 'rotation': rotation,
+      };
+}
+
+/// مستطيل خانة توقيع داخل صندوق العنصر (وحدات تصميم).
+class SignatureSlotRect {
+  const SignatureSlotRect({
+    required this.index,
+    required this.left,
+    required this.width,
+  });
+
+  final int index;
+  final double left;
+  final double width;
 }
 
 // ===========================================================================

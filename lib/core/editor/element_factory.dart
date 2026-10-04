@@ -30,6 +30,9 @@ enum NewElementKind {
   /// شعار/توقيع (صورة).
   image,
 
+  /// كتلة توقيعات متعددة (حتى ثلاثة توقيعات جنباً إلى جنب).
+  signature,
+
   /// رمز تحقّق QR.
   qr,
 }
@@ -159,6 +162,9 @@ abstract final class ElementFactory {
           path: '',
         );
 
+      case NewElementKind.signature:
+        return createSignature(design: design, index: index);
+
       case NewElementKind.qr:
         final double size = shortSide * 0.18;
         return QrElement(
@@ -172,6 +178,43 @@ abstract final class ElementFactory {
           data: DynamicFields.token('رابط_التحقق'),
         );
     }
+  }
+
+  /// أدوار التوقيعات الافتراضية في الكتلة الجديدة.
+  ///
+  /// الأدوار نص ثابت (تتكرّر في كل المستندات)، وأسماء أصحابها تُولَّد بحقول
+  /// ديناميكية حيث يوجد حقل مطابق في [DynamicFields] فتُربط بأعمدة Excel.
+  static const List<SignatureSlot> defaultSignatureSlots = <SignatureSlot>[
+    SignatureSlot(role: 'مدرب البرنامج', name: '{{المدرب}}'),
+    SignatureSlot(role: 'الموارد البشرية'),
+    SignatureSlot(role: 'المدير العام'),
+  ];
+
+  /// كتلة توقيعات جديدة (3 خانات افتراضياً) أسفل المستند.
+  ///
+  /// توزّع على 84% من عرض الورقة بتباعد تلقائي، وتُحجَّم خطوطها نسبياً من
+  /// أبعاد الورقة فتبدو مناسبة على A4 الأفقي والرأسي بلا ضبط يدوي.
+  static SignatureElement createSignature({
+    required Size design,
+    int index = 0,
+    int slotCount = 3,
+    List<SignatureSlot>? slots,
+  }) {
+    final double shortSide =
+        design.width < design.height ? design.width : design.height;
+    return SignatureElement(
+      id: nextId(index, 'signature'),
+      box: ElementBox(
+        x: design.width * 0.08,
+        y: design.height * 0.72,
+        width: design.width * 0.84,
+        height: design.height * 0.2,
+      ),
+      slots: slots ?? defaultSignatureSlots.take(slotCount).toList(),
+      roleFontSize: shortSide * 0.016,
+      nameFontSize: shortSide * 0.021,
+      spacing: design.width * 0.03,
+    );
   }
 
   /// بناء عنصر صورة يشير إلى أصل من مكتبة أصولي (`ImageSourceKind.userAsset`).

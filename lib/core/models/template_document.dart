@@ -200,7 +200,8 @@ class TemplateDocument {
   bool get hasDynamicFields => elements.any(
         (TemplateElement element) =>
             (element is TextElement && element.hasDynamicFields) ||
-            (element is QrElement && element.data.contains('{{')),
+            (element is QrElement && element.data.contains('{{')) ||
+            (element is SignatureElement && element.hasDynamicFields),
       );
 
   /// أسماء الحقول الديناميكية المستخدمة في القالب (تُستخدم لربط أعمدة Excel).
@@ -211,6 +212,11 @@ class TemplateDocument {
       final String? payload = switch (element) {
         TextElement(:final String text) => text,
         QrElement(:final String data) => data,
+        // أدوار التوقيعات وأسماء أصحابها قد تحمل حقولاً ديناميكية أيضاً
+        // (مثل اسم المتدرّب في توقيع المدرب) فتُربط بأعمدة Excel كغيرها.
+        SignatureElement() => element.slots
+            .map((SignatureSlot slot) => '${slot.role} ${slot.name}')
+            .join(' '),
         _ => null,
       };
       if (payload == null) continue;

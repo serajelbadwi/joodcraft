@@ -99,4 +99,530 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get routeNotFoundBody => 'المسار المطلوب غير معرّف في التطبيق:';
+
+  @override
+  String get editorPrecisionTitle => 'الضبط الدقيق';
+
+  @override
+  String get editorNudgeStep => 'خطوة النقل';
+
+  @override
+  String get editorNudgeStepHint =>
+      'الأسهم في اللوحة تنقل بـ Shift = 10px أيضاً.';
+
+  @override
+  String get editorNudgeUp => 'نقل لأعلى';
+
+  @override
+  String get editorNudgeLeft => 'نقل لليسار';
+
+  @override
+  String get editorNudgeDown => 'نقل لأسفل';
+
+  @override
+  String get editorNudgeRight => 'نقل لليمين';
+
+  @override
+  String get editorScale => 'التحجيم';
+
+  @override
+  String get editorScaleHint =>
+      'تحجيم نسبي حول مركز العنصر (عجلة الفأرة فوق الزر تسرّع الخطوة).';
+
+  @override
+  String get editorScaleUp => 'تكبير';
+
+  @override
+  String get editorScaleDown => 'تصغير';
+
+  @override
+  String get editorDecorTitle => 'الزخرفة المتجهية';
+
+  @override
+  String get editorDecorKind => 'نوع الزخرفة';
+
+  @override
+  String get editorDecorPalette => 'لوحة الألوان';
+
+  @override
+  String get editorDecorLayers => 'عدد الطبقات';
+
+  @override
+  String get editorDecorSeed => 'البذرة';
+
+  @override
+  String get editorDecorThickness => 'السماكة';
+
+  @override
+  String get editorDecorPrimary => 'اللون الأساسي';
+
+  @override
+  String get editorDecorSecondary => 'اللون الثاني';
+
+  @override
+  String get editorDecorAccent => 'لون اللمسة';
+
+  @override
+  String get editorDecorGradient => 'تدرّج الطبقات';
+
+  @override
+  String get editorDecorGallery => 'معرض الوصفات';
+
+  @override
+  String get editorDecorGalleryTitle => 'معرض الزخارف الجاهزة';
+
+  @override
+  String get editorClose => 'إغلاق';
+
+  @override
+  String get editorDecorPaletteCustom => 'مخصصة';
+
+  @override
+  String get decorKindModernWave => 'موجات حديثة';
+
+  @override
+  String get decorKindPaperCut => 'قصّ ورقي متعدد الطبقات';
+
+  @override
+  String get decorKindClassicCorner => 'إطار كلاسيكي مزخرف';
+
+  @override
+  String get decorKindGuilloche => 'نمط غيوش الأمني';
+
+  @override
+  String get decorKindRibbonBanner => 'شريط/وسام';
+
+  @override
+  String get decorPaletteRoyalGold => 'ذهبي ملكي';
+
+  @override
+  String get decorPaletteRoyalBlue => 'أزرق ملكي';
+
+  @override
+  String get decorPaletteEmerald => 'زمردي';
+
+  @override
+  String get decorPaletteBurgundy => 'عنابي';
+
+  @override
+  String get decorPaletteMidnight => 'كحلي ليلي';
+
+  @override
+  String get decorPaletteMono => 'رمادي أحادي';
+
+  @override
+  String get editorSignatureTitle => 'كتلة التوقيعات';
+
+  @override
+  String get editorSignatureCount => 'عدد التوقيعات';
+
+  @override
+  String get signatureCountOne => 'توقيع واحد';
+
+  @override
+  String get signatureCountTwo => 'توقيعان';
+
+  @override
+  String get signatureCountThree => 'ثلاثة توقيعات';
+
+  @override
+  String get editorSignatureOrder => 'ترتيب الخانات';
+
+  @override
+  String get editorSignatureOrderHint =>
+      'في المستندات العربية تقع الخانة الأولى في أقصى اليمين.';
+
+  @override
+  String get editorSignatureFirstRight => 'الأولى يميناً';
+
+  @override
+  String get editorSignatureFirstLeft => 'الأولى يساراً';
+
+  @override
+  String get editorDirectionAuto => 'تلقائي';
+
+  @override
+  String get editorSignatureImageAlign => 'محاذاة الصورة';
+
+  @override
+  String get editorAlignStart => 'بداية';
+
+  @override
+  String get editorAlignCenter => 'وسط';
+
+  @override
+  String get editorAlignEnd => 'نهاية';
+
+  @override
+  String get editorSignatureDivider => 'خط التوقيع';
+
+  @override
+  String get editorVisible => 'ظاهر';
+
+  @override
+  String get editorHidden => 'مخفي';
+
+  @override
+  String get editorSignatureNameSize => 'حجم الاسم';
+
+  @override
+  String get editorSignatureRoleSize => 'حجم الدور';
+
+  @override
+  String get editorSignatureSpacing => 'التباعد';
+
+  @override
+  String get editorSignatureImageSize => 'حجم الصورة';
+
+  @override
+  String get editorSignatureNameColor => 'لون الاسم';
+
+  @override
+  String get editorSignatureRoleColor => 'لون الدور';
+
+  @override
+  String get editorFont => 'الخط';
+
+  @override
+  String get editorImageSource => 'مصدر الصورة';
+
+  @override
+  String get imageSourceAppAssets => 'أصول التطبيق';
+
+  @override
+  String get imageSourceMyLibrary => 'مكتبة أصولي';
+
+  @override
+  String get imageSourceLocalFile => 'ملف محلي';
+
+  @override
+  String get imageSourceEmbedded => 'بيانات مضمّنة';
+
+  @override
+  String get editorSignatureChangeImage => 'تغيير صورة التوقيع';
+
+  @override
+  String get editorSignatureAddImage => 'إضافة صورة توقيع';
+
+  @override
+  String get editorSignatureRemoveImage => 'إزالة صورة التوقيع';
+
+  @override
+  String get editorSignaturePickImageTitle =>
+      'اختر صورة التوقيع من مكتبة أصولي';
+
+  @override
+  String get editorSignatureSlot => 'الخانة';
+
+  @override
+  String get editorSignatureRoleField => 'الدور (مثل: المدير العام)';
+
+  @override
+  String get editorSignatureNameField => 'اسم المُوقّع (يقبل حقلاً ديناميكياً)';
+
+  @override
+  String get editorFromMyLibrary => 'من مكتبة أصولي';
+
+  @override
+  String get paletteSignatureBlock => 'توقيعات';
+
+  @override
+  String get editorInsertFromLibraryTooltip =>
+      'إدراج إطار أو شعار مرفوع مباشرةً';
+
+  @override
+  String get unsupportedElementVersionNote =>
+      'هذا العنصر من إصدار أحدث من المحرر — يُحفظ كما هو ولا يمكن تعديله هنا.';
+
+  @override
+  String editorSelectedCount(Object count) {
+    return '$count عناصر محددة';
+  }
+
+  @override
+  String get editorClearSelection => 'إلغاء التحديد';
+
+  @override
+  String get editorGroup => 'المجموعة';
+
+  @override
+  String get editorOpacity => 'الشفافية';
+
+  @override
+  String get editorBringToFront => 'إلى المقدمة';
+
+  @override
+  String get editorSendToBack => 'إلى الخلف';
+
+  @override
+  String get editorDuplicate => 'تكرار';
+
+  @override
+  String get editorDeleteSelected => 'حذف المحدد';
+
+  @override
+  String get editorGroupDragHint =>
+      'اسحب المجموعة بالماوس، والأسهم للتحريك الدقيق (Shift = 10px)، و Ctrl + نقر لتعديل التحديد.';
+
+  @override
+  String get editorBringForward => 'إلى الأمام';
+
+  @override
+  String get editorDuplicateElement => 'تكرار العنصر';
+
+  @override
+  String get editorDeleteElement => 'حذف العنصر';
+
+  @override
+  String get editorPageSettings => 'إعدادات الصفحة';
+
+  @override
+  String get editorPageSize => 'المقاس';
+
+  @override
+  String get editorUnit => 'الوحدة';
+
+  @override
+  String get editorWidth => 'العرض';
+
+  @override
+  String get editorHeight => 'الارتفاع';
+
+  @override
+  String get editorLabelText => 'نص';
+
+  @override
+  String get editorLabelShape => 'شكل';
+
+  @override
+  String get editorLabelSeal => 'ختم';
+
+  @override
+  String get editorLabelDecoration => 'زخرفة متجهية';
+
+  @override
+  String get editorLabelSignature => 'كتلة توقيعات';
+
+  @override
+  String get editorLabelImage => 'صورة/شعار';
+
+  @override
+  String get editorLabelQr => 'رمز QR';
+
+  @override
+  String get editorLabelUnknown => 'عنصر غير مدعوم';
+
+  @override
+  String get editorLabelDynamicField => 'حقل ديناميكي';
+
+  @override
+  String get editorPositionAndSize => 'الموضع والحجم';
+
+  @override
+  String get editorPosX => 'س';
+
+  @override
+  String get editorPosY => 'ص';
+
+  @override
+  String get editorRotation => 'الدوران';
+
+  @override
+  String get editorTextFormat => 'تنسيق النص';
+
+  @override
+  String get editorConvertToField => 'تحويل إلى حقل ديناميكي';
+
+  @override
+  String get editorFontWeight => 'الوزن';
+
+  @override
+  String get editorWeightRegular => 'عادي';
+
+  @override
+  String get editorWeightSemiBold => 'متوسط';
+
+  @override
+  String get editorWeightBold => 'عريض';
+
+  @override
+  String get editorFontSize => 'حجم الخط';
+
+  @override
+  String get editorLetterSpacing => 'تباعد الحروف';
+
+  @override
+  String get editorLineHeight => 'ارتفاع السطر';
+
+  @override
+  String get editorTextColor => 'لون النص';
+
+  @override
+  String get editorTextBackground => 'خلفية النص';
+
+  @override
+  String get editorTextAlign => 'المحاذاة';
+
+  @override
+  String get editorAlignJustify => 'ضبط';
+
+  @override
+  String get editorJustifyMode => 'طريقة الضبط';
+
+  @override
+  String get editorJustifyHint =>
+      'الكشيدة تُطبَّق في ملف PDF (المعاينة تُظهر ضبط الفراغات)';
+
+  @override
+  String get editorJustifySpaces => 'فراغات';
+
+  @override
+  String get editorJustifyKashida => 'كشيدة';
+
+  @override
+  String get editorVerticalAlign => 'المحاذاة الرأسية';
+
+  @override
+  String get editorVerticalTop => 'أعلى';
+
+  @override
+  String get editorVerticalBottom => 'أسفل';
+
+  @override
+  String get editorDirection => 'الاتجاه';
+
+  @override
+  String get editorDirectionHint => 'اختصار التبديل: Ctrl+Shift+D';
+
+  @override
+  String get editorDirectionRtl => 'عربي';
+
+  @override
+  String get editorDirectionLtr => 'لاتيني';
+
+  @override
+  String get editorImage => 'الصورة';
+
+  @override
+  String get editorSource => 'المصدر';
+
+  @override
+  String get editorImageFit => 'ملاءمة الصورة';
+
+  @override
+  String get editorFitContain => 'احتواء كامل';
+
+  @override
+  String get editorFitCover => 'تغطية';
+
+  @override
+  String get editorFitFill => 'تمديد';
+
+  @override
+  String get assetPickerEmptyHint =>
+      'لم ترفع أصولاً بعد. ارفع شعاراً أو توقيعاً أو ختماً لتستخدمه هنا وفي الطباعة.';
+
+  @override
+  String get assetPickerNoneOption => 'بلا (مصدر آخر)';
+
+  @override
+  String get assetPickerTitle => 'اختر صورة من مكتبة أصولي';
+
+  @override
+  String assetUploadType(Object type) {
+    return 'رفع $type';
+  }
+
+  @override
+  String get editorSeal => 'الختم';
+
+  @override
+  String get editorSealColor => 'لون الختم';
+
+  @override
+  String get editorSealRingColor => 'لون الحلقة';
+
+  @override
+  String get editorSealStarColor => 'لون النجمة';
+
+  @override
+  String get editorSealStarSize => 'حجم النجمة';
+
+  @override
+  String get editorShape => 'الشكل';
+
+  @override
+  String get editorFillColor => 'لون التعبئة';
+
+  @override
+  String get editorBorderColor => 'لون الحدود';
+
+  @override
+  String get editorBorderWidth => 'سماكة الحدود';
+
+  @override
+  String get editorCornerRadius => 'استدارة الزوايا';
+
+  @override
+  String get editorQrVerify => 'رمز التحقق';
+
+  @override
+  String get editorQrData => 'بيانات الرمز';
+
+  @override
+  String get editorQrColor => 'لون الرمز';
+
+  @override
+  String get editorQrBackground => 'خلفية الرمز';
+
+  @override
+  String editorConvertDialogMessage(Object text) {
+    return 'التحويل يغيّر النص «$text» إلى علامة ديناميكية قابلة للربط في التوليد الجماعي.';
+  }
+
+  @override
+  String get editorFieldKeyHint => 'مفتاح الحقل (مثل: الاسم، التاريخ، المرجع)';
+
+  @override
+  String get editorCustomKeyHint =>
+      'أدخل مفتاحاً مخصصاً (بدون أقواس — سيُضاف تلقائياً)';
+
+  @override
+  String get editorCancel => 'إلغاء';
+
+  @override
+  String get editorConvert => 'تحويل';
+
+  @override
+  String get editorPath => 'المسار';
+
+  @override
+  String get editorTextContent => 'محتوى النص';
+
+  @override
+  String editorInsertFieldToken(Object token) {
+    return 'إدراج $token';
+  }
+
+  @override
+  String editorAddLabel(Object label) {
+    return 'إضافة $label';
+  }
+
+  @override
+  String assetInsertedSnack(Object name) {
+    return 'أُدرج «$name» في القالب.';
+  }
+
+  @override
+  String get paletteHeading => 'عنوان';
+
+  @override
+  String get paletteFrame => 'مستطيل/برواز';
+
+  @override
+  String get paletteDivider => 'خط فاصل';
+
+  @override
+  String get paletteLogo => 'شعار/توقيع';
 }

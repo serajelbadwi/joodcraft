@@ -78,6 +78,7 @@ class ElementView extends StatelessWidget {
       final ShapeElement shape => _buildShape(shape),
       final SealElement seal => _buildSeal(seal),
       final DecorationElement decor => _buildDecoration(decor),
+      final SignatureElement signature => _buildSignature(signature),
       final ImageElement image => _buildImage(image),
       final QrElement qr => _buildQr(qr),
       final UnknownElement unknown => _buildUnknown(unknown),
@@ -187,6 +188,208 @@ class ElementView extends StatelessWidget {
     return Opacity(
       opacity: decor.opacity.clamp(0, 1),
       child: CustomPaint(painter: DecorationPainter(spec: decor.spec)),
+    );
+  }
+
+  // --------------------------------------------------------------------------
+  //  التوقيعات المتعددة
+  // --------------------------------------------------------------------------
+  Widget _buildSignature(SignatureElement signature) {
+    final List<SignatureSlot> slots = signature.orderedSlots;
+    if (slots.isEmpty) {
+      return const _MissingAssetHint(
+        icon: Icons.draw_rounded,
+        label: 'توقيعات فارغة',
+        detail: 'أضف دوراً واسماً وصورة توقيع',
+      );
+    }
+
+    return Opacity(
+      opacity: signature.opacity.clamp(0, 1),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          // العرض بالوحدات التصميمية: صندوق العنصر إن حُدّد، وإلا نستنتجه من
+          // مقاس اللوحة الفعلي ÷ معامل التحويل (الصندوق 0 = امتداد).
+          final double designWidth = signature.box.width > 0
+              ? signature.box.width
+              : (scale <= 0
+                  ? constraints.maxWidth
+                  : constraints.maxWidth / scale);
+          final List<SignatureSlotRect> rects = signature.slotLayout(
+            designWidth,
+            slotCountOverride: slots.length,
+          );
+          final bool boundedHeight = constraints.maxHeight.isFinite;
+          return Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              for (int i = 0; i < rects.length && i < slots.length; i++)
+                Positioned(
+                  left: rects[i].left * scale,
+                  top: 0,
+                  width: rects[i].width * scale,
+                  height: boundedHeight ? constraints.maxHeight : null,
+                  child: _signatureSlot(signature, slots[i], rects[i].width),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  /// خانة واحدة: صورة التوقيع ← خط التوقيع ← الاسم ← الدور (ويُوسَّط رأسياً).
+  ///
+  /// [slotWidth] عرض الخانة بالوحدات التصميمية (من `slotLayout`) — يُستخدم
+  /// لحساب ارتفاع الصورة بنفس قاعدة الـ PDF تماماً.
+  Widget _signatureSlot(
+    SignatureElement element,
+    SignatureSlot slot,
+    double slotWidth,
+  ) {
+    final String role = document.resolveFields(
+      slot.role,
+      null,
+      keepUnknownTokens: true,
+    );
+    final String name = document.resolveFields(
+      slot.name,
+      null,
+      keepUnknownTokens: true,
+    );
+    final bool rtl = TextFlow.resolvesRtl(element.direction, '$name $role');
+    final TextDirection textDirection =
+        rtl ? TextDirection.rtl : TextDirection.ltr;
+    final TextAlign textAlign = switch (element.align) {
+      SignatureAlign.start => TextAlign.start,
+      SignatureAlign.center => TextAlign.center,
+      SignatureAlign.end => TextAlign.end,
+    };
+    final double imageHeight = element.imageHeightFor(
+      slotWidth,
+      boxHeight: element.box.height,
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        if (slot.hasImage)
+          SizedBox(
+            height: imageHeight * scale,
+            width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6 * scale),
+              child: _signatureImage(slot),
+            ),
+          ),
+        if (element.showDivider)
+          Padding(
+            padding: EdgeInsets.only(
+              top: (slot.hasImage ? 4 : 0) * scale,
+              left: 12 * scale,
+              right: 12 * scale,
+              bottom: 5 * scale,
+            ),
+            child: Container(height: 1, color: const Color(0xFF6B7280)),
+          ),
+        if (name.trim().isNotEmpty)
+          Text(
+            name,
+            textDirection: textDirection,
+            textAlign: textAlign,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: _signatureTextStyle(
+              element: element,
+              fontSize: element.nameFontSize,
+              colorHex: element.nameColorHex,
+              weight: PdfFontWeight.semiBold,
+            ),
+          ),
+        if (role.trim().isNotEmpty)
+          Text(
+            role,
+            textDirection: textDirection,
+            textAlign: textAlign,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: _signatureTextStyle(
+              element: element,
+              fontSize: element.roleFontSize,
+              colorHex: element.roleColorHex,
+              weight: PdfFontWeight.regular,
+            ),
+          ),
+      ],
+    );
+  }
+
+  TextStyle _signatureTextStyle({
+    required SignatureElement element,
+    required double fontSize,
+    required String colorHex,
+    required PdfFontWeight weight,
+  }) {
+    final String? custom = element.customFont;
+    return TextStyle(
+      fontFamily: custom != null && custom.trim().isNotEmpty
+          ? custom.trim()
+          : editorFontFamily(element.family),
+      fontSize: fontSize * scale,
+      fontWeight: switch (weight) {
+        PdfFontWeight.regular => FontWeight.w400,
+        PdfFontWeight.semiBold => FontWeight.w600,
+        PdfFontWeight.bold => FontWeight.w700,
+      },
+      color: colorFromHex(colorHex, fallback: Colors.black),
+      height: 1.3,
+    );
+  }
+
+  /// صورة توقيع خانة — نفس قواعد عرض [ImageElement] (أصل حيّ ← Base64 ← تنبيه).
+  Widget _signatureImage(SignatureSlot slot) {
+    const BoxFit fit = BoxFit.contain;
+    if (slot.imageSource == ImageSourceKind.userAsset) {
+      final UserAsset? asset = AssetsController.instance.byId(slot.imagePath);
+      if (asset != null) {
+        return _memoryImage(
+          AssetImageCache.instance.providerForAsset(asset),
+          fit,
+        );
+      }
+      final String? inline = inlineSlotBase64(slot, document);
+      return inline == null
+          ? const _MissingAssetHint(
+              icon: Icons.image_not_supported_outlined,
+              label: 'توقيع محذوف',
+              detail: 'اختر صورة من مكتبة أصولي',
+            )
+          : _imageFromBase64(inline, fit);
+    }
+    if (slot.imageSource == ImageSourceKind.dataUri) {
+      return _imageFromBase64(slot.imagePath, fit);
+    }
+    if (slot.imageSource == ImageSourceKind.file) {
+      return const _MissingAssetHint(
+        icon: Icons.link_off_rounded,
+        label: 'ملف محلي',
+        detail: 'ارفع الصورة إلى مكتبة الأصول',
+      );
+    }
+    return Image.asset(
+      slot.imagePath,
+      fit: fit,
+      errorBuilder: (
+        BuildContext context,
+        Object error,
+        StackTrace? stackTrace,
+      ) =>
+          _MissingAssetHint(
+        icon: Icons.broken_image_outlined,
+        label: 'صورة غير موجودة',
+        detail: slot.imagePath,
+      ),
     );
   }
 

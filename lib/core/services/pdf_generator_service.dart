@@ -391,15 +391,33 @@ class PdfGeneratorService {
   Iterable<_ImageRef> _imageRefs(TemplateDocument document) sync* {
     final Set<String> seen = <String>{};
     for (final TemplateElement element in document.elements) {
-      if (element is! ImageElement) continue;
-      final String key = '${element.sourceKind.jsonValue}:${element.path}';
-      if (!seen.add(key)) continue;
-      yield _ImageRef(
-        key: key,
-        path: element.path,
-        kind: element.sourceKind,
-        inlineData: inlineImageBase64(element, document),
-      );
+      if (element is ImageElement) {
+        final String key = '${element.sourceKind.jsonValue}:${element.path}';
+        if (!seen.add(key)) continue;
+        yield _ImageRef(
+          key: key,
+          path: element.path,
+          kind: element.sourceKind,
+          inlineData: inlineImageBase64(element, document),
+        );
+        continue;
+      }
+      // صور خانات التوقيع تُحمّل بنفس مفتاح النوع:المسار الذي يستعلم به محرّك
+      // الرسم، فتخرج التوقيعات في الـ PDF بلا مسار تحميل موازٍ.
+      if (element is SignatureElement) {
+        for (final SignatureSlot slot in element.slots) {
+          if (!slot.hasImage) continue;
+          final String key =
+              '${slot.imageSource.jsonValue}:${slot.imagePath}';
+          if (!seen.add(key)) continue;
+          yield _ImageRef(
+            key: key,
+            path: slot.imagePath,
+            kind: slot.imageSource,
+            inlineData: inlineSlotBase64(slot, document),
+          );
+        }
+      }
     }
   }
 

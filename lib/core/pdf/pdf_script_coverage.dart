@@ -80,6 +80,12 @@ abstract final class PdfScriptCoverage {
           scan(text);
         case QrElement(:final String data):
           scan(data);
+        // أدوار التوقيعات وأسماء أصحابها تُكتب في الـ PDF فتشمَلها التغطية.
+        case SignatureElement():
+          for (final SignatureSlot slot in element.slots) {
+            scan(slot.role);
+            scan(slot.name);
+          }
         default:
           break;
       }
