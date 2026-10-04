@@ -98,6 +98,15 @@ void main() {
 
   Finder card(String id) => find.byKey(ValueKey<String>('library-entry-$id'));
 
+  /// ينقل البطاقة إلى داخل العرض ثم ينقر الهدف (بعض البطاقات تقع أسفل
+  /// حدود نافذة الاختبار فيفشل النقر بلا تمرير).
+  Future<void> tapVisible(WidgetTester tester, Finder finder) async {
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    await tester.tap(finder);
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('بلا سحابة تعرض القوالب الجاهزة وتعمل أوفلاين',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
@@ -240,13 +249,13 @@ void main() {
   testWidgets('فتح عقد جاهز ينقل إلى محرّر العقود', (WidgetTester tester) async {
     await pumpLibrary(tester);
 
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(
         of: card('preset:employment_contract'),
         matching: find.text('فتح كقالب'),
       ),
     );
-    await tester.pumpAndSettle();
 
     expect(find.text('محرر عقد:مسودة-عقد عمل'), findsOneWidget);
   });
@@ -268,13 +277,13 @@ void main() {
       (WidgetTester tester) async {
     await pumpLibrary(tester);
 
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(
         of: card('preset:service_contract'),
         matching: find.byIcon(Icons.more_vert_rounded),
       ),
     );
-    await tester.pumpAndSettle();
     await tester.tap(find.text('استخدام في التوليد الجماعي'));
     await tester.pumpAndSettle();
 

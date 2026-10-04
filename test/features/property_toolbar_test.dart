@@ -149,8 +149,7 @@ void main() {
       controller.select('text-1');
       await tester.pump();
 
-      await tester.tap(stepUpFor('حجم الخط'));
-      await tester.pump();
+      await tapVisible(tester, stepUpFor('حجم الخط'));
 
       expect((controller.selected! as TextElement).fontSize, 17);
     });
@@ -167,6 +166,8 @@ void main() {
             .first,
         matching: find.byTooltip('إنقاص'),
       );
+      await tester.ensureVisible(stepDown);
+      await tester.pumpAndSettle();
       for (int i = 0; i < 30; i++) {
         await tester.tap(stepDown);
         await tester.pump();
