@@ -1766,4 +1766,33 @@ class AppLocalizationsId extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'Elemen ini ditetapkan ke $token dan perubahan disimpan ke templat. Elemen lain tidak terpengaruh.';
   }
+
+  @override
+  String get commonShow => 'Tampilkan';
+
+  @override
+  String get commonHide => 'Sembunyikan';
+
+  @override
+  String get themeSwitchToLight => 'Beralih ke tema terang';
+
+  @override
+  String get themeSwitchToDark => 'Beralih ke tema gelap';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'Sedang berjalan — tahap $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'Sertifikat baru';
+
+  @override
+  String get cbNewContractTitle => 'Kontrak baru';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'Data penerima (contoh)';
+
+  @override
+  String get cbContractDataTitle => 'Data kontrak (contoh)';
 }

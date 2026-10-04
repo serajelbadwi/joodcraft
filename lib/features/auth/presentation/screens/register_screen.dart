@@ -143,9 +143,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               textInputAction: TextInputAction.next,
               textInputFormatterEnabled: false,
               enabled: !busy,
-              helperText:
+              helperText: context.l10n?.authPasswordRule(
+                    AppConstants.minPasswordLength,
+                  ) ??
                   'استخدم ${AppConstants.minPasswordLength} أحرف أو أكثر '
-                  'مع أرقام ورموز.',
+                      'مع أرقام ورموز.',
               validator: Validators.password,
             ),
             const SizedBox(height: AppTheme.space16),

@@ -514,5 +514,14 @@
   "bpWarnNoDynamicFields": "Templat ini tidak punya bidang dinamis — data tidak berubah antar catatan. Tambahkan bidang “nama peserta” dari bilah editor, lalu simpan templat.",
   "bpWarnNoNameField": "Templat ini tidak punya bidang nama dinamis — kolom nama bisa dipetakan ke bidang tanggal atau referensi dan nama tercetak di tempat yang salah. Ubah teks nama tetap menjadi bidang atau rancang ulang templat.",
   "bpAssignedTemp": "Elemen ini ditetapkan ke {token} untuk pembuatan saat ini — elemen lain tidak terpengaruh. Simpan templat agar perubahan permanen.",
-  "bpAssignedSaved": "Elemen ini ditetapkan ke {token} dan perubahan disimpan ke templat. Elemen lain tidak terpengaruh."
+  "bpAssignedSaved": "Elemen ini ditetapkan ke {token} dan perubahan disimpan ke templat. Elemen lain tidak terpengaruh.",
+  "commonShow": "Tampilkan",
+  "commonHide": "Sembunyikan",
+  "themeSwitchToLight": "Beralih ke tema terang",
+  "themeSwitchToDark": "Beralih ke tema gelap",
+  "commonComingSoonPhase": "Sedang berjalan — tahap {phase}",
+  "cbNewCertificateTitle": "Sertifikat baru",
+  "cbNewContractTitle": "Kontrak baru",
+  "cbBeneficiaryDataTitle": "Data penerima (contoh)",
+  "cbContractDataTitle": "Data kontrak (contoh)"
 }

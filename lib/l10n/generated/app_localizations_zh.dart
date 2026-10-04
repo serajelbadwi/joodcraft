@@ -1707,4 +1707,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return '此元素已指定到 $token，更改已保存到模板。其他元素不受影响。';
   }
+
+  @override
+  String get commonShow => '显示';
+
+  @override
+  String get commonHide => '隐藏';
+
+  @override
+  String get themeSwitchToLight => '切换到浅色主题';
+
+  @override
+  String get themeSwitchToDark => '切换到深色主题';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return '进行中 — 阶段 $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => '新证书';
+
+  @override
+  String get cbNewContractTitle => '新合同';
+
+  @override
+  String get cbBeneficiaryDataTitle => '受益人数据（示例）';
+
+  @override
+  String get cbContractDataTitle => '合同数据（示例）';
 }

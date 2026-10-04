@@ -3203,6 +3203,60 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'عُيّن هذا العنصر إلى {token} وحُفظ التعديل في القالب. بقية العناصر لم تُمسّ.'**
   String bpAssignedSaved(Object token);
+
+  /// No description provided for @commonShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار'**
+  String get commonShow;
+
+  /// No description provided for @commonHide.
+  ///
+  /// In ar, this message translates to:
+  /// **'إخفاء'**
+  String get commonHide;
+
+  /// No description provided for @themeSwitchToLight.
+  ///
+  /// In ar, this message translates to:
+  /// **'التبديل إلى المظهر الفاتح'**
+  String get themeSwitchToLight;
+
+  /// No description provided for @themeSwitchToDark.
+  ///
+  /// In ar, this message translates to:
+  /// **'التبديل إلى المظهر الداكن'**
+  String get themeSwitchToDark;
+
+  /// No description provided for @commonComingSoonPhase.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد التنفيذ — المرحلة {phase}'**
+  String commonComingSoonPhase(Object phase);
+
+  /// No description provided for @cbNewCertificateTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة جديدة'**
+  String get cbNewCertificateTitle;
+
+  /// No description provided for @cbNewContractTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عقد جديد'**
+  String get cbNewContractTitle;
+
+  /// No description provided for @cbBeneficiaryDataTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات المستفيد (تجريبية)'**
+  String get cbBeneficiaryDataTitle;
+
+  /// No description provided for @cbContractDataTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات العقد (تجريبية)'**
+  String get cbContractDataTitle;
 }
 
 class _AppLocalizationsDelegate

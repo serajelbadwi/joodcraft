@@ -514,5 +514,14 @@
   "bpWarnNoDynamicFields": "This template has no dynamic fields — data won’t change between records. Add a “trainee name” field from the editor toolbar, then save the template.",
   "bpWarnNoNameField": "This template has no dynamic name field — the name column may map to a date or reference field and the name prints in the wrong place. Convert the fixed name text into a field or redesign the template.",
   "bpAssignedTemp": "This element was assigned to {token} for the current generation — the other elements are untouched. Save the template to keep the change permanently.",
-  "bpAssignedSaved": "This element was assigned to {token} and the change was saved to the template. The other elements are untouched."
+  "bpAssignedSaved": "This element was assigned to {token} and the change was saved to the template. The other elements are untouched.",
+  "commonShow": "Show",
+  "commonHide": "Hide",
+  "themeSwitchToLight": "Switch to light theme",
+  "themeSwitchToDark": "Switch to dark theme",
+  "commonComingSoonPhase": "In progress — phase {phase}",
+  "cbNewCertificateTitle": "New certificate",
+  "cbNewContractTitle": "New contract",
+  "cbBeneficiaryDataTitle": "Beneficiary data (sample)",
+  "cbContractDataTitle": "Contract data (sample)"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_l10n.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 
@@ -59,7 +60,8 @@ class ComingSoonScreen extends StatelessWidget {
                           Text(title, style: text.headlineSmall),
                           const SizedBox(height: 4),
                           Text(
-                            'قيد التنفيذ — المرحلة $phase',
+                            context.l10n?.commonComingSoonPhase(phase) ??
+                                'قيد التنفيذ — المرحلة $phase',
                             style: text.bodySmall?.copyWith(
                               color: Theme.of(context).colorScheme.goldDeep,
                             ),

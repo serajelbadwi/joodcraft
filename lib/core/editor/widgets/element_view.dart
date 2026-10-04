@@ -4,6 +4,7 @@ import '../../assets/asset_image_cache.dart';
 import '../../assets/assets_controller.dart';
 import '../../assets/embedded_assets.dart';
 import '../../assets/user_asset.dart';
+import '../../constants/app_assets.dart';
 import '../../models/template_document.dart';
 import '../../models/template_element.dart';
 import '../../models/text_flow.dart';
@@ -26,6 +27,9 @@ String editorFontFamilyOf(TextElement text) {
 TextStyle editorTextStyle(TextElement text, double scale) {
   return TextStyle(
     fontFamily: editorFontFamilyOf(text),
+    // خطوط نظام احتياطية للصينية/الآسيوية — فلا تظهر مربعات في معاينة القالب
+    // حتى لو كان الخط المختار عربياً لا يغطّي CJK. راجع AppAssets.cjkFontFallback.
+    fontFamilyFallback: AppAssets.cjkFontFallback,
     fontSize: text.fontSize * scale,
     fontWeight: switch (text.weight) {
       PdfFontWeight.regular => FontWeight.w400,
@@ -339,6 +343,7 @@ class ElementView extends StatelessWidget {
       fontFamily: custom != null && custom.trim().isNotEmpty
           ? custom.trim()
           : editorFontFamily(element.family),
+      fontFamilyFallback: AppAssets.cjkFontFallback,
       fontSize: fontSize * scale,
       fontWeight: switch (weight) {
         PdfFontWeight.regular => FontWeight.w400,

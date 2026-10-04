@@ -1766,4 +1766,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'This element was assigned to $token and the change was saved to the template. The other elements are untouched.';
   }
+
+  @override
+  String get commonShow => 'Show';
+
+  @override
+  String get commonHide => 'Hide';
+
+  @override
+  String get themeSwitchToLight => 'Switch to light theme';
+
+  @override
+  String get themeSwitchToDark => 'Switch to dark theme';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'In progress — phase $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'New certificate';
+
+  @override
+  String get cbNewContractTitle => 'New contract';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'Beneficiary data (sample)';
+
+  @override
+  String get cbContractDataTitle => 'Contract data (sample)';
 }

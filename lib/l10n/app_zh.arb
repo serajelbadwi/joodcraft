@@ -514,5 +514,14 @@
   "bpWarnNoDynamicFields": "此模板没有动态字段——记录之间数据不会变化。请从编辑器工具栏添加“学员姓名”字段，然后保存模板。",
   "bpWarnNoNameField": "此模板没有动态姓名字段——姓名列可能映射到日期或编号字段，导致姓名打印在错误位置。请将固定姓名文本转换为字段，或重新设计模板。",
   "bpAssignedTemp": "此元素已为当前生成指定到 {token}——其他元素不受影响。保存模板以永久保留更改。",
-  "bpAssignedSaved": "此元素已指定到 {token}，更改已保存到模板。其他元素不受影响。"
+  "bpAssignedSaved": "此元素已指定到 {token}，更改已保存到模板。其他元素不受影响。",
+  "commonShow": "显示",
+  "commonHide": "隐藏",
+  "themeSwitchToLight": "切换到浅色主题",
+  "themeSwitchToDark": "切换到深色主题",
+  "commonComingSoonPhase": "进行中 — 阶段 {phase}",
+  "cbNewCertificateTitle": "新证书",
+  "cbNewContractTitle": "新合同",
+  "cbBeneficiaryDataTitle": "受益人数据（示例）",
+  "cbContractDataTitle": "合同数据（示例）"
 }

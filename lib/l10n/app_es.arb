@@ -514,5 +514,14 @@
   "bpWarnNoDynamicFields": "Esta plantilla no tiene campos dinámicos: los datos no cambiarán entre registros. Añade un campo «nombre del aprendiz» desde la barra del editor y guarda la plantilla.",
   "bpWarnNoNameField": "Esta plantilla no tiene un campo de nombre dinámico: la columna del nombre podría asignarse a un campo de fecha o referencia y el nombre imprimirse en el lugar equivocado. Convierte el texto fijo del nombre en un campo o rediseña la plantilla.",
   "bpAssignedTemp": "Este elemento se asignó a {token} para la generación actual; los demás elementos no se ven afectados. Guarda la plantilla para conservar el cambio.",
-  "bpAssignedSaved": "Este elemento se asignó a {token} y el cambio se guardó en la plantilla. Los demás elementos no se ven afectados."
+  "bpAssignedSaved": "Este elemento se asignó a {token} y el cambio se guardó en la plantilla. Los demás elementos no se ven afectados.",
+  "commonShow": "Mostrar",
+  "commonHide": "Ocultar",
+  "themeSwitchToLight": "Cambiar al tema claro",
+  "themeSwitchToDark": "Cambiar al tema oscuro",
+  "commonComingSoonPhase": "En curso — fase {phase}",
+  "cbNewCertificateTitle": "Nuevo certificado",
+  "cbNewContractTitle": "Nuevo contrato",
+  "cbBeneficiaryDataTitle": "Datos del beneficiario (muestra)",
+  "cbContractDataTitle": "Datos del contrato (muestra)"
 }

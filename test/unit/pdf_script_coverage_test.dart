@@ -5,6 +5,10 @@ import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/pdf/pdf_script_coverage.dart';
 
 void main() {
+  // تُصفَّر التغطية المسجّلة وقت التشغيل قبل كل اختبار كي لا تتسرّب بينها.
+  setUp(PdfScriptCoverage.resetRuntimeCoverage);
+  tearDown(PdfScriptCoverage.resetRuntimeCoverage);
+
   test('يكتشف الكتابات الأساسية', () {
     expect(PdfScriptCoverage.scriptsIn('مرحبا'), <PdfScript>{PdfScript.arabic});
     expect(PdfScriptCoverage.scriptsIn('Hello_123'),
@@ -80,6 +84,53 @@ void main() {
     expect(
       PdfScriptCoverage.warningFor(PdfScript.cjk),
       contains('Noto Sans'),
+    );
+  });
+
+  test('تسجيل تغطية وقت التشغيل يلغي تحذير الصينية', () {
+    expect(PdfScriptCoverage.unsupportedIn('中文'), <PdfScript>{PdfScript.cjk});
+
+    PdfScriptCoverage.registerCovered(<PdfScript>{PdfScript.cjk});
+
+    expect(PdfScriptCoverage.coveredScripts, contains(PdfScript.cjk));
+    expect(PdfScriptCoverage.unsupportedIn('中文'), isEmpty);
+    expect(PdfScriptCoverage.covers(<PdfScript>{PdfScript.cjk}), isTrue);
+  });
+
+  test('الخط المخصّص المتاح يحجب تحذير تغطية النص', () {
+    TemplateDocument withFont(String? font) => TemplateDocument(
+          elements: <TemplateElement>[
+            TextElement(
+              id: 't',
+              box: const ElementBox(x: 0, y: 0, width: 100, height: 20),
+              text: '中文',
+              customFont: font,
+            ),
+          ],
+        );
+
+    // بلا خط مخصّص: الصينية غير مغطّاة.
+    expect(
+      PdfScriptCoverage.unsupportedInDocument(withFont(null)),
+      <PdfScript>{PdfScript.cjk},
+    );
+
+    // خط مخصّص متاح (مسجَّل): لا تحذير.
+    expect(
+      PdfScriptCoverage.unsupportedInDocument(
+        withFont('custom-cjk'),
+        isCustomFontAvailable: (String family) => family == 'custom-cjk',
+      ),
+      isEmpty,
+    );
+
+    // خط مخصّص غير مسجَّل: التحذير يبقى (لا نَعد بتغطية لم نتحقّق منها).
+    expect(
+      PdfScriptCoverage.unsupportedInDocument(
+        withFont('custom-cjk'),
+        isCustomFontAvailable: (String family) => false,
+      ),
+      <PdfScript>{PdfScript.cjk},
     );
   });
 }

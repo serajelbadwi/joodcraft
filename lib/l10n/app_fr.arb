@@ -514,5 +514,14 @@
   "bpWarnNoDynamicFields": "Ce modèle n’a pas de champs dynamiques — les données ne changeront pas d’un enregistrement à l’autre. Ajoutez un champ « nom du stagiaire » depuis la barre de l’éditeur, puis enregistrez le modèle.",
   "bpWarnNoNameField": "Ce modèle n’a pas de champ de nom dynamique — la colonne du nom pourrait être associée à un champ date ou référence et le nom s’imprimer au mauvais endroit. Convertissez le texte de nom fixe en champ ou refaites le modèle.",
   "bpAssignedTemp": "Cet élément a été associé à {token} pour la génération en cours — les autres éléments ne sont pas touchés. Enregistrez le modèle pour conserver la modification.",
-  "bpAssignedSaved": "Cet élément a été associé à {token} et la modification a été enregistrée dans le modèle. Les autres éléments ne sont pas touchés."
+  "bpAssignedSaved": "Cet élément a été associé à {token} et la modification a été enregistrée dans le modèle. Les autres éléments ne sont pas touchés.",
+  "commonShow": "Afficher",
+  "commonHide": "Masquer",
+  "themeSwitchToLight": "Passer au thème clair",
+  "themeSwitchToDark": "Passer au thème sombre",
+  "commonComingSoonPhase": "En cours — phase {phase}",
+  "cbNewCertificateTitle": "Nouveau certificat",
+  "cbNewContractTitle": "Nouveau contrat",
+  "cbBeneficiaryDataTitle": "Données du bénéficiaire (exemple)",
+  "cbContractDataTitle": "Données du contrat (exemple)"
 }

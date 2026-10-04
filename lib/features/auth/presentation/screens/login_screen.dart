@@ -100,8 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             if (auth.isEmailConfirmationPending) ...<Widget>[
               _InfoBanner(
-                message: 'تم إنشاء حسابك. يرجى تأكيد بريدك الإلكتروني أولاً '
-                    'ثم تسجيل الدخول.',
+                message: context.l10n?.authConfirmEmailThenLogin ??
+                    'تم إنشاء حسابك. يرجى تأكيد بريدك الإلكتروني أولاً '
+                        'ثم تسجيل الدخول.',
                 onDismiss: auth.clearEmailConfirmationFlag,
               ),
               const SizedBox(height: AppTheme.space20),

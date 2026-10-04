@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/widgets/pdf_template_preview.dart';
 
 /// محرّك الشهادات — معاينة الشهادة (A4 أفقي) وطباعتها وتصديرها.
@@ -12,10 +13,11 @@ class CertificatePreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PdfTemplatePreview(
+    return PdfTemplatePreview(
       templateAssetPath: AppAssets.sampleCertificateTemplate,
       exportFileName: 'joodcraft-certificate.pdf',
-      dataPanelTitle: 'بيانات المستفيد (تجريبية)',
+      dataPanelTitle:
+          context.l10n?.cbBeneficiaryDataTitle ?? 'بيانات المستفيد (تجريبية)',
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/editor/widgets/template_editor_view.dart';
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/templates/template_draft.dart';
 import '../../../../core/templates/template_record.dart';
 import '../../../../core/templates/template_repository.dart';
@@ -48,7 +49,8 @@ class CertificateTemplateEditorScreen extends StatelessWidget {
       initialTemplateAsset: AppAssets.sampleCertificateTemplate,
       exportFileName: 'joodcraft-certificate.pdf',
       repository: repository,
-      title: record?.title ?? 'شهادة جديدة',
+      title: record?.title ??
+          (context.l10n?.cbNewCertificateTitle ?? 'شهادة جديدة'),
       document: record?.toDocument(),
       initialRecordId: record?.id,
     );

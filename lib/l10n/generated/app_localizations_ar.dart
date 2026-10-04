@@ -1751,4 +1751,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'عُيّن هذا العنصر إلى $token وحُفظ التعديل في القالب. بقية العناصر لم تُمسّ.';
   }
+
+  @override
+  String get commonShow => 'إظهار';
+
+  @override
+  String get commonHide => 'إخفاء';
+
+  @override
+  String get themeSwitchToLight => 'التبديل إلى المظهر الفاتح';
+
+  @override
+  String get themeSwitchToDark => 'التبديل إلى المظهر الداكن';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'قيد التنفيذ — المرحلة $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'شهادة جديدة';
+
+  @override
+  String get cbNewContractTitle => 'عقد جديد';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'بيانات المستفيد (تجريبية)';
+
+  @override
+  String get cbContractDataTitle => 'بيانات العقد (تجريبية)';
 }

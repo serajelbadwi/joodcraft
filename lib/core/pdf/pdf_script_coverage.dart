@@ -41,9 +41,28 @@ abstract final class PdfScriptCoverage {
     PdfScript.latin,
   };
 
+  /// كتابات صارت تغطيتها متاحة **وقت التشغيل**: خط مخصّص رفعه المستخدم (خط
+  /// صيني مثلاً) أو خط محزوم يُسجَّل لاحقاً. تُضاف إلى [bundledScripts] في كل
+  /// فحوص التغطية، فتُلغى تحذيراتها تلقائياً بلا أي تغيير في هذه الشيفرة.
+  static final Set<PdfScript> _runtimeCovered = <PdfScript>{};
+
+  /// يسجّل كتابات صار تغطيتها متاحاً (تراكمي — لا يستبدل السابق).
+  ///
+  /// مثال: بعد أن يرفع المستخدم خطاً صينياً ويُسجَّل في محرّك الـ PDF، يُندَع
+  /// `registerCovered({PdfScript.cjk})` فلا يبقى تحذير الصينية.
+  static void registerCovered(Iterable<PdfScript> scripts) =>
+      _runtimeCovered.addAll(scripts);
+
+  /// يمسح الكتابات المسجَّلة وقت التشغيل (للاختبارات فقط).
+  static void resetRuntimeCoverage() => _runtimeCovered.clear();
+
+  /// كل الكتابات المغطّاة فعلاً الآن: المحزومة + المسجَّلة وقت التشغيل.
+  static Set<PdfScript> get coveredScripts =>
+      <PdfScript>{...bundledScripts, ..._runtimeCovered};
+
   /// كتابات كلها مغطّاة — تُستخدم لإخبار المستدعي أن الخط المطلوب آمن.
   static bool covers(Iterable<PdfScript> scripts) =>
-      scripts.every(bundledScripts.contains);
+      scripts.every(coveredScripts.contains);
 
   /// الكتابات المكتشَفة في نص واحد.
   static Set<PdfScript> scriptsIn(String text) {
@@ -57,8 +76,9 @@ abstract final class PdfScriptCoverage {
 
   /// الكتابات في [text] التي **لا** يغطّيها أي خط محزوم (قد تُرسم مربعات).
   static Set<PdfScript> unsupportedIn(String text) {
+    final Set<PdfScript> covered = coveredScripts;
     final Set<PdfScript> missing = scriptsIn(text)
-        .where((PdfScript s) => !bundledScripts.contains(s))
+        .where((PdfScript s) => !covered.contains(s))
         .toSet();
     return missing;
   }
@@ -67,24 +87,41 @@ abstract final class PdfScriptCoverage {
   ///
   /// يشمل نصوص `TextElement`، ومحتوى `QrElement` (قد يحمل اسم صيني مثلاً)،
   /// وقيم المعاينة — فالتوليد يستخدمها كلها.
-  static Set<PdfScript> unsupportedInDocument(TemplateDocument document) {
+  /// [isCustomFontAvailable] يتيح للمستدعي التحقّق من أن الخط المخصّص المطلوب
+  /// مسجَّل فعلاً (راجع `PdfFontSet.hasRegisteredCustomFamily`). عند تمريره، لا
+  /// نعفِي التغطية إلا للخطوط المسجَّلة؛ وعند غيابه نفترض أن خط المستخدم يغطّي
+  /// الكتابة (اختياره يعني تكفّله بالتغطية).
+  static Set<PdfScript> unsupportedInDocument(
+    TemplateDocument document, {
+    bool Function(String customFamily)? isCustomFontAvailable,
+  }) {
     final Set<PdfScript> missing = <PdfScript>{};
     void scan(String? value) {
       if (value == null || value.isEmpty) return;
       missing.addAll(unsupportedIn(value));
     }
 
+    /// هل يتكفّل خط مخصّص بترجمة هذا النص؟ (الخط المخصص هو آلية الاحتياط
+    /// المتاحة للمستخدم لكتابات لا يغطّيها خط محزوم، كالصينية.)
+    bool customFontCovers(String? family) {
+      if (family == null || family.trim().isEmpty) return false;
+      final bool Function(String)? check = isCustomFontAvailable;
+      return check == null || check(family.trim());
+    }
+
     for (final TemplateElement element in document.elements) {
       switch (element) {
-        case TextElement(:final String text):
-          scan(text);
+        case TextElement(:final String text, :final String? customFont):
+          if (!customFontCovers(customFont)) scan(text);
         case QrElement(:final String data):
           scan(data);
         // أدوار التوقيعات وأسماء أصحابها تُكتب في الـ PDF فتشمَلها التغطية.
         case SignatureElement():
-          for (final SignatureSlot slot in element.slots) {
-            scan(slot.role);
-            scan(slot.name);
+          if (!customFontCovers(element.customFont)) {
+            for (final SignatureSlot slot in element.slots) {
+              scan(slot.role);
+              scan(slot.name);
+            }
           }
         default:
           break;

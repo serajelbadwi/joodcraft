@@ -197,6 +197,17 @@ class PdfFontSet {
     return fallback;
   }
 
+  /// العائلات المخصّصة (التي رفعها المستخدم) المتاحة للرسم الآن.
+  ///
+  /// تُستخدم لفحص تغطية الكتابات غير العربية: الخط المخصّص الذي يذكره العنصر
+  /// صراحةً هو آلية الاحتياط المتاحة لما لا يغطّيه خط محزوم (كالصينية). راجع
+  /// `PdfScriptCoverage.unsupportedInDocument`.
+  Set<String> get registeredCustomFamilies => CustomPdfFonts.families;
+
+  /// هل الخط المخصّص [family] مسجَّل وجاهز للرسم فعلاً؟
+  bool hasRegisteredCustomFamily(String family) =>
+      family.trim().isNotEmpty && CustomPdfFonts.contains(family.trim());
+
   /// العائلة الافتراضية للـ PDF.
   static const PdfFontFamily defaultFamily = PdfFontFamily.plex;
 

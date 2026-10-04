@@ -1763,4 +1763,33 @@ class AppLocalizationsTr extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'Bu öğe $token ile eşlendi ve değişiklik şablona kaydedildi. Diğer öğeler etkilenmedi.';
   }
+
+  @override
+  String get commonShow => 'Göster';
+
+  @override
+  String get commonHide => 'Gizle';
+
+  @override
+  String get themeSwitchToLight => 'Açık temaya geç';
+
+  @override
+  String get themeSwitchToDark => 'Koyu temaya geç';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'Devam ediyor — aşama $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'Yeni sertifika';
+
+  @override
+  String get cbNewContractTitle => 'Yeni sözleşme';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'Yararlanıcı verileri (örnek)';
+
+  @override
+  String get cbContractDataTitle => 'Sözleşme verileri (örnek)';
 }

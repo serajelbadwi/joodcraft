@@ -1762,4 +1762,33 @@ class AppLocalizationsUr extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'یہ عنصر $token سے منسلک کیا گیا اور تبدیلی ٹیمپلیٹ میں محفوظ کر دی گئی۔ دیگر عناصر متاثر نہیں۔';
   }
+
+  @override
+  String get commonShow => 'دکھائیں';
+
+  @override
+  String get commonHide => 'چھپائیں';
+
+  @override
+  String get themeSwitchToLight => 'روشن تھیم پر جائیں';
+
+  @override
+  String get themeSwitchToDark => 'گہرے تھیم پر جائیں';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'جاری ہے — مرحلہ $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'نیا سرٹیفکیٹ';
+
+  @override
+  String get cbNewContractTitle => 'نیا معاہدہ';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'مستفید کے اعداد و شمار (نمونہ)';
+
+  @override
+  String get cbContractDataTitle => 'معاہدے کے اعداد و شمار (نمونہ)';
 }

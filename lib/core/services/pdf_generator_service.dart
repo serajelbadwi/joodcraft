@@ -250,9 +250,14 @@ class PdfGeneratorService {
   }) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     final List<String> warnings = <String>[...document.warnings];
+    // سجّل الخطوط المخصّصة التي يشير إليها المستند أولاً، حتى يعرف فحص التغطية
+    // أنها متاحة ويمنع تحذيرات كاذبة عن كتابات يتكفّل بها خط المستخدم.
+    _ensureCustomFonts(document);
     // تحذيرات تغطية الكتابات (سيريلية/صينية بلا خط محزوم) قبل أي رسم.
-    for (final PdfScript script
-        in PdfScriptCoverage.unsupportedInDocument(document)) {
+    for (final PdfScript script in PdfScriptCoverage.unsupportedInDocument(
+      document,
+      isCustomFontAvailable: _fonts.hasRegisteredCustomFamily,
+    )) {
       warnings.add(PdfScriptCoverage.warningFor(script));
     }
 

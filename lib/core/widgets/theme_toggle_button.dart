@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_l10n.dart';
 import '../theme/theme_controller.dart';
 
 /// أيقونة تبديل المظهر (☀️ فاتح / 🌙 داكن) بنقرة واحدة.
@@ -16,8 +17,9 @@ class ThemeToggleButton extends StatelessWidget {
     final ThemeController theme = context.watch<ThemeController>();
     final bool dark = theme.isDark;
     return IconButton(
-      tooltip:
-          dark ? 'التبديل إلى المظهر الفاتح' : 'التبديل إلى المظهر الداكن',
+      tooltip: dark
+          ? (context.l10n?.themeSwitchToLight ?? 'التبديل إلى المظهر الفاتح')
+          : (context.l10n?.themeSwitchToDark ?? 'التبديل إلى المظهر الداكن'),
       onPressed: theme.toggle,
       icon: Icon(
         dark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,

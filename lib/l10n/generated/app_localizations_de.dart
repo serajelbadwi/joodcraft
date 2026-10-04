@@ -1781,4 +1781,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'Dieses Element wurde $token zugewiesen und die Änderung in der Vorlage gespeichert. Die anderen Elemente bleiben unberührt.';
   }
+
+  @override
+  String get commonShow => 'Anzeigen';
+
+  @override
+  String get commonHide => 'Ausblenden';
+
+  @override
+  String get themeSwitchToLight => 'Zum hellen Design wechseln';
+
+  @override
+  String get themeSwitchToDark => 'Zum dunklen Design wechseln';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'In Arbeit — Phase $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'Neues Zertifikat';
+
+  @override
+  String get cbNewContractTitle => 'Neuer Vertrag';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'Empfängerdaten (Beispiel)';
+
+  @override
+  String get cbContractDataTitle => 'Vertragsdaten (Beispiel)';
 }

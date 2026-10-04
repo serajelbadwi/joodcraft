@@ -885,5 +885,19 @@
     "placeholders": {
       "token": {}
     }
-  }
+  },
+  "commonShow": "إظهار",
+  "commonHide": "إخفاء",
+  "themeSwitchToLight": "التبديل إلى المظهر الفاتح",
+  "themeSwitchToDark": "التبديل إلى المظهر الداكن",
+  "commonComingSoonPhase": "قيد التنفيذ — المرحلة {phase}",
+  "@commonComingSoonPhase": {
+    "placeholders": {
+      "phase": {}
+    }
+  },
+  "cbNewCertificateTitle": "شهادة جديدة",
+  "cbNewContractTitle": "عقد جديد",
+  "cbBeneficiaryDataTitle": "بيانات المستفيد (تجريبية)",
+  "cbContractDataTitle": "بيانات العقد (تجريبية)"
 }

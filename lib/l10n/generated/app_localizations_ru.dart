@@ -1770,4 +1770,33 @@ class AppLocalizationsRu extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'Этот элемент назначен $token, изменение сохранено в шаблоне. Остальные элементы не затронуты.';
   }
+
+  @override
+  String get commonShow => 'Показать';
+
+  @override
+  String get commonHide => 'Скрыть';
+
+  @override
+  String get themeSwitchToLight => 'Переключить на светлую тему';
+
+  @override
+  String get themeSwitchToDark => 'Переключить на тёмную тему';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'В процессе — этап $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'Новый сертификат';
+
+  @override
+  String get cbNewContractTitle => 'Новый договор';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'Данные получателя (образец)';
+
+  @override
+  String get cbContractDataTitle => 'Данные договора (образец)';
 }

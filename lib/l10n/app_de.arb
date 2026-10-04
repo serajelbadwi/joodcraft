@@ -514,5 +514,14 @@
   "bpWarnNoDynamicFields": "Diese Vorlage hat keine dynamischen Felder – die Daten ändern sich nicht zwischen Datensätzen. Fügen Sie ein Feld „Name des Teilnehmers“ über die Editorleiste hinzu und speichern Sie die Vorlage.",
   "bpWarnNoNameField": "Diese Vorlage hat kein dynamisches Namensfeld – die Namensspalte könnte einem Datums- oder Referenzfeld zugeordnet werden und der Name an der falschen Stelle gedruckt werden. Wandeln Sie den festen Namenstext in ein Feld um oder gestalten Sie die Vorlage neu.",
   "bpAssignedTemp": "Dieses Element wurde für die aktuelle Generierung {token} zugewiesen – die anderen Elemente bleiben unberührt. Speichern Sie die Vorlage, um die Änderung dauerhaft zu machen.",
-  "bpAssignedSaved": "Dieses Element wurde {token} zugewiesen und die Änderung in der Vorlage gespeichert. Die anderen Elemente bleiben unberührt."
+  "bpAssignedSaved": "Dieses Element wurde {token} zugewiesen und die Änderung in der Vorlage gespeichert. Die anderen Elemente bleiben unberührt.",
+  "commonShow": "Anzeigen",
+  "commonHide": "Ausblenden",
+  "themeSwitchToLight": "Zum hellen Design wechseln",
+  "themeSwitchToDark": "Zum dunklen Design wechseln",
+  "commonComingSoonPhase": "In Arbeit — Phase {phase}",
+  "cbNewCertificateTitle": "Neues Zertifikat",
+  "cbNewContractTitle": "Neuer Vertrag",
+  "cbBeneficiaryDataTitle": "Empfängerdaten (Beispiel)",
+  "cbContractDataTitle": "Vertragsdaten (Beispiel)"
 }

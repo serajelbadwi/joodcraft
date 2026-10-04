@@ -1779,4 +1779,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String bpAssignedSaved(Object token) {
     return 'Cet élément a été associé à $token et la modification a été enregistrée dans le modèle. Les autres éléments ne sont pas touchés.';
   }
+
+  @override
+  String get commonShow => 'Afficher';
+
+  @override
+  String get commonHide => 'Masquer';
+
+  @override
+  String get themeSwitchToLight => 'Passer au thème clair';
+
+  @override
+  String get themeSwitchToDark => 'Passer au thème sombre';
+
+  @override
+  String commonComingSoonPhase(Object phase) {
+    return 'En cours — phase $phase';
+  }
+
+  @override
+  String get cbNewCertificateTitle => 'Nouveau certificat';
+
+  @override
+  String get cbNewContractTitle => 'Nouveau contrat';
+
+  @override
+  String get cbBeneficiaryDataTitle => 'Données du bénéficiaire (exemple)';
+
+  @override
+  String get cbContractDataTitle => 'Données du contrat (exemple)';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_l10n.dart';
+
 /// حقل نصي موحّد الشكل لكل شاشات المنصة.
 ///
 /// يوفّر: تسمية، تلميحاً، أيقونة، إظهار/إخفاء كلمة المرور، ومدقّقاً عربياً.
@@ -90,7 +92,9 @@ class _AppTextFieldState extends State<AppTextField> {
                     : Icon(widget.prefixIcon, size: 20)),
             suffixIcon: widget.obscure
                 ? IconButton(
-                    tooltip: _obscured ? 'إظهار' : 'إخفاء',
+                    tooltip: _obscured
+                        ? (context.l10n?.commonShow ?? 'إظهار')
+                        : (context.l10n?.commonHide ?? 'إخفاء'),
                     icon: Icon(
                       _obscured
                           ? Icons.visibility_outlined

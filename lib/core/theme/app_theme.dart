@@ -145,6 +145,9 @@ abstract final class AppTheme {
       canvasColor: scheme.surfaceContainerHighest,
       // الخط المحزوم محلياً — لا استدعاء شبكة ولا خط احتياطي شبكي.
       fontFamily: AppAssets.cairoFont,
+      // تغطية الكتابات غير العربية (الصينية/الآسيوية) بخطوط النظام — يمنع
+      // ظهور مربعات فارغة (□□□) عند اختيار لغة لا يغطّيها خط Cairo.
+      fontFamilyFallback: AppAssets.cjkFontFallback,
       textTheme: textTheme,
       visualDensity: VisualDensity.standard,
       splashFactory: InkSparkle.splashFactory,
@@ -352,7 +355,7 @@ abstract final class AppTheme {
     required Color muted,
     required Color label,
   }) {
-    return TextTheme(
+    final TextTheme theme = TextTheme(
       displaySmall: TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.w700,
@@ -426,5 +429,8 @@ abstract final class AppTheme {
         color: label,
       ),
     );
+    // كل نمط نصي يحمل خطوط النظام الاحتياطية للكتابات غير العربية (CJK)، فلا
+    // تظهر مربعات فارغة في أي نص واجهة. راجع `AppAssets.cjkFontFallback`.
+    return theme.apply(fontFamilyFallback: AppAssets.cjkFontFallback);
   }
 }
