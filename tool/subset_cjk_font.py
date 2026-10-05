@@ -96,11 +96,35 @@ def arb_chars(arb_dir: str) -> set[str]:
 
 
 def base_chars() -> set[str]:
-    """ASCII + التنقيط المستعمل في الواجهة + كتل الترقيم الصينية."""
-    out = {chr(code) for code in range(0x20, 0x7F)}
+    """ASCII واللاتيني والتنقيط وكتل رموز CJK/الشكل الكامل الكاملة.
+
+    لا نكتفي بالحرف الصيني وحده: نصوص المستخدم تخلط الرموز والتنقيط الصيني
+    (``，。「」``) وأشكال العرض الكاملة والأرقام المحيَّطة والأسهم والرموز
+    الهندسية، وغياب أي منها يعني مربعاً فارغاً يظهر بصمت. نضمّ الكتل كاملة ولا
+    نختار محارف بعينها، فيبقى الغطاء قابلاً للفحص وثابتاً عبر إصدارات Unicode.
+    """
+    out = {chr(code) for code in range(0x20, 0x7F)}  # ASCII
+    out |= {chr(code) for code in range(0xA0, 0x100)}  # Latin-1 Supplement
+    out |= {chr(code) for code in range(0x2000, 0x2070)}  # General Punctuation
+    out |= {chr(code) for code in range(0x2190, 0x2200)}  # Arrows
+    out |= {chr(code) for code in range(0x2200, 0x2300)}  # Mathematical Operators
+    out |= {chr(code) for code in range(0x2460, 0x2500)}  # Enclosed Alphanumerics
+    out |= {chr(code) for code in range(0x25A0, 0x2600)}  # Geometric Shapes
+    out |= {chr(code) for code in range(0x2600, 0x2700)}  # Miscellaneous Symbols
+    out |= {chr(code) for code in range(0x2700, 0x27C0)}  # Dingbats
+    out |= {chr(code) for code in range(0x2E80, 0x2F00)}  # CJK Radicals Supplement
+    out |= {chr(code) for code in range(0x2F00, 0x2FE0)}  # Kangxi Radicals
     out |= {chr(code) for code in range(0x3000, 0x3040)}  # CJK punctuation
-    out |= {chr(code) for code in range(0xFF00, 0xFF66)}  # Fullwidth forms
-    out |= set("—–‘’“”…•·«»©®¥€±×÷°")
+    out |= {chr(code) for code in range(0x3100, 0x3130)}  # Bopomofo
+    out |= {chr(code) for code in range(0x31A0, 0x31C0)}  # Bopomofo Extended
+    out |= {chr(code) for code in range(0x31C0, 0x31F0)}  # CJK Strokes
+    out |= {chr(code) for code in range(0x3200, 0x3300)}  # Enclosed CJK Letters
+    out |= {chr(code) for code in range(0x3300, 0x3400)}  # CJK Compatibility
+    out |= {chr(code) for code in range(0xFE10, 0xFE20)}  # Vertical Forms
+    out |= {chr(code) for code in range(0xFE30, 0xFE50)}  # CJK Compatibility Forms
+    out |= {chr(code) for code in range(0xFE50, 0xFE70)}  # Small Form Variants
+    out |= {chr(code) for code in range(0xFF00, 0xFFF0)}  # Half/Fullwidth Forms
+    out |= set("—–‘’“”…•·«»©®™¥€±×÷°№※")
     return out
 
 

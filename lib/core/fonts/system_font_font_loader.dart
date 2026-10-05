@@ -60,21 +60,15 @@ abstract final class SystemFontFontLoader {
       return null;
     }
 
-    final WindowsFontDiscoveryResult discovery =
-        await WindowsSystemFontService.discover(
-      onError: (String source, String error) => debugPrint(
-        '[SystemFontFontLoader] فشل مصدر $source: $error',
-      ),
-    );
-
-    final WindowsSystemFontFamily? target = _find(discovery.families, normalized);
+    final WindowsSystemFontFamily? target = await _resolveTarget(normalized);
     if (target == null || target.filePaths.isEmpty) {
       onError?.call('لم يُعثر على ملف خط للعائلة «$normalized».');
       return null;
     }
 
     for (final String path in target.filePaths) {
-      final ByteData? bytes = await WindowsSystemFontService.readFontBytes(path);
+      final ByteData? bytes =
+          await WindowsSystemFontService.readFontBytes(path);
       if (bytes == null) continue;
       try {
         final FontLoader loader = FontLoader(normalized)
@@ -92,6 +86,39 @@ abstract final class SystemFontFontLoader {
       }
     }
     return null;
+  }
+
+  /// يقرأ بايتات ملف عائلة خط نظام **من الكاش** بلا تسجيلها في واجهة فلاتر.
+  ///
+  /// تُستخدم لتمرير خط النظام المختار إلى isolate تصدير الدُفعات، فلا يعود
+  /// صامتاً إلى الخط المحزوم. الفحص والقراءة مخزَّنان (راجع
+  /// `WindowsSystemFontService`)، فلا يُعاد مسح القرص/السجل عند كل تصدير.
+  static Future<Uint8List?> readSystemFontBytes(String family) async {
+    if (!WindowsSystemFontService.isSupported) return null;
+    final String normalized = family.trim();
+    if (normalized.isEmpty) return null;
+
+    final WindowsSystemFontFamily? target = await _resolveTarget(normalized);
+    if (target == null || target.filePaths.isEmpty) return null;
+
+    for (final String path in target.filePaths) {
+      final ByteData? bytes =
+          await WindowsSystemFontService.readFontBytes(path);
+      if (bytes == null) continue;
+      return bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+    }
+    return null;
+  }
+
+  /// يجد عائلة الخط النظامي من نتيجة الفحص المخزّنة (بلا إعادة مسح).
+  static Future<WindowsSystemFontFamily?> _resolveTarget(String family) async {
+    final WindowsFontDiscoveryResult discovery =
+        await WindowsSystemFontService.discover(
+      onError: (String source, String error) => debugPrint(
+        '[SystemFontFontLoader] فشل مصدر $source: $error',
+      ),
+    );
+    return _find(discovery.families, family);
   }
 
   static WindowsSystemFontFamily? _find(

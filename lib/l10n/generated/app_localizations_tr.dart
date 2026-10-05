@@ -1133,6 +1133,28 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Diskteki görsel önbelleği';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count dosya · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count dosya · $used / $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'Henüz disk önbelleği yok';
+
+  @override
+  String get amCacheClear => 'Önbelleği temizle';
+
+  @override
+  String get amCacheCleared => 'Diskteki görsel önbelleği temizlendi.';
+
+  @override
   String get commonRetry => 'Yeniden dene';
 
   @override
@@ -1321,6 +1343,21 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'Yok (dahili yazı tipi)';
+
+  @override
+  String get cfpGroupBuiltin => 'Yerleşik yazı tipleri';
+
+  @override
+  String get cfpGroupUploaded => 'Yüklediğim yazı tipleri';
+
+  @override
+  String get cfpGroupSystem => 'Sistem yazı tipleri';
+
+  @override
+  String get cfpSearchHint => 'Yazı tipi ara…';
+
+  @override
+  String get cfpNoMatch => 'Eşleşen yazı tipi yok.';
 
   @override
   String get cfpPickTitle => 'Bir yazı tipi dosyası seç (TTF veya OTF)';

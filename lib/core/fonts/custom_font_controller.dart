@@ -149,6 +149,7 @@ class CustomFontController extends ChangeNotifier {
     try {
       final WindowsFontDiscoveryResult result =
           await WindowsSystemFontService.discover(
+        force: force,
         onError: (String source, String error) => debugPrint(
           '[الخطوط المخصصة] فحص خطوط النظام ($source): $error',
         ),
@@ -162,6 +163,14 @@ class CustomFontController extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /// بايتات عائلة خط نظام (Windows) من الكاش — للطباعة وتصدير الدُفعات.
+  ///
+  /// يستخدم نتيجة الفحص المخزّنة وبايتات الملفات المخزّنة (راجع
+  /// `WindowsSystemFontService`)، فلا يُعاد مسح القرص ولا قراءة الملف عند كل
+  /// تصدير. يعيد `null` بلا رمي على المنصات غير المدعومة أو عند غياب الخط.
+  Future<Uint8List?> systemFontBytes(String family) =>
+      SystemFontFontLoader.readSystemFontBytes(family.trim());
 
   /// يسجّل عائلة خط نظام في محرّك خطوط فلاتر عند اختيارها (تحميل ديناميكي).
   ///
@@ -241,7 +250,8 @@ class CustomFontController extends ChangeNotifier {
       );
     }
 
-    final FontInspection inspection = FontInspector.inspect(bytes);
+    // تحليل الخط الثقيل في isolate خلفي فلا تتجمّد الواجهة أثناء الاستيراد.
+    final FontInspection inspection = await FontInspector.inspectAsync(bytes);
     if (!inspection.isValid) {
       throw AppException(
         AppErrorCode.validation,
@@ -344,7 +354,7 @@ class CustomFontController extends ChangeNotifier {
           '${face.displayName}: $error');
       return false;
     }
-    final FontInspection inspection = FontInspector.inspect(bytes);
+    final FontInspection inspection = await FontInspector.inspectAsync(bytes);
     if (!inspection.isValid || !inspection.hasTrueTypeOutlines) {
       debugPrint('[الخطوط المخصصة] تجاهل خطاً غير قابل للرسم في الـ PDF '
           '${face.displayName} (محيطات CFF؟ ${inspection.isOpenTypeCff})');

@@ -78,9 +78,9 @@ void main() {
     await tester.pumpWidget(const _JourneyHarness());
     await tester.pumpAndSettle();
 
-    // قبل الرفع: لا خطوط مخصصة والقسم يعرض حالة الفراغ.
+    // قبل الرفع: لا خطوط مخصصة والقسم يعرض تنبيه الحفظ المحلي.
     expect(controller.isEmpty, isTrue);
-    expect(find.textContaining('لم ترفع خطوطاً بعد'), findsOneWidget);
+    expect(find.textContaining('تُحفظ على جهازك'), findsOneWidget);
 
     // (1) الرفع عبر الزر الحقيقي.
     await tester.tap(find.byTooltip('رفع خط مخصص (.ttf / .otf)'));
@@ -97,13 +97,13 @@ void main() {
     // حُفظ محلياً فوراً (يلزم للاستعادة بعد إعادة التشغيل).
     expect(store.faces.length, 1);
 
-    // (3) الظهور الفوري: القائمة المنسدلة أُعيد بناؤها في نفس اللحظة.
+    // (3) الظهور الفوري: المنتقي الموحّد يضمّ الخط المرفوع في مجموعته.
     expect(find.byKey(const ValueKey<String>('custom-font-picker')),
         findsOneWidget);
-    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.tap(find.byKey(const ValueKey<String>('custom-font-picker')));
     await tester.pumpAndSettle();
-    expect(find.text('Noto Sans Arabic'), findsWidgets);
-    await tester.tap(find.text('Noto Sans Arabic').last);
+    expect(find.text('خطوطي المرفوعة · 1'), findsOneWidget);
+    await tester.tap(find.byKey(ValueKey<String>('font-option-$notoFamily')));
     await tester.pumpAndSettle();
 
     // (4) المحرر يرسم النص بالخط المخصص مباشرةً بعد الاختيار.
@@ -160,9 +160,12 @@ class _JourneyHarnessState extends State<_JourneyHarness> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: CustomFontSection(
-                  selected: _family,
-                  onChanged: (String? family) =>
+                child: FontSelectorSection(
+                  bundledFamily: PdfFontFamily.plex,
+                  customFamily: _family,
+                  onBundledSelected: (PdfFontFamily _) =>
+                      setState(() => _family = null),
+                  onCustomSelected: (String? family) =>
                       setState(() => _family = family),
                 ),
               ),

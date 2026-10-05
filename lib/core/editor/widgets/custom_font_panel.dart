@@ -7,28 +7,50 @@ import '../../errors/app_exception.dart';
 import '../../fonts/custom_font_controller.dart';
 import '../../fonts/custom_font_face.dart';
 import '../../l10n/app_l10n.dart';
+import '../../pdf/pdf_font_catalog.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
-import 'editor_controls.dart';
+import 'font_selector.dart';
 
 /// امتدادات ملفات الخطوط المقبولة في الرفع.
 const List<String> kCustomFontExtensions = <String>['ttf', 'otf'];
 
-/// قسم «خطوطي المخصصة» داخل شريط الخصائص.
+/// منتقي الخطوط الموحّد داخل شريط الخصائص.
 ///
-/// يعرض قائمة الخطوط التي رفعها المستخدم + أزرار الرفع والإدارة، ويستمع لمحرّك
-/// الخطوط الديناميكي مباشرة (نسخة واحدة للتطبيق) فيتحدّث فوراً بعد أي رفع.
-class CustomFontSection extends StatelessWidget {
-  const CustomFontSection({
+/// يجمع **ثلاثة مصادر** في عنصر واحد قابل للبحث:
+/// 1. **الخطوط المضمّنة** ([PdfFontFamily] المحزومة في التطبيق).
+/// 2. **خطوط المستخدم المرفوعة** (المكتبة المحلية).
+/// 3. **خطوط نظام التشغيل** (Windows — قد تبلغ المئات).
+///
+/// يعرض أزرار الرفع والإدارة أيضاً، ويستمع لمحرّك الخطوط الديناميكي مباشرة
+/// (نسخة واحدة للتطبيق) فيتحدّث فوراً بعد أي رفع.
+///
+/// التوجيه عند الاختيار: الخط المضمّن يمرّ عبر [onBundledSelected] (ويُلغي أي
+/// خط مخصص)، أما المرفوع/النظامي فيمرّ عبر [onCustomSelected] بعد تسجيل الخط
+/// النظامي ديناميكياً.
+class FontSelectorSection extends StatelessWidget {
+  const FontSelectorSection({
     super.key,
-    required this.selected,
-    required this.onChanged,
+    required this.bundledFamily,
+    required this.customFamily,
+    required this.onBundledSelected,
+    required this.onCustomSelected,
   });
 
-  /// اسم عائلة الخط المخصص المختار للعنصر (أو `null`).
-  final String? selected;
+  /// عائلة الخط المضمّن المختارة (تُستخدم حين لا يوجد خط مخصص).
+  final PdfFontFamily bundledFamily;
 
-  final ValueChanged<String?> onChanged;
+  /// مفتاح الخط المخصص/النظامي المختار، أو `null` للخط المضمّن.
+  final String? customFamily;
+
+  /// اختير خط مضمّن جديد.
+  final ValueChanged<PdfFontFamily> onBundledSelected;
+
+  /// اختير خط مرفوع/نظامي (أو `null` عند الرجوع للمضمّن).
+  final ValueChanged<String?> onCustomSelected;
+
+  /// بادئة معرّف الخيارات المضمّنة داخل المنتقي.
+  static const String _builtinIdPrefix = 'builtin:';
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +63,7 @@ class CustomFontSection extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Expanded(child: _picker(context, fonts)),
+                _field(context, fonts),
                 const SizedBox(width: AppTheme.space8),
                 Tooltip(
                   message: context.l10n?.cfpUploadTooltip ??
@@ -53,8 +75,8 @@ class CustomFontSection extends StatelessWidget {
                   ),
                 ),
                 Tooltip(
-                  message: context.l10n?.cfpManageTooltip ??
-                      'إدارة الخطوط المرفوعة',
+                  message:
+                      context.l10n?.cfpManageTooltip ?? 'إدارة الخطوط المرفوعة',
                   child: IconButton(
                     onPressed: fonts.isEmpty
                         ? null
@@ -81,54 +103,129 @@ class CustomFontSection extends StatelessWidget {
     );
   }
 
-  Widget _picker(BuildContext context, CustomFontController fonts) {
-    // مفتاح فارغ = الخط المضمّن، ثم الخطوط المرفوعة، ثم خطوط النظام (Windows).
-    final List<String> keys = <String>[
-      '',
-      ...fonts.families,
-      ...fonts.systemFamilies.where(
-        (String family) => !fonts.families.contains(family),
-      ),
-    ];
-    if (selected != null &&
-        selected!.trim().isNotEmpty &&
-        !keys.contains(selected)) {
-      keys.add(selected!);
+  Widget _field(BuildContext context, CustomFontController fonts) {
+    final List<FontSelectorGroup> groups = _groups(context, fonts);
+    final String selectedId = _selectedId();
+    FontSelectorItem? selected;
+    for (final FontSelectorGroup group in groups) {
+      for (final FontSelectorItem item in group.items) {
+        if (item.id == selectedId) {
+          selected = item;
+          break;
+        }
+      }
+      if (selected != null) break;
     }
-    if (keys.length == 1) {
-      return DropdownField<String>(
-        label: context.l10n?.cfpMyFonts ?? 'خطوطي المخصصة',
-        value: '',
-        items: keys,
-        labelOf: (String _) => context.l10n?.cfpNoFonts ?? 'لم ترفع خطوطاً بعد',
-        onChanged: (String value) => onChanged(value.isEmpty ? null : value),
-      );
-    }
-    return DropdownField<String>(
+    // خط محفوظ في قالب لكن غير موجود في القوائم (حُذف مثلاً) — نعرض اسمه بلا
+    // بادئة تقنية بدل إظهار مفتاح خام.
+    selected ??= FontSelectorItem(
+      id: selectedId,
+      label: fonts.displayNameOf(selectedId),
+      previewFamily: selectedId,
+    );
+    return FontSelectorField(
       key: const ValueKey<String>('custom-font-picker'),
-      label: context.l10n?.cfpMyFonts ?? 'خطوطي المخصصة',
-      value: selected?.trim().isNotEmpty == true && keys.contains(selected)
-          ? selected!
-          : '',
-      items: keys,
-      labelOf: (String key) => key.isEmpty
-          ? (context.l10n?.cfpBuiltinOption ?? 'بلا (الخط المضمّن)')
-          : fonts.displayNameOf(key),
-      onChanged: (String value) => _select(fonts, value),
+      label: context.l10n?.editorFont ?? 'الخط',
+      selected: selected,
+      onTap: () => _openPicker(context, fonts),
     );
   }
 
-  /// يوجّه اختيار الخط: خط النظام يُحمَّل ديناميكياً أولاً، ثم يُبلَّغ الأب.
-  Future<void> _select(CustomFontController fonts, String value) async {
-    if (value.isEmpty) {
-      onChanged(null);
+  /// يبني المجموعات الثلاث (مضمّنة/مرفوعة/نظامية)، ويُخفي كل مجموعة فارغة.
+  List<FontSelectorGroup> _groups(
+    BuildContext context,
+    CustomFontController fonts,
+  ) {
+    final l10n = context.l10n;
+    // نُبعد خطوط النظام التي يطابق اسمها خطاً مرفوعاً (تفادي التكرار).
+    final Set<String> uploadedNames =
+        fonts.families.map(fonts.displayNameOf).toSet();
+    final List<String> systemFamilies = fonts.systemFamilies
+        .where((String name) => !uploadedNames.contains(name))
+        .toList(growable: false);
+    return <FontSelectorGroup>[
+      FontSelectorGroup(
+        title: l10n?.cfpGroupBuiltin ?? 'الخطوط المضمّنة',
+        items: <FontSelectorItem>[
+          for (final PdfFontFamily family in PdfFontFamily.pdfFamilies)
+            FontSelectorItem(
+              id: '$_builtinIdPrefix${family.jsonValue}',
+              label: family.labelAr,
+              previewFamily: family.uiFamily,
+            ),
+        ],
+      ),
+      if (fonts.families.isNotEmpty)
+        FontSelectorGroup(
+          title: l10n?.cfpGroupUploaded ?? 'خطوطي المرفوعة',
+          items: <FontSelectorItem>[
+            for (final String family in fonts.families)
+              FontSelectorItem(
+                id: family,
+                label: fonts.displayNameOf(family),
+                previewFamily: family,
+              ),
+          ],
+        ),
+      if (systemFamilies.isNotEmpty)
+        FontSelectorGroup(
+          title: l10n?.cfpGroupSystem ?? 'خطوط النظام',
+          items: <FontSelectorItem>[
+            for (final String family in systemFamilies)
+              FontSelectorItem(
+                id: family,
+                label: family,
+                previewFamily: family,
+              ),
+          ],
+        ),
+    ];
+  }
+
+  String _selectedId() {
+    final String? custom = customFamily?.trim();
+    if (custom != null && custom.isNotEmpty) return custom;
+    return '$_builtinIdPrefix${bundledFamily.jsonValue}';
+  }
+
+  Future<void> _openPicker(
+    BuildContext context,
+    CustomFontController fonts,
+  ) async {
+    final l10n = context.l10n;
+    final FontSelectorItem? chosen = await showFontSelectorDialog(
+      context,
+      groups: _groups(context, fonts),
+      title: l10n?.editorFont ?? 'الخط',
+      searchHint: l10n?.cfpSearchHint ?? 'ابحث في الخطوط…',
+      noMatchText: l10n?.cfpNoMatch ?? 'لا توجد خطوط مطابقة.',
+      selectedId: _selectedId(),
+    );
+    if (chosen == null) return;
+    await _apply(fonts, chosen);
+  }
+
+  /// يوجّه الخيار المختار إلى الفعل الصحيح حسب نوعه.
+  Future<void> _apply(
+    CustomFontController fonts,
+    FontSelectorItem item,
+  ) async {
+    if (item.id.startsWith(_builtinIdPrefix)) {
+      final String jsonValue = item.id.substring(_builtinIdPrefix.length);
+      final PdfFontFamily family = PdfFontFamily.values.firstWhere(
+        (PdfFontFamily f) => f.jsonValue == jsonValue,
+        orElse: () => bundledFamily,
+      );
+      onBundledSelected(family);
       return;
     }
     // عائلات المستخدم تحمل البادئة التقنية؛ ما عداها خط نظام.
-    if (!value.startsWith(CustomFontFace.familyPrefix)) {
-      await fonts.registerSystemFont(value);
+    if (item.id.startsWith(CustomFontFace.familyPrefix)) {
+      onCustomSelected(item.id);
+      return;
     }
-    onChanged(value);
+    await fonts.registerSystemFont(item.id);
+    onCustomSelected(item.id);
   }
 }
 

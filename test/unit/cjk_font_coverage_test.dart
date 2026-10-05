@@ -153,4 +153,59 @@ void main() {
       expect(notoSc.covers(0x3000), isTrue);
     });
   });
+
+  group('توسيع نطاقات CJK والرموز', () {
+    int coveredIn(int start, int end) {
+      int count = 0;
+      for (int code = start; code <= end; code++) {
+        if (notoSc.covers(code)) count++;
+      }
+      return count;
+    }
+
+    /// يطبع الحروف الغائبة عند فشل التأكيد.
+    List<String> missingIn(int start, int end) {
+      final List<String> out = <String>[];
+      for (int code = start; code <= end; code++) {
+        if (!notoSc.covers(code)) out.add(String.fromCharCode(code));
+      }
+      return out;
+    }
+
+    test('تنقيط CJK كامل U+3000..U+303F', () {
+      // «，。「」、；：» ورموز CJK — أول ما يفقد خطه يظهر مربعاً داخل النص.
+      final List<String> missing = missingIn(0x3000, 0x303F);
+      expect(missing, isEmpty, reason: 'تنقيط CJK ناقص: ${missing.join()}');
+    });
+
+    test('أشكال العرض الكاملة U+FF01..U+FF5E', () {
+      // الأبجدية والصيغ الكاملة العرض — تُستعمل في نصوص مختلطة صينية/لاتينية.
+      final List<String> missing = missingIn(0xFF01, 0xFF5E);
+      expect(missing, isEmpty, reason: 'أشكال عرض كاملة ناقصة: ${missing.join()}');
+    });
+
+    test('أشكال توافق CJK U+FE30..U+FE4F', () {
+      final List<String> missing = missingIn(0xFE30, 0xFE4F);
+      expect(missing, isEmpty, reason: 'أشكال توافق CJK ناقصة: ${missing.join()}');
+    });
+
+    test('أرقام وأحرف CJK المحيَّطة ومتوافقاتها (‎≥99%)', () {
+      expect(coveredIn(0x3200, 0x32FF), greaterThanOrEqualTo(255));
+      expect(coveredIn(0x3300, 0x33FF), greaterThanOrEqualTo(255));
+    });
+
+    test('جذور كانغشي وجذور CJK الإضافية مغطاة', () {
+      // المصدر نفسه لا يملك الحروف العليا من هذين النطاقين، فنؤكد الحد الأدنى
+      // الذي يوفره المصدر فعلاً (لا نطلب ما لا يوجد).
+      expect(coveredIn(0x2F00, 0x2FDF), greaterThanOrEqualTo(214));
+      expect(coveredIn(0x2E80, 0x2EFF), greaterThanOrEqualTo(115));
+    });
+
+    test('الرموز الهندسية والأسهم والتنقيط العام مغطاة جزئياً على الأقل', () {
+      // المصدر لا يملك كل الرموز، نضمن ألا يسقط النطاق كاملاً عند إعادة التصغير.
+      expect(coveredIn(0x2000, 0x206F), greaterThan(0));
+      expect(coveredIn(0x2190, 0x21FF), greaterThan(0));
+      expect(coveredIn(0x25A0, 0x25FF), greaterThan(0));
+    });
+  });
 }

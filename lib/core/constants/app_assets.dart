@@ -32,6 +32,16 @@ abstract final class AppAssets {
   static const String notoScFontFile =
       'assets/fonts/noto_sans_sc/NotoSansSC-Regular.ttf';
 
+  /// خط السيريلية الاحتياطي — **محزوم داخل الحزمة** ومُصغَّر من `Noto Sans`.
+  ///
+  /// لماذا خط منفصل؟ خط الصينية أعلاه لا يملك إلا الأبجدية الروسية الأساسية
+  /// (‎66 محرفاً)، ولا خط عربي محزوم يغطي السيريلية إطلاقاً. هذا الملف يغطي كامل
+  /// الكتلة السيريلية `U+0400..U+052F` واللاتيني والتنقيط. أعد توليده بـ
+  /// `python tool/subset_cyrillic_font.py`.
+  static const String notoCyrillicFont = 'Noto Sans';
+  static const String notoCyrillicFontFile =
+      'assets/fonts/noto_sans/NotoSans-Cyrillic.ttf';
+
   /// خطوط احتياطية عالمية للواجهة (`fontFamilyFallback`).
   /// الخط الافتراضي **Cairo** يغطي العربية واللاتينية، لكن أي محرف يغيب عنه قد
   /// يظهر مربعاً فارغاً (□□□)، فنمرّر خطوط نظام تغطي الحالتين: Tahoma/Arial
@@ -41,6 +51,9 @@ abstract final class AppAssets {
     // خط صيني محزوم داخل الحزمة — الوحيد المضمون على كل منصة بما فيها الويب،
     // لذا يتصدّر القائمة فتُرسم ترجمات zh كلها بلا مربعات فارغة (□□□).
     notoScFont,
+    // سيريلية كاملة (Noto Sans) — خط الصينية يغطي الروسية الأساسية فقط، فلا
+    // مربعات فارغة في الأوكرانية/الصربية/البلغارية ولا في نص سيريلي مخلوط.
+    notoCyrillicFont,
     'Tahoma', // ويندوز/ماك — يغطي العربي واللاتيني
     'Arial',
     'Microsoft YaHei', // ويندوز (CJK) إن وُجد

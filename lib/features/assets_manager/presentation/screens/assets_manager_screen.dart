@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../../../core/assets/asset_image_cache.dart';
+import '../../../../core/assets/asset_image_disk_cache.dart';
 import '../../../../core/assets/asset_type_ui.dart';
 import '../../../../core/assets/asset_upload.dart';
 import '../../../../core/assets/assets_controller.dart';
@@ -19,10 +20,27 @@ import '../../../../core/utils/ui_feedback.dart';
 /// كل الأصول محلية على جهاز المستخدم (تُستعاد أوفلاين عند بدء التشغيل)، وتُربط
 /// بالقوالب عبر عنصر صورة مصدره `مكتبة أصولي`، ويُرسمها محرّك الطباعة مباشرةً.
 class AssetsManagerScreen extends StatefulWidget {
-  const AssetsManagerScreen({super.key, this.controller});
+  const AssetsManagerScreen({
+    super.key,
+    this.controller,
+    this.cacheStats,
+    this.onClearCache,
+    this.cacheMaxBytes,
+  });
 
   /// متحكّم الأصول — يُحقن في الاختبارات (نسخة في الذاكرة).
   final AssetsController? controller;
+
+  /// قارئ حجم كاش الصور القرصي — يُحقن في الاختبارات لتفادي قراءة قرص حقيقية
+  /// (والتي لا تكتمل داخل منطقة `testWidgets` الزمنية المزيّفة).
+  final Future<AssetImageCacheStats> Function()? cacheStats;
+
+  /// منظّف الكاش — يُحقن في الاختبارات.
+  final Future<void> Function()? onClearCache;
+
+  /// سقف كاش القرص (بايتات) المعروض مقابل الاستهلاك — يُحقن في الاختبارات،
+  /// وافتراضه سقف المخزن نفسه (`AssetImageDiskCache.maxBytes`).
+  final int? cacheMaxBytes;
 
   @override
   State<AssetsManagerScreen> createState() => _AssetsManagerScreenState();
@@ -35,10 +53,15 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
 
   AssetType? _type;
 
+  /// إحصاء كاش الصور القرصي — `null` ما دام يُقرأ.
+  AssetImageCacheStats? _cacheStats;
+  bool _clearingCache = false;
+
   @override
   void initState() {
     super.initState();
     if (!_controller.isRestored) unawaited(_controller.restore());
+    unawaited(_refreshCacheStats());
   }
 
   @override
@@ -138,9 +161,129 @@ class _AssetsManagerScreenState extends State<AssetsManagerScreen> {
               ),
             ],
           ),
+          const SizedBox(height: AppTheme.space8),
+          _cacheBar(context),
         ],
       ),
     );
+  }
+
+  // ==========================================================================
+  //  كاش الصور على القرص (حجمه ومسحه)
+  // ==========================================================================
+
+  /// يقرأ حجم الكاش القرصي ويحدّث الواجهة (لا يرمي).
+  Future<void> _refreshCacheStats() async {
+    AssetImageCacheStats stats;
+    try {
+      stats = await (widget.cacheStats?.call() ??
+          AssetImageDiskCache.instance.stats());
+    } on Object catch (_) {
+      stats = AssetImageCacheStats.empty;
+    }
+    if (!mounted) return;
+    setState(() => _cacheStats = stats);
+  }
+
+  /// يمسح كاش الصور القرصي (والنسخ الساخنة في الذاكرة) ثم يعيد قراءة الحجم.
+  Future<void> _clearCache() async {
+    if (_clearingCache) return;
+    setState(() => _clearingCache = true);
+    final Future<void> Function()? clear = widget.onClearCache;
+    if (clear != null) {
+      await clear();
+    } else {
+      await AssetImageDiskCache.instance.clear();
+      AssetImageCache.instance.clear();
+    }
+    await _refreshCacheStats();
+    if (!mounted) return;
+    setState(() => _clearingCache = false);
+    context.showSuccess(
+      context.l10n?.amCacheCleared ?? 'تم مسح ذاكرة الصور على القرص.',
+    );
+  }
+
+  /// شريط يعرض استهلاك الكاش القرصي **مقابل سقفه** وزرّ مسحه.
+  Widget _cacheBar(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final AssetImageCacheStats? stats = _cacheStats;
+    final int maxBytes = widget.cacheMaxBytes ??
+        AssetImageDiskCache.instance.maxBytes;
+    final bool enabled = !_clearingCache && stats != null && !stats.isEmpty;
+
+    final String usage;
+    if (stats == null) {
+      usage = '…';
+    } else if (stats.isEmpty) {
+      usage = context.l10n?.amCacheEmpty ?? 'لا ذاكرة قرصية بعد';
+    } else {
+      usage = context.l10n?.amCacheUsageOf(
+            '${stats.files}',
+            _formatBytes(stats.bytes),
+            _formatBytes(maxBytes),
+          ) ??
+          '${stats.files} ملف · ${_formatBytes(stats.bytes)} من '
+              '${_formatBytes(maxBytes)}';
+    }
+
+    // نسبة الاستهلاك من السقف (0..1) — تُرسم شريطاً تحت السطر ليفهم المستخدم
+    // قرب امتلاء الكاش قبل أن يبدأ الطرف بحذف الأقدم.
+    final double ratio = (stats == null || maxBytes <= 0)
+        ? 0
+        : (stats.bytes / maxBytes).clamp(0.0, 1.0).toDouble();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Icon(Icons.sd_storage_outlined,
+                size: 16, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: AppTheme.space8),
+            Text(
+              context.l10n?.amCacheLabel ?? 'ذاكرة الصور على القرص',
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(width: AppTheme.space8),
+            Expanded(
+              child: Text(
+                usage,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: enabled ? () => unawaited(_clearCache()) : null,
+              icon: const Icon(Icons.delete_sweep_rounded, size: 16),
+              label: Text(context.l10n?.amCacheClear ?? 'مسح الذاكرة'),
+            ),
+          ],
+        ),
+        if (stats != null && !stats.isEmpty) ...<Widget>[
+          const SizedBox(height: AppTheme.space4),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+            child: LinearProgressIndicator(
+              key: const Key('cache-usage-progress'),
+              value: ratio,
+              minHeight: 4,
+              backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// صيغة مقروئة لحجم بالبايتات.
+  static String _formatBytes(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    final int kb = bytes ~/ 1024;
+    if (kb < 1024) return '$kb KB';
+    return '${(kb / 1024).toStringAsFixed(1)} MB';
   }
 
   Widget _uploadButton(BuildContext context) {

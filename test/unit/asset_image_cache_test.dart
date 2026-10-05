@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/assets/asset_image_cache.dart';
+import 'package:joodcraft/core/assets/asset_image_disk_cache.dart';
 import 'package:joodcraft/core/assets/asset_store.dart';
 import 'package:joodcraft/core/assets/assets_controller.dart';
 import 'package:joodcraft/core/assets/user_asset.dart';
@@ -11,8 +13,39 @@ import 'package:joodcraft/core/constants/app_constants.dart';
 import '../support/sample_image.dart';
 
 void main() {
-  setUp(() => AssetImageCache.instance.clear());
-  tearDown(() => AssetImageCache.instance.clear());
+  late Directory tempCache;
+  late AssetImageDiskCache previousDisk;
+
+  setUp(() {
+    AssetImageCache.instance.clear();
+    // جذر قرصي مؤقّت حتى لا نلمس الكاش الحقيقي للمستخدم في الاختبارات.
+    tempCache = Directory.systemTemp.createTempSync('jood_img_disk_test');
+    previousDisk = AssetImageDiskCache.instance;
+    AssetImageDiskCache.instance = AssetImageDiskCache(
+      rootPath: '${tempCache.path}/cache',
+    );
+  });
+
+  tearDown(() {
+    AssetImageCache.instance.clear();
+    AssetImageDiskCache.instance = previousDisk;
+    try {
+      if (tempCache.existsSync()) tempCache.deleteSync(recursive: true);
+    } on FileSystemException {
+      // على ويندوز قد يبقى الملف مقفولاً لحظةً بعد كتابة غير حاجزة — لا نُسقط
+      // الاختبار لذلك؛ المجلد مؤقّت ويُكنسه النظام لاحقاً.
+    }
+  });
+
+  /// ينتظر حتى تتطابق حالة الكاش القرصي للأصل [id] مع [present].
+  Future<void> waitForDisk(String id, {required bool present}) async {
+    for (int i = 0; i < 100; i++) {
+      final bool has =
+          (await AssetImageDiskCache.instance.read(id)) != null;
+      if (has == present) return;
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+  }
 
   UserAsset asset({String id = 'asset_1'}) => UserAsset(
         id: id,
@@ -114,6 +147,89 @@ void main() {
       await controller.clear();
       expect(AssetImageCache.instance.length, 0);
       controller.dispose();
+    });
+  });
+
+  group('الطبقة القرصية (إعادة الاستخدام عبر التشغيلات)', () {
+    test('preload يعيد البايتات من القرص بلا إعادة فكّ Base64', () async {
+      final UserAsset a = asset();
+      // نحاكي فتحة سابقة: البايتات المفكوكة محفوظة على القرص.
+      await AssetImageDiskCache.instance.write(a.id, samplePngBytes());
+      AssetImageCache.instance.clear();
+
+      await AssetImageCache.instance.preload(<UserAsset>[a]);
+
+      expect(AssetImageCache.instance.length, 1);
+      expect(AssetImageCache.instance.bytesForAsset(a), samplePngBytes());
+    });
+
+    test('preload يفكّ من Base64 ويحفظ على القرص عند غياب النسخة', () async {
+      final UserAsset a = asset();
+
+      await AssetImageCache.instance.preload(<UserAsset>[a]);
+      expect(AssetImageCache.instance.bytesForAsset(a), samplePngBytes());
+
+      // الكتابة القرصية غير حاجزة — ننتظر ظهورها بإمهال محدود.
+      await waitForDisk(a.id, present: true);
+      expect(await AssetImageDiskCache.instance.read(a.id), samplePngBytes());
+    });
+
+    test('إزالة أصل تحذف نسخته القرصية', () async {
+      final UserAsset a = asset();
+      await AssetImageDiskCache.instance.write(a.id, samplePngBytes());
+      await AssetImageCache.instance.preload(<UserAsset>[a]);
+
+      AssetImageCache.instance.evictAsset(a.id);
+      await waitForDisk(a.id, present: false);
+
+      expect(await AssetImageDiskCache.instance.read(a.id), isNull);
+    });
+
+    test('إضافة أصل تحفظ صورته على القرص فوراً', () async {
+      final AssetsController controller =
+          AssetsController(store: InMemoryAssetStore());
+      final UserAsset added = await controller.addAsset(
+        type: AssetType.border,
+        name: 'إطار',
+        fileName: 'border.png',
+        bytes: samplePngBytes(),
+      );
+
+      // الحفظ القرصي مجدول غير حاجز — ننتظر ظهوره بإمهال محدود.
+      await waitForDisk(added.id, present: true);
+      expect(
+        await AssetImageDiskCache.instance.read(added.id),
+        samplePngBytes(),
+      );
+      controller.dispose();
+    });
+
+    test('استعادة المكتبة تسخّن الذاكرة من الكاش القرصي', () async {
+      final InMemoryAssetStore store = InMemoryAssetStore();
+      final AssetsController first = AssetsController(store: store);
+      final UserAsset added = await first.addAsset(
+        type: AssetType.border,
+        name: 'إطار',
+        fileName: 'border.png',
+        bytes: samplePngBytes(),
+      );
+      first.dispose();
+      await pumpEventQueue();
+
+      // كأن التطبيق أُغلق وأُعيد فتحه: الذاكرة فارغة والقرص هو الذاكرة.
+      AssetImageCache.instance.clear();
+      final AssetsController second = AssetsController(store: store);
+      await second.restore();
+      // التسخين غير حاجز (لا يؤخّر الإقلاع) — نمنحه فرصة بإمهال محدود.
+      for (int i = 0;
+          i < 100 && AssetImageCache.instance.length == 0;
+          i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+
+      expect(AssetImageCache.instance.length, greaterThan(0));
+      expect(AssetImageCache.instance.bytesForAsset(added), samplePngBytes());
+      second.dispose();
     });
   });
 }

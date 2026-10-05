@@ -162,6 +162,8 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       unawaited(_bootstrapFromAsset());
     } else {
       _applyInitialSelection();
+      // إعادة تسخين ذاكرة الصور من الكاش القرصي (بلا انتظار).
+      unawaited(warmDocumentImageCache(widget.document!));
     }
   }
 
@@ -189,6 +191,7 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
       asClean: true,
     );
     _applyInitialSelection();
+    unawaited(warmDocumentImageCache(_controller.document));
   }
 
   void _applyInitialSelection() {
@@ -861,12 +864,16 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
 
     // قالب جديد قد يستخدم أصولاً مختلفة — نُفرّغ ذاكرة الصور المرتبطة بالقديم.
     AssetImageCache.instance.clear();
+    final TemplateDocument document = record.toDocument();
     _controller.loadDocument(
-      record.toDocument(),
+      document,
       asClean: true,
       recordId: record.id,
       title: record.title,
     );
+    // إعادة تسخين الذاكرة من الكاش القرصي بدل إعادة فكّ Base64 لكل صورة عند
+    // أول رسم — غير حاجزة كي لا يتأخّر فتح القالب.
+    unawaited(warmDocumentImageCache(document));
     context.showSuccess(
       context.l10n?.tevOpenedTemplate(record.title) ??
           'تم فتح «${record.title}».',

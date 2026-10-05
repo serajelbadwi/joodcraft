@@ -30,7 +30,7 @@ void main() {
         ],
       );
 
-  test('يولّد نصاً روسياً وصينياً بخط عربي بلا انهيار ويحذّر من الكتابات الناقصة',
+  test('النص الروسي والصيني يُرسم بخط الاحتياط المحزوم بلا تحذير تغطية',
       () async {
     final TemplateDocument document =
         documentWith('تقرير Русский 中文 {{اسم_المتدرب}}');
@@ -40,16 +40,13 @@ void main() {
       data: const <String, String>{'اسم_المتدرب': 'Иван Петров'},
     );
 
-    // الملف يُنتَج فعلاً رغم غياب الخطوط الكاملة.
     expect(report.bytes.lengthInBytes, greaterThan(1000));
-    // وتحذير واضح لكل كتابة غير مغطّاة بدل فشل صامت.
+    // Noto Sans SC صار محزوماً ومربوطاً كخط احتياط، فيرسم السيريلية والصينية
+    // معاً، فلا تحذير تغطية كاذب.
     expect(
-      report.warnings.any((String w) => w.contains('السيريلية')),
-      isTrue,
-    );
-    expect(
-      report.warnings.any((String w) => w.contains('الصينية')),
-      isTrue,
+      report.warnings.any((String w) => w.contains('لا يغطّيها أي خط محزوم')),
+      isFalse,
+      reason: 'السيريلية والصينية مغطّاتان بالخط المحزوم: ${report.warnings}',
     );
   });
 
@@ -84,27 +81,17 @@ void main() {
         reason: 'العربية مغطّاة فلا يجوز أي تحذير تغطية: ${report.warnings}');
   });
 
-  test('الصينية: بلا انهيار، وتحذير يختفي بعد تسجيل خط يغطّيها', () async {
+  test('الصينية تُرسم بخط الاحتياط المحزوم بلا تحذير تغطية', () async {
     final TemplateDocument document = documentWith('结业证书 {{الاسم}}');
 
-    // 1) بلا خط يغطّيها ⇒ لا سقوط، لكن تحذير واضح.
-    final PdfGenerationReport before =
+    final PdfGenerationReport report =
         await service.generate(document: document, data: <String, String>{'الاسم': '张三'});
-    expect(before.bytes.lengthInBytes, greaterThan(1000));
-    expect(
-      before.warnings.any((String w) => w.contains('الصينية')),
-      isTrue,
-    );
 
-    // 2) بعد تسجيل تغطية وقت التشغيل (خط مخصّص صيني مسجَّل) ⇒ يختفي التحذير.
-    PdfScriptCoverage.registerCovered(const <PdfScript>{PdfScript.cjk});
-
-    final PdfGenerationReport after =
-        await service.generate(document: document, data: <String, String>{'الاسم': '张三'});
-    expect(after.bytes.lengthInBytes, greaterThan(1000));
+    expect(report.bytes.lengthInBytes, greaterThan(1000));
     expect(
-      after.warnings.any((String w) => w.contains('لا يغطّيها أي خط محزوم')),
+      report.warnings.any((String w) => w.contains('لا يغطّيها أي خط محزوم')),
       isFalse,
+      reason: 'الصينية مغطّاة بخط الاحتياط المحزوم: ${report.warnings}',
     );
   });
 }

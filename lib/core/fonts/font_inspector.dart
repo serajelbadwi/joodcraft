@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 
 /// فحص ملف خط (.ttf / .otf) داخل دارت بلا أي مكتبة خارجية.
 ///
@@ -131,8 +131,24 @@ class FontInspection {
   }
 }
 
+/// نقطة دخول التحليل داخل isolate (يجب أن تكون دالة عُليا).
+FontInspection _inspectInIsolate(Uint8List bytes) => FontInspector.inspect(bytes);
+
 /// قارئ الحد الأدنى من بنية ملفات sfnt.
 abstract final class FontInspector {
+  /// الحدّ الذي فوقه يُنقل التحليل إلى isolate خلفي (250KB) — كي لا تتجمّد
+  /// الواجهة أثناء استيراد ملفات الخطوط الثقيلة (CJK مثلاً).
+  static const int heavyFontThresholdBytes = 250 * 1024;
+
+  /// نسخة غير حاجزة من [inspect]: تُحلّل في isolate خلفي للخطوط الثقيلة، وعلى
+  /// الخيط الحالي للصغيرة (تفادي كلفة إنشاء isolate بلا داعٍ). لا ترمي أبداً.
+  static Future<FontInspection> inspectAsync(Uint8List bytes) {
+    if (bytes.lengthInBytes < heavyFontThresholdBytes) {
+      return Future<FontInspection>.value(inspect(bytes));
+    }
+    return compute<Uint8List, FontInspection>(_inspectInIsolate, bytes);
+  }
+
   static const Set<String> _latinFallbackTables = <String>{
     'head',
     'cmap',

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:joodcraft/core/assets/asset_image_disk_cache.dart';
 import 'package:joodcraft/core/assets/asset_store.dart';
 import 'package:joodcraft/core/assets/assets_controller.dart';
 import 'package:joodcraft/core/assets/user_asset.dart';
@@ -36,13 +37,25 @@ void main() {
     );
   }
 
-  Future<void> pump(WidgetTester tester) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    Future<AssetImageCacheStats> Function()? cacheStats,
+    Future<void> Function()? onClearCache,
+    int? cacheMaxBytes,
+  }) async {
     await tester.binding.setSurfaceSize(const Size(1280, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
-        home: Scaffold(body: AssetsManagerScreen(controller: controller)),
+        home: Scaffold(
+          body: AssetsManagerScreen(
+            controller: controller,
+            cacheStats: cacheStats,
+            onClearCache: onClearCache,
+            cacheMaxBytes: cacheMaxBytes,
+          ),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -162,6 +175,85 @@ void main() {
 
     expect(controller.count, 1);
     expect(find.text('logo'), findsOneWidget);
+  });
+
+  testWidgets('يعرض حجم كاش الصور القرصي', (WidgetTester tester) async {
+    await pump(
+      tester,
+      cacheStats: () async =>
+          const AssetImageCacheStats(files: 3, bytes: 2048),
+    );
+
+    expect(find.text('ذاكرة الصور على القرص'), findsOneWidget);
+    expect(find.textContaining('3 ملف'), findsOneWidget);
+  });
+
+  testWidgets('بلا كاش يعرض حالة الفراغ', (WidgetTester tester) async {
+    await pump(
+      tester,
+      cacheStats: () async => AssetImageCacheStats.empty,
+    );
+    expect(find.text('لا ذاكرة قرصية بعد'), findsOneWidget);
+    // لا شريط استهلاك حين لا شيء يُستهلك.
+    expect(find.byKey(const Key('cache-usage-progress')), findsNothing);
+  });
+
+  testWidgets('يعرض الاستهلاك مقابل السقف مع شريط تقدّم',
+      (WidgetTester tester) async {
+    await pump(
+      tester,
+      cacheStats: () async =>
+          const AssetImageCacheStats(files: 4, bytes: 1024),
+      cacheMaxBytes: 4096,
+    );
+
+    // 4 ملفات · 1 KB من 4 KB — الاستهلاك دائماً مقيساً بالسقف نفسه.
+    expect(find.textContaining('4 ملف'), findsOneWidget);
+    expect(find.textContaining('1 KB من 4 KB'), findsOneWidget);
+
+    final LinearProgressIndicator bar =
+        tester.widget<LinearProgressIndicator>(
+      find.byKey(const Key('cache-usage-progress')),
+    );
+    expect(bar.value, closeTo(0.25, 0.0001));
+  });
+
+  testWidgets('شريط التقدّم ممتلئ ومقيّد عند اقتراب السقف',
+      (WidgetTester tester) async {
+    await pump(
+      tester,
+      cacheStats: () async =>
+          const AssetImageCacheStats(files: 9, bytes: 4096),
+      cacheMaxBytes: 4096,
+    );
+
+    final LinearProgressIndicator bar =
+        tester.widget<LinearProgressIndicator>(
+      find.byKey(const Key('cache-usage-progress')),
+    );
+    expect(bar.value, 1.0);
+  });
+
+  testWidgets('زر المسح يُفرّغ كاش الصور القرصي', (WidgetTester tester) async {
+    int clears = 0;
+    AssetImageCacheStats current =
+        const AssetImageCacheStats(files: 2, bytes: 1024);
+
+    await pump(
+      tester,
+      cacheStats: () async => current,
+      onClearCache: () async {
+        clears++;
+        current = AssetImageCacheStats.empty;
+      },
+    );
+    expect(find.textContaining('2 ملف'), findsOneWidget);
+
+    await tester.tap(find.text('مسح الذاكرة'));
+    await tester.pumpAndSettle();
+
+    expect(clears, 1);
+    expect(find.text('لا ذاكرة قرصية بعد'), findsOneWidget);
   });
 }
 

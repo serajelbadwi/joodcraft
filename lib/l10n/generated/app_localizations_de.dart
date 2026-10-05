@@ -1142,6 +1142,29 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Bildcache auf dem Datenträger';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count Datei(en) · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count Datei(en) · $used von $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'Noch kein Datenträger-Cache';
+
+  @override
+  String get amCacheClear => 'Cache leeren';
+
+  @override
+  String get amCacheCleared =>
+      'Der Bildcache auf dem Datenträger wurde geleert.';
+
+  @override
   String get commonRetry => 'Erneut versuchen';
 
   @override
@@ -1333,6 +1356,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'Keine (integrierte Schrift)';
+
+  @override
+  String get cfpGroupBuiltin => 'Integrierte Schriften';
+
+  @override
+  String get cfpGroupUploaded => 'Meine hochgeladenen Schriften';
+
+  @override
+  String get cfpGroupSystem => 'Systemschriften';
+
+  @override
+  String get cfpSearchHint => 'Schriften suchen…';
+
+  @override
+  String get cfpNoMatch => 'Keine passenden Schriften.';
 
   @override
   String get cfpPickTitle => 'Schriftdatei wählen (TTF oder OTF)';

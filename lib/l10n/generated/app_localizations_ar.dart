@@ -1125,6 +1125,28 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'ذاكرة الصور على القرص';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count ملف · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count ملف · $used من $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'لا ذاكرة قرصية بعد';
+
+  @override
+  String get amCacheClear => 'مسح الذاكرة';
+
+  @override
+  String get amCacheCleared => 'تم مسح ذاكرة الصور على القرص.';
+
+  @override
   String get commonRetry => 'إعادة المحاولة';
 
   @override
@@ -1313,6 +1335,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'بلا (الخط المضمّن)';
+
+  @override
+  String get cfpGroupBuiltin => 'الخطوط المضمّنة';
+
+  @override
+  String get cfpGroupUploaded => 'خطوطي المرفوعة';
+
+  @override
+  String get cfpGroupSystem => 'خطوط النظام';
+
+  @override
+  String get cfpSearchHint => 'ابحث في الخطوط…';
+
+  @override
+  String get cfpNoMatch => 'لا توجد خطوط مطابقة.';
 
   @override
   String get cfpPickTitle => 'اختر ملف خط (TTF أو OTF)';

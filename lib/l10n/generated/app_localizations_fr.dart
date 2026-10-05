@@ -1141,6 +1141,28 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Cache d’images sur disque';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count fichier(s) · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count fichier(s) · $used sur $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'Pas encore de cache disque';
+
+  @override
+  String get amCacheClear => 'Vider le cache';
+
+  @override
+  String get amCacheCleared => 'Le cache d’images sur disque a été vidé.';
+
+  @override
   String get commonRetry => 'Réessayer';
 
   @override
@@ -1332,6 +1354,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'Aucune (police intégrée)';
+
+  @override
+  String get cfpGroupBuiltin => 'Polices intégrées';
+
+  @override
+  String get cfpGroupUploaded => 'Mes polices importées';
+
+  @override
+  String get cfpGroupSystem => 'Polices système';
+
+  @override
+  String get cfpSearchHint => 'Rechercher des polices…';
+
+  @override
+  String get cfpNoMatch => 'Aucune police correspondante.';
 
   @override
   String get cfpPickTitle => 'Choisir un fichier de police (TTF ou OTF)';

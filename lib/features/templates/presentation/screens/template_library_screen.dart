@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/app_routes.dart';
+import '../../../../core/assets/embedded_assets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/editor/widgets/editor_controls.dart';
 import '../../../../core/errors/app_exception.dart';
@@ -12,6 +13,7 @@ import '../../../../core/templates/preset_template.dart';
 import '../../../../core/templates/template_library_controller.dart';
 import '../../../../core/templates/template_library_entry.dart';
 import '../../../../core/l10n/app_l10n.dart';
+import '../../../../core/models/template_document.dart';
 import '../../../../core/templates/template_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -42,6 +44,7 @@ class TemplateLibraryScreen extends StatefulWidget {
     this.repository,
     this.localStore,
     this.controller,
+    this.warmImageCache,
   });
 
   /// مستودع القوالب السحابية (يُحقن من الموجّه) — `null` إن لم يُربط Supabase.
@@ -52,6 +55,12 @@ class TemplateLibraryScreen extends StatefulWidget {
 
   /// متحكّم جاهز (للاختبارات) — يتقدّم على الحقن الافتراضي.
   final TemplateLibraryController? controller;
+
+  /// مُسخِّن ذاكرة الصور عند فتح المكتبة — يُحقن في الاختبارات (لتفادي قرص
+  /// حقيقي داخل منطقة `testWidgets` الزمنية المزيّفة). الافتراضي هو
+  /// [warmDocumentsImageCache] على مستندات كل القوالب.
+  final Future<void> Function(List<TemplateDocument> documents)?
+      warmImageCache;
 
   @override
   State<TemplateLibraryScreen> createState() => _TemplateLibraryScreenState();
@@ -72,7 +81,25 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(_controller.refresh());
+    unawaited(_refreshAndWarm());
+  }
+
+  /// يحمّل القوالب ثم يسخّن ذاكرة صور معايناتها في الخلفية.
+  ///
+  /// **لماذا عند الفتح؟** بطاقات المكتبة ومعايناتها ترسم صور أصول المستخدم
+  /// (الإطار/الخلفية/التوقيع)، وهي بلا تسخين تُفكّ من Base64 عند أول رسم. قراءة
+  /// نسخ القرص المحفوظة — أو فكّها وحفظها مرة واحدة — تجعلها جاهزة فوراً،
+  /// وبلا تأخير للواجهة: كله غير حاجز بعد انتهاء تحميل القوالب.
+  Future<void> _refreshAndWarm() async {
+    await _controller.refresh();
+    if (!mounted || _controller.entries.isEmpty) return;
+    final List<TemplateDocument> documents = <TemplateDocument>[
+      for (final TemplateLibraryEntry entry in _controller.entries)
+        entry.toDocument(),
+    ];
+    final Future<void> Function(List<TemplateDocument>)? warm =
+        widget.warmImageCache;
+    await (warm ?? warmDocumentsImageCache)(documents);
   }
 
   @override

@@ -1141,6 +1141,28 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Caché de imágenes en disco';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count archivo(s) · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count archivo(s) · $used de $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'Aún no hay caché en disco';
+
+  @override
+  String get amCacheClear => 'Vaciar caché';
+
+  @override
+  String get amCacheCleared => 'Se vació el caché de imágenes en disco.';
+
+  @override
   String get commonRetry => 'Reintentar';
 
   @override
@@ -1331,6 +1353,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'Ninguna (fuente integrada)';
+
+  @override
+  String get cfpGroupBuiltin => 'Fuentes integradas';
+
+  @override
+  String get cfpGroupUploaded => 'Mis fuentes subidas';
+
+  @override
+  String get cfpGroupSystem => 'Fuentes del sistema';
+
+  @override
+  String get cfpSearchHint => 'Buscar fuentes…';
+
+  @override
+  String get cfpNoMatch => 'No hay fuentes coincidentes.';
 
   @override
   String get cfpPickTitle => 'Elige un archivo de fuente (TTF u OTF)';

@@ -196,9 +196,15 @@ void main() {
 
       expect((controller.selected! as TextElement).family, PdfFontFamily.plex);
 
-      await tester.tap(find.byType(DropdownButton<PdfFontFamily>));
+      // فتح المنتقي الموحّد ثم اختيار «Amiri» من مجموعة الخطوط المضمّنة.
+      await tapVisible(
+        tester,
+        find.byKey(const ValueKey<String>('custom-font-picker')),
+      );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Amiri').last);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('font-option-builtin:amiri')),
+      );
       await tester.pumpAndSettle();
 
       expect((controller.selected! as TextElement).family, PdfFontFamily.amiri);

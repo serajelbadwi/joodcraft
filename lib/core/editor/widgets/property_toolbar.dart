@@ -671,18 +671,14 @@ class _PropertyToolbarState extends State<PropertyToolbar> {
           focusNode: widget.textFocusNode,
           onChanged: controller.updateText,
         ),
-        DropdownField<PdfFontFamily>(
-          label: context.l10n?.editorFont ?? 'الخط',
-          value: element.family,
-          items: PdfFontFamily.pdfFamilies,
-          labelOf: (PdfFontFamily family) => family.labelAr,
+        // منتقٍ موحّد يجمع الخطوط المضمّنة والمرفوعة وخطوط النظام، قابل للبحث.
+        FontSelectorSection(
+          bundledFamily: element.family,
+          customFamily: element.customFont,
           // اختيار خط مضمّن يلغي أي خط مخصص مرتبط بالعنصر.
-          onChanged: (PdfFontFamily family) =>
+          onBundledSelected: (PdfFontFamily family) =>
               controller.updateTextStyle(family: family, customFont: null),
-        ),
-        CustomFontSection(
-          selected: element.customFont,
-          onChanged: (String? family) =>
+          onCustomSelected: (String? family) =>
               controller.updateTextStyle(customFont: family),
         ),
         DropdownField<PdfFontWeight>(

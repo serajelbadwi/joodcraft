@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+import 'system_font_disk_cache.dart';
 import 'system_font_models.dart';
 
 /// الدليل الرئيسي لخطوط النظام على Windows.
@@ -13,6 +15,9 @@ const String _registryFontsKey =
 
 /// امتدادات ملفات الخطوط المقبولة.
 const List<String> _fontExtensions = <String>['.ttf', '.otf', '.ttc'];
+
+/// كاش القرص المشترك لبايتات خطوط النظام (يُبطل تلقائياً عند تغيّر الملف).
+final SystemFontDiskCache _diskCache = SystemFontDiskCache();
 
 /// يفحص خطوط النظام المثبتة على Windows ويُرجعها مجمّعة بالعائلة.
 ///
@@ -115,9 +120,15 @@ Future<WindowsFontDiscoveryResult> discoverSystemFonts({
 /// لا يرمي أبداً: خطوط النظام قد تكون محميّة، والتعذّر يجب أن يُتجاهل بهدوء.
 Future<ByteData?> readSystemFontBytes(String path) async {
   try {
+    // الكاش القرصي أولاً: فتح لاحق يقرأ من الـSSD بلا مسح القرص الأصلي.
+    final Uint8List? cached = await _diskCache.read(path);
+    if (cached != null) return ByteData.sublistView(cached);
+
     final File file = File(path);
     if (!await file.exists()) return null;
     final Uint8List bytes = await file.readAsBytes();
+    // حفظ غير حاجز: لا نؤخّر إرجاع البايتات على كتابة الكاش.
+    unawaited(_diskCache.write(path, bytes));
     return ByteData.sublistView(bytes);
   } on Object catch (error) {
     // نتجاهل أخطاء الصلاحيات بصمت كما هو مطلوب لخطوط النظام.

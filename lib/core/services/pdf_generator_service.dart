@@ -250,13 +250,23 @@ class PdfGeneratorService {
   }) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     final List<String> warnings = <String>[...document.warnings];
-    // سجّل الخطوط المخصّصة التي يشير إليها المستند أولاً، حتى يعرف فحص التغطية
-    // أنها متاحة ويمنع تحذيرات كاذبة عن كتابات يتكفّل بها خط المستخدم.
-    _ensureCustomFonts(document);
-    // تحذيرات تغطية الكتابات (سيريلية/صينية بلا خط محزوم) قبل أي رسم.
+    // سجّل الخطوط المخصّصة/النظامية التي يشير إليها المستند أولاً، حتى يعرف
+    // فحص التغطية أنها متاحة ويمنع تحذيرات كاذبة عن كتابات يتكفّل بها الخط.
+    await _ensureCustomFonts(document);
+    // تحذيرات تغطية الكتابات قبل أي رسم — بدقّة حسب الخطوط المتاحة فعلاً:
+    // المحزومة (بما فيها خط الاحتياط Noto Sans SC) + الخطوط المخصّصة/النظامية.
+    // فلا يُحذَّر على كتابة تُرسم فعلاً، ولا يمرّ محرف بلا أي خط بلا تحذير.
+    final Set<int> bundledCoverage = _fonts.bundledCodePoints;
+    final Set<PdfScript> runtimeCovered = PdfScriptCoverage.runtimeCovered;
     for (final PdfScript script in PdfScriptCoverage.unsupportedInDocument(
       document,
       isCustomFontAvailable: _fonts.hasRegisteredCustomFamily,
+      isCodePointCovered: (String? customFamily, int codePoint) {
+        if (bundledCoverage.contains(codePoint)) return true;
+        if (_fonts.customFontCovers(customFamily, codePoint)) return true;
+        final PdfScript? script = PdfScriptCoverage.scriptOf(codePoint);
+        return script != null && runtimeCovered.contains(script);
+      },
     )) {
       warnings.add(PdfScriptCoverage.warningFor(script));
     }
@@ -293,8 +303,8 @@ class PdfGeneratorService {
     List<String> warnings,
     void Function(int done, int total)? onProgress,
   ) async {
-    // تأكيد تضمين الخطوط المخصصة التي يشير إليها المستند من مخزن الخطوط.
-    _ensureCustomFonts(document);
+    // تأكيد تضمين الخطوط المخصصة/النظامية التي يشير إليها المستند.
+    await _ensureCustomFonts(document);
     final Map<String, pw.ImageProvider?> images =
         await _resolveImages(document, warnings);
     final PdfRenderer renderer = PdfRenderer(fonts: _fonts, compress: compress);
@@ -331,7 +341,7 @@ class PdfGeneratorService {
       imageBytes: imageBytes,
       // كل الخطوط المضمّنة: الرسم قد يرجع إليها عند عائلة غير صالحة أو ناقصة.
       embeddedFontBytes: _fonts.bytesByKey,
-      customFonts: _customFontBytes(document),
+      customFonts: await _customFontBytes(document),
       compress: compress,
       metadata: metadata,
     );
@@ -346,35 +356,69 @@ class PdfGeneratorService {
     }
   }
 
-  /// يضمّن خطوطاً مخصصة يشير إليها المستند عبر `customFont`.
-  void _ensureCustomFonts(TemplateDocument document) {
+  /// يضمّن الخطوط المخصّصة **وخطوط النظام** التي يشير إليها المستند.
+  ///
+  /// خط النظام المختار في القالب لا يوجد في مخزن الخطوط المرفوعة، فنقرأ
+  /// بايتاته من الكاش (بلا إعادة مسح)، وإلا عاد الرسم صامتاً للخط المحزوم.
+  Future<void> _ensureCustomFonts(TemplateDocument document) async {
     final CustomFontController store = CustomFontController.instance;
     for (final String family in _customFontFamilies(document)) {
       if (CustomPdfFonts.contains(family)) continue;
       final CustomFontFace? face = store.faceOf(family);
-      if (face == null) continue;
+      if (face != null) {
+        try {
+          CustomPdfFonts.register(face.family, face.bytes, weight: face.weight);
+        } catch (_) {
+          // يبقى الخط المضمّن هو البديل الآمن.
+        }
+        continue;
+      }
+      final Uint8List? systemBytes = await store.systemFontBytes(family);
+      if (systemBytes == null) continue;
       try {
-        CustomPdfFonts.register(face.family, face.bytes, weight: face.weight);
+        CustomPdfFonts.register(family, systemBytes);
       } catch (_) {
-        // يبقى الخط المضمّن هو البديل الآمن.
+        // خط نظام غير قابل للتضمين (CFF/ttc) — يبقى الخط المضمّن بديلاً.
       }
     }
   }
 
-  /// بايتات الخطوط المخصصة التي يحتاجها الـ isolate لتسجيلها هناك.
-  List<PdfCustomFontBytes> _customFontBytes(TemplateDocument document) {
+  /// بايتات الخطوط (المرفوعة وخطوط النظام) التي يحتاجها isolate التصدير.
+  ///
+  /// **إصلاح الدُفعات:** كان يُقرأ فقط من `store.faceOf` (المرفوعة)، فتختفي
+  /// خطوط النظام المختارة في التصدير الجماعي. الآن تُضمَّن بايتاتها المخزّنة
+  /// صراحةً فتُسجَّل داخل الـisolate وترسم كما في المعاينة المفردة.
+  Future<List<PdfCustomFontBytes>> _customFontBytes(
+    TemplateDocument document,
+  ) async {
     final CustomFontController store = CustomFontController.instance;
     final List<PdfCustomFontBytes> payload = <PdfCustomFontBytes>[];
     for (final String family in _customFontFamilies(document)) {
-      final CustomFontFace? face = store.faceOf(family);
-      if (face == null) continue;
-      payload.add(
-        PdfCustomFontBytes(
-          family: face.family,
-          weight: face.weight,
-          bytes: face.bytes,
-        ),
-      );
+      final List<CustomFontFace> faces =
+          store.faces.where((CustomFontFace f) => f.family == family).toList();
+      if (faces.isNotEmpty) {
+        for (final CustomFontFace face in faces) {
+          payload.add(
+            PdfCustomFontBytes(
+              family: face.family,
+              weight: face.weight,
+              bytes: face.bytes,
+            ),
+          );
+        }
+        continue;
+      }
+      // خط نظام: بايتاته من الكاش بدل إسقاطه صامتاً للخط المحزوم.
+      final Uint8List? systemBytes = await store.systemFontBytes(family);
+      if (systemBytes != null) {
+        payload.add(
+          PdfCustomFontBytes(
+            family: family,
+            weight: PdfFontWeight.regular.value,
+            bytes: systemBytes,
+          ),
+        );
+      }
     }
     return payload;
   }

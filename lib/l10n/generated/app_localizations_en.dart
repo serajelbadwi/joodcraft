@@ -1135,6 +1135,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Image cache on disk';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count file(s) · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count file(s) · $used of $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'No disk cache yet';
+
+  @override
+  String get amCacheClear => 'Clear cache';
+
+  @override
+  String get amCacheCleared => 'Disk image cache cleared.';
+
+  @override
   String get commonRetry => 'Retry';
 
   @override
@@ -1324,6 +1346,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'None (built-in font)';
+
+  @override
+  String get cfpGroupBuiltin => 'Built-in fonts';
+
+  @override
+  String get cfpGroupUploaded => 'My uploaded fonts';
+
+  @override
+  String get cfpGroupSystem => 'System fonts';
+
+  @override
+  String get cfpSearchHint => 'Search fonts…';
+
+  @override
+  String get cfpNoMatch => 'No matching fonts.';
 
   @override
   String get cfpPickTitle => 'Pick a font file (TTF or OTF)';

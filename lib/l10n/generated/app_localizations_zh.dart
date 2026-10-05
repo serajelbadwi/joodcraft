@@ -1092,6 +1092,28 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => '磁盘上的图片缓存';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count 个文件 · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count 个文件 · $used / $limit';
+  }
+
+  @override
+  String get amCacheEmpty => '尚无磁盘缓存';
+
+  @override
+  String get amCacheClear => '清除缓存';
+
+  @override
+  String get amCacheCleared => '已清除磁盘上的图片缓存。';
+
+  @override
   String get commonRetry => '重试';
 
   @override
@@ -1277,6 +1299,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => '无（内置字体）';
+
+  @override
+  String get cfpGroupBuiltin => '内置字体';
+
+  @override
+  String get cfpGroupUploaded => '我上传的字体';
+
+  @override
+  String get cfpGroupSystem => '系统字体';
+
+  @override
+  String get cfpSearchHint => '搜索字体…';
+
+  @override
+  String get cfpNoMatch => '没有匹配的字体。';
 
   @override
   String get cfpPickTitle => '选择字体文件（TTF 或 OTF）';

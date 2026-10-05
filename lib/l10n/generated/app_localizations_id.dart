@@ -1132,6 +1132,28 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Cache gambar di disk';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count berkas · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count berkas · $used dari $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'Belum ada cache disk';
+
+  @override
+  String get amCacheClear => 'Bersihkan cache';
+
+  @override
+  String get amCacheCleared => 'Cache gambar di disk telah dibersihkan.';
+
+  @override
   String get commonRetry => 'Coba lagi';
 
   @override
@@ -1321,6 +1343,21 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'Tidak ada (font bawaan)';
+
+  @override
+  String get cfpGroupBuiltin => 'Font bawaan';
+
+  @override
+  String get cfpGroupUploaded => 'Font yang saya unggah';
+
+  @override
+  String get cfpGroupSystem => 'Font sistem';
+
+  @override
+  String get cfpSearchHint => 'Cari font…';
+
+  @override
+  String get cfpNoMatch => 'Tidak ada font yang cocok.';
 
   @override
   String get cfpPickTitle => 'Pilih berkas font (TTF atau OTF)';

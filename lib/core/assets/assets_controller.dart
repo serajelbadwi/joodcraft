@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import '../constants/app_constants.dart';
 import '../errors/app_error_code.dart';
 import '../errors/app_exception.dart';
 import 'asset_image_cache.dart';
+import 'asset_image_disk_cache.dart';
 import 'asset_store.dart';
 import 'user_asset.dart';
 
@@ -83,6 +85,9 @@ class AssetsController extends ChangeNotifier {
     } catch (error, stackTrace) {
       debugPrint('[الأصول] تعذّرت الاستعادة: $error\n$stackTrace');
     }
+    // تسخين الذاكرة من الكاش القرصي في الخلفية: لا يؤخّر الإقلاع، ويجعل فتح
+    // القالب بعد إعادة التشغيل يعيد استخدام الصور بلا إعادة فكّها من Base64.
+    unawaited(AssetImageCache.instance.preload(List<UserAsset>.from(_assets)));
     _restored = true;
     notifyListeners();
   }
@@ -131,6 +136,8 @@ class AssetsController extends ChangeNotifier {
     );
 
     _assets.add(asset);
+    // نخزّن البايتات في الذاكرة ونجدول حفظها على القرص كي يجدتها الفتح التالي.
+    AssetImageCache.instance.putAndPersist(asset, bytes);
     await _persist();
     notifyListeners();
     return asset;
@@ -167,6 +174,21 @@ class AssetsController extends ChangeNotifier {
   }
 
   Future<void> _persist() => _store.saveAll(List<UserAsset>.from(_assets));
+
+  /// تنظيف كاش الصور القرصي في الخلفية: يحذف الملفات التي لم يعد أي أصل في
+  /// المكتبة يشير إليها (أصل حُذف أو ملف يتيم بقي بعد تغيّر المكتبة).
+  ///
+  /// تُستدعى من نقطة الإقلاع عبر `unawaited` فلا تؤخّر الواجهة، ولا ترمي أبداً
+  /// — الكاش تحسين اختياري. تُرجع عدد الملفات المحذوفة (للتشخيص والاختبارات).
+  Future<int> pruneImageCache() async {
+    if (!_restored) return 0;
+    try {
+      return await AssetImageDiskCache.instance
+          .prune(<String>{for (final UserAsset asset in _assets) asset.id});
+    } on Object catch (_) {
+      return 0;
+    }
+  }
 
   // ==========================================================================
   //  أدوات داخلية

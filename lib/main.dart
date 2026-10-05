@@ -6,6 +6,7 @@ import 'app/app.dart';
 import 'core/assets/assets_controller.dart';
 import 'core/fonts/custom_font_controller.dart';
 import 'core/locale/locale_controller.dart';
+import 'core/pdf/pdf_font_catalog.dart';
 import 'core/services/supabase_service.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/auth/data/supabase_auth_repository.dart';
@@ -32,6 +33,10 @@ Future<void> main() async {
   // مكتبة الأصول (الشعار/الختم/التوقيع) محلية أيضاً — تُستعاد قبل الواجهة.
   await AssetsController.instance.restore();
 
+  // تنظيف كاش الصور القرصي: نحذف ملفات الأصول التي لم تعد في المكتبة (أصل
+  // حُذف أو ملف بقي يتاماً) في الخلفية — لا يؤخّر الإقلاع ولا يرمي أبداً.
+  unawaited(AssetsController.instance.pruneImageCache());
+
   // تفضيل المظهر (فاتح/داكن/النظام) — يُقرأ قبل البناء لتفادي وميض لحظي.
   final ThemeController themeController = ThemeController();
   await themeController.load();
@@ -53,4 +58,9 @@ Future<void> main() async {
       localeController: localeController,
     ),
   );
+
+  // تسخين محرّك الطباعة: تحميل الخطوط المحزومة وتحليلها كسولاً في الخلفية
+  // (وحساب تغطيتها في isolate منفصل) قبل أول تصدير، فلا يدفع المستخدم كلفة
+  // التحميل عند أول طباعة. بعد `runApp` فلا يؤخّر الإقلاع إطلاقاً.
+  unawaited(PdfFontSet.warmUp());
 }

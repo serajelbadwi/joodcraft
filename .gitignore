@@ -55,3 +55,5 @@ app.*.map.json
 
 # Temporary CJK source font re-downloaded by tool/subset_cjk_font.py
 tool/.cjk_src.ttf
+# Temporary Cyrillic source font re-downloaded by tool/subset_cyrillic_font.py
+tool/.cyr_src.ttf

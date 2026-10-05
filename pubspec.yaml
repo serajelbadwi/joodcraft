@@ -159,6 +159,14 @@ flutter:
       fonts:
         - asset: assets/fonts/noto_sans_sc/NotoSansSC-Regular.ttf
           weight: 400
+    # خط السيريلية الاحتياطي: محزوم ومُصغَّر من Noto Sans (‎~64KB) — يغطي كامل
+    # الكتلة السيريلية U+0400..U+052F لأن خط الصينية أعلاه لا يملك إلا الأبجدية
+    # الروسية الأساسية، ولا خط محزوم آخر يغطي السيريلية.
+    # أعد التوليد بـ: python tool/subset_cyrillic_font.py
+    - family: Noto Sans
+      fonts:
+        - asset: assets/fonts/noto_sans/NotoSans-Cyrillic.ttf
+          weight: 400
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1138,6 +1138,28 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'Кэш изображений на диске';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count файл(ов) · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count файл(ов) · $used из $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'Кэша на диске пока нет';
+
+  @override
+  String get amCacheClear => 'Очистить кэш';
+
+  @override
+  String get amCacheCleared => 'Кэш изображений на диске очищен.';
+
+  @override
   String get commonRetry => 'Повторить';
 
   @override
@@ -1327,6 +1349,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'Нет (встроенный шрифт)';
+
+  @override
+  String get cfpGroupBuiltin => 'Встроенные шрифты';
+
+  @override
+  String get cfpGroupUploaded => 'Мои загруженные шрифты';
+
+  @override
+  String get cfpGroupSystem => 'Системные шрифты';
+
+  @override
+  String get cfpSearchHint => 'Поиск шрифтов…';
+
+  @override
+  String get cfpNoMatch => 'Нет подходящих шрифтов.';
 
   @override
   String get cfpPickTitle => 'Выберите файл шрифта (TTF или OTF)';

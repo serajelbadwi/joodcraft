@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../constants/app_assets.dart';
 import '../errors/app_error_code.dart';
 import '../errors/app_exception.dart';
+import '../fonts/font_inspector.dart';
 import 'custom_pdf_fonts.dart';
 
 /// عائلات الخطوط المدعومة في محرّك الـ PDF.
@@ -125,7 +127,13 @@ enum PdfFontWeight {
 
 /// مجموعة الخطوط الجاهزة للرسم (تُحمَّل مرة واحدة).
 class PdfFontSet {
-  const PdfFontSet._(this._fonts, this._bytesByKey, this.loadedFontFileCount);
+  const PdfFontSet._(
+    this._fonts,
+    this._bytesByKey,
+    this.loadedFontFileCount,
+    this._familyCodePoints,
+    this._bundledCodePoints,
+  );
 
   final Map<String, pw.Font> _fonts;
 
@@ -135,6 +143,19 @@ class PdfFontSet {
 
   /// عدد ملفات الخطوط المقروءة فعلياً من الأصول (بلا تكرار).
   final int loadedFontFileCount;
+
+  /// مفتاح خط الاحتياط العالمي في `_fonts`/`_bytesByKey` (الخط الكامل للصينية).
+  static const String notoScFontKey = 'jood:notoSc';
+
+  /// مفتاح خط احتياط السيريلية (Noto Sans المُصغَّر) في `_fonts`/`_bytesByKey`.
+  static const String notoCyrillicFontKey = 'jood:notoCyrillic';
+
+  /// محارف كل عائلة محزومة (لاختيار الخط حسب كتابة النص).
+  final Map<PdfFontFamily, Set<int>> _familyCodePoints;
+
+  /// اتحاد محارف كل الخطوط المحزومة (بما فيها خط الاحتياط العالمي) — أساس
+  /// فحص التغطية الدقيق: أي محرف هنا يُرسم فعلاً، فلا تحذير كاذب.
+  final Set<int> _bundledCodePoints;
 
   static const Map<PdfFontFamily, Map<PdfFontWeight, String>> _sources =
       <PdfFontFamily, Map<PdfFontWeight, String>>{
@@ -204,6 +225,78 @@ class PdfFontSet {
   /// `PdfScriptCoverage.unsupportedInDocument`.
   Set<String> get registeredCustomFamilies => CustomPdfFonts.families;
 
+  /// الخطوط الاحتياطية العالمية المُمرَّرة مع كل نمط نصّي.
+  ///
+  /// محرّك الـ PDF يستبدل المحرف الواحد بخط بديل إذا لم يدعمه الخط الأساسي
+  /// (`pw.TextStyle.fontFallback`)، فتضمن هذه القائمة رسم السيريلية واللاتينية
+  /// الممتدة التركية (Noto Sans) والصينية (Noto Sans SC) وصور العرض الأوردية
+  /// (Noto Sans Arabic) بلا مربعات فارغة. وما يُستخدم منها فقط يُضمَّن مصغَّراً،
+  /// فلا يتضخّم الملف.
+  ///
+  /// **الترتيب مقصود:** خط Noto Sans (لاتيني/سيريلي) **أوّلًا** كي تُرسم المحارف
+  /// التركية الممتدة (ğ/ş/İ/ı) بأسلوب لاتيني محايد، لا بأساليب عربية (Cairo/
+  /// Tajawal) مخالفة لروح خط المستخدم — فالمحرّك يأخذ أول خط يدعم المحرف.
+  List<pw.Font> get fallbackFonts => <pw.Font>[
+        if (_fonts[notoCyrillicFontKey] != null)
+          _fonts[notoCyrillicFontKey]!,
+        if (_fonts['cairo:regular'] != null) _fonts['cairo:regular']!,
+        if (_fonts['noto:regular'] != null) _fonts['noto:regular']!,
+        if (_fonts[notoScFontKey] != null) _fonts[notoScFontKey]!,
+      ];
+
+  /// اتحاد محارف كل الخطوط المحزومة (بما فيها خط الاحتياط).
+  Set<int> get bundledCodePoints => _bundledCodePoints;
+
+  /// هل يرسم أي خط محزوم المحرف [codePoint]؟
+  bool coversCodePoint(int codePoint) => _bundledCodePoints.contains(codePoint);
+
+  /// هل يغطّي الخط المخصّص/النظامي [family] المحرف [codePoint]؟
+  bool customFontCovers(String? family, int codePoint) {
+    if (family == null || family.trim().isEmpty) return false;
+    final Set<int>? codePoints = CustomPdfFonts.codePointsOf(family.trim());
+    return codePoints != null && codePoints.contains(codePoint);
+  }
+
+  /// أفضل عائلة محزومة لنصّ ما: يُحترم الخط المختار إن كان يغطّي كل محارف النص،
+  /// وإلا يُختار الخط الذي يغطّي أكبر عدد منها (للكتابات غير اللاتينية). ما لا
+  /// تغطّيه أي عائلة يُعالجه خط الاحتياط العالمي.
+  ///
+  /// **النص اللاتيني الممتد (التركية ğ/ş/İ/ı وغيرها): لا يُنتقل لعائلة عربية**
+  /// إطلاقاً — يُحترم الخط المختار، ويرسم خط الاحتياط اللاتيني المحزوم (Noto
+  /// Sans) المحارف الممتدة بأسلوب لاتيني موحّد. (سابقاً كان يُنتقل إلى Amiri
+  /// السيريفي أو Cairo العربي فيبدو النص التركي غريباً عن بقيته اللاتينية.)
+  PdfFontFamily familyForText(String text, {PdfFontFamily? preferred}) {
+    final PdfFontFamily fallback = preferred ?? defaultFamily;
+    if (text.isEmpty) return fallback;
+    final List<int> codePoints =
+        text.runes.where((int rune) => rune >= 0x80).toList(growable: false);
+    if (codePoints.isEmpty) return fallback;
+    if (codePoints.every(_isLatinScript)) return fallback;
+    final Set<int> preferredCoverage =
+        _familyCodePoints[fallback] ?? const <int>{};
+    if (codePoints.every(preferredCoverage.contains)) return fallback;
+    int bestScore = codePoints.where(preferredCoverage.contains).length;
+    PdfFontFamily best = fallback;
+    for (final PdfFontFamily family in PdfFontFamily.pdfFamilies) {
+      if (family == fallback) continue;
+      final Set<int> coverage = _familyCodePoints[family] ?? const <int>{};
+      final int score = codePoints.where(coverage.contains).length;
+      if (score > bestScore) {
+        bestScore = score;
+        best = family;
+      }
+    }
+    return best;
+  }
+
+  /// هل المحرف [rune] من الكتابة اللاتينية (الأساسية أو الممتدة)؟
+  ///
+  /// النص اللاتيني لا يُعيد اختيار عائلة (خط عربي مثلاً)، بل يبقى على الخط
+  /// المختار ويُكمل خط الاحتياط اللاتيني المحزوم ما يغيب عنه.
+  static bool _isLatinScript(int rune) =>
+      (rune >= 0x00A0 && rune <= 0x024F) || // Latin-1 Sup + Extended A/B
+      (rune >= 0x1E00 && rune <= 0x1EFF); // Latin Extended Additional
+
   /// هل الخط المخصّص [family] مسجَّل وجاهز للرسم فعلاً؟
   bool hasRegisteredCustomFamily(String family) =>
       family.trim().isNotEmpty && CustomPdfFonts.contains(family.trim());
@@ -234,7 +327,104 @@ class PdfFontSet {
         bytesByKey[key] = bytes;
       }
     }
-    return PdfFontSet._(fonts, bytesByKey, bytesByPath.length);
+
+    // خط الاحتياط العالمي: Noto Sans SC (الصينية) ثم Noto Sans (السيريلية) —
+    // يُضمَّنان عبر `fontFallback` فيرسمان ما لا تغطّيه الخطوط العربية بلا
+    // مربعات فارغة.
+    final Uint8List notoScBytes =
+        (await assets.load(AppAssets.notoScFontFile)).buffer.asUint8List();
+    fonts[notoScFontKey] = pw.Font.ttf(notoScBytes.buffer.asByteData());
+    bytesByKey[notoScFontKey] = notoScBytes;
+
+    // خط احتياط السيريلية: Noto Sans المُصغَّر — خط الصينية أعلاه لا يملك إلا
+    // الأبجدية الروسية الأساسية، فلا يغطي الأوكرانية/الصربية/البلغارية.
+    final Uint8List cyrillicBytes =
+        (await assets.load(AppAssets.notoCyrillicFontFile)).buffer.asUint8List();
+    fonts[notoCyrillicFontKey] = pw.Font.ttf(cyrillicBytes.buffer.asByteData());
+    bytesByKey[notoCyrillicFontKey] = cyrillicBytes;
+
+    // حساب التغطية في isolate خلفي: مسح `cmap` لكل خط ثقيل على الخيط الرئيسي
+    // كان يُجمّد الإقلاع/أول تصدير (قِيس ~37ms)، فنُخرجه من الخيط الرئيسي.
+    final (Map<PdfFontFamily, Set<int>> byFamily, Set<int> bundled) =
+        await _coverageOffMainThread(bytesByKey);
+    return PdfFontSet._(
+      fonts,
+      bytesByKey,
+      bytesByPath.length,
+      byFamily,
+      bundled,
+    );
+  }
+
+  /// مفتاح خط الاحتياط في حمولة حساب التغطية (نصّي وقابل للإرسال).
+  static const String _notoScCoverageKey = '__notoSc__';
+  static const String _notoCyrillicCoverageKey = '__notoCyrillic__';
+
+  /// يبني خريطة تغطية المحارف من بايتات الخطوط (بلا قراءة أصول).
+  ///
+  /// يُحسب من كل ملف `regular` لكل عائلة، ثم يُضمّ خط الاحتياط العالمي. الناتج
+  /// أساس اختيار الخط حسب كتابة النص وفحص التغطية الدقيق.
+  static (Map<PdfFontFamily, Set<int>>, Set<int>) _coverageFromBytes(
+    Map<String, Uint8List> bytesByKey,
+  ) {
+    final Map<PdfFontFamily, Set<int>> byFamily =
+        <PdfFontFamily, Set<int>>{};
+    final Set<int> bundled = <int>{};
+    for (final PdfFontFamily family in PdfFontFamily.pdfFamilies) {
+      final Uint8List? bytes = bytesByKey['${family.jsonValue}:regular'];
+      if (bytes == null) continue;
+      final Set<int> codePoints = FontInspector.inspect(bytes).codePoints;
+      byFamily[family] = codePoints;
+      bundled.addAll(codePoints);
+    }
+    final Uint8List? notoSc = bytesByKey[notoScFontKey];
+    if (notoSc != null) {
+      bundled.addAll(FontInspector.inspect(notoSc).codePoints);
+    }
+    final Uint8List? cyrillic = bytesByKey[notoCyrillicFontKey];
+    if (cyrillic != null) {
+      bundled.addAll(FontInspector.inspect(cyrillic).codePoints);
+    }
+    return (byFamily, bundled);
+  }
+
+  /// يحسب التغطية في **isolate خلفي** فلا يتجمّد الخيط الرئيسي أثناء التحميل.
+  ///
+  /// يمرّر بايتات ملفات `regular` فقط (مع خط الاحتياط) لتقليل النسخ، ويعيد
+  /// النتيجة كمفاتيح نصية/قوائم قابلة للإرسال بين الـisolates.
+  static Future<(Map<PdfFontFamily, Set<int>>, Set<int>)> _coverageOffMainThread(
+    Map<String, Uint8List> bytesByKey,
+  ) async {
+    final Map<String, Uint8List> inputs = <String, Uint8List>{};
+    for (final PdfFontFamily family in PdfFontFamily.pdfFamilies) {
+      final Uint8List? bytes = bytesByKey['${family.jsonValue}:regular'];
+      if (bytes != null) inputs[family.jsonValue] = bytes;
+    }
+    final Uint8List? notoSc = bytesByKey[notoScFontKey];
+    if (notoSc != null) inputs[_notoScCoverageKey] = notoSc;
+    final Uint8List? cyrillic = bytesByKey[notoCyrillicFontKey];
+    if (cyrillic != null) inputs[_notoCyrillicCoverageKey] = cyrillic;
+
+    final Map<String, List<int>> raw =
+        await compute<Map<String, Uint8List>, Map<String, List<int>>>(
+      _coverageEntry,
+      inputs,
+    );
+    final Map<PdfFontFamily, Set<int>> byFamily =
+        <PdfFontFamily, Set<int>>{};
+    final Set<int> bundled = <int>{};
+    for (final PdfFontFamily family in PdfFontFamily.pdfFamilies) {
+      final List<int>? codePoints = raw[family.jsonValue];
+      if (codePoints == null) continue;
+      final Set<int> set = codePoints.toSet();
+      byFamily[family] = set;
+      bundled.addAll(set);
+    }
+    final List<int>? notoScCodePoints = raw[_notoScCoverageKey];
+    if (notoScCodePoints != null) bundled.addAll(notoScCodePoints);
+    final List<int>? cyrillicCodePoints = raw[_notoCyrillicCoverageKey];
+    if (cyrillicCodePoints != null) bundled.addAll(cyrillicCodePoints);
+    return (byFamily, bundled);
   }
 
   /// إعادة بناء المجموعة من بايتات نمطها المصدر (تُستعمل داخل isolate).
@@ -245,7 +435,17 @@ class PdfFontSet {
     bytesByKey.forEach((String key, Uint8List bytes) {
       fonts[key] = pw.Font.ttf(bytes.buffer.asByteData());
     });
-    return PdfFontSet._(fonts, bytesByKey, bytesByKey.length);
+    // داخل isolate التصدير نحن أصلاً خارج الخيط الرئيسي، فنحسب التغطية مباشرة
+    // بلا إنشاء isolate إضافي.
+    final (Map<PdfFontFamily, Set<int>> byFamily, Set<int> bundled) =
+        _coverageFromBytes(bytesByKey);
+    return PdfFontSet._(
+      fonts,
+      bytesByKey,
+      bytesByKey.length,
+      byFamily,
+      bundled,
+    );
   }
 
   /// بايتات كل خط بالمفتاح `family:weight` (نسخة غير قابلة للتعديل).
@@ -267,9 +467,36 @@ class PdfFontSet {
     return loading;
   }
 
+  /// تسخين مسبق: يبدأ تحميل الخطوط المحزومة وتحليلها كسولاً **في الخلفية** عند
+  /// الإقلاع، فلا يدفع المستخدم كلفة التحميل (قراءة الأصول + تحليل الخطوط +
+  /// حساب التغطية) عند أول تصدير. لا يؤخّر الإقلاع ولا يرمي أبداً.
+  static Future<void> warmUp({AssetBundle? bundle}) async {
+    try {
+      await loadCached(bundle: bundle);
+    } on Object catch (error) {
+      debugPrint('[PdfFontSet] تعذّر التسخين المسبق للخطوط: $error');
+    }
+  }
+
   /// مسح الذاكرة المؤقتة (للاختبارات).
   static void resetCache() => _cached = null;
 
-  /// عدد الخطوط المتاحة للاختيار (عائلة × وزن).
-  int get loadedCount => _fonts.length;
+  /// عدد الخطوط المتاحة للاختيار (عائلة × وزن) — بلا خط الاحتياط العالمي
+  /// الذي ليس عائلة قابلة للاختيار.
+  int get loadedCount =>
+      _fonts.length -
+      (_fonts.containsKey(notoScFontKey) ? 1 : 0) -
+      (_fonts.containsKey(notoCyrillicFontKey) ? 1 : 0);
+}
+
+/// نقطة دخول حساب التغطية داخل isolate (يجب أن تكون دالة عُليا).
+///
+/// تُرجع المفاتيح نصية/قوائم أعداد صحيحة فقط، وكلها قابلة للإرسال بين
+/// الـisolates، فتُبنى خريطة العائلات على الخيط الرئيسي بلا نسخ كائنات ثقيلة.
+Map<String, List<int>> _coverageEntry(Map<String, Uint8List> inputs) {
+  final Map<String, List<int>> out = <String, List<int>>{};
+  inputs.forEach((String key, Uint8List bytes) {
+    out[key] = FontInspector.inspect(bytes).codePoints.toList(growable: false);
+  });
+  return out;
 }

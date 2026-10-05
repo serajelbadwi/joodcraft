@@ -2154,6 +2154,42 @@ abstract class AppLocalizations {
   /// **'اجعل النوع: {type}'**
   String amMakeType(Object type);
 
+  /// No description provided for @amCacheLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذاكرة الصور على القرص'**
+  String get amCacheLabel;
+
+  /// No description provided for @amCacheUsage.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} ملف · {size}'**
+  String amCacheUsage(Object count, Object size);
+
+  /// No description provided for @amCacheUsageOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} ملف · {used} من {limit}'**
+  String amCacheUsageOf(Object count, Object used, Object limit);
+
+  /// No description provided for @amCacheEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا ذاكرة قرصية بعد'**
+  String get amCacheEmpty;
+
+  /// No description provided for @amCacheClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح الذاكرة'**
+  String get amCacheClear;
+
+  /// No description provided for @amCacheCleared.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم مسح ذاكرة الصور على القرص.'**
+  String get amCacheCleared;
+
   /// No description provided for @commonRetry.
   ///
   /// In ar, this message translates to:
@@ -2501,6 +2537,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'بلا (الخط المضمّن)'**
   String get cfpBuiltinOption;
+
+  /// No description provided for @cfpGroupBuiltin.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطوط المضمّنة'**
+  String get cfpGroupBuiltin;
+
+  /// No description provided for @cfpGroupUploaded.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوطي المرفوعة'**
+  String get cfpGroupUploaded;
+
+  /// No description provided for @cfpGroupSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوط النظام'**
+  String get cfpGroupSystem;
+
+  /// No description provided for @cfpSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث في الخطوط…'**
+  String get cfpSearchHint;
+
+  /// No description provided for @cfpNoMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد خطوط مطابقة.'**
+  String get cfpNoMatch;
 
   /// No description provided for @cfpPickTitle.
   ///

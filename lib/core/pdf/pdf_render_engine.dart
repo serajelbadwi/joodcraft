@@ -387,6 +387,7 @@ class PdfRenderer {
             textDirection: pw.TextDirection.ltr,
             style: pw.TextStyle(
               font: nameFont,
+              fontFallback: fonts.fallbackFonts,
               fontSize: element.nameFontSize * scale,
               color: pdfColorFromHex(element.nameColorHex),
               height: 1.3,
@@ -399,6 +400,7 @@ class PdfRenderer {
             textDirection: pw.TextDirection.ltr,
             style: pw.TextStyle(
               font: roleFont,
+              fontFallback: fonts.fallbackFonts,
               fontSize: element.roleFontSize * scale,
               color: pdfColorFromHex(element.roleColorHex),
               height: 1.3,
@@ -450,8 +452,15 @@ class PdfRenderer {
     final double fontSize = element.fontSize * s;
     if (fontSize <= 0) return null;
 
+    // اختيار تلقائي حسب الكتابة: بلا خط مخصص، إن لم يغطِّ الخط الحالي كل محارف
+    // النص **غير اللاتينية** ننتقل لأقرب خط محزوم يغطّيها. أما اللاتينية الممتدة
+    // (التركية ğ/ş/İ/ı) فلا تُغيّر العائلة إطلاقاً — يرسمها خط الاحتياط اللاتيني
+    // المحزوم (Noto Sans) في `fontFallback` بأسلوب لاتيني موحّد، لا بخط عربي.
+    final PdfFontFamily family = element.customFont == null
+        ? fonts.familyForText(logical, preferred: element.family)
+        : element.family;
     final pw.Font font =
-        fonts.resolve(element.family, element.weight, element.customFont);
+        fonts.resolve(family, element.weight, element.customFont);
     final PdfFont metricsFont = font.getFont(context);
 
     final bool rtl = TextFlow.resolvesRtl(element.direction, logical);
@@ -493,6 +502,7 @@ class PdfRenderer {
           overflow: pw.TextOverflow.clip,
           style: pw.TextStyle(
             font: font,
+            fontFallback: fonts.fallbackFonts,
             fontSize: fontSize,
             color: pdfColorFromHex(element.colorHex),
             height: element.lineHeight,

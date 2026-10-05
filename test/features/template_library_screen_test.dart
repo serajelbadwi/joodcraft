@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:joodcraft/core/constants/app_constants.dart';
 import 'package:joodcraft/core/errors/app_error_code.dart';
+import 'package:joodcraft/core/models/template_document.dart';
+import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/templates/local_template_store.dart';
 import 'package:joodcraft/core/templates/preset_template.dart';
 import 'package:joodcraft/core/templates/template_draft.dart';
@@ -52,7 +54,10 @@ void main() {
     return 'بلا-قالب';
   }
 
-  Future<void> pumpLibrary(WidgetTester tester) async {
+  Future<void> pumpLibrary(
+    WidgetTester tester, {
+    Future<void> Function(List<TemplateDocument> documents)? warmImageCache,
+  }) async {
     await tester.binding.setSurfaceSize(const Size(1400, 1000));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -65,6 +70,7 @@ void main() {
             body: TemplateLibraryScreen(
               repository: repository,
               localStore: store,
+              warmImageCache: warmImageCache,
             ),
           ),
         ),
@@ -97,6 +103,56 @@ void main() {
   }
 
   Finder card(String id) => find.byKey(ValueKey<String>('library-entry-$id'));
+
+  testWidgets('فتح المكتبة يسخّن ذاكرة صور مستندات القوالب',
+      (WidgetTester tester) async {
+    // قالب محلي يشير إلى أصل من المكتبة: معاينته لا بدّ أن تُسخَّن عند الفتح.
+    store = InMemoryLocalTemplateStore(<TemplateRecord>[
+      TemplateRecord(
+        id: 'local_with_frame',
+        userId: 'local',
+        title: 'قالب بإطار',
+        category: TemplateCategory.certificate,
+        orientation: PageOrientation.portrait,
+        layoutData: TemplateDocument(
+          elements: <TemplateElement>[
+            const ImageElement(
+              id: 'frame',
+              box: ElementBox(x: 0, y: 0, width: 400, height: 300),
+              sourceKind: ImageSourceKind.userAsset,
+              path: 'asset_thumb',
+              fit: ImageFit.fill,
+            ),
+          ],
+        ).toJson(),
+        createdAt: DateTime(2026, 1, 1),
+        updatedAt: DateTime(2026, 3, 15),
+      ),
+    ]);
+
+    final List<TemplateDocument> warmed = <TemplateDocument>[];
+    await pumpLibrary(
+      tester,
+      warmImageCache: (List<TemplateDocument> documents) async {
+        warmed.addAll(documents);
+      },
+    );
+
+    // سُخِّنت مستندات كل القوالب بعد التحميل — لا عند أول رسم لمعاينة.
+    expect(warmed, isNotEmpty);
+    expect(warmed.length, greaterThan(1));
+    expect(
+      warmed.any(
+        (TemplateDocument document) => document.elements.any(
+          (TemplateElement element) =>
+              element is ImageElement && element.path == 'asset_thumb',
+        ),
+      ),
+      isTrue,
+      reason: 'مستند القالب المحلي (ومراجع أصوله) يجب أن يصل إلى التسخين.',
+    );
+  });
+
 
   /// ينقل البطاقة إلى داخل العرض ثم ينقر الهدف (بعض البطاقات تقع أسفل
   /// حدود نافذة الاختبار فيفشل النقر بلا تمرير).

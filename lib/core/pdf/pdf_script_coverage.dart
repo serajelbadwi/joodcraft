@@ -56,6 +56,10 @@ abstract final class PdfScriptCoverage {
   /// يمسح الكتابات المسجَّلة وقت التشغيل (للاختبارات فقط).
   static void resetRuntimeCoverage() => _runtimeCovered.clear();
 
+  /// الكتابات المسجّلة **وقت التشغيل** فقط (بلا المحزومة الثابتة).
+  static Set<PdfScript> get runtimeCovered =>
+      Set<PdfScript>.unmodifiable(_runtimeCovered);
+
   /// كل الكتابات المغطّاة فعلاً الآن: المحزومة + المسجَّلة وقت التشغيل.
   static Set<PdfScript> get coveredScripts =>
       <PdfScript>{...bundledScripts, ..._runtimeCovered};
@@ -94,11 +98,25 @@ abstract final class PdfScriptCoverage {
   static Set<PdfScript> unsupportedInDocument(
     TemplateDocument document, {
     bool Function(String customFamily)? isCustomFontAvailable,
+    bool Function(String? customFamily, int codePoint)? isCodePointCovered,
   }) {
     final Set<PdfScript> missing = <PdfScript>{};
-    void scan(String? value) {
+
+    /// يفحص نصاً؛ عند تمرير [isCodePointCovered] يُحكم على كل محرف على حدة
+    /// حسب التغطية الفعلية (الخط الأساسي + الاحتياط + المخصّص)، فلا تُبلَّغ
+    /// كتابة مغطّاة فعلاً، ولا يُغفَل محرف لا يرسمه أي خط.
+    void scan(String? value, String? customFont) {
       if (value == null || value.isEmpty) return;
-      missing.addAll(unsupportedIn(value));
+      final bool Function(String?, int)? isCovered = isCodePointCovered;
+      if (isCovered == null) {
+        missing.addAll(unsupportedIn(value));
+        return;
+      }
+      for (final int rune in value.runes) {
+        final PdfScript? script = scriptOf(rune);
+        if (script == null) continue;
+        if (!isCovered(customFont, rune)) missing.add(script);
+      }
     }
 
     /// هل يتكفّل خط مخصّص بترجمة هذا النص؟ (الخط المخصص هو آلية الاحتياط
@@ -109,25 +127,28 @@ abstract final class PdfScriptCoverage {
       return check == null || check(family.trim());
     }
 
+    final bool accurate = isCodePointCovered != null;
     for (final TemplateElement element in document.elements) {
       switch (element) {
         case TextElement(:final String text, :final String? customFont):
-          if (!customFontCovers(customFont)) scan(text);
+          if (accurate || !customFontCovers(customFont)) scan(text, customFont);
         case QrElement(:final String data):
-          scan(data);
+          scan(data, null);
         // أدوار التوقيعات وأسماء أصحابها تُكتب في الـ PDF فتشمَلها التغطية.
         case SignatureElement():
-          if (!customFontCovers(element.customFont)) {
+          if (accurate || !customFontCovers(element.customFont)) {
             for (final SignatureSlot slot in element.slots) {
-              scan(slot.role);
-              scan(slot.name);
+              scan(slot.role, element.customFont);
+              scan(slot.name, element.customFont);
             }
           }
         default:
           break;
       }
     }
-    document.sampleData.forEach((String _, String value) => scan(value));
+    document.sampleData.forEach(
+      (String _, String value) => scan(value, null),
+    );
     return missing;
   }
 

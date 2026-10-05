@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 
+import 'asset_image_disk_cache.dart';
 import 'user_asset.dart';
 
 /// ذاكرة وسيطة لبيانات الصور المفكوكة من Base64 وموفّرات الرسم المشتقّة منها.
@@ -23,6 +25,11 @@ import 'user_asset.dart';
 /// [maxEntries] عنصراً فقط ونُسقط الأقدم «الأقل استخداماً» تلقائياً — دون أي
 /// أثر على العرض لأن الويدجت المعروض يملك مرجع موفّره أصلاً، وإعادة الطلب
 /// اللاحقة تُعيد الفكّ والبناء تلقائياً.
+///
+/// **طبقة القرص:** هذه الذاكرة تضيع بإغلاق التطبيق، فتعيد الفتحة التالية فكّ
+/// Base64 من جديد. لذلك تُساندها طبقة قرصية ([AssetImageDiskCache]) تحفظ
+/// البايتات المفكوكة، ويسخّنها [preload] عند استعادة المكتبة فيصير فتح القالب
+/// بعد إعادة التشغيل إعادة استخدام مباشرة للصورة بلا إعادة فكّها.
 class AssetImageCache {
   AssetImageCache._({this.maxEntries = defaultMaxEntries})
       : assert(maxEntries > 0, 'maxEntries يجب أن يكون أكبر من صفر.');
@@ -133,14 +140,73 @@ class AssetImageCache {
     return provider;
   }
 
-  /// إزالة أصل واحد (عند حذفه من المكتبة) حتى لا تبقى صورة ميتة في الذاكرة.
+  // ==========================================================================
+  //  الطبقة القرصية (إعادة الاستخدام عبر إعادات التشغيل)
+  // ==========================================================================
+
+  /// يسخّن الذاكرة من الكاش القرصي عند استعادة مكتبة الأصول.
+  ///
+  /// لكل أصل غير موجود في الذاكرة: نجرّب قراءة البايتات المفكوكة من القرص (وهو
+  /// ما يجعل فتح القالب بعد إعادة التشغيل يعيد استخدام الصورة بلا إعادة فكّ
+  /// Base64)، وإن غابت نفكّها من Base64 ونحفظها للفتحات التالية.
+  ///
+  /// لا يرمي أبداً: أي فشل في أصل واحد لا يوقف البقية.
+  Future<void> preload(Iterable<UserAsset> assets) async {
+    for (final UserAsset asset in assets) {
+      final String key = _keyForAsset(asset.id);
+      if (_bytes.containsKey(key)) continue;
+
+      Uint8List? fromDisk;
+      try {
+        fromDisk = await AssetImageDiskCache.instance.read(asset.id);
+      } on Object catch (_) {
+        fromDisk = null;
+      }
+      if (fromDisk != null && fromDisk.isNotEmpty) {
+        _store(key, fromDisk);
+        continue;
+      }
+
+      final Uint8List decoded;
+      try {
+        decoded = asset.bytes;
+      } on Object catch (_) {
+        continue; // محتوى تالف: نتجاهله بلا كسر الاستعادة.
+      }
+      _store(key, decoded);
+      // كتابة غير حاجزة: التسخين لا يجوز أن يتوقّف على القرص.
+      unawaited(AssetImageDiskCache.instance.write(asset.id, decoded));
+    }
+  }
+
+  /// يخزّن بايتات أصل في الذاكرة ويجدول حفظها على القرص.
+  ///
+  /// يُستعمل عند إضافة أصل جديد كي يجدته الفتح التالي في الكاش القرصي. الذاكرة
+  /// تُحدَّث فوراً، والكتابة القرصية غير حاجزة (تحسين خلفي لا يؤخّر الإضافة).
+  Uint8List putAndPersist(UserAsset asset, Uint8List bytes) {
+    _store(_keyForAsset(asset.id), bytes);
+    unawaited(AssetImageDiskCache.instance.write(asset.id, bytes));
+    return bytes;
+  }
+
+  void _store(String key, Uint8List value) {
+    _bytes[key] = value;
+    _trim();
+  }
+
+  /// إزالة أصل واحد (عند حذفه من المكتبة) حتى لا تبقى صورة ميتة في الذاكرة
+  /// ولا نسخة يتيمة على القرص.
   void evictAsset(String id) {
     final String key = _keyForAsset(id);
     _bytes.remove(key);
     _providers.remove(key);
+    unawaited(AssetImageDiskCache.instance.remove(id));
   }
 
   /// تفريغ الذاكرة كاملة (إغلاق المحرّر أو إعادة ضبط القالب).
+  ///
+  /// لا يمسّ الطبقة القرصية: هي الذاكرة الدائمة التي يُعاد الاستخدام منها في
+  /// الفتحة التالية، وإنما نُفرّغ الذاكرة المؤقّتة فقط.
   void clear() {
     _bytes.clear();
     _providers.clear();

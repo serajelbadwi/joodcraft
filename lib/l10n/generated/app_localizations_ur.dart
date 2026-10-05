@@ -1131,6 +1131,28 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get amCacheLabel => 'ڈسک پر تصویروں کا کیش';
+
+  @override
+  String amCacheUsage(Object count, Object size) {
+    return '$count فائل · $size';
+  }
+
+  @override
+  String amCacheUsageOf(Object count, Object used, Object limit) {
+    return '$count فائلیں · $used میں سے $limit';
+  }
+
+  @override
+  String get amCacheEmpty => 'ابھی کوئی ڈسک کیش نہیں';
+
+  @override
+  String get amCacheClear => 'کیش صاف کریں';
+
+  @override
+  String get amCacheCleared => 'ڈسک پر تصویروں کا کیش صاف کر دیا گیا۔';
+
+  @override
   String get commonRetry => 'دوبارہ کوشش کریں';
 
   @override
@@ -1319,6 +1341,21 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cfpBuiltinOption => 'کوئی نہیں (بلٹ اِن فونٹ)';
+
+  @override
+  String get cfpGroupBuiltin => 'بلٹ اِن فونٹس';
+
+  @override
+  String get cfpGroupUploaded => 'میرے اپلوڈ کردہ فونٹس';
+
+  @override
+  String get cfpGroupSystem => 'سسٹم فونٹس';
+
+  @override
+  String get cfpSearchHint => 'فونٹ تلاش کریں…';
+
+  @override
+  String get cfpNoMatch => 'کوئی مماثل فونٹ نہیں۔';
 
   @override
   String get cfpPickTitle => 'فونٹ فائل منتخب کریں (TTF یا OTF)';

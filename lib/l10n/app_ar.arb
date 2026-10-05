@@ -491,6 +491,25 @@
       "type": {}
     }
   },
+  "amCacheLabel": "ذاكرة الصور على القرص",
+  "amCacheUsage": "{count} ملف · {size}",
+  "@amCacheUsage": {
+    "placeholders": {
+      "count": {},
+      "size": {}
+    }
+  },
+  "amCacheUsageOf": "{count} ملف · {used} من {limit}",
+  "@amCacheUsageOf": {
+    "placeholders": {
+      "count": {},
+      "used": {},
+      "limit": {}
+    }
+  },
+  "amCacheEmpty": "لا ذاكرة قرصية بعد",
+  "amCacheClear": "مسح الذاكرة",
+  "amCacheCleared": "تم مسح ذاكرة الصور على القرص.",
   "commonRetry": "إعادة المحاولة",
   "commonPrint": "طباعة",
   "commonExportPdf": "تصدير PDF",
@@ -579,6 +598,11 @@
   "cfpMyFonts": "خطوطي المخصصة",
   "cfpNoFonts": "لم ترفع خطوطاً بعد",
   "cfpBuiltinOption": "بلا (الخط المضمّن)",
+  "cfpGroupBuiltin": "الخطوط المضمّنة",
+  "cfpGroupUploaded": "خطوطي المرفوعة",
+  "cfpGroupSystem": "خطوط النظام",
+  "cfpSearchHint": "ابحث في الخطوط…",
+  "cfpNoMatch": "لا توجد خطوط مطابقة.",
   "cfpPickTitle": "اختر ملف خط (TTF أو OTF)",
   "cfpPickerError": "تعذّر فتح منتقي الملفات: {error}",
   "@cfpPickerError": {
