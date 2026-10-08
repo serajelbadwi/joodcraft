@@ -1,17 +1,49 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
+import '../../assets/assets_controller.dart';
+import '../../assets/user_asset.dart';
+import '../../constants/app_constants.dart';
 import '../../models/template_document.dart';
 import '../../models/template_element.dart';
+import '../../models/text_styling.dart';
+import '../../pdf/pdf_font_catalog.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/hex_color.dart';
 import '../canvas_geometry.dart';
 import '../element_factory.dart';
+import '../element_hit_picker.dart';
 import '../template_editor_controller.dart';
 import 'element_painters.dart';
 import 'element_view.dart';
+
+/// تحويل تدرّج خلفية المستند إلى [LinearGradient] للوحة — أو `null` إن لم يوجد.
+///
+/// مشترك بين اللوحة وبقية واجهات المحرّر حتى تكون دلالة الاتجاه واحدة، فلا
+/// يختلف ما يراه المستخدم عمّا يُطبع في الـ PDF.
+LinearGradient? paperGradient(BackgroundGradient? gradient) {
+  if (gradient == null) return null;
+  final (Alignment begin, Alignment end) = switch (gradient.direction) {
+    GradientDirection.vertical => (Alignment.topCenter, Alignment.bottomCenter),
+    GradientDirection.horizontal => (
+        Alignment.centerLeft,
+        Alignment.centerRight
+      ),
+    GradientDirection.diagonal => (Alignment.topLeft, Alignment.bottomRight),
+  };
+  return LinearGradient(
+    begin: begin,
+    end: end,
+    colors: <Color>[
+      colorFromHex(gradient.startHex, fallback: Colors.white),
+      colorFromHex(gradient.endHex, fallback: Colors.white),
+    ],
+  );
+}
 
 /// مقابس التحجيم والتدوير حول العنصر المحدد.
 enum _HandleKind {
@@ -67,6 +99,7 @@ class TemplateCanvas extends StatefulWidget {
     this.showGrid = true,
     this.snapToGuides = true,
     this.onRequestTextEdit,
+    this.paperKey,
   });
 
   final TemplateEditorController controller;
@@ -82,6 +115,11 @@ class TemplateCanvas extends StatefulWidget {
 
   /// يُستدعى عند النقر المزدوج على نص (لتركيز حقل التحرير في شريط الخصائص).
   final ValueChanged<TextElement>? onRequestTextEdit;
+
+  /// مفتاح رَسم الورقة — يمرّره المحرّر ليلتقط منه **الصورة المصغّرة** للمشروع
+  /// عند الحفظ (راجع `ProjectThumbnails`). `null` يعني مفتاحاً داخلياً خاصاً
+  /// باللوحة، فلا يلزم أحداً.
+  final GlobalKey? paperKey;
 
   @override
   State<TemplateCanvas> createState() => _TemplateCanvasState();
@@ -100,7 +138,10 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
   /// الحواف مناطق ميتة لا تستجيب للسحب.
   static const double _selectionMargin = _rotateHandleGap + _rotateHandleSize;
 
-  final GlobalKey _paperKey = GlobalKey();
+  final GlobalKey _localPaperKey = GlobalKey();
+
+  /// مفتاح الورقة الفعّال: الممرَّر من المحرّر إن وُجد وإلا المفتاح الداخلي.
+  GlobalKey get _paperKey => widget.paperKey ?? _localPaperKey;
 
   ElementBox? _startBox;
 
@@ -120,10 +161,43 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
   /// خطوط الإرشاد الذكية النشطة أثناء السحب (تُخفى فور الإفلات).
   List<SmartGuide> _guides = const <SmartGuide>[];
 
+  // ==========================================================================
+  //                   التحرير المباشر على اللوحة
+  // ==========================================================================
+
+  /// معرّف العنصر قيد التحرير المباشر — `null` يعني أنه لا تحرير جارٍ.
+  ///
+  /// وجوده يُبطِل رسم إطار التحديد ومقابسه لهذا العنصر ويحلّ حقل كتابة محلّه،
+  /// فتختفي كل الحواجز أثناء الكتابة تماماً كما في Word وفوتوشوب.
+  String? _editingId;
+
+  /// متحكّم حقل التحرير وعقدة تركيزه — يُخلَّقان عند الدخول ويُتلفان عند الخروج.
+  TextEditingController? _editController;
+  FocusNode? _editFocus;
+
+  /// هل فُتحت خطوة تراجع لهذه الجلسة؟ (تُفتح أوّل تغيير وحده، فجلسة تحرير
+  /// بلا تعديل لا تترك خطوة تراجع فارغة في السجل.)
+  bool _editHistoryOpen = false;
+
+  /// حدود التحديد داخل الحقل — بها يعرف الشريط العائم أيّ جزء يُنسَّق.
+  TextSelection _editSelection = const TextSelection.collapsed(offset: -1);
+
+  /// هل بدأت الشجرة بالتلاشي؟ — يمنع `setState` على عنصر متوفّى أثناء
+  /// التفكيك (كان يرمي استثناءً في نهاية كل اختبار يفتح التحرير المباشر).
+  bool _disposed = false;
+
   /// هل مفتاح التحديد المتعدد (Ctrl/⌘) مضغوط الآن؟
   static bool get _multiSelectPressed {
     final HardwareKeyboard keyboard = HardwareKeyboard.instance;
     return keyboard.isControlPressed || keyboard.isMetaPressed;
+  }
+
+  @override
+  void dispose() {
+    // خروج نظيف من التحرير المباشر: يُكتب النص المتبقي ثم يُتلف الحقل والعقدة.
+    _disposed = true;
+    _commitTextEdit();
+    super.dispose();
   }
 
   @override
@@ -141,20 +215,28 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
             ).zoomed(widget.zoom);
             final double scale = geometry.scale;
             final Size paperSize = geometry.pageSize(design);
+            // معرّفات صور الإطارات (حُسبت مرة واحدة للبناء تُمرَّر إلى بوابات
+            // الإصابة بدل تكرار البحث في المكتبة لكل طبقة).
+            final Set<String> frameIds = _frameImageIds(controller);
+
+            // العنصر قيد التحرير المباشر يُستخرج من الطبقة العادية ليُرسم حقل
+            // كتابة فوقها؛ فلا يُغطّيه عنصر أحدث، ولا يبقى له إطار ولا مقابس.
+            final TemplateElement? editing = _editingElement(controller);
 
             return GestureDetector(
               // النقر خارج الورقة يُلغي التحديد (داخل الورقة تترجّح أولويات
               // النقر إلى العناصر التي تحته مباشرة).
               behavior: HitTestBehavior.opaque,
-              onTap: controller.clearSelection,
+              onTap: () => _onBlankTap(controller),
               child: Center(
                 child: SizedBox(
                   width: paperSize.width,
                   height: paperSize.height,
-                  child: Stack(
-                    key: _paperKey,
-                    clipBehavior: Clip.none,
-                    children: <Widget>[
+                  child: ClipRect(
+                    child: Stack(
+                      key: _paperKey,
+                      clipBehavior: Clip.hardEdge,
+                      children: <Widget>[
                       // طبقة مستقلّة للخلفية: رَستَرتها (والصورة عالية الدقة)
                       // تُخزَّن فلا تُعاد عند تحريك عنصر أو رسم خطوط الإرشاد.
                       Positioned.fill(
@@ -162,9 +244,21 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
                           child: _paperBackground(controller, paperSize),
                         ),
                       ),
+                      // العناصر المخفية لا تُرسم أصلاً (كما لا تُطبع)، وكذلك
+                      // العنصر قيد التحرير المباشر: مكانه طبقة الحقل بعد قليل.
                       for (final TemplateElement element
                           in controller.document.elements)
-                        _elementLayer(element, controller, design, scale),
+                        if (!controller.isElementHidden(element.id) &&
+                            element.id != _editingId)
+                          _elementLayer(
+                            element,
+                            controller,
+                            design,
+                            scale,
+                            frameIds,
+                          ),
+                      if (editing is TextElement)
+                        _editingLayer(editing, controller, design, scale),
                       // خطوط الإرشاد الذكية على طبقة أوفلاي معزولة تماماً
                       // (‎RepaintBoundary + IgnorePointer‎) فلا تلمس رَستَرة العناصر.
                       if (_guides.isNotEmpty)
@@ -199,20 +293,26 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
                           ),
                         ),
                       // المقابس تظهر فقط لعنصر واحد؛ في التحديد الجماعي يكفي
-                      // إطار كل عنصر (يُرسم داخل طبقة العنصر نفسها).
+                      // إطار كل عنصر (يُرسم داخل طبقة العنصر نفسها)، وتُخفى كلياً
+                      // أثناء التحرير المباشر لأن الإطار نفسه مطلوب اختفاءه.
                       if (controller.selectionCount == 1 &&
-                          controller.selected != null)
+                          controller.selected != null &&
+                          controller.selected!.id != _editingId)
                         ..._selectionLayer(
                           controller.selected!,
                           controller,
                           design,
                           scale,
                         ),
+                      // الشريط العائم آخر الطبقة كي يعلو كل شيء ويبقى قابلاً للنقر.
+                      if (editing is TextElement && _hasEditSelection)
+                        _floatingTextToolbar(editing, design, scale),
                     ],
                   ),
                 ),
               ),
-            );
+            ),
+          );
           },
         );
       },
@@ -227,9 +327,10 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
     Size paperSize,
   ) {
     final TemplateDocument document = controller.document;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: controller.clearSelection,
+      onTap: () => _onBlankTap(controller),
       // السحب على فراغ الورقة يرسم مستطيل تحديد جماعي.
       onPanStart: _onMarqueeStart,
       onPanUpdate: _onMarqueeUpdate,
@@ -239,19 +340,25 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
           _addTextAt(details.localPosition),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: colorFromHex(document.backgroundHex, fallback: Colors.white),
+          // الخلفية إما لون مفرد أو تدرّج — والتدرّج يتقدّم عند وجوده، تماماً
+          // كما يُصدَّر في الـ PDF.
+          gradient: paperGradient(document.backgroundGradient),
+          color: document.backgroundGradient == null
+              ? colorFromHex(document.backgroundHex, fallback: Colors.white)
+              : null,
           // حدود واضحة للورقة في الوضعين: خيط باهت فوق مساحة العمل الداكنة
           // والفاتحة معاً حتى لا تلتصق ألوان التصميم بخلفية البرنامج.
-          border: Border.all(color: Theme.of(context).colorScheme.outline),
+          border: Border.all(color: scheme.outline),
+          // ظل **ناعم متدرّج** (12px تمويهاً + 2px انتشاراً) يرفع الورقة عن
+          // مساحة العمل ذات الطنّ المتوسط بلا حدّة، كما في أدوات التصميم
+          // الاحترافية. لونه يكيفيّ مع السطوع: أسود شفّاف ليلاً، كحلي خفيف
+          // نهاراً — راجع `paperShadow`.
           boxShadow: <BoxShadow>[
             BoxShadow(
-              // الظل الكحلي يكفي على الفاتح؛ الداكن يحتاج ظلاً أعمق ليُبرز
-              // حدود الورقة البيضاء عن مساحة العمل الليلية.
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.black.withValues(alpha: 0.55)
-                  : AppColors.navyShadow(0.16),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
+              color: scheme.paperShadow,
+              blurRadius: 12,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -270,6 +377,7 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
     TemplateEditorController controller,
     Size design,
     double scale,
+    Set<String> frameIds,
   ) {
     final Rect rect = _screenRect(element, design, scale);
     final bool selected = controller.isSelected(element.id);
@@ -286,6 +394,7 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
           element: element,
           document: controller.document,
           scale: scale,
+          gender: controller.previewGender,
         ),
       ),
     );
@@ -295,41 +404,102 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
       top: rect.top,
       width: rect.width,
       height: rect.height,
-      child: Transform.rotate(
-        angle: radians,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => _onElementTap(element, controller),
-          onDoubleTap: () {
-            controller.select(element.id);
-            if (element is TextElement) widget.onRequestTextEdit?.call(element);
-          },
-          onPanStart: (_) => _startMove(element, controller),
-          onPanUpdate: (DragUpdateDetails details) =>
-              _updateMove(details.delta / scale, controller),
-          onPanEnd: (_) => _endInteraction(controller),
-          onPanCancel: () => _endInteraction(controller),
-          child: selected
-              ? Stack(
-                  clipBehavior: Clip.none,
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    content,
-                    // إطار التحديد يُرسم داخل العنصر نفسه لأن العنصر مُدوَّر.
-                    IgnorePointer(
-                      child: CustomPaint(
-                        painter: const BorderPainter(
-                          color: EditorColors.selection,
-                          width: 1.4,
+      // بوابة اختبار الإصابة: تستقبل النقر (والنقل والتحرير) لهذه الطبقة فقط
+      // إذا كان هذا العنصر هو الهدف الأصغر/الأعلى تحت المؤشر؛ وإلا ترفض ليمرّ
+      // النقر إلى ما تحتها (العناصر الأدلى) ثم إلى الورقة. والعنصر المقفل
+      // يرفض دائماً فيبقى النقر للعناصر تحته (لا يُزاحم ولا يُحدَّد).
+      child: _ElementHitGate(
+        origin: Offset(rect.left, rect.top),
+        shouldHit: (Offset paperPoint) =>
+            controller.document.isInteractive(element) &&
+            _isElementPick(
+              paperPoint,
+              element,
+              controller,
+              design,
+              scale,
+              frameIds,
+            ),
+        child: Transform.rotate(
+          angle: radians,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _onElementTap(element, controller),
+            onDoubleTap: () {
+              controller.select(element.id);
+              if (element is TextElement) {
+                // تحرير مباشر في موضع العنصر نفسه: بلا لوحة جانبية وبلا إطار.
+                _startTextEdit(element, controller);
+                widget.onRequestTextEdit?.call(element);
+              }
+            },
+            onPanStart: (_) => _startMove(element, controller),
+            onPanUpdate: (DragUpdateDetails details) =>
+                _updateMove(details.delta / scale, controller),
+            onPanEnd: (_) => _endInteraction(controller),
+            onPanCancel: () => _endInteraction(controller),
+            child: selected
+                ? Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      content,
+                      // إطار التحديد يُرسم داخل العنصر نفسه لأن العنصر مُدوَّر.
+                      IgnorePointer(
+                        child: CustomPaint(
+                          painter: const BorderPainter(
+                            color: EditorColors.selection,
+                            width: 1.4,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              : content,
+                    ],
+                  )
+                : content,
+          ),
         ),
       ),
     );
+  }
+
+  // ==========================================================================
+  //  اختبار الإصابة (أي عنصر تحت المؤشر؟)
+  // ==========================================================================
+
+  /// معرّفات صور الإطارات (أصول من نوع «إطار»): حاويات مفرغة تُنقر على حدّها.
+  Set<String> _frameImageIds(TemplateEditorController controller) {
+    final Set<String> ids = <String>{};
+    for (final TemplateElement element in controller.document.elements) {
+      if (element is! ImageElement) continue;
+      if (element.sourceKind != ImageSourceKind.userAsset) continue;
+      final UserAsset? asset = AssetsController.instance.byId(element.path);
+      if (asset != null && asset.type == AssetType.border) ids.add(element.id);
+    }
+    return ids;
+  }
+
+  /// هل [element] هو الهدف المستهدف تحت النقطة [paperPoint] (بكسلات اللوحة)؟
+  ///
+  /// تُحوَّل النقطة إلى إحداثيات التصميم ثم يُستدعى المنطق النقي في
+  /// [pickElementAt]: الأصغر مساحة أولاً، وعند التساوي الأعلى طبقة (z).
+  bool _isElementPick(
+    Offset paperPoint,
+    TemplateElement element,
+    TemplateEditorController controller,
+    Size design,
+    double scale,
+    Set<String> frameIds,
+  ) {
+    if (!(scale > 0)) return true; // حماية: بلا مقياس صالح لا نُسقط النقر.
+    final TemplateElement? pick = pickElementAt(
+      controller.document.elements
+          .where(controller.document.isInteractive)
+          .toList(growable: false),
+      point: paperPoint / scale,
+      resolveBox: (TemplateElement item) => _designBox(item, design),
+      frameIds: frameIds,
+    );
+    return pick != null && pick.id == element.id;
   }
 
   // ==========================================================================
@@ -426,7 +596,8 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
         width: _rotateHandleSize,
         height: _rotateHandleSize,
         decoration: BoxDecoration(
-          color: AppColors.navy,
+          // مقبض التدوير: فحمي ليلاً وكحلي نهاراً (لا كتلة كحلية في الداكن).
+          color: Theme.of(context).colorScheme.brandSurfaceSoft,
           shape: BoxShape.circle,
           border: Border.all(color: EditorColors.handle, width: 1.6),
         ),
@@ -448,6 +619,8 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
     TemplateElement element,
     TemplateEditorController controller,
   ) {
+    // النقر على عنصر آخر يُنهي التحرير المباشر للعنصر الجاري أولاً.
+    _commitIfEditingOther(element.id);
     if (_multiSelectPressed) {
       controller.toggleSelection(element.id);
     } else {
@@ -684,8 +857,12 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
   /// ارتفاع العنصر عندما لا يُحدَّد صراحةً (`height: 0` = تلقائي).
   double _autoHeight(TemplateElement element, double width) {
     if (element is! TextElement) return width > 0 ? width : 24;
-    final String resolved = widget.controller.document
-        .resolveFields(element.text, null, keepUnknownTokens: true);
+    final String resolved = widget.controller.document.resolveFields(
+      element.text,
+      null,
+      keepUnknownTokens: true,
+      gender: widget.controller.previewGender,
+    );
     final bool rtl = editorTextIsRtl(element, resolved);
     final TextPainter painter = TextPainter(
       text: TextSpan(text: resolved, style: editorTextStyle(element, 1)),
@@ -703,6 +880,531 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
       box.width * scale,
       box.height * scale,
     );
+  }
+
+  // ==========================================================================
+  //                 التحرير المباشر على اللوحة (Inline Editing)
+  // ==========================================================================
+
+  /// العنصر قيد التحرير المباشر — يُرجَع `null` إن اختفى أو خرج من التحرير.
+  TextElement? _editingElement(TemplateEditorController controller) {
+    final String? id = _editingId;
+    if (id == null || _editController == null || _editFocus == null) return null;
+    final TemplateElement? element = _elementById(controller, id);
+    if (element is! TextElement) return null;
+    if (controller.isElementHidden(element.id)) return null;
+    return element;
+  }
+
+  TemplateElement? _elementById(
+    TemplateEditorController controller,
+    String id,
+  ) {
+    for (final TemplateElement element in controller.document.elements) {
+      if (element.id == id) return element;
+    }
+    return null;
+  }
+
+  /// هل يُظلَّل مقطع صالح داخل الحقل؟ (به يظهر الشريط العائم)
+  bool get _hasEditSelection {
+    final TextSelection selection = _editSelection;
+    if (!selection.isValid || selection.isCollapsed) return false;
+    final String text = _editController?.text ?? '';
+    final int start = math.min(selection.start, selection.end);
+    final int end = math.max(selection.start, selection.end);
+    return start >= 0 && end <= text.length && end > start;
+  }
+
+  /// يفتح خطوة تراجع واحدة للجلسة كاملة (نصّ + أحجام + تنسيق جزئي).
+  void _openEditHistory(TemplateEditorController controller) {
+    if (_editHistoryOpen) return;
+    _editHistoryOpen = true;
+    controller.beginInteraction();
+  }
+
+  /// يبدأ التحرير المباشر لـ[element] في موضعه على اللوحة.
+  void _startTextEdit(TextElement element, TemplateEditorController controller) {
+    if (_editingId == element.id) return;
+    _commitTextEdit();
+
+    final TextEditingController field = TextEditingController(text: element.text);
+    final FocusNode focus = FocusNode(debugLabel: 'inline-${element.id}');
+    _editHistoryOpen = false;
+    _editSelection = const TextSelection.collapsed(offset: -1);
+    field.addListener(_onEditChanged);
+
+    setState(() {
+      _editingId = element.id;
+      _editController = field;
+      _editFocus = focus;
+    });
+
+    // المؤشر في نهاية النص — بعد بناء الحقل فعلاً وإلا ضاع التركيز.
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || _editController != field) return;
+      field.selection = TextSelection.collapsed(offset: field.text.length);
+      focus.requestFocus();
+    });
+  }
+
+  void _onEditChanged() {
+    if (_editingId == null) return;
+    final TextSelection selection = _editController?.selection ??
+        const TextSelection.collapsed(offset: -1);
+    if (selection == _editSelection) return;
+    setState(() => _editSelection = selection);
+  }
+
+  /// يُلتزم التحرير: يكتب النص والصندوق المُلاءَم مرّة واحدة ثم يُغلق الحقل.
+  void _commitTextEdit() {
+    final String? id = _editingId;
+    if (id == null && _editController == null && _editFocus == null) return;
+
+    final TextEditingController? field = _editController;
+    final FocusNode? focus = _editFocus;
+    _editingId = null;
+    _editController = null;
+    _editFocus = null;
+    _editSelection = const TextSelection.collapsed(offset: -1);
+
+    final TemplateEditorController controller = widget.controller;
+    field?.removeListener(_onEditChanged);
+    final bool opened = _editHistoryOpen;
+    _editHistoryOpen = false;
+
+    try {
+      final TemplateElement? current =
+          id == null ? null : _elementById(controller, id);
+      if (current is TextElement &&
+          field != null &&
+          field.text != current.text) {
+        if (!opened) controller.beginInteraction();
+        controller.replaceElement(
+          current.copyWith(
+            text: field.text,
+            box: _autoFitBox(current, field.text, controller.designSize),
+          ),
+        );
+        controller.endInteraction();
+      } else if (opened) {
+        controller.endInteraction();
+      }
+    } on Object catch (error) {
+      // عند التفكيك قد تكون الشجرة وقد أُزيل مستمعوها؛ التعديل نفسه مسجَّل
+      // في المستند، فلا نُسقط إغلاق المحرّر بسبب فشل إشعار.
+      debugPrint('[canvas] تعذّر إنهاء تحرير النص: $error');
+    } finally {
+      field?.dispose();
+      focus?.dispose();
+    }
+
+    if (!_disposed && mounted) setState(() {});
+  }
+
+  /// يغلق التحرير المباشر إن كان المُستدعي آخر غير العنصر الجاري — يُستدعى
+  /// عند النقر على عنصر آخر أو على فراغ الورقة، فيُلتزم ما كُتب ويتحرّر الحقل.
+  void _commitIfEditingOther(String? elementId) {
+    if (_editingId == null) return;
+    if (elementId != null && elementId == _editingId) return;
+    _commitTextEdit();
+  }
+
+  /// نقر على فراغ (خارج الورقة أو داخلها): يُلتزم التحرير المباشر إن كان
+  /// مفتوحاً، ثم يُلغي التحديد — إلا أن العنصر الذي انتهى تحريره يبقى
+  /// محدَّداً كي تعود أطاره ومقابسه فوراً كما في Word.
+  void _onBlankTap(TemplateEditorController controller) {
+    final String? editingId = _editingId;
+    _commitIfEditingOther(null);
+    if (editingId != null && _elementById(controller, editingId) != null) {
+      controller.select(editingId);
+    } else {
+      controller.clearSelection();
+    }
+  }
+
+  /// يكتب النص الجاري في الحقل إلى المستند **من دون** إنهاء التحرير.
+  ///
+  /// يُستدعى قبل تطبيق تنسيق جزئي كي تُحسب الإزاحات على نصٍّ واحد هو نفسه في
+  /// الحقل وفي المستند — وإلا لانزلقت حدود التحديد عن كلماتها.
+  void _flushLiveText(TemplateEditorController controller) {
+    final String? id = _editingId;
+    final TextEditingController? field = _editController;
+    if (id == null || field == null) return;
+    final TemplateElement? current = _elementById(controller, id);
+    if (current is! TextElement || field.text == current.text) return;
+    _openEditHistory(controller);
+    controller.replaceElement(
+      current.copyWith(
+        text: field.text,
+        box: _autoFitBox(current, field.text, controller.designSize),
+      ),
+    );
+  }
+
+  /// النطاقات المعمول بها للنص الجاري في الحقل.
+  List<StyledTextSpan> _liveSpans(TextElement element, String current) {
+    if (current == element.text) return element.spans;
+    return StyledTextSpan.remapAfterEdit(
+      oldText: element.text,
+      newText: current,
+      spans: element.spans,
+    );
+  }
+
+  /// صندوق العنصر بعد ملاءمة **ارتفاعه** للنص (« resize shape to fit text »).
+  ///
+  /// يُحسب **دون لمس المستند** أثناء الكتابة، فيكبر الحقل مع كل حرف ويُكتب
+  /// التعديل مرّة واحدة عند الالتزام — فلا خطوة تراجع لكل ضغطة مفتاح ولا
+  /// إشعار إعادة رسم لكل حرف. الصندوق تلقائي الارتفاع (‎0‎) يبقى تلقائياً
+  /// لأن محلّه يحتسبه من المحتوى أصلاً.
+  ElementBox _autoFitBox(TextElement element, String text, Size design) {
+    if (element.box.height <= 0) return element.box;
+    final double width = element.box.width > 0
+        ? element.box.width
+        : math.max(1, design.width - element.box.x);
+    return element.box.copyWith(
+      height: math.max(1, _measureTextHeight(element, text, width)),
+    );
+  }
+
+  /// ارتفاع النص بوحدات التصميم عند عرض [maxWidth].
+  double _measureTextHeight(
+    TextElement element,
+    String text,
+    double maxWidth,
+  ) {
+    final List<StyledTextSpan> spans = _liveSpans(element, text);
+    final TextPainter painter = TextPainter(
+      text: spans.isEmpty
+          ? TextSpan(text: text, style: editorTextStyle(element, 1))
+          : editorTextSpan(text, element, spans, 1),
+      textDirection:
+          editorTextIsRtl(element, text) ? TextDirection.rtl : TextDirection.ltr,
+      textAlign: editorTextAlign(element.align),
+      maxLines: element.maxLines,
+    )..layout(maxWidth: maxWidth > 0 ? maxWidth : double.infinity);
+    final double height = painter.height;
+    painter.dispose();
+    return height;
+  }
+
+  /// طبقة الكتابة: حقل بلا إطار وبلا حدود في موضع العنصر تماماً.
+  Widget _editingLayer(
+    TextElement element,
+    TemplateEditorController controller,
+    Size design,
+    double scale,
+  ) {
+    final TextEditingController field = _editController!;
+    final FocusNode focus = _editFocus!;
+    final String current = field.text;
+    final ElementBox box = _autoFitBox(element, current, design);
+    final Rect rect = Rect.fromLTWH(
+      box.x * scale,
+      box.y * scale,
+      box.width * scale,
+      box.height * scale,
+    );
+    final bool rtl = editorTextIsRtl(element, current);
+    final TextDirection direction = rtl ? TextDirection.rtl : TextDirection.ltr;
+    final TextAlign align = editorTextAlign(element.align);
+    final TextStyle base = editorTextStyle(element, scale);
+    final List<StyledTextSpan> spans = _liveSpans(element, current);
+
+    return Positioned(
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height,
+      child: Transform.rotate(
+        angle: element.rotation * math.pi / 180,
+        child: Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            // طبقة التنسيق الجزئي أسفل الحقل: الحقل شفّاف فتظهر طبقته عبره،
+            // وبقائها تحت يعني أن مؤشر الكتابة يُرسم فوق النص فلا يختفي.
+            if (spans.isNotEmpty)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Text.rich(
+                    editorTextSpan(current, element, spans, scale),
+                    textDirection: direction,
+                    textAlign: align,
+                    maxLines: element.maxLines,
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+              ),
+            TextField(
+              key: const ValueKey<String>('canvas-inline-text'),
+              controller: field,
+              focusNode: focus,
+              // نص الحقل شفّاف: ما يُرى هو طبقة [Text.rich] أو نمط [base]
+              // في الحقل نفسه عندما لا يوجد تنسيق جزئي.
+              style: spans.isEmpty
+                  ? base
+                  : base.copyWith(color: const Color(0x00000000)),
+              cursorColor:
+                  colorFromHex(element.colorHex, fallback: Colors.black),
+              cursorWidth: 1.6,
+              textDirection: direction,
+              textAlign: align,
+              textAlignVertical: TextAlignVertical.top,
+              maxLines: element.maxLines,
+              minLines: 1,
+              expands: false,
+              decoration: InputDecoration.collapsed(hintText: ''),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// مستطيل التحديد الحالي بإحداثيات اللوحة (بكسل) — فوقه يظهر الشريط العائم.
+  Rect? _selectionScreenRect(TextElement element, Size design, double scale) {
+    final TextEditingController? field = _editController;
+    if (field == null || !_hasEditSelection) return null;
+    final String current = field.text;
+    final TextSelection selection = field.selection;
+    final int start = math.min(selection.start, selection.end);
+    final int end = math.max(selection.start, selection.end);
+
+    final ElementBox box = _autoFitBox(element, current, design);
+    final double width = box.width > 0
+        ? box.width
+        : math.max(1, design.width - box.x);
+    final List<StyledTextSpan> spans = _liveSpans(element, current);
+    final TextPainter painter = TextPainter(
+      text: spans.isEmpty
+          ? TextSpan(text: current, style: editorTextStyle(element, 1))
+          : editorTextSpan(current, element, spans, 1),
+      textDirection:
+          editorTextIsRtl(element, current) ? TextDirection.rtl : TextDirection.ltr,
+      textAlign: editorTextAlign(element.align),
+      maxLines: element.maxLines,
+    )..layout(maxWidth: width);
+    final List<TextBox> boxes = painter.getBoxesForSelection(
+      TextSelection(baseOffset: start, extentOffset: end),
+    );
+    painter.dispose();
+    if (boxes.isEmpty) return null;
+    Rect union = boxes.first.toRect();
+    for (final TextBox rect in boxes.skip(1)) {
+      union = union.expandToInclude(rect.toRect());
+    }
+    return Rect.fromLTWH(
+      (box.x + union.left) * scale,
+      (box.y + union.top) * scale,
+      union.width * scale,
+      union.height * scale,
+    );
+  }
+
+  /// التنسيق الأساسي الفعلي للعنصر — أرضية تُحسب عليه أنواع المقاطع.
+  ResolvedSpanStyle _baseResolved(TextElement element) => ResolvedSpanStyle(
+        family: element.family,
+        customFont: element.customFont,
+        weight: element.weight,
+        size: element.fontSize,
+        colorHex: element.colorHex,
+      );
+
+  /// يطبّق تنسيقاً على **المقطع المظلل وحده**.
+  ///
+  /// المنطق قابل للعكس: ما يتحقّق قيمته على المقاطع كلها يُزال منها، وما لا
+  /// يتحقّق يُعطى قيمة صريحة — فزرّ «عريض» يبدّل حرفياً لا يبقى عالقاً.
+  void _applySpanStyle(
+    TemplateEditorController controller, {
+    PdfFontFamily? family,
+    String? customFont,
+    PdfFontWeight? weight,
+    bool? italic,
+    bool? underline,
+    double? size,
+    String? colorHex,
+  }) {
+    final TextEditingController? field = _editController;
+    if (field == null) return;
+    _flushLiveText(controller);
+
+    final TemplateElement? fresh =
+        _editingId == null ? null : _elementById(controller, _editingId!);
+    if (fresh is! TextElement) return;
+
+    final TextSelection selection = field.selection;
+    if (!selection.isValid || selection.isCollapsed) return;
+    final int start = math.min(selection.start, selection.end);
+    final int end = math.max(selection.start, selection.end);
+    if (start < 0 || end > fresh.text.length || end <= start) return;
+
+    final bool setFamily = family != null || customFont != null;
+    final bool setWeight = weight != null;
+    final bool setItalic = italic != null;
+    final bool setUnderline = underline != null;
+    final bool setSize = size != null;
+    final bool setColor = colorHex != null;
+
+    final List<StyledTextSpan> next = <StyledTextSpan>[];
+    for (final StyledTextSpan span
+        in StyledTextSpan.normalize(fresh.spans, fresh.text.length)) {
+      if (span.end <= start || span.start >= end) {
+        next.add(span);
+        continue;
+      }
+      if (span.start < start) {
+        final StyledTextSpan? left = _sliceSpan(span, span.start, start);
+        if (left != null) next.add(left);
+      }
+      final int midStart = math.max(span.start, start);
+      final int midEnd = math.min(span.end, end);
+      final StyledTextSpan? mid = _sliceSpan(
+        span,
+        midStart,
+        midEnd,
+        dropFamily: setFamily,
+        dropWeight: setWeight,
+        dropItalic: setItalic,
+        dropUnderline: setUnderline,
+        dropSize: setSize,
+        dropColor: setColor,
+      );
+      if (mid != null) next.add(mid);
+      if (span.end > end) {
+        final StyledTextSpan? right = _sliceSpan(span, end, span.end);
+        if (right != null) next.add(right);
+      }
+    }
+
+    final StyledTextSpan applied = StyledTextSpan(
+      start: start,
+      end: end,
+      family: family,
+      customFont: customFont,
+      weight: weight,
+      italic: italic,
+      underline: underline,
+      size: size,
+      colorHex: colorHex,
+    );
+    if (!applied.isBase) next.add(applied);
+
+    _openEditHistory(controller);
+    controller.replaceElement(fresh.copyWith(
+      spans: StyledTextSpan.normalize(next, fresh.text.length),
+    ));
+    if (mounted) setState(() {});
+  }
+
+  /// قصّ جزء من نطاق مع إمكانية إفراغ حقوله التي ستُعطى من جديد.
+  static StyledTextSpan? _sliceSpan(
+    StyledTextSpan span,
+    int start,
+    int end, {
+    bool dropFamily = false,
+    bool dropWeight = false,
+    bool dropItalic = false,
+    bool dropUnderline = false,
+    bool dropSize = false,
+    bool dropColor = false,
+  }) {
+    if (end <= start) return null;
+    final StyledTextSpan out = StyledTextSpan(
+      start: start,
+      end: end,
+      family: dropFamily ? null : span.family,
+      customFont: dropFamily ? null : span.customFont,
+      weight: dropWeight ? null : span.weight,
+      italic: dropItalic ? null : span.italic,
+      underline: dropUnderline ? null : span.underline,
+      size: dropSize ? null : span.size,
+      colorHex: dropColor ? null : span.colorHex,
+      backgroundHex: span.backgroundHex,
+    );
+    return out.isBase ? null : out;
+  }
+
+  // ==========================================================================
+  //                 الشريط العائم فوق المقطع المظلل
+  // ==========================================================================
+
+  /// الشريط العائم: اختيار الخط والحجم واللون والمحاذاة + عريض/مائل/سفلي.
+  ///
+  /// يظهر فور تظليل أي مقطع ويوضع فوقه مباشرة (وينقلب أسفله إن لم يتسع ما
+  /// فوقه، تماماً كما في Word)، وكل ما فيه يُطبَّق على المقطع المظلل وحده.
+  Widget _floatingTextToolbar(TextElement element, Size design, double scale) {
+    final TextEditingController? field = _editController;
+    if (field == null) return const SizedBox.shrink();
+
+    final Rect anchor = _selectionScreenRect(element, design, scale) ??
+        _screenRect(element, design, scale);
+    const double barHeight = 38;
+    const double gap = 6;
+    double top = anchor.top - barHeight - gap;
+    if (top < 2) top = anchor.bottom + gap;
+
+    const double estimatedWidth = 300;
+    final double paperWidth = design.width * scale;
+    final double left = (anchor.center.dx - estimatedWidth / 2)
+        .clamp(4.0, math.max(4.0, paperWidth - estimatedWidth - 4.0));
+
+    final TextSelection selection = field.selection;
+    final int start = math.min(selection.start, selection.end);
+    final int end = math.max(selection.start, selection.end);
+
+    final TemplateEditorController controller = widget.controller;
+    return Positioned(
+      left: left,
+      top: top,
+      child: _TextSpanToolbar(
+        key: const ValueKey<String>('canvas-text-toolbar'),
+        style: _effectiveSelectionStyle(element, start, end),
+        element: element,
+        onFont: (PdfFontFamily value) =>
+            _applySpanStyle(controller, family: value),
+        onSize: (double value) => _applySpanStyle(controller, size: value),
+        onColor: (String value) =>
+            _applySpanStyle(controller, colorHex: value),
+        onAlign: (ElementTextAlign value) => _applyAlign(controller, value),
+        onWeight: (PdfFontWeight value) =>
+            _applySpanStyle(controller, weight: value),
+        onItalic: (bool value) => _applySpanStyle(controller, italic: value),
+        onUnderline: (bool value) =>
+            _applySpanStyle(controller, underline: value),
+      ),
+    );
+  }
+
+  /// التنسيق الفعلي للمقطع المظلل (بالدمج مع أساس العنصر) — به تُميَّز القيم
+  /// الحالية في الشريط (أيّ خط؟ أيّ حجم؟ هل هو عريض أصلاً؟).
+  ResolvedSpanStyle _effectiveSelectionStyle(
+    TextElement element,
+    int start,
+    int end,
+  ) {
+    for (final StyledTextRun run in splitStyledRuns(
+      element.text,
+      element.spans,
+      base: _baseResolved(element),
+    )) {
+      if (run.end <= start || run.start >= end) continue;
+      return run.style;
+    }
+    return _baseResolved(element);
+  }
+
+  /// المحاذاة خاصية **الفقرة** كلها لا المقطع وحده (كما في Word): تعديلها
+  /// يُسجَّل كخطوة واحدة مع بقية التحرير.
+  void _applyAlign(TemplateEditorController controller, ElementTextAlign align) {
+    _flushLiveText(controller);
+    final TemplateElement? current =
+        _editingId == null ? null : _elementById(controller, _editingId!);
+    if (current is! TextElement || current.align == align) return;
+    _openEditHistory(controller);
+    controller.replaceElement(current.copyWith(align: align));
+    if (mounted) setState(() {});
   }
 
   // ==========================================================================
@@ -761,6 +1463,8 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
 
   /// إضافة نص جديد عند موضع النقر المزدوج (النقر على فراغ الورقة).
   void _addTextAt(Offset localPosition) {
+    // إنشاء نصّ جديد وهو ما زال تحرير سابق مفتوحاً ⇒ نُلتزمه أولاً.
+    _commitIfEditingOther(null);
     final TemplateEditorController controller = widget.controller;
     final Size design = controller.designSize;
 
@@ -789,6 +1493,282 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
   }
 }
 
+/// الشريط العائم الصغير فوق المقطع المظلل داخل الكانفاس.
+///
+/// يعرض **القيم الفعلية** للتحديد الحالي (أيّ خط؟ أيّ حجم؟ هل هو عريض؟) ويعيد
+/// كل تغيير عبر النداءات الممرَّرة — فلا يعرف شيئاً عن المستند ولا عن الحقل،
+/// فيبقى قابلاً للاختبار وحده.
+class _TextSpanToolbar extends StatelessWidget {
+  const _TextSpanToolbar({
+    super.key,
+    required this.style,
+    required this.element,
+    required this.onFont,
+    required this.onSize,
+    required this.onColor,
+    required this.onAlign,
+    required this.onWeight,
+    required this.onItalic,
+    required this.onUnderline,
+  });
+
+  /// التنسيق الفعلي للمقطع المظلل (أساس العنصر مدموجاً بما فوقه).
+  final ResolvedSpanStyle style;
+  final TextElement element;
+
+  final ValueChanged<PdfFontFamily> onFont;
+  final ValueChanged<double> onSize;
+  final ValueChanged<String> onColor;
+  final ValueChanged<ElementTextAlign> onAlign;
+  final ValueChanged<PdfFontWeight> onWeight;
+  final ValueChanged<bool> onItalic;
+  final ValueChanged<bool> onUnderline;
+
+  /// مقاسات الخط المنشورة في القائمة.
+  static const List<double> sizes = <double>[
+    8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 40, 48, 56, 64, 72,
+  ];
+
+  /// لوحة الألوان المنشورة — نفس ألوان الشريط الجانبي حتى لا يتشتّت المستخدم.
+  static const List<String> palette = <String>[
+    '#000000', '#FFFFFF', '#E53935', '#FB8C00', '#FDD835', '#43A047',
+    '#00ACC1', '#1E88E5', '#3949AB', '#8E24AA', '#D81B60', '#6D4C41',
+    '#757575', '#1B2539',
+  ];
+
+  static const Map<ElementTextAlign, IconData> _alignIcons =
+      <ElementTextAlign, IconData>{
+    ElementTextAlign.start: Icons.format_align_left_rounded,
+    ElementTextAlign.center: Icons.format_align_center_rounded,
+    ElementTextAlign.end: Icons.format_align_right_rounded,
+    ElementTextAlign.justify: Icons.format_align_justify_rounded,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final PdfFontFamily family =
+        style.family ?? element.family;
+    final double fontSize = style.size ?? element.fontSize;
+
+    return Material(
+      color: scheme.surface,
+      elevation: 8,
+      shadowColor: Colors.black.withValues(alpha: 0.4),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.space4,
+          vertical: AppTheme.space2,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // اختيار الخط — يُطبَّق على المقطع المظلل وحده.
+            PopupMenuButton<PdfFontFamily>(
+              tooltip: 'نوع الخط',
+              padding: EdgeInsets.zero,
+              onSelected: onFont,
+              iconSize: 18,
+              icon: const Icon(Icons.font_download_outlined, size: 18),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<PdfFontFamily>>[
+                for (final PdfFontFamily option in PdfFontFamily.values)
+                  PopupMenuItem<PdfFontFamily>(
+                    value: option,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (option == family)
+                          Icon(Icons.check_rounded,
+                              size: 16, color: scheme.primary)
+                        else
+                          const SizedBox(width: 16),
+                        const SizedBox(width: 6),
+                        Text(option.labelAr),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            _divider(),
+            // حجم الخط.
+            PopupMenuButton<double>(
+              tooltip: 'حجم الخط',
+              padding: EdgeInsets.zero,
+              onSelected: onSize,
+              iconSize: 18,
+              icon: Text(
+                fontSize % 1 == 0
+                    ? '${fontSize.toInt()}'
+                    : fontSize.toStringAsFixed(1),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurface,
+                ),
+              ),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<double>>[
+                for (final double option in sizes)
+                  PopupMenuItem<double>(
+                    value: option,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if ((option - fontSize).abs() < 0.01)
+                          Icon(Icons.check_rounded,
+                              size: 16, color: scheme.primary)
+                        else
+                          const SizedBox(width: 16),
+                        const SizedBox(width: 6),
+                        Text('${option.toInt()}'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            _divider(),
+            // لون النص.
+            PopupMenuButton<String>(
+              tooltip: 'لون النص',
+              padding: EdgeInsets.zero,
+              onSelected: onColor,
+              iconSize: 18,
+              icon: Container(
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: colorFromHex(
+                    style.colorHex ?? element.colorHex,
+                    fallback: Colors.black,
+                  ),
+                  border: Border.all(color: scheme.outline, width: 1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                for (final String hex in palette)
+                  PopupMenuItem<String>(
+                    value: hex,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: colorFromHex(hex, fallback: Colors.black),
+                            border: Border.all(color: scheme.outline, width: 1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(hex.toUpperCase()),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            _divider(),
+            _toggle(
+              context,
+              icon: Icons.format_bold_rounded,
+              tooltip: 'عريض',
+              active: style.weight == PdfFontWeight.bold,
+              onTap: () => onWeight(
+                style.weight == PdfFontWeight.bold
+                    ? PdfFontWeight.regular
+                    : PdfFontWeight.bold,
+              ),
+            ),
+            _toggle(
+              context,
+              icon: Icons.format_italic_rounded,
+              tooltip: 'مائل',
+              active: style.italic,
+              onTap: () => onItalic(!style.italic),
+            ),
+            _toggle(
+              context,
+              icon: Icons.format_underlined_rounded,
+              tooltip: 'خط سفلي',
+              active: style.underline,
+              onTap: () => onUnderline(!style.underline),
+            ),
+            _divider(),
+            // المحاذاة — خاصية الفقرة كلها (كما في Word).
+            PopupMenuButton<ElementTextAlign>(
+              tooltip: 'المحاذاة',
+              padding: EdgeInsets.zero,
+              onSelected: onAlign,
+              iconSize: 18,
+              icon: Icon(
+                _alignIcons[element.align] ?? Icons.format_align_left_rounded,
+                size: 18,
+              ),
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<ElementTextAlign>>[
+                for (final ElementTextAlign option in ElementTextAlign.values)
+                  PopupMenuItem<ElementTextAlign>(
+                    value: option,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (option == element.align)
+                          Icon(Icons.check_rounded,
+                              size: 16, color: scheme.primary)
+                        else
+                          const SizedBox(width: 16),
+                        const SizedBox(width: 6),
+                        Icon(_alignIcons[option], size: 16),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _divider() => Container(
+        width: 1,
+        height: 20,
+        margin: const EdgeInsets.symmetric(horizontal: AppTheme.space2),
+        color: const Color(0x1A000000),
+      );
+
+  Widget _toggle(
+    BuildContext context, {
+    required IconData icon,
+    required String tooltip,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        child: Container(
+          padding: const EdgeInsets.all(AppTheme.space4),
+          decoration: BoxDecoration(
+            color: active ? scheme.primary.withValues(alpha: 0.16) : null,
+            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+          ),
+          child: Icon(
+            icon,
+            size: 18,
+            color: active ? scheme.primary : scheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// إطار بسيط حول العنصر المحدد.
 class BorderPainter extends CustomPainter {
   const BorderPainter({required this.color, required this.width});
@@ -805,9 +1785,65 @@ class BorderPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = width,
     );
-  }
+  }  @override
+  bool shouldRepaint(BorderPainter oldDelegate) => oldDelegate.color != color || oldDelegate.width != width;
+}
+
+// ==========================================================================
+//  بوابة اختبار الإصابة
+// ==========================================================================
+
+/// بوابة اختبار الإصابة لطبقة عنصر واحد.
+///
+/// لا تمسّ الرسم إطلاقاً؛ تسمح أو تمنع باستقبال النقر فقط، اعتماداً على
+/// [shouldHit] (نفس نتيجة [pickElementAt] للنقطة). إن رُفضت الطبقة مرّ النقر
+/// إلى ما تحتها في الـ Stack، فيُنتقي دائماً **الأصغر/الأعلى** تحت المؤشر بدل
+/// الأعلى طبقة وحده — وبذلك لا تسرق الحاويات الكبيرة (بخاصة المفرغة) نقرات
+/// العناصر الصغيرة داخلها.
+class _ElementHitGate extends SingleChildRenderObjectWidget {
+  const _ElementHitGate({
+    required this.origin,
+    required this.shouldHit,
+    required Widget child,
+  }) : super(child: child);
+
+  /// موضع الطبقة داخل اللوحة (بكسلات الورقة) لتحويل النقطة المحلية إليها.
+  final Offset origin;
+
+  /// هل تستقبل هذه الطبقة النقرة عند هذه النقطة؟
+  final bool Function(Offset paperPoint) shouldHit;
 
   @override
-  bool shouldRepaint(BorderPainter oldDelegate) =>
-      oldDelegate.color != color || oldDelegate.width != width;
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenderElementHitGate(origin: origin, shouldHit: shouldHit);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderElementHitGate render) {
+    render.origin = origin;
+    render.shouldHit = shouldHit;
+  }
+}
+
+/// الكاشف الفعلي: يرفض النقطة قبل أن تصل إلى كاشف النقر أسفله.
+class _RenderElementHitGate extends RenderProxyBox {
+  _RenderElementHitGate({
+    required Offset origin,
+    required bool Function(Offset) shouldHit,
+    RenderBox? child,
+  })  : _origin = origin,
+        _shouldHit = shouldHit,
+        super(child);
+
+  Offset _origin;
+  bool Function(Offset) _shouldHit;
+
+  set origin(Offset value) => _origin = value;
+  set shouldHit(bool Function(Offset) value) => _shouldHit = value;
+
+  @override
+  bool hitTest(BoxHitTestResult result, {required Offset position}) {
+    // النقطة هنا بعوامض الطبقة؛ تُضاف الإزاحة للحصول على موضعها في اللوحة.
+    if (!_shouldHit(position + _origin)) return false;
+    return super.hitTest(result, position: position);
+  }
 }

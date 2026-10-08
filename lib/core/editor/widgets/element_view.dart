@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../assets/asset_image_cache.dart';
@@ -5,12 +7,15 @@ import '../../assets/assets_controller.dart';
 import '../../assets/embedded_assets.dart';
 import '../../assets/user_asset.dart';
 import '../../constants/app_assets.dart';
+import '../../gender/arabic_gender.dart';
 import '../../models/template_document.dart';
 import '../../models/template_element.dart';
 import '../../models/text_flow.dart';
+import '../../models/text_styling.dart';
 import '../../pdf/pdf_font_catalog.dart';
 import '../../l10n/app_l10n.dart';
 import '../../utils/hex_color.dart';
+import 'element_effects.dart';
 import 'element_painters.dart';
 
 /// اسم عائلة الخط داخل فلاتر مقابل عائلة الخط في محرّك الـ PDF.
@@ -23,8 +28,71 @@ String editorFontFamilyOf(TextElement text) {
   return editorFontFamily(text.family);
 }
 
+/// ظل النص كما يفهمه فلاتر ([Shadow]) — لون + إزاحة + تمويه.
+///
+/// يُستخدم في **كل** مسارات رسم النص في المحرر: العنصر العادي، معاينة المحرر
+/// الداخلية، والحقول الديناميكية المحلولة داخل النص - لأنها كلها تنتهي إلى
+/// [editorTextStyle] نفسه.
+///
+/// ويضيف فوقه **التوهّج الخارجي** ([GlowEffect]) إن وُجد: تمويه بلا إزاحة
+/// يحيط الحروف، ويتحوّل [GlowEffect.spread] إلى حلقة نسخ مُزاحة على محيط
+/// دائرة لأنّ [Shadow] لا يعرف التوسيع.
+List<Shadow>? editorTextShadows(
+  TextShadow? shadow,
+  double scale, {
+  GlowEffect? outerGlow,
+}) {
+  final List<Shadow> layers = <Shadow>[];
+  if (shadow != null && shadow.isVisible) {
+    final Color color = colorFromHex(shadow.colorHex, fallback: Colors.black)
+        .withValues(alpha: shadow.opacity.clamp(0, 1));
+    final double blur = math.max(0, shadow.blurRadius) * scale;
+    final Offset base = Offset(shadow.offsetX * scale, shadow.offsetY * scale);
+    final double spread = math.max(0, shadow.spread) * scale;
+    if (spread <= 0) {
+      layers.add(Shadow(color: color, offset: base, blurRadius: blur));
+    } else {
+      // التوسيع: نسخة في المركز وأخرى على محيط دائرة نصف قطرها `spread`
+      // فيبدو الظل منتفخاً من كل جهة كسلوك Photoshop.
+      layers.add(Shadow(color: color, offset: base, blurRadius: blur));
+      for (int i = 0; i < _spreadRingSteps; i++) {
+        final double angle = 2 * math.pi * i / _spreadRingSteps;
+        layers.add(Shadow(
+          color: color,
+          offset: base +
+              Offset(math.cos(angle) * spread, math.sin(angle) * spread),
+          blurRadius: blur,
+        ));
+      }
+    }
+  }
+  if (outerGlow != null && outerGlow.isVisible) {
+    final Color color = colorFromHex(outerGlow.colorHex, fallback: Colors.amber)
+        .withValues(alpha: outerGlow.opacity.clamp(0, 1));
+    final double blur = math.max(0, outerGlow.radius) * scale;
+    final double spread = math.max(0, outerGlow.spread) * scale;
+    layers.add(Shadow(color: color, blurRadius: blur));
+    // حلقة التوسيع تُضاف فقط عند وجود توسيع فعلي — وإلا لتكرّرت النسخة
+    // المركزية تسع مرّات بلا أي أثر بصري.
+    if (spread > 0) {
+      for (int i = 0; i < _spreadRingSteps; i++) {
+        final double angle = 2 * math.pi * i / _spreadRingSteps;
+        layers.add(Shadow(
+          color: color,
+          offset: Offset(math.cos(angle) * spread, math.sin(angle) * spread),
+          blurRadius: blur,
+        ));
+      }
+    }
+  }
+  return layers.isEmpty ? null : layers;
+}
+
+/// عدد نسخ الحلقة المستخدمة لإدراك التوسيع (spread) في ظلال النص.
+const int _spreadRingSteps = 8;
+
 /// نمط نص العنصر كما يظهر في المحرر (يُستخدم أيضاً في قياس الارتفاع التلقائي).
-TextStyle editorTextStyle(TextElement text, double scale) {
+TextStyle editorTextStyle(TextElement text, double scale, {Paint? foreground}) {
   return TextStyle(
     fontFamily: editorFontFamilyOf(text),
     // خطوط نظام احتياطية (عربي + CJK) — فلا تظهر مربعات في معاينة القالب
@@ -36,12 +104,18 @@ TextStyle editorTextStyle(TextElement text, double scale) {
       PdfFontWeight.semiBold => FontWeight.w600,
       PdfFontWeight.bold => FontWeight.w700,
     },
-    color: colorFromHex(text.colorHex, fallback: Colors.black),
+    // عند رسم طبقة التوهّج الداخلي يحلّ `foreground` محلّ اللون: لا يجوز
+    // جمعهما في نمط واحد (فلاتر ترفض الاثنين معاً).
+    color: foreground == null
+        ? colorFromHex(text.colorHex, fallback: Colors.black)
+        : null,
+    foreground: foreground,
     height: text.lineHeight,
     letterSpacing: text.letterSpacing * scale,
     backgroundColor: text.backgroundHex == null
         ? null
         : colorFromHex(text.backgroundHex, fallback: Colors.white),
+    shadows: editorTextShadows(text.shadow, scale, outerGlow: text.outerGlow),
   );
 }
 
@@ -49,6 +123,76 @@ TextStyle editorTextStyle(TextElement text, double scale) {
 /// محرّك الطباعة حتى لا يختلف الاتجاه بين المحرر والـ PDF.
 bool editorTextIsRtl(TextElement text, String resolved) =>
     TextFlow.resolvesRtl(text.direction, resolved);
+
+/// نمط جزء واحد من النص ([run]) فوق نمط العنصر الأساسي.
+///
+/// نبني **طبقة رقيقة واحدة** فوق [base] فتُورّث الحقول غير المذكورة (الارتفاع،
+/// تباعد الحروف، الظل…) تلقائياً — فلا يتكرّر التنسيق في كل قطعة ولا يمكن أن
+/// ينحرف تباعد الأسطر بين كلمة ملوّنة وأخرى داخل السطر نفسه.
+///
+/// [applyColor] تُطفأ لطبقات التوهّج/الظل: هناك يحلّ `foreground` محل اللون،
+/// وفلاتر ترفض الجمع بينهما في نمط واحد.
+TextStyle editorSpanStyle(
+  ResolvedSpanStyle run,
+  TextStyle base, {
+  bool applyColor = true,
+}) {
+  if (run.isBase) return base;
+  return _spanStyleOnly(run, applyColor: applyColor);
+}
+
+TextStyle _spanStyleOnly(ResolvedSpanStyle run, {required bool applyColor}) {
+  return TextStyle(
+    inherit: true,
+    fontFamily: run.customFont != null && run.customFont!.isNotEmpty
+        ? run.customFont
+        : (run.family == null ? null : editorFontFamily(run.family!)),
+    fontWeight: run.weight == null
+        ? null
+        : switch (run.weight!) {
+            PdfFontWeight.regular => FontWeight.w400,
+            PdfFontWeight.semiBold => FontWeight.w600,
+            PdfFontWeight.bold => FontWeight.w700,
+          },
+    fontStyle: run.italic ? FontStyle.italic : null,
+    fontSize: run.size,
+    color: applyColor && run.colorHex != null
+        ? colorFromHex(run.colorHex!, fallback: Colors.black)
+        : null,
+    backgroundColor: run.backgroundHex == null
+        ? null
+        : colorFromHex(run.backgroundHex!, fallback: Colors.white),
+    decoration: run.underline ? TextDecoration.underline : null,
+  );
+}
+
+/// يبني شجرة [InlineSpan] لنصّ فيه تنسيق جزئي، من مقاطع [splitStyledRuns].
+///
+/// قطع [splitStyledRuns] تغطّي النص بالكامل بلا فجوات، فالناتج لا يختلف عن نصٍّ
+/// موحّد إلا في التنسيق حرفياً.
+InlineSpan editorTextSpan(
+  String source,
+  TextElement element,
+  List<StyledTextSpan> spans,
+  double scale, {
+  Paint? foreground,
+}) {
+  final TextStyle base = editorTextStyle(element, scale, foreground: foreground);
+  final List<StyledTextRun> runs = splitStyledRuns(source, spans);
+  if (runs.length == 1 && runs.first.isBase) {
+    return TextSpan(text: source, style: base);
+  }
+  return TextSpan(
+    style: base,
+    children: <InlineSpan>[
+      for (final StyledTextRun run in runs)
+        TextSpan(
+          text: run.textOf(source),
+          style: editorSpanStyle(run.style, base, applyColor: foreground == null),
+        ),
+    ],
+  );
+}
 
 /// محاذاة النص كما يفهمها Flutter، مطابقة لقاعدة [TextFlow.anchorFor] المشتركة.
 TextAlign editorTextAlign(ElementTextAlign align) => switch (align) {
@@ -68,10 +212,18 @@ class ElementView extends StatelessWidget {
     required this.element,
     required this.document,
     required this.scale,
+    this.gender,
+    this.rowData,
   });
 
   final TemplateElement element;
   final TemplateDocument document;
+  final Map<String, String>? rowData;
+
+  /// جنس المعاينة الحيّة — `null` يعني الاستنتاج التلقائي من
+  /// الاسم/البيانات، وهو الوضع الافتراضي. يُمرَّر من مبدّل الجنس في الشريط
+  /// العلوي لمعاينة الصياغة المؤنّثة فوراً على اللوحة.
+  final Gender? gender;
 
   /// بكسلات الشاشة لكل وحدة تصميم.
   final double scale;
@@ -96,11 +248,68 @@ class ElementView extends StatelessWidget {
   Widget _buildText(TextElement text) {
     final String resolved = document.resolveFields(
       text.text,
-      null,
+      rowData,
       keepUnknownTokens: true,
+      gender: gender,
     );
 
     final bool rtl = editorTextIsRtl(text, resolved);
+    final TextDirection direction =
+        rtl ? TextDirection.rtl : TextDirection.ltr;
+    final TextAlign align = editorTextAlign(text.align);
+
+    // التنسيق الجزئي يُطبَّق فقط إذا بقي النص بعد حلّ الحقول كما هو حرفياً —
+    // وإلا لانزاحت الإزاحات عن كلماتها فصار اللون في موضع خاطئ. تحقّق بسيط
+    // يمنع خطأً صامتاً بدل تخمين إزاحات.
+    final bool useSpans = text.hasSpans && resolved == text.text;
+
+    Widget content = useSpans
+        ? RichText(
+            text: editorTextSpan(resolved, text, text.spans, scale),
+            textDirection: direction,
+            textAlign: align,
+            maxLines: text.maxLines,
+            overflow: TextOverflow.clip,
+          )
+        : Text(
+            resolved,
+            textDirection: direction,
+            textAlign: align,
+            maxLines: text.maxLines,
+            overflow: TextOverflow.clip,
+            style: _textStyle(text, scale),
+          );
+
+    // التوهّج الداخلي: طبقة نص ثانية بنفس الحروف وحدّ مطموس إلى الداخل
+    // (`BlurStyle.inner`) فوق الأصل — فيبقى التوهّج داخل الحروف وحدها.
+    final Paint? innerGlow = editorTextInnerGlowPaint(text, scale);
+    if (innerGlow != null) {
+      content = Stack(
+        fit: StackFit.passthrough,
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          content,
+          Text(
+            resolved,
+            textDirection: direction,
+            textAlign: align,
+            maxLines: text.maxLines,
+            overflow: TextOverflow.clip,
+            style: _textStyle(text, scale, foreground: innerGlow),
+          ),
+        ],
+      );
+    }
+
+    // عزل تأثيرات النص: ظل/توهّج خارجي يبقى داخل صندوق الفقرة + مسافة أثره
+    // فقط، فلا يتسرّب التمويه إلى العناصر المجاورة أو إلى مساحة العمل.
+    final double reach = _textEffectReach(text);
+    if (reach > 0) {
+      content = ClipRect(
+        clipper: EffectBoundsClipper(reach: reach),
+        child: content,
+      );
+    }
 
     return Opacity(
       opacity: text.opacity.clamp(0, 1),
@@ -110,61 +319,55 @@ class ElementView extends StatelessWidget {
           ElementVerticalAlign.middle => Alignment.center,
           ElementVerticalAlign.bottom => Alignment.bottomCenter,
         },
-        child: Text(
-          resolved,
-          textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
-          textAlign: editorTextAlign(text.align),
-          maxLines: text.maxLines,
-          overflow: TextOverflow.clip,
-          style: _textStyle(text, scale),
-        ),
+        child: content,
       ),
     );
   }
 
-  TextStyle _textStyle(TextElement text, double scale) =>
-      editorTextStyle(text, scale);
+  /// مسافة أثر ظل/توهّج النص خارج صندوق الفقرة (بكسلات الشاشة).
+  ///
+  /// تُحتسب كأقصى مسافة يبلغها التمويه فعلياً: الإزاحة + الانتشار + مدى
+  /// التمويه ([blurReach]). يُؤخذ `blurRadius` كأنه انحراف معياريّ كامل حتى
+  /// لا يُقتطع الظلّ مهما كان مقياس تحويل فلاتر لنص إلى σ.
+  ///
+  /// تُعيد `0` إن لم يكن للنص تأثير خارجي، فلا تُضاف طبقة قصّ زائدة أصلاً.
+  double _textEffectReach(TextElement text) {
+    double reach = 0;
+    final TextShadow? shadow = text.shadow;
+    if (shadow != null && shadow.isVisible) {
+      final double blur = math.max(0, shadow.blurRadius) * scale;
+      reach = math.max(
+        reach,
+        math.max(shadow.offsetX.abs(), shadow.offsetY.abs()) * scale +
+            math.max(0, shadow.spread) * scale +
+            blurReach(blur),
+      );
+    }
+    final GlowEffect? glow = text.outerGlow;
+    if (glow != null && glow.isVisible) {
+      reach = math.max(
+        reach,
+        math.max(0, glow.spread) * scale +
+            blurReach(math.max(0, glow.radius) * scale),
+      );
+    }
+    return reach;
+  }
+
+  TextStyle _textStyle(TextElement text, double scale, {Paint? foreground}) =>
+      editorTextStyle(text, scale, foreground: foreground);
 
   // --------------------------------------------------------------------------
   //  الأشكال
   // --------------------------------------------------------------------------
   Widget _buildShape(ShapeElement shape) {
-    final Color? fill =
-        shape.fillHex == null ? null : colorFromHex(shape.fillHex);
-    final Color? stroke =
-        shape.strokeHex == null ? null : colorFromHex(shape.strokeHex);
-
-    if (shape.kind == ShapeKind.line) {
-      return Opacity(
-        opacity: shape.opacity.clamp(0, 1),
-        child: Align(
-          alignment: Alignment.center,
-          child: Container(
-            height: (shape.strokeWidth > 0 ? shape.strokeWidth : 1) * scale,
-            color: stroke ?? fill ?? Colors.black,
-          ),
-        ),
-      );
-    }
-
+    // الرسم عبر [ShapePainter] — نفس هندسة محرّك الـ PDF تماماً (التعبئة/
+    // التدرّج/الإطار المتقطّع/الظل/القلب/الدمج المنطقي).
     return Opacity(
       opacity: shape.opacity.clamp(0, 1),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: fill,
-          shape: shape.kind == ShapeKind.ellipse
-              ? BoxShape.circle
-              : BoxShape.rectangle,
-          borderRadius: shape.kind == ShapeKind.rect && shape.radius > 0
-              ? BorderRadius.circular(shape.radius * scale)
-              : null,
-          border: stroke == null || shape.strokeWidth <= 0
-              ? null
-              : Border.all(
-                  color: stroke,
-                  width: shape.strokeWidth * scale,
-                ),
-        ),
+      child: CustomPaint(
+        painter: ShapePainter(shape: shape, scale: scale),
+        child: const SizedBox.expand(),
       ),
     );
   }
@@ -256,13 +459,15 @@ class ElementView extends StatelessWidget {
   ) {
     final String role = document.resolveFields(
       slot.role,
-      null,
+      rowData,
       keepUnknownTokens: true,
+      gender: gender,
     );
     final String name = document.resolveFields(
       slot.name,
-      null,
+      rowData,
       keepUnknownTokens: true,
+      gender: gender,
     );
     final bool rtl = TextFlow.resolvesRtl(element.direction, '$name $role');
     final TextDirection textDirection =
@@ -467,7 +672,51 @@ class ElementView extends StatelessWidget {
       );
     }
 
-    return Opacity(opacity: image.opacity.clamp(0, 1), child: child);
+    // الضبط اللوني يُطبَّق على بكسلات الصورة **قبل** الظل والتوهّج، فيرسم
+    // الظل حدود الصورة بعد الضبط (نفس ترتيب Photoshop).
+    final ColorFilter? adjustments = elementAdjustmentFilter(image.adjustments);
+    Widget content =
+        adjustments == null
+            ? child
+            : ColorFiltered(colorFilter: adjustments, child: child);
+
+    final bool hasEffects =
+        (image.shadow != null && image.shadow!.isVisible) ||
+            (image.outerGlow != null && image.outerGlow!.isVisible);
+
+    return Opacity(
+      opacity: image.opacity.clamp(0, 1),
+      child: _maybeTinted(
+        image,
+        // عزل الطبقات الظلّية داخل `wrapRasterEffects`: صندوق العنصر +
+        // مسافة أثر التأثير تحديداً، فلا يتسرّب التمويه إلى مساحة العمل.
+        hasEffects
+            ? wrapRasterEffects(
+                child: content,
+                scale: scale,
+                shadow: image.shadow,
+                outerGlow: image.outerGlow,
+              )
+            : content,
+      ),
+    );
+  }
+
+  /// يلوّن صورة العنصر إن كان له لون (`tintHex`).
+  ///
+  /// `BlendMode.srcIn` يستبدل **لون كل بكسل مرسوم** بلون التلوين ويأخذ قناة
+  /// الشفافية من الصورة نفسها — فتتحول الخطوط/الزخرفة الداكنة إلى اللون المختار
+  /// وتبقى الخلفية الشفافة شفافة تماماً (لا يزحف اللون إلى الفراغ). وعند غياب
+  /// اللون يعود العنصر ببكسلاته الأصلية بلا أي طبقة إضافية.
+  Widget _maybeTinted(ImageElement image, Widget child) {
+    if (!image.hasTint) return child;
+    return ColorFiltered(
+      colorFilter: ColorFilter.mode(
+        colorFromHex(image.tintHex!.trim()),
+        BlendMode.srcIn,
+      ),
+      child: child,
+    );
   }
 
   Widget _memoryImage(
@@ -514,8 +763,9 @@ class ElementView extends StatelessWidget {
   Widget _buildQr(BuildContext context, QrElement qr) {
     final String resolved = document.resolveFields(
       qr.data,
-      null,
+      rowData,
       keepUnknownTokens: true,
+      gender: gender,
     );
     if (resolved.trim().isEmpty) {
       return _MissingAssetHint(

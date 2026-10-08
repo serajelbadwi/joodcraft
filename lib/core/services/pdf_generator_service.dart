@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -17,8 +17,13 @@ import '../models/template_element.dart';
 import '../pdf/custom_pdf_fonts.dart';
 import '../pdf/pdf_font_catalog.dart';
 import '../pdf/pdf_generation_isolate.dart';
+import '../pdf/pdf_image_adjust.dart';
+import '../pdf/pdf_quality_image.dart';
+import '../pdf/pdf_image_tint.dart';
 import '../pdf/pdf_render_engine.dart';
 import '../pdf/pdf_script_coverage.dart';
+import '../print/crop_marks.dart';
+import '../print/imposition_pdf_builder.dart';
 
 // يبقى `PdfDocumentMetadata` متاحاً من هذا الملف لمن يستورده تاريخياً.
 export '../pdf/pdf_render_engine.dart' show PdfDocumentMetadata;
@@ -29,17 +34,29 @@ export '../pdf/pdf_render_engine.dart' show PdfDocumentMetadata;
 /// يقرأ من أصول التطبيق المحزومة فقط.
 abstract interface class PdfImageResolver {
   /// حلّ صورة من مرجعها كـ[مزوّد رسم] جاهز (للمسار المتزامن على الخيط الرئيسي).
+  ///
+  /// [tintHex] لون تلوين اختياري (`#RRGGBB`) يُطبَّق كما في المحرّر،
+  /// و[adjustments] ضبط لوني اختياري (سطوع/تباين/تدوير لوني/تشبّع) يُطبَّق
+  /// على البكسلات **قبل** التلوين — بنفس ترتيب اللوحة تماماً.
   Future<pw.ImageProvider?> resolve(
     String path,
     ImageSourceKind kind, {
     String? inlineData,
+    String? tintHex,
+    ElementAdjustments? adjustments,
   });
 
   /// بايتات الصورة نفسها — تُستخدم لتوليد داخل isolate (لا تُنقل كائنات `pw.*`).
+  ///
+  /// بوجود [tintHex] تُعاد البايتات **ملوّنة** جاهزة (`BlendMode.srcIn`)، أو
+  /// الأصلية إن تعذّر التلوين — فلا يسقط العنصر من الملف بسبب لون غير صالح.
+  /// وبوجود [adjustments] تُعاد **مضبوطة لونياً** قبل التلوين.
   Future<Uint8List?> resolveBytes(
     String path,
     ImageSourceKind kind, {
     String? inlineData,
+    String? tintHex,
+    ElementAdjustments? adjustments,
   });
 }
 
@@ -69,20 +86,34 @@ class AssetPdfImageResolver implements PdfImageResolver {
     String path,
     ImageSourceKind kind, {
     String? inlineData,
+    String? tintHex,
+    ElementAdjustments? adjustments,
   }) async {
-    final String key = '${kind.jsonValue}:$path';
+    final String key = pdfImageCacheKey(
+      path,
+      kind,
+      tintHex: tintHex,
+      adjustKey: adjustments?.key,
+    );
     final pw.ImageProvider? cached = _cache.remove(key);
     if (cached != null) {
       _cache[key] = cached; // أعِده للمؤخّرة = «أحدث استخداماً».
       return cached;
     }
 
-    final Uint8List? bytes =
-        await resolveBytes(path, kind, inlineData: inlineData);
+    final Uint8List? bytes = await resolveBytes(
+      path,
+      kind,
+      inlineData: inlineData,
+      tintHex: tintHex,
+      adjustments: adjustments,
+    );
     // ⚠️ لا نُخزّن الفشل: الأصل قد يكون غير مستعادٍ بعد (بدء التشغيل) أو يُضاف
     // لاحقاً؛ فحفظ `null` كان يجعل الصورة تختفي نهائياً في المعاينة التالية.
     if (bytes == null) return null;
-    final pw.ImageProvider image = pw.MemoryImage(bytes);
+    // مُزوّد الطباعة عالي الدقة: تحجيم بمتوسط المساحة (لا «أقرب جار») وتضمين
+    // بلا فقدان — لا مواريه ولا خطوط تكميم في التصدير 300dpi.
+    final pw.ImageProvider image = PdfQualityImage(bytes);
     _cache[key] = image;
     _trim();
     return image;
@@ -93,10 +124,28 @@ class AssetPdfImageResolver implements PdfImageResolver {
     String path,
     ImageSourceKind kind, {
     String? inlineData,
+    String? tintHex,
+    ElementAdjustments? adjustments,
   }) async {
     // الترتيب: المرجع الحيّ أولاً (الأصل/الأصل المحزوم)، ثم النسخة المضمّنة
     // احتياطاً — فلو حُذف الأصل من المكتبة يبقى الإطار قابلاً للرسم.
-    return await _loadBytes(path, kind) ?? _decodeInlineBytes(inlineData);
+    final Uint8List? bytes =
+        await _loadBytes(path, kind) ?? _decodeInlineBytes(inlineData);
+    if (bytes == null) return null;
+
+    // الترتيب نفسه المتبع في اللوحة: الضبط اللوني أولاً (يغيّر البكسلات)
+    // ثم التلوين (يستبدل اللون). وفشل أيّهما يُبقي ما قبله بلا فقدان العنصر.
+    try {
+      final Uint8List adjusted =
+          await adjustImageBytesSafely(bytes, adjustments);
+      final String tint = (tintHex ?? '').trim();
+      if (tint.isEmpty) return adjusted;
+      return tintImageBytesSafely(adjusted, tint);
+    } catch (e, trace) {
+      debugPrint('⚠️ Image Adjust/Tint Error: $e');
+      debugPrint('📍 Trace: $trace');
+      return bytes;
+    }
   }
 
   /// إسقاط الأقدم (الأقل استخداماً) حتى لا يتجاوز المخزن الحدّ الأعلى.
@@ -121,9 +170,28 @@ class AssetPdfImageResolver implements PdfImageResolver {
   /// تفريغ ذاكرة الصور (عند تغيير المستند أو إعادة توليد المعاينة).
   void clearCache() => _cache.clear();
 
+  /// عدد الصور المخزّنة (للتشخيص والاختبارات — يثبت فصل نسخ التلوين).
+  @visibleForTesting
+  int get cacheLength => _cache.length;
+
   Future<Uint8List?> _loadBytes(String path, ImageSourceKind kind) async {
     try {
-      switch (kind) {
+      return await Future.any<Uint8List?>(<Future<Uint8List?>>[
+        _loadBytesActual(path, kind),
+        Future<Uint8List?>.delayed(const Duration(seconds: 4), () {
+          debugPrint('⚠️ Image load timeout for path: $path');
+          return null;
+        }),
+      ]);
+    } catch (e, stackTrace) {
+      debugPrint('❌ Image Load Exception: $e');
+      debugPrint('📍 Trace: $stackTrace');
+      return null;
+    }
+  }
+
+  Future<Uint8List?> _loadBytesActual(String path, ImageSourceKind kind) async {
+    switch (kind) {
         case ImageSourceKind.asset:
           final ByteData data = await _bundle.load(path);
           return data.buffer.asUint8List();
@@ -141,10 +209,7 @@ class AssetPdfImageResolver implements PdfImageResolver {
           // غير مدعوم في الوضع غير المتصل: يجب أن يُرفع الملف إلى مكتبة الأصول.
           return null;
       }
-    } catch (_) {
-      return null;
     }
-  }
 }
 
 /// نتيجة التوليد: الملف + معلومات مفيدة للواجهة (زمن، عدد صفحات، تحذيرات).
@@ -256,6 +321,127 @@ class PdfGeneratorService {
     // تحذيرات تغطية الكتابات قبل أي رسم — بدقّة حسب الخطوط المتاحة فعلاً:
     // المحزومة (بما فيها خط الاحتياط Noto Sans SC) + الخطوط المخصّصة/النظامية.
     // فلا يُحذَّر على كتابة تُرسم فعلاً، ولا يمرّ محرف بلا أي خط بلا تحذير.
+    addCoverageWarnings(document, warnings);
+
+    if (rows.isEmpty) {
+      throw const AppException(
+        AppErrorCode.pdfGeneration,
+        message: 'لا توجد صفوف بيانات لتوليدها.',
+      );
+    }
+
+    try {
+      debugPrint('📄 [PdfGeneratorService] Starting batch generation ($rows rows) using Vector Engine...');
+      
+      // **المسار المتجهي** هو المسار المعتمد: خطوط عربية مضمّنة داخل الملف،
+      // وألوان RGB حرفية (لا صورة مُرستَرة)، ونصّ قابل للتحديد والبحث.
+      // المسار النقطي (Rasterized) يُنتج صورة داخل الـ PDF فتضيع تغطية الخطوط
+      // وانزياح الألوان، لذا لا يُستدعى من هنا.
+      final Uint8List bytes = _shouldUseIsolate(rows.length)
+          ? await _generateInBackground(
+              document,
+              rows,
+              metadata,
+              warnings,
+              onProgress,
+            )
+          : await _generateInline(
+              document,
+              rows,
+              metadata,
+              warnings,
+              onProgress,
+            );
+
+      stopwatch.stop();
+      debugPrint('📄 [PdfGeneratorService] Batch generation complete in ${stopwatch.elapsedMilliseconds} ms.');
+      
+      return PdfGenerationReport(
+        bytes: bytes,
+        pageCount: rows.length,
+        elapsed: stopwatch.elapsed,
+        warnings: warnings,
+      );
+    } catch (e, stackTrace) {
+      debugPrint('❌ PDF Batch Generation Error [PdfGeneratorService]: $e');
+      debugPrint('📍 StackTrace: $stackTrace');
+      rethrow;
+    }
+  }
+
+  // ==========================================================================
+  //                           التجميع للطباعة
+  // ==========================================================================
+
+  /// توليد **ورقة تجميع** (تجميع للطباعة) بعلامات قصّ متجهية وبدقّة 300 نقطة/بوصة.
+  ///
+  /// المساران المدعومان:
+  /// * **تجميع مفرد**: مرّر [copies] (و[data] اختياري) فيُكرَّر العنصر على
+  ///   الورقة كاملة حتى يمتلئ، ثم تُضاف ورقة أخرى إن فضل.
+  /// * **تجميع جماعي**: مرّر [rows] (عشرة أرقام جلوس مثلاً) فتُوزَّع القطع
+  ///   بترتيبها عبر أوراق متتالية، يكتمل كلٌّ منها قبل التالي.
+  ///
+  /// التوزيع يُحسب من [spec] **نفسه** المستخدم في معاينة المحرّر، فالملف
+  /// الخارج مطابق تماماً لما رآه المستخدم قبل التصدير.
+  Future<PdfGenerationReport> generateImposition({
+    required TemplateDocument document,
+    required ImpositionSpec spec,
+    List<Map<String, String>>? rows,
+    Map<String, String>? data,
+    int copies = 1,
+    PdfDocumentMetadata? metadata,
+    void Function(int done, int total)? onProgress,
+  }) async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+    final List<String> warnings = <String>[...document.warnings];
+    await _ensureCustomFonts(document);
+    addCoverageWarnings(document, warnings);
+
+    final Map<String, pw.ImageProvider?> images =
+        await _resolveImages(document, warnings);
+
+    final ImpositionPdfArtifact artifact;
+    if (rows != null && rows.isNotEmpty) {
+      artifact = await ImpositionPdfBuilder.buildBulk(
+        fonts: _fonts,
+        document: document,
+        spec: spec,
+        images: images,
+        rows: rows,
+        metadata: metadata,
+        compress: compress,
+        onProgress: onProgress,
+      );
+    } else {
+      artifact = await ImpositionPdfBuilder.buildSingle(
+        fonts: _fonts,
+        document: document,
+        spec: spec,
+        images: images,
+        copies: copies,
+        data: data ?? document.sampleData,
+        metadata: metadata,
+        compress: compress,
+        onProgress: onProgress,
+      );
+    }
+
+    stopwatch.stop();
+    return PdfGenerationReport(
+      bytes: artifact.bytes,
+      pageCount: artifact.sheetCount,
+      elapsed: stopwatch.elapsed,
+      warnings: warnings,
+    );
+  }
+
+  /// تحذيرات تغطية الكتابات لمستند — تُضاف إلى [warnings].
+  ///
+  /// تُسجَّل الخطوط المخصّصة/النظامية أولاً حتى يعرف فحص التغطية أنها متاحة
+  /// ويمنع تحذيرات كاذبة عن كتابات يتكفّل بها الخط؛ والفحص بدقّة حسب الخطوط
+  /// المتاحة فعلاً (المحزومة بما فيها خطوط CJK/السريلية) فلا يُحذَّر على كتابة
+  /// تُرسم فعلاً، ولا مرّ محرف بلا أي خط بلا تحذير.
+  void addCoverageWarnings(TemplateDocument document, List<String> warnings) {
     final Set<int> bundledCoverage = _fonts.bundledCodePoints;
     final Set<PdfScript> runtimeCovered = PdfScriptCoverage.runtimeCovered;
     for (final PdfScript script in PdfScriptCoverage.unsupportedInDocument(
@@ -270,26 +456,14 @@ class PdfGeneratorService {
     )) {
       warnings.add(PdfScriptCoverage.warningFor(script));
     }
-
-    if (rows.isEmpty) {
-      throw const AppException(
-        AppErrorCode.pdfGeneration,
-        message: 'لا توجد صفوف بيانات لتوليدها.',
-      );
-    }
-
-    final Uint8List bytes = _shouldUseIsolate(rows.length)
-        ? await _generateInBackground(document, rows, metadata, warnings, onProgress)
-        : await _generateInline(document, rows, metadata, warnings, onProgress);
-
-    stopwatch.stop();
-    return PdfGenerationReport(
-      bytes: bytes,
-      pageCount: rows.length,
-      elapsed: stopwatch.elapsed,
-      warnings: warnings,
-    );
   }
+
+  /// مجموعة الخطوط المحمّلة — تُستخدم في الاختبارات لبناء [PdfRenderer] يدوياً
+  /// بلا إعادة تحميل الخطوط.
+  @visibleForTesting
+  PdfFontSet get debugFonts => _fonts;
+
+
 
   /// هل يُنفَّذ البناء في isolate خلفي؟ (يُعطَّل على الويب — لا isolates فيه.)
   bool _shouldUseIsolate(int rowCount) =>
@@ -303,11 +477,16 @@ class PdfGeneratorService {
     List<String> warnings,
     void Function(int done, int total)? onProgress,
   ) async {
-    // تأكيد تضمين الخطوط المخصصة/النظامية التي يشير إليها المستند.
     await _ensureCustomFonts(document);
     final Map<String, pw.ImageProvider?> images =
         await _resolveImages(document, warnings);
-    final PdfRenderer renderer = PdfRenderer(fonts: _fonts, compress: compress);
+    final PdfRenderer renderer = PdfRenderer(
+      fonts: _fonts,
+      compress: compress,
+      // دقّة المستند نفسها في المسارين (خيط رئيسي/isolate) فلا تختلف النتيجة
+      // باختلاف حجم الدفعة.
+      dpi: document.dpi.toDouble(),
+    );
     try {
       return await renderer.build(
         document: document,
@@ -441,13 +620,18 @@ class PdfGeneratorService {
     final Set<String> seen = <String>{};
     for (final TemplateElement element in document.elements) {
       if (element is ImageElement) {
-        final String key = '${element.sourceKind.jsonValue}:${element.path}';
+        // المفتاح يضمّ التلوين والضبط اللوني: نفس الصورة بلونين/ضبطين مختلفين
+        // = مراجع (ونسخ معالجة) مستقلة.
+        final String key =
+            element.processedImageKey ?? element.imageKey;
         if (!seen.add(key)) continue;
         yield _ImageRef(
           key: key,
           path: element.path,
           kind: element.sourceKind,
           inlineData: inlineImageBase64(element, document),
+          tintHex: element.hasTint ? element.tintHex : null,
+          adjustments: element.adjustments,
         );
         continue;
       }
@@ -481,6 +665,8 @@ class PdfGeneratorService {
         ref.path,
         ref.kind,
         inlineData: ref.inlineData,
+        tintHex: ref.tintHex,
+        adjustments: ref.adjustments,
       );
       if (image == null) warnings.add(_missingAssetWarning(ref.path));
       images[ref.key] = image;
@@ -498,6 +684,8 @@ class PdfGeneratorService {
         ref.path,
         ref.kind,
         inlineData: ref.inlineData,
+        tintHex: ref.tintHex,
+        adjustments: ref.adjustments,
       );
       // التحذير يُسجَّل مرة واحدة هنا (المصدر الوحيد لغياب الصورة).
       if (bytes == null) {
@@ -521,10 +709,18 @@ class _ImageRef {
     required this.path,
     required this.kind,
     required this.inlineData,
+    this.tintHex,
+    this.adjustments,
   });
 
   final String key;
   final String path;
   final ImageSourceKind kind;
   final String? inlineData;
+
+  /// لون التلوين المطلوب لهذا المرجع (`#RRGGBB`) أو `null`.
+  final String? tintHex;
+
+  /// الضبط اللوني المطلوب لهذا المرجع، أو `null` إن كان بلا ضبط.
+  final ElementAdjustments? adjustments;
 }

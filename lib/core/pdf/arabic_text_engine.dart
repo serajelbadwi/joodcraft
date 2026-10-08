@@ -15,6 +15,68 @@ import '../models/template_element.dart';
 ///
 /// ملاحظة ترتيب الأسطر: التشكيل والترتيب يتمّان **لكل سطر على حدة** بعد تقسيم
 /// الأسطر، لأن قلب كامل الفقرة ثم تقسيمها يُنتج ترتيباً خاطئاً لأسطر التالية.
+/// سطر واحد ناتج عن تقسيم الفقرة.
+///
+/// [visual] هو النصّ المرسوم حرفياً (مشكَّلاً، وقد دُمجت فراغات الضبط فيه)،
+/// أمّا [start]/[end] فيشيران إلى **المدى المنطقي الأصلي** للسطر داخل النص
+/// الأصلي — وبهذا يُوضع التنسيق الجزئي (لون/خط كلمة) في موضعه الصحيح بعد
+/// التشكيل، فالإزاحة قبل التشكيل لا بعده.
+final class WrappedLine {
+  const WrappedLine({
+    required this.visual,
+    required this.logical,
+    required this.start,
+    required this.end,
+  });
+
+  /// النصّ المرسوم (مشكَّلاً + بعد الضبط).
+  final String visual;
+
+  /// النصّ المنطقي للسطر **بعد** ضبط الفراغات/الكشيدة (بلا تشكيل).
+  /// يساوي مقطع `[start, end)` تماماً عندما لم يُضَف شيء أثناء الضبط.
+  final String logical;
+
+  /// بداية المدى الأصلي داخل نصّ التغليف (شاملة).
+  final int start;
+
+  /// نهاية المدى الأصلي داخل نصّ التغليف (غير شاملة).
+  final int end;
+
+  bool get isEmpty => visual.isEmpty;
+}
+
+/// تقسيم يحترم `\n` و`\r\n` مع إزاحة بداية كل فقرة داخل النصّ الأصلي.
+///
+/// يطابق دلالة `_splitParagraphs` حرفاً بحرف، لكنه يُبقي عنوانَي البداية كي
+/// يعرف كل سطر من أين جاء.
+List<(String, int)> _paragraphsWithOffsets(String text) {
+  final List<(String, int)> out = <(String, int)>[];
+  int start = 0;
+  int i = 0;
+  while (i < text.length) {
+    final int code = text.codeUnitAt(i);
+    if (code == 0x0D) {
+      out.add((text.substring(start, i), start));
+      if (i + 1 < text.length && text.codeUnitAt(i + 1) == 0x0A) {
+        start = i + 2;
+      } else {
+        start = i + 1;
+      }
+      i = start;
+      continue;
+    }
+    if (code == 0x0A) {
+      out.add((text.substring(start, i), start));
+      start = i + 1;
+      i = start;
+      continue;
+    }
+    i++;
+  }
+  out.add((text.substring(start), start));
+  return out;
+}
+
 abstract final class ArabicTextEngine {
   const ArabicTextEngine._();
 
@@ -95,18 +157,50 @@ abstract final class ArabicTextEngine {
     bool justify = false,
     JustifyMode justifyMode = JustifyMode.spaces,
   }) {
+    return <String>[
+      for (final WrappedLine line in wrapRanges(
+        text: text,
+        maxWidth: maxWidth,
+        measureWidth: measureWidth,
+        maxLines: maxLines,
+        justify: justify,
+        justifyMode: justifyMode,
+      ))
+        line.visual,
+    ];
+  }
+
+  /// نفس [wrap] لكن مع **المدى المنطقي** لكل سطر — به يُوضع التنسيق الجزئي
+  /// (حدود الكلمات الملوّنة) على الفقرة قبل التشكيل لا بعده.
+  ///
+  /// خوارزمياً هي نفسها [wrap] حرفياً: لا فرق في تقسيم الأسطر ولا في الضبط
+  /// ولا في قصّ `maxLines`، والفرق الوحيد أننا نحتفظ بعنوانَي كل سطر بدل
+  /// إلقائهما.
+  static List<WrappedLine> wrapRanges({
+    required String text,
+    required double maxWidth,
+    required double Function(String visualText) measureWidth,
+    int? maxLines,
+    bool justify = false,
+    JustifyMode justifyMode = JustifyMode.spaces,
+  }) {
     // القياس الداخلي يعمل على أسطر **منطقية**، لكن واجهة [measureWidth] تقيس
     // نصاً بصرياً؛ فنجسر الفجوة بتشكيل السطر قبل قياسه.
     double measureLogical(String logicalText) => measureWidth(toVisual(logicalText));
 
-    final List<String> result = <String>[];
-    final List<String> paragraphs = _splitParagraphs(text);
+    final List<WrappedLine> result = <WrappedLine>[];
+    final List<(String, int)> paragraphs = _paragraphsWithOffsets(text);
     final double spaceWidth = measureWidth(' ');
 
     for (int p = 0; p < paragraphs.length; p++) {
-      final String paragraph = paragraphs[p];
+      final (String paragraph, int paragraphStart) = paragraphs[p];
       if (paragraph.trim().isEmpty) {
-        result.add('');
+        result.add(WrappedLine(
+          visual: '',
+          logical: '',
+          start: paragraphStart,
+          end: paragraphStart,
+        ));
         continue;
       }
 
@@ -116,21 +210,48 @@ abstract final class ArabicTextEngine {
           .where((String w) => w.isNotEmpty)
           .toList();
 
+      // إزاحة كل كلمة داخل النصّ الأصلي: نبحث عن كل كلمة توالياً بدل احتساب
+      // البياض يدوياً، فلا ينزلق المتصفّح لو اختلف تعريف المسافة عن `\s`.
+      final List<int> wordStarts = <int>[];
+      int scan = paragraphStart;
+      final int paragraphEnd = paragraphStart + paragraph.length;
+      for (final String word in words) {
+        final int at = text.indexOf(word, scan < paragraphEnd ? scan : paragraphStart);
+        if (at < 0 || at + word.length > paragraphEnd) {
+          wordStarts.add(scan);
+        } else {
+          wordStarts.add(at);
+        }
+        scan = wordStarts.last + word.length;
+      }
+
       // الأسطر المنطقية + هل يجوز ضبطها؟ (الأسطر المكسورة بالحرف لا تُضبط).
       final List<String> paraLines = <String>[];
       final List<bool> flexible = <bool>[];
+      final List<int> lineStarts = <int>[];
+      final List<int> lineEnds = <int>[];
       List<String> currentLine = <String>[];
+      List<int> currentStarts = <int>[];
+      List<int> currentEnds = <int>[];
       double currentWidth = 0;
 
       void flush() {
         if (currentLine.isEmpty) return;
         paraLines.add(currentLine.join(' '));
         flexible.add(true);
+        lineStarts.add(currentStarts.first);
+        lineEnds.add(currentEnds.last);
         currentLine = <String>[];
+        currentStarts = <int>[];
+        currentEnds = <int>[];
         currentWidth = 0;
       }
 
+      int wordIndex = 0;
       for (final String word in words) {
+        final int start = wordStarts[wordIndex];
+        final int end = start + word.length;
+        wordIndex++;
         final double wordWidth = measureWidth(toVisual(word));
         final double needed = currentLine.isEmpty
             ? wordWidth
@@ -141,22 +262,32 @@ abstract final class ArabicTextEngine {
             // كلمة واحدة أطول من السطر: نقسمها بالحرف.
             final List<String> chunks =
                 _breakWord(word, maxWidth, measureWidth);
+            int sub = start;
             for (int i = 0; i < chunks.length; i++) {
               if (i < chunks.length - 1) {
                 paraLines.add(chunks[i]);
                 flexible.add(false);
+                lineStarts.add(sub);
+                lineEnds.add(sub + chunks[i].length);
+                sub += chunks[i].length;
               } else {
                 currentLine = <String>[chunks[i]];
+                currentStarts = <int>[sub];
+                currentEnds = <int>[sub + chunks[i].length];
                 currentWidth = measureWidth(toVisual(chunks[i]));
               }
             }
           } else {
             currentLine.add(word);
+            currentStarts.add(start);
+            currentEnds.add(end);
             currentWidth = needed;
           }
         } else {
           flush();
           currentLine.add(word);
+          currentStarts.add(start);
+          currentEnds.add(end);
           currentWidth = wordWidth;
         }
       }
@@ -172,17 +303,29 @@ abstract final class ArabicTextEngine {
           mode: justifyMode,
         );
       }
-      for (final String line in paraLines) {
-        result.add(line.isEmpty ? '' : toVisual(line));
+      for (int i = 0; i < paraLines.length; i++) {
+        final String line = paraLines[i];
+        result.add(WrappedLine(
+          visual: line.isEmpty ? '' : toVisual(line),
+          logical: line,
+          start: lineStarts[i],
+          end: lineEnds[i],
+        ));
       }
     }
 
     // تقليم الأسطر الزائدة وإضافة علامة الحذف في المكان المنطقي الصحيح.
     if (maxLines != null && result.length > maxLines) {
-      final List<String> trimmed = result.sublist(0, maxLines);
+      final List<WrappedLine> trimmed = result.sublist(0, maxLines);
       // نهاية النص المنطقي = أقصى **اليسار** في السطر البصري للعربية، لذلك
       // تُسبَق علامة الحذف لا تُلحق.
-      trimmed[trimmed.length - 1] = '$ellipsis${trimmed.last}';
+      final WrappedLine last = trimmed.last;
+      trimmed[trimmed.length - 1] = WrappedLine(
+        visual: '$ellipsis${last.visual}',
+        logical: '$ellipsis${last.logical}',
+        start: last.start,
+        end: last.end,
+      );
       return trimmed;
     }
     return result;
