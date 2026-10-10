@@ -73,8 +73,6 @@ class DashboardScreen extends StatelessWidget {
           ),
           const SizedBox(height: AppTheme.space24),
           _RecentProjectsCard(projects: projects),
-          const SizedBox(height: AppTheme.space24),
-          const _FoundationCard(),
         ],
       ),
     );
@@ -478,75 +476,4 @@ class _ModuleCard extends StatelessWidget {
   }
 }
 
-// ===========================================================================
-//  بطاقة حالة التأسيس (توثيق المرحلة الأولى داخل الواجهة)
-// ===========================================================================
-class _FoundationCard extends StatelessWidget {
-  const _FoundationCard();
 
-  @override
-  Widget build(BuildContext context) {
-    final TextTheme text = Theme.of(context).textTheme;
-    final List<String> done = <String>[
-      context.l10n?.dashRoadmapLocal ??
-          'قاعدة مشاريع محلية (جدول projects) وحفظ محلي 100%',
-      context.l10n?.dashRoadmapModular ??
-          'هيكل Modular Feature-First قابل للتوسّع',
-      context.l10n?.dashRoadmapTheme ??
-          'الثيم البصري للهوية ودعم RTL بخط Cairo',
-      context.l10n?.dashRoadmapOffline ??
-          'العمل أوفلاين بالكامل: لا رفع للمشاريع ولا حاجة إلى شبكة',
-    ];
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppTheme.space24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Icon(
-                  Icons.verified_rounded,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.success,
-                ),
-                const SizedBox(width: AppTheme.space8),
-                Text(context.l10n?.dashPhaseOneDone ?? 'المرحلة الأولى مكتملة', style: text.titleMedium),
-              ],
-            ),
-            const SizedBox(height: AppTheme.space16),
-            for (final String item in done)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppTheme.space8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Icon(
-                        Icons.check_circle_outline_rounded,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.success,
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.space8),
-                    Expanded(child: Text(item, style: text.bodyMedium)),
-                  ],
-                ),
-              ),
-            const SizedBox(height: AppTheme.space8),
-            const Divider(),
-            const SizedBox(height: AppTheme.space12),
-            Text(
-              context.l10n?.dashNextPhase ?? 'التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.',
-              style: text.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.goldDeep,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
