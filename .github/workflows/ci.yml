@@ -1,0 +1,60 @@
+# CI — JoodCraft
+#
+# يشغّل على كل push وpull request نحو main: تحليل ساكن ثم اختبارات الوحدة/الواجهة.
+# لا يحتاج أي secret — كل الخطوات محلية بلا شبكة ولا نشر.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# إلغاء أي تشغيل قديم لنفس الطلب لم يكتمل بعد.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    # bash صريح يعني ‎--noprofile --norc -e -o pipefail‎ — أي سطر يفشل يوقف
+    # المهمة فوراً (fail fast) بدل تجاوز الخطأ بصمت.
+    shell: bash
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ‎1) جلب الشيفرة.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ‎2) تثبيت Flutter 3.38.x مع كاش SDK داخل الأكشن نفسه.
+      - name: Setup Flutter 3.38.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.x'
+          channel: stable
+          cache: true
+
+      # ‎3) كاش حزم pub (يعتمد على بصمة pubspec.lock فيبقى صالحاً ما لم تتغيّر الحزم).
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      # ‎4) جلب الاعتماديات.
+      - name: flutter pub get
+        run: flutter pub get
+
+      # ‎5) التحليل الساكن.
+      - name: flutter analyze
+        run: flutter analyze
+
+      # ‎6) الاختبارات (بلا شبكة — الاختبارات الحيّة موسومة live وتُستبعد تلقائياً).
+      - name: flutter test
+        run: flutter test

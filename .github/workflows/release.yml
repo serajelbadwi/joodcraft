@@ -1,0 +1,53 @@
+# Release — JoodCraft (تشغيل يدوي فقط)
+#
+# يبني نسخة Windows بالإصدار ثم يرفعها كـ artifact باسم يحمل الصيغة القصيرة
+# للـ commit. بلا أي secret: مجلد assets/env/ موجود في المستودع (.gitkeep)،
+# وغياب env.json داخله لا يُسقط البناء — يقرأ التطبيق من القرص ثم يعرض شاشة
+# التهيئة إن لم تُملأ المفاتيح.
+name: Release
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    # bash صريح = ‎--noprofile --norc -e -o pipefail‎ (فشل فوري عند أول خطأ).
+    shell: bash
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      # ‎1) جلب الشيفرة.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ‎2) تثبيت Flutter 3.38.x مع كاش SDK.
+      - name: Setup Flutter 3.38.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.x'
+          channel: stable
+          cache: true
+
+      # ‎3) جلب الاعتماديات.
+      - name: flutter pub get
+        run: flutter pub get
+
+      # ‎4) بناء نسخة الإصدار لويندوز.
+      - name: flutter build windows --release
+        run: flutter build windows --release
+
+      # ‎5) الصيغة القصيرة للـ commit (تُستخدم في اسم الـ artifact).
+      - name: Resolve short SHA
+        id: meta
+        run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      # ‎6) رفع مجلد التوزيع كاملاً (joodcraft.exe + data/ + مكتبات DLL).
+      - name: Upload JoodCraft-windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JoodCraft-windows-${{ steps.meta.outputs.short_sha }}
+          path: build/windows/x64/runner/Release/
+          if-no-files-found: error
