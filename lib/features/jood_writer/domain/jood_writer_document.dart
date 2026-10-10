@@ -177,6 +177,44 @@ enum WriterOrientation {
   }
 }
 
+/// تقسيم صفحة المحرّر إلى نصفين — «A4 → 2 × A5».
+///
+/// **الفكرة:** ورقة المحرّر المنطقية تتقلّص إلى نصف A4 (أي A5) فيتدفّق النصّ
+/// من الصفحة الأولى إلى الثانية تلقائياً عبر [FlowPaginator]. وعند الطباعة
+/// تُجمَع صفحتان متتاليتان على ورقة A4 واحدة (انظر [printImposition]).
+///
+/// | الوضع | صفحة المحرّر | ورقة الطباعة | الأثر |
+/// |---|---|---|---|
+/// | [single] | كما هي | A4 كما هو | عادي |
+/// | [twoUpPortrait] | A5 (عرض A4 × نصف ارتفاعه) | A4 رأسية، نصفان فوق بعض | كتيّب يُطوى أفقياً |
+/// | [twoUpLandscape] | A5 (نصف عرض A4 × ارتفاعه) | A4 عرضية، نصفان جنب بعض | كتيّب يُطوى عمودياً |
+enum WriterPageLayout {
+  /// صفحة واحدة كاملة بلا تقسيم.
+  single('عادي (صفحة واحدة)', 'single'),
+
+  /// A4 ← 2 × A5 طولي (كتيّب).
+  twoUpPortrait('A4 → 2 × A5 طولي (كتيّب)', 'twoUpPortrait'),
+
+  /// A4 ← 2 × A5 عرضي.
+  twoUpLandscape('A4 → 2 × A5 عرضي', 'twoUpLandscape');
+
+  const WriterPageLayout(this.labelAr, this.jsonValue);
+  final String labelAr;
+
+  /// القيمة المخزّنة في JSON (تظل ثابتة عبر الإصدارات).
+  final String jsonValue;
+
+  /// هل يُنتج هذا الوضع نصفَي صفحة بدل صفحة واحدة؟
+  bool get splitsPage => this != WriterPageLayout.single;
+
+  static WriterPageLayout fromJson(String? value) {
+    for (final WriterPageLayout layout in values) {
+      if (layout.jsonValue == value) return layout;
+    }
+    return WriterPageLayout.single;
+  }
+}
+
 /// مقاس ورقة مستند «جود كاتب» (مليمتر) — A4 رأسي افتراضاً.
 class JoodWriterPageSize {
   const JoodWriterPageSize({
@@ -210,6 +248,36 @@ class JoodWriterPageSize {
     label: 'Legal',
   );
 
+  /// نصف A4 — الصفحة الواحدة عند تفعيل «A4 -> 2 x A5».
+  ///
+  /// النسبة من الورقة نفسها لا ثابت بصري: يضمن ان النصفين يعيدانان ابعاد
+  /// الورقة بالضبط عند التجميع، فلا يبقى فراغ ولا يفيض المحتوى.
+  ///
+  /// كلا الوضعين يطبعان على ورقة **A4 رأسية** (210x297):
+  /// * [WriterPageLayout.twoUpPortrait] — طيّ **افقي**: النصفان فوق بعض،
+  ///   فالصفحة 210x148.5 (A5 افقي) — كتيّب يطوى ا水平ياً.
+  /// * [WriterPageLayout.twoUpLandscape] — طيّ **عمودي**: النصفان جنب بعض،
+  ///   فالصفحة 105x297 (A5 رأسي) — كتيّب يطوى عمودياً.
+  static JoodWriterPageSize halfOf(
+    JoodWriterPageSize page,
+    WriterPageLayout layout,
+  ) {
+    if (!layout.splitsPage) return page;
+    // الطولي: الشقّ افقي ⇒ الارتفاع نصفه.
+    if (layout == WriterPageLayout.twoUpPortrait) {
+      return JoodWriterPageSize(
+        widthMm: page.widthMm,
+        heightMm: page.heightMm / 2,
+        label: '${page.label}1/2',
+      );
+    }
+    // العرضي: الشقّ عمودي ⇒ العرض نصفه.
+    return JoodWriterPageSize(
+      widthMm: page.widthMm / 2,
+      heightMm: page.heightMm,
+      label: '${page.label}1/2',
+    );
+  }
   /// كل الأحجام المدعومة.
   static const List<JoodWriterPageSize> all = <JoodWriterPageSize>[
     a4,
@@ -287,6 +355,7 @@ class JoodWriterDocument {
     this.pageNumbering = const PageNumberingConfig(),
     this.shapes = const <WriterShape>[],
     this.images = const <WriterImage>[],
+    this.pageLayout = WriterPageLayout.single,
   });
 
   final String title;
@@ -298,8 +367,19 @@ class JoodWriterDocument {
   final List<WriterShape> shapes;
   final List<WriterImage> images;
 
+  /// تقسيم الصفحة — [single] يعني صفحة كاملة بلا تقسيم.
+  final WriterPageLayout pageLayout;
+
   /// الحجم الفعلي بعد تطبيق الاتجاه.
   JoodWriterPageSize get effectivePageSize => pageSize.oriented(orientation);
+
+  /// **مقاس صفحة المحرّر** بعد الاتجاه وبعد التقسيم.
+  ///
+  /// هنا تكمن الميزة: عند تفعيل «A4 → 2 × A5» يصبح مقاس الصفحة الواحدة نصف
+  /// A4، فيتدفّق [FlowPaginator] النصّ من الأولى إلى الثانية تلقائياً —
+  /// بلا أي تغيير في خوارزمية الترقيم نفسها، فهي تقبل أيّ ارتفاع محتوى.
+  JoodWriterPageSize get editorPageSize =>
+      JoodWriterPageSize.halfOf(effectivePageSize, pageLayout);
 
   /// مستند فارغ بابتدائي فقرة واحدة — لا يُفتح المحرّر بلا حقل كتابة.
   /// الفقرة تبدأ بمسافة سطر أول افتراضية لتنظيم بداية الأسطر.
@@ -356,6 +436,7 @@ class JoodWriterDocument {
     PageNumberingConfig? pageNumbering,
     List<WriterShape>? shapes,
     List<WriterImage>? images,
+    WriterPageLayout? pageLayout,
   }) {
     return JoodWriterDocument(
       title: title ?? this.title,
@@ -366,6 +447,7 @@ class JoodWriterDocument {
       pageNumbering: pageNumbering ?? this.pageNumbering,
       shapes: shapes ?? this.shapes,
       images: images ?? this.images,
+      pageLayout: pageLayout ?? this.pageLayout,
     );
   }
 
@@ -373,6 +455,7 @@ class JoodWriterDocument {
     'title': title,
     'pageSize': pageSize.label,
     'orientation': orientation.jsonValue,
+    'pageLayout': pageLayout.jsonValue,
     'pageNumbering': pageNumbering.toJson(),
     'blocks': <dynamic>[for (final JoodWriterBlock b in blocks) b.toJson()],
     if (shapes.isNotEmpty)
@@ -389,6 +472,7 @@ class JoodWriterDocument {
       title: json['title'] as String? ?? 'مستند',
       pageSize: JoodWriterPageSize.fromLabel(json['pageSize'] as String?),
       orientation: WriterOrientation.fromJson(json['orientation'] as String?),
+      pageLayout: WriterPageLayout.fromJson(json['pageLayout'] as String?),
       pageNumbering: json['pageNumbering'] != null
           ? PageNumberingConfig.fromJson(
               Map<String, dynamic>.from(json['pageNumbering'] as Map),

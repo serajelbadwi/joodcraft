@@ -772,6 +772,24 @@ class WriterDocumentController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// يفعل تقسيم الصفحة (A4 → 2 × A5).
+  ///
+  /// #[WriterPageLayout.splitsPage] يصغّر صفحة المحرّر إلى نصف الورقة، فيتدفّق
+  /// [FlowPaginator] النصّ من الصفحة الأولى إلى الثانية تلقائياً — بلا أي
+  /// تغيير في خوارزمية الترقيم نفسها.
+  ///
+  /// ويرافق التقسيم عرض صفحتين متقابلتين (طي الكتاب) لأنه يوافق شكل الكتيّب
+  /// المطبوع؛ والعودة إلى «عادي» تُرجع الوضع المفرد.
+  void setPageLayout(WriterPageLayout layout) {
+    if (_doc.pageLayout == layout) return;
+    _doc = _doc.copyWith(pageLayout: layout);
+    _viewMode = layout.splitsPage
+        ? WriterViewMode.spread
+        : WriterViewMode.single;
+    _markDirty();
+    notifyListeners();
+  }
+
   // -------------------------------- ترقيم الصفحات --------------------------------
 
   /// تفعيل/تعطيل الترقيم الآلي في تذييل الصفحات.
