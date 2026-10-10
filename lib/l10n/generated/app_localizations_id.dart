@@ -1087,29 +1087,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get dashOpenModule => 'Buka modul';
 
   @override
-  String get dashRoadmapSupabase =>
-      'Menyiapkan basis data Supabase (tabel + RLS + trigger)';
-
-  @override
-  String get dashRoadmapModular =>
-      'Struktur Modular Feature-First yang dapat diskalakan';
-
-  @override
-  String get dashRoadmapTheme =>
-      'Tema visual merek dengan dukungan RTL dalam font Cairo';
-
-  @override
-  String get dashRoadmapAuth =>
-      'Autentikasi: masuk, pembuatan akun, dan atur ulang kata sandi';
-
-  @override
-  String get dashPhaseOneDone => 'Fase pertama selesai';
-
-  @override
-  String get dashNextPhase =>
-      'Berikutnya: mesin PDF offline dan font Arab, lalu editor templat visual.';
-
-  @override
   String get destDashboard => 'Dasbor';
 
   @override
@@ -2646,14 +2623,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get dashRecentOpen => 'Buka proyek';
 
   @override
-  String get dashRoadmapLocal =>
-      'Basis data proyek lokal (tabel projects) dengan penyimpanan 100% offline';
-
-  @override
-  String get dashRoadmapOffline =>
-      'Sepenuhnya offline: tanpa unggahan proyek dan tanpa jaringan';
-
-  @override
   String get editorTransformPosition => 'Transformasi & Posisi';
 
   @override
@@ -2975,4 +2944,39 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       'Manajemen admin berfungsi saat aplikasi berjalan dengan akun lokal (LocalAuthRepository), sehingga akun dibaca dari perangkat ini.';
+
+  @override
+  String get pdfExportTypeTitle => 'Jenis ekspor';
+
+  @override
+  String get pdfExportTypeHint => 'Pilih format berkas sebelum mengekspor.';
+
+  @override
+  String get pdfExportTypeImages => 'Gambar';
+
+  @override
+  String get pdfExportTypeImagesDesc => 'Cocok 100% — ukuran lebih besar';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => 'Teks tidak dapat disalin';
+
+  @override
+  String get pdfExportTypeVector => 'Vektor';
+
+  @override
+  String get pdfExportTypeVectorDesc =>
+      'Teks dapat disalin — ukuran lebih kecil';
+
+  @override
+  String get pdfExportTypeVectorCopyable => 'Teks dapat disalin dan dicari';
+
+  @override
+  String get pdfExportTypeVectorBestFor => 'Ideal untuk pencetakan profesional';
+
+  @override
+  String get pdfExportTypeComingSoon => 'Segera hadir';
+
+  @override
+  String get pdfExportTypeComingSoonMessage =>
+      'Ekspor vektor masih dikembangkan — segera hadir.';
 }

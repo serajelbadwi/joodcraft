@@ -2154,42 +2154,6 @@ abstract class AppLocalizations {
   /// **'فتح الوحدة'**
   String get dashOpenModule;
 
-  /// No description provided for @dashRoadmapSupabase.
-  ///
-  /// In ar, this message translates to:
-  /// **'تأسيس قاعدة بيانات Supabase (جداول + RLS + Triggers)'**
-  String get dashRoadmapSupabase;
-
-  /// No description provided for @dashRoadmapModular.
-  ///
-  /// In ar, this message translates to:
-  /// **'هيكل Modular Feature-First قابل للتوسّع'**
-  String get dashRoadmapModular;
-
-  /// No description provided for @dashRoadmapTheme.
-  ///
-  /// In ar, this message translates to:
-  /// **'الثيم البصري للهوية ودعم RTL بخط Cairo'**
-  String get dashRoadmapTheme;
-
-  /// No description provided for @dashRoadmapAuth.
-  ///
-  /// In ar, this message translates to:
-  /// **'المصادقة: تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور'**
-  String get dashRoadmapAuth;
-
-  /// No description provided for @dashPhaseOneDone.
-  ///
-  /// In ar, this message translates to:
-  /// **'المرحلة الأولى مكتملة'**
-  String get dashPhaseOneDone;
-
-  /// No description provided for @dashNextPhase.
-  ///
-  /// In ar, this message translates to:
-  /// **'التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.'**
-  String get dashNextPhase;
-
   /// No description provided for @destDashboard.
   ///
   /// In ar, this message translates to:
@@ -4908,18 +4872,6 @@ abstract class AppLocalizations {
   /// **'فتح المشروع'**
   String get dashRecentOpen;
 
-  /// No description provided for @dashRoadmapLocal.
-  ///
-  /// In ar, this message translates to:
-  /// **'قاعدة مشاريع محلية (جدول projects) وحفظ محلي 100% بلا أي خادم'**
-  String get dashRoadmapLocal;
-
-  /// No description provided for @dashRoadmapOffline.
-  ///
-  /// In ar, this message translates to:
-  /// **'العمل أوفلاين بالكامل: لا رفع للمشاريع ولا حاجة إلى شبكة'**
-  String get dashRoadmapOffline;
-
   /// No description provided for @editorTransformPosition.
   ///
   /// In ar, this message translates to:
@@ -5519,6 +5471,72 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إدارة المديرين تعمل عندما يُشغَّل التطبيق بحساب محلي (LocalAuthRepository)، فتُقرأ الحسابات من هذا الجهاز.'**
   String get admUnavailableBody;
+
+  /// No description provided for @pdfExportTypeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع التصدير'**
+  String get pdfExportTypeTitle;
+
+  /// No description provided for @pdfExportTypeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر صيغة الملف قبل التصدير.'**
+  String get pdfExportTypeHint;
+
+  /// No description provided for @pdfExportTypeImages.
+  ///
+  /// In ar, this message translates to:
+  /// **'صور'**
+  String get pdfExportTypeImages;
+
+  /// No description provided for @pdfExportTypeImagesDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطابقة 100% — حجم أكبر'**
+  String get pdfExportTypeImagesDesc;
+
+  /// No description provided for @pdfExportTypeImagesNotCopyable.
+  ///
+  /// In ar, this message translates to:
+  /// **'النص غير قابل للنسخ'**
+  String get pdfExportTypeImagesNotCopyable;
+
+  /// No description provided for @pdfExportTypeVector.
+  ///
+  /// In ar, this message translates to:
+  /// **'فيكتور'**
+  String get pdfExportTypeVector;
+
+  /// No description provided for @pdfExportTypeVectorDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص قابل للنسخ — حجم أصغر'**
+  String get pdfExportTypeVectorDesc;
+
+  /// No description provided for @pdfExportTypeVectorCopyable.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص قابل للنسخ والبحث'**
+  String get pdfExportTypeVectorCopyable;
+
+  /// No description provided for @pdfExportTypeVectorBestFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثالي للطباعة الاحترافية'**
+  String get pdfExportTypeVectorBestFor;
+
+  /// No description provided for @pdfExportTypeComingSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'قريباً'**
+  String get pdfExportTypeComingSoon;
+
+  /// No description provided for @pdfExportTypeComingSoonMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.'**
+  String get pdfExportTypeComingSoonMessage;
 }
 
 class _AppLocalizationsDelegate

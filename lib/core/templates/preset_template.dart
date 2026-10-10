@@ -20,7 +20,13 @@ enum TemplateCollection {
   employmentContract('عقود عمل', TemplateCategory.contract,
       Icons.badge_rounded),
   serviceContract('عقود خدمات', TemplateCategory.contract,
-      Icons.handshake_rounded);
+      Icons.handshake_rounded),
+  ramadan('دعوات رمضان', TemplateCategory.certificate,
+      Icons.nightlight_rounded),
+  eid('دعوات العيد', TemplateCategory.certificate,
+      Icons.celebration_rounded),
+  wedding('دعوات الزفاف', TemplateCategory.certificate,
+      Icons.favorite_rounded);
 
   const TemplateCollection(this.labelAr, this.category, this.icon);
 

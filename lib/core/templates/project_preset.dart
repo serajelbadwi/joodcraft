@@ -25,6 +25,7 @@ enum ProjectPresetGroup {
   cardsAndBadges('cards', Icons.badge_rounded),
   seatNumbersAndTags('seat', Icons.event_seat_rounded),
   greetingCards('greeting', Icons.celebration_rounded),
+  invitations('invitations', Icons.redeem_rounded),
   publications('publications', Icons.menu_book_rounded);
 
   const ProjectPresetGroup(this.jsonValue, this.icon);
@@ -387,6 +388,115 @@ abstract final class ProjectPresetCatalog {
     ),
   ];
 
+  /// الدعوات والمناسبات الشخصية — مقاسات طباعة (A6/A5 مطوي) ومقاسات سوشيال
+  /// ميديا (Instagram / WhatsApp / Facebook) لقوالب الدعوات السبعة.
+  static const List<ProjectPreset> _invitations = <ProjectPreset>[
+    ProjectPreset(
+      id: 'invite.a6.portrait',
+      titleAr: 'A6 رأسي',
+      descriptionAr: 'دعوة مطبوعة على مقاس A6 بالطول (105×148 ملم).',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 105,
+      pageHeight: 148,
+      unit: MeasurementUnit.mm,
+      tags: <String>['دعوة', 'a6', 'طباعة', 'invitation'],
+    ),
+    ProjectPreset(
+      id: 'invite.a6.landscape',
+      titleAr: 'A6 أفقي',
+      descriptionAr: 'دعوة مطبوعة على مقاس A6 بالعرض (148×105 ملم).',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 148,
+      pageHeight: 105,
+      unit: MeasurementUnit.mm,
+      tags: <String>['دعوة', 'a6', 'طباعة', 'invitation'],
+    ),
+    ProjectPreset(
+      id: 'invite.square148',
+      titleAr: 'مربّع 148',
+      descriptionAr: 'دعوة مطبوعة مربّعة 148×148 ملم — مناسبة للإطار والطبق.',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 148,
+      pageHeight: 148,
+      unit: MeasurementUnit.mm,
+      tags: <String>['دعوة', 'مربع', 'طباعة', 'invitation'],
+    ),
+    ProjectPreset(
+      id: 'invite.a5.folded',
+      titleAr: 'A5 مطوي',
+      descriptionAr: 'دعوة مطبوعة على وجه A5 مطوي (105×148 ملم بعد الطي).',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 105,
+      pageHeight: 148,
+      unit: MeasurementUnit.mm,
+      tags: <String>['دعوة', 'a5', 'مطوي', 'طباعة', 'invitation'],
+    ),
+    ProjectPreset(
+      id: 'invite.instagram.square',
+      titleAr: 'Instagram مربّع',
+      descriptionAr: 'منشور إنستغرام مربّع 1080×1080 بكسل بنسبة 1:1.',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 1080,
+      pageHeight: 1080,
+      unit: MeasurementUnit.px,
+      isDigital: true,
+      tags: <String>['دعوة', 'انستغرام', 'مربع', '1080x1080', 'digital'],
+    ),
+    ProjectPreset(
+      id: 'invite.instagram.portrait',
+      titleAr: 'Instagram طولي',
+      descriptionAr: 'منشور إنستغرام طولي 1080×1350 بكسل بنسبة 4:5.',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 1080,
+      pageHeight: 1350,
+      unit: MeasurementUnit.px,
+      isDigital: true,
+      tags: <String>['دعوة', 'انستغرام', 'طولي', '1080x1350', 'digital'],
+    ),
+    ProjectPreset(
+      id: 'invite.instagram.story',
+      titleAr: 'Instagram Story',
+      descriptionAr: 'قصة إنستغرام عمودية 1080×1920 بكسل بنسبة 9:16.',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 1080,
+      pageHeight: 1920,
+      unit: MeasurementUnit.px,
+      isDigital: true,
+      tags: <String>['دعوة', 'انستغرام', 'قصة', '1080x1920', 'digital'],
+    ),
+    ProjectPreset(
+      id: 'invite.whatsapp.status',
+      titleAr: 'WhatsApp Status',
+      descriptionAr: 'حالة واتساب عمودية 1080×1920 بكسل بنسبة 9:16.',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 1080,
+      pageHeight: 1920,
+      unit: MeasurementUnit.px,
+      isDigital: true,
+      tags: <String>['دعوة', 'واتساب', 'حالة', '1080x1920', 'digital'],
+    ),
+    ProjectPreset(
+      id: 'invite.facebook.post',
+      titleAr: 'Facebook Post',
+      descriptionAr: 'منشور فيسبوك عريض 1200×630 بكسل — يظهر كاملاً في التايم.',
+      kind: ProjectKind.singleSheet,
+      group: ProjectPresetGroup.invitations,
+      pageWidth: 1200,
+      pageHeight: 630,
+      unit: MeasurementUnit.px,
+      isDigital: true,
+      tags: <String>['دعوة', 'فيسبوك', 'منشور', '1200x630', 'digital'],
+    ),
+  ];
+
   /// الكتب والمنشورات متعددة الصفحات — هندسة صفحة الكتاب قبل الترقيم والطيّ.
   static const List<ProjectPreset> _publications = <ProjectPreset>[
     ProjectPreset(
@@ -468,6 +578,7 @@ abstract final class ProjectPresetCatalog {
     ..._cards,
     ..._seatNumbers,
     ..._greetingCards,
+    ..._invitations,
     ..._publications,
   ];
 

@@ -631,6 +631,8 @@ class NewDocumentBody extends StatelessWidget {
           context.l10n?.newDocFilterGreeting ?? 'المعايدات',
         ProjectPresetGroup.publications =>
           context.l10n?.newDocFilterPublications ?? 'المنشورات',
+        ProjectPresetGroup.invitations =>
+          context.l10n?.invCategoryTitle ?? 'دعوات ومناسبات',
       };
 
   Widget _emptyState(BuildContext context, NewDocumentController controller) {

@@ -1086,29 +1086,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashOpenModule => 'Modülü aç';
 
   @override
-  String get dashRoadmapSupabase =>
-      'Supabase veritabanının kurulması (tablolar + RLS + trigger’lar)';
-
-  @override
-  String get dashRoadmapModular =>
-      'Ölçeklenebilir Modüler Feature-First yapısı';
-
-  @override
-  String get dashRoadmapTheme =>
-      'Cairo yazı tipiyle RTL destekli marka görsel teması';
-
-  @override
-  String get dashRoadmapAuth =>
-      'Kimlik doğrulama: giriş, hesap oluşturma ve parola sıfırlama';
-
-  @override
-  String get dashPhaseOneDone => 'Birinci aşama tamamlandı';
-
-  @override
-  String get dashNextPhase =>
-      'Sonraki: çevrimdışı PDF motoru ve Arapça yazı tipleri, ardından görsel şablon düzenleyici.';
-
-  @override
   String get destDashboard => 'Kontrol paneli';
 
   @override
@@ -2642,14 +2619,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dashRecentOpen => 'Projeyi aç';
 
   @override
-  String get dashRoadmapLocal =>
-      'Yerel proje veritabanı (projects tablosu) ile %100 çevrimdışı kayıt';
-
-  @override
-  String get dashRoadmapOffline =>
-      'Tamamen çevrimdışı çalışma: proje yüklemesi ve ağ gerekmez';
-
-  @override
   String get editorTransformPosition => 'Dönüşüm ve Konum';
 
   @override
@@ -2971,4 +2940,39 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       'Yönetici yönetimi, uygulama yerel bir hesapla (LocalAuthRepository) çalıştığında çalışır; böylece hesaplar bu cihazdan okunur.';
+
+  @override
+  String get pdfExportTypeTitle => 'Dışa aktarma türü';
+
+  @override
+  String get pdfExportTypeHint => 'Dışa aktarmadan önce dosya biçimini seçin.';
+
+  @override
+  String get pdfExportTypeImages => 'Görseller';
+
+  @override
+  String get pdfExportTypeImagesDesc => '%100 eşleşme — daha büyük dosya';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => 'Metin kopyalanamaz';
+
+  @override
+  String get pdfExportTypeVector => 'Vektör';
+
+  @override
+  String get pdfExportTypeVectorDesc =>
+      'Kopyalanabilir metin — daha küçük dosya';
+
+  @override
+  String get pdfExportTypeVectorCopyable => 'Metin kopyalanıp aranabilir';
+
+  @override
+  String get pdfExportTypeVectorBestFor => 'Profesyonel baskı için ideal';
+
+  @override
+  String get pdfExportTypeComingSoon => 'Yakında';
+
+  @override
+  String get pdfExportTypeComingSoonMessage =>
+      'Vektör dışa aktarma geliştirilme aşamasında — yakında.';
 }

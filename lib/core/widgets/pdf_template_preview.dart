@@ -17,6 +17,20 @@ import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../utils/ui_feedback.dart';
 
+/// نوع تصدير ملف PDF — يحدّد صيغة الملف الناتج.
+///
+/// * [images]: صور نقطية (Raster) مطابقة للمحرر 100% بحجم أكبر، والنص غير
+///   قابل للنسخ — المسار المتاح حالياً والافتراضي.
+/// * [vector]: فيكتور (Vector) نصه قابل للنسخ والبحث وحجمه أصغر — **قيد
+///   التطوير**، فيظهر الخيار معطّلاً مع شارة «قريباً» ولا يُنفّذ تصديراً.
+enum PdfExportType {
+  /// صور نقطية — متاح الآن (وهو الخيار الافتراضي).
+  images,
+
+  /// فيكتور — قيد التطوير (يظهر معطّلاً بشارة «قريباً»).
+  vector,
+}
+
 /// معاينة حيّة لقالب PDF + طباعة وتصدير — ودجت محايد عن الميزات.
 ///
 /// وُضع في `core` لأن كلاً من محرّك الشهادات ومحرّك العقود (وغيرهما لاحقاً)
@@ -31,9 +45,9 @@ class PdfTemplatePreview extends StatefulWidget {
     this.dataPanelTitle,
     this.emptyStateHint,
   }) : assert(
-          templateAssetPath != null || document != null,
-          'يجب تمرير مسار القالب أو مستند جاهز.',
-        );
+         templateAssetPath != null || document != null,
+         'يجب تمرير مسار القالب أو مستند جاهز.',
+       );
 
   /// مسار ملف القالب (JSON) داخل أصول التطبيق.
   ///
@@ -121,7 +135,8 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
   Future<void> _bootstrap() async {
     try {
       final TemplateDocument? provided = widget.document;
-      final TemplateDocument document = provided ??
+      final TemplateDocument document =
+          provided ??
           TemplateDocument.fromJsonString(
             await rootBundle.loadString(widget.templateAssetPath!),
           );
@@ -143,7 +158,8 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     } on Object {
       if (!mounted) return;
       setState(() {
-        _error = context.l10n?.ptpPrepError ??
+        _error =
+            context.l10n?.ptpPrepError ??
             'تعذّر تحضير المعاينة. تحقّق من ملف القالب.';
         _busy = false;
       });
@@ -308,7 +324,27 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     }
   }
 
+  /// يفتح حوار «نوع التصدير» ثم يسلّم الخيار المختار لمساره.
+  ///
+  /// «صور» يسلك دالة التصدير الحالية كما هي بلا أي تغيير؛ أما «فيكتور»
+  /// فلم يُبنَ بعد — لا تصدير خلفه (ويظهر الخيار من البداية معطّلاً).
   Future<void> _export() async {
+    final PdfExportType? type = await showDialog<PdfExportType>(
+      context: context,
+      builder: (BuildContext dialogContext) => const PdfExportTypeDialog(),
+    );
+    if (!mounted || type == null) return;
+    switch (type) {
+      case PdfExportType.images:
+        await _exportImages();
+      case PdfExportType.vector:
+        // قيد التطوير — لم يُبنَ مسار التصدير بعد.
+        break;
+    }
+  }
+
+  /// حفظ الملف على القرص بمسار **الصور النقطية** (المسار الحالي بلا تغيير).
+  Future<void> _exportImages() async {
     final Uint8List? bytes = _bytes;
     if (bytes == null) return;
     try {
@@ -383,18 +419,21 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
           if (document != null) ...<Widget>[
             _Chip(
               icon: Icons.description_outlined,
-              label: '${document.paperSize.labelAr} — '
+              label:
+                  '${document.paperSize.labelAr} — '
                   '${document.orientation.labelAr}',
             ),
             _Chip(
               icon: Icons.layers_outlined,
-              label: context.l10n?.evElementCount(document.drawableElementCount) ??
+              label:
+                  context.l10n?.evElementCount(document.drawableElementCount) ??
                   '${document.drawableElementCount} عنصراً',
             ),
             if (report != null)
               _Chip(
                 icon: Icons.memory_rounded,
-                label: context.l10n?.ptpElapsedSize(
+                label:
+                    context.l10n?.ptpElapsedSize(
                       report.elapsed.inMilliseconds,
                       (report.byteSize / 1024).toStringAsFixed(1),
                     ) ??
@@ -433,9 +472,7 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
                 onPressed: _bytes == null || _busy ? null : _export,
                 icon: const Icon(Icons.download_rounded, size: 18),
                 label: Text(context.l10n?.commonExportPdf ?? 'تصدير PDF'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(150, 42),
-                ),
+                style: FilledButton.styleFrom(minimumSize: const Size(150, 42)),
               ),
             ],
           ),
@@ -456,26 +493,30 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
         horizontal: AppTheme.space20,
         vertical: AppTheme.space12,
       ),
-      color: Theme.of(context)
-          .colorScheme
-          .primaryContainer
-          .withValues(alpha: 0.5),
+      color: Theme.of(
+        context,
+      ).colorScheme.primaryContainer.withValues(alpha: 0.5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(Icons.edit_note_rounded,
-                  size: 18, color: Theme.of(context).colorScheme.primary),
+              Icon(
+                Icons.edit_note_rounded,
+                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               const SizedBox(width: AppTheme.space8),
               Text(
                 widget.dataPanelTitle ??
-                    context.l10n?.commonDataPanelTitle ?? 'بيانات تجريبية',
+                    context.l10n?.commonDataPanelTitle ??
+                    'بيانات تجريبية',
                 style: text.titleSmall,
               ),
               const SizedBox(width: AppTheme.space8),
               Text(
-                context.l10n?.ptpGeneratingNote ?? '— تُحدَّث المعاينة تلقائياً',
+                context.l10n?.ptpGeneratingNote ??
+                    '— تُحدَّث المعاينة تلقائياً',
                 style: text.bodySmall?.copyWith(fontSize: 11.5),
               ),
             ],
@@ -526,16 +567,18 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Icon(Icons.warning_amber_rounded,
-              size: 16, color: AppColors.warning),
+          const Icon(
+            Icons.warning_amber_rounded,
+            size: 16,
+            color: AppColors.warning,
+          ),
           const SizedBox(width: AppTheme.space8),
           Expanded(
             child: Text(
               warnings.join(' • '),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: AppColors.warning),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppColors.warning),
             ),
           ),
         ],
@@ -572,11 +615,13 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
         icon: Icons.picture_as_pdf_outlined,
         color: Theme.of(context).colorScheme.primary,
         title: context.l10n?.ptpPreparingTitle ?? 'جارٍ تحضير المحرك…',
-        message: widget.emptyStateHint ??
+        message:
+            widget.emptyStateHint ??
             context.l10n?.ptpPreparingMessage ??
             'يتم تحميل الخطوط المحزومة وتوليد أول نسخة من الملف.',
       );
-    }    return PdfPreview(
+    }
+    return PdfPreview(
       // مفتاح يتغيّر مع كل توليد ليُعيد الودجت بناء المعاينة بالنسخة الجديدة.
       key: ValueKey<int>(_revision),
       build: (PdfPageFormat format) async => bytes,
@@ -656,12 +701,307 @@ class _Chip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall
-                ?.copyWith(fontSize: 11.5),
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(fontSize: 11.5),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ===========================================================================
+//  حوار «نوع التصدير»: صور (افتراضي) أو فيكتور (قيد التطوير)
+// ===========================================================================
+
+/// حوار اختيار نوع ملف PDF قبل التصدير: **صور** أو **فيكتور**.
+///
+/// «صور» هو الخيار الافتراضي والوحيد المفعّل؛ «فيكتور» يظهر رمادياً مع شارة
+/// «قريباً»، والضغط عليه يعرض رسالة «قريباً» بلا أي تصدير. يُعيد
+/// [PdfExportType] المختار عند التأكيد، أو `null` عند الإلغاء.
+class PdfExportTypeDialog extends StatefulWidget {
+  const PdfExportTypeDialog({
+    super.key,
+    this.initialType = PdfExportType.images,
+  });
+
+  /// النوع المختار ابتداءً — «صور» افتراضياً.
+  final PdfExportType initialType;
+
+  @override
+  State<PdfExportTypeDialog> createState() => _PdfExportTypeDialogState();
+}
+
+class _PdfExportTypeDialogState extends State<PdfExportTypeDialog> {
+  static const String _imagesValue = 'images';
+  static const String _vectorValue = 'vector';
+
+  /// القيمة الفعلية المختارة — «صور» دائماً في هذه المرحلة.
+  late String _value = widget.initialType == PdfExportType.vector
+      ? _vectorValue
+      : _imagesValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme text = Theme.of(context).textTheme;
+    final l10n = context.l10n;
+    return AlertDialog(
+      key: const ValueKey<String>('pdf-export-type-dialog'),
+      title: Text(l10n?.pdfExportTypeTitle ?? 'نوع التصدير'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            l10n?.pdfExportTypeHint ?? 'اختر صيغة الملف قبل التصدير.',
+            style: text.bodySmall,
+          ),
+          const SizedBox(height: AppTheme.space12),
+          _ExportTypeOption(
+            key: const ValueKey<String>('pdf-export-option-images'),
+            icon: Icons.image_outlined,
+            title: l10n?.pdfExportTypeImages ?? 'صور',
+            description:
+                l10n?.pdfExportTypeImagesDesc ?? 'مطابقة 100% — حجم أكبر',
+            notes: <String>[
+              l10n?.pdfExportTypeImagesNotCopyable ?? 'النص غير قابل للنسخ',
+            ],
+            selected: _value == _imagesValue,
+            onTap: () => setState(() => _value = _imagesValue),
+          ),
+          const SizedBox(height: AppTheme.space8),
+          _ExportTypeOption(
+            key: const ValueKey<String>('pdf-export-option-vector'),
+            icon: Icons.auto_awesome_outlined,
+            title: l10n?.pdfExportTypeVector ?? 'فيكتور',
+            description:
+                l10n?.pdfExportTypeVectorDesc ?? 'نص قابل للنسخ — حجم أصغر',
+            notes: <String>[
+              l10n?.pdfExportTypeVectorCopyable ?? 'نص قابل للنسخ والبحث',
+              l10n?.pdfExportTypeVectorBestFor ?? 'مثالي للطباعة الاحترافية',
+            ],
+            badge: l10n?.pdfExportTypeComingSoon ?? 'قريباً',
+            enabled: false,
+            comingSoonMessage:
+                l10n?.pdfExportTypeComingSoonMessage ??
+                'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.',
+            selected: false,
+            onTap: () => context.showWarning(
+              l10n?.pdfExportTypeComingSoonMessage ??
+                  'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.',
+            ),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          key: const ValueKey<String>('pdf-export-cancel'),
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n?.editorCancel ?? 'إلغاء'),
+        ),
+        FilledButton(
+          key: const ValueKey<String>('pdf-export-confirm'),
+          // «صور» هو المسار الوحيد الموصول في هذه المرحلة.
+          onPressed: () => Navigator.of(context).pop(
+            _value == _vectorValue
+                ? PdfExportType.vector
+                : PdfExportType.images,
+          ),
+          child: Text(l10n?.commonExportPdf ?? 'تصدير PDF'),
+        ),
+      ],
+    );
+  }
+}
+
+/// بطاقة خيار واحد في حوار «نوع التصدير».
+///
+/// [enabled] = false يعني معطّلاً: يظهر رمادياً وبشارة [badge]، ولا يُغيَّر
+/// الاختيار به أبداً؛ وإن أُتيح [comingSoonMessage] يُعرض عند الضغط بدل أي
+/// تصدير.
+class _ExportTypeOption extends StatelessWidget {
+  const _ExportTypeOption({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.notes,
+    required this.selected,
+    required this.onTap,
+    this.badge,
+    this.enabled = true,
+    this.comingSoonMessage,
+  });
+
+  /// أيقونة الصيغة (صورة نقطية / فيكتور).
+  final IconData icon;
+
+  /// عنوان الخيار («صور» / «فيكتور»).
+  final String title;
+
+  /// سطر الوصف المختصر.
+  final String description;
+
+  /// نقاط فرعية بعلامة «•».
+  final List<String> notes;
+
+  /// هل الخيار مختار — «صور» افتراضياً.
+  final bool selected;
+
+  /// هل الخيار متاح — «فيكتور» معطّل في هذه المرحلة.
+  final bool enabled;
+
+  /// شارة صغيرة بجانب العنوان (مثل «قريباً»).
+  final String? badge;
+
+  /// رسالة تُعرض عند الضغط على خيار معطّل — بلا أي تصدير.
+  final String? comingSoonMessage;
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme text = Theme.of(context).textTheme;
+    final Color contentColor = enabled
+        ? scheme.onSurface
+        : scheme.onSurfaceVariant;
+    final Color background = !enabled
+        ? scheme.surfaceContainerHighest
+        : selected
+        ? scheme.primaryContainer.withValues(alpha: 0.35)
+        : scheme.surface;
+    // الإطار الملوّن يفرّق المختار وحده؛ أمّا البطاقة المعطّلة فبإطار خفيف.
+    final Color borderColor = selected && enabled
+        ? scheme.primary
+        : scheme.outlineVariant;
+
+    return Semantics(
+      selected: selected,
+      enabled: enabled,
+      child: Opacity(
+        // التعطيل مرئي: محتوى باهت مع شارة «قريباً» — ولا يُختار أبداً.
+        opacity: enabled ? 1 : 0.6,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(AppTheme.space12),
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Icon(icon, size: 20, color: contentColor),
+                const SizedBox(width: AppTheme.space12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Flexible(
+                            child: Text(
+                              title,
+                              style: text.titleSmall?.copyWith(
+                                color: contentColor,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          if (badge != null) ...<Widget>[
+                            const SizedBox(width: AppTheme.space8),
+                            _ComingSoonBadge(
+                              key: const ValueKey<String>(
+                                'pdf-export-coming-soon-badge',
+                              ),
+                              label: badge!,
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: AppTheme.space4),
+                      Text(
+                        description,
+                        style: text.bodySmall?.copyWith(color: contentColor),
+                      ),
+                      for (final String note in notes) ...<Widget>[
+                        const SizedBox(height: AppTheme.space2),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '•',
+                              style: text.bodySmall?.copyWith(
+                                color: contentColor,
+                              ),
+                            ),
+                            const SizedBox(width: AppTheme.space6),
+                            Expanded(
+                              child: Text(
+                                note,
+                                style: text.bodySmall?.copyWith(
+                                  color: contentColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppTheme.space8),
+                // دائرة الاختيار: صحّة ممتلئة للمختار، ودائرة فارغة لغيره.
+                if (selected)
+                  Icon(
+                    Icons.check_circle_rounded,
+                    size: 20,
+                    color: scheme.primary,
+                  )
+                else
+                  Icon(
+                    Icons.radio_button_unchecked,
+                    size: 20,
+                    color: scheme.outline,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// شارة «قريباً» الصغيرة بجانب عنوان خيار غير متاح بعد.
+class _ComingSoonBadge extends StatelessWidget {
+  const _ComingSoonBadge({super.key, required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme text = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.space8,
+        vertical: AppTheme.space2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.goldSoft,
+        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+      ),
+      child: Text(
+        label,
+        style: text.labelSmall?.copyWith(
+          color: AppColors.goldDeep,
+          fontSize: 10.5,
+        ),
       ),
     );
   }

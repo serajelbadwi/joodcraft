@@ -1092,29 +1092,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dashOpenModule => 'Открыть модуль';
 
   @override
-  String get dashRoadmapSupabase =>
-      'Настройка базы данных Supabase (таблицы + RLS + триггеры)';
-
-  @override
-  String get dashRoadmapModular =>
-      'Масштабируемая модульная структура Feature-First';
-
-  @override
-  String get dashRoadmapTheme =>
-      'Визуальная тема бренда с поддержкой RTL в шрифте Cairo';
-
-  @override
-  String get dashRoadmapAuth =>
-      'Аутентификация: вход, создание аккаунта и сброс пароля';
-
-  @override
-  String get dashPhaseOneDone => 'Первый этап завершён';
-
-  @override
-  String get dashNextPhase =>
-      'Далее: офлайн-движок PDF и арабские шрифты, затем визуальный редактор шаблонов.';
-
-  @override
   String get destDashboard => 'Панель управления';
 
   @override
@@ -2648,14 +2625,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dashRecentOpen => 'Открыть проект';
 
   @override
-  String get dashRoadmapLocal =>
-      'Локальная база проектов (таблица projects) с 100 % офлайн-сохранением';
-
-  @override
-  String get dashRoadmapOffline =>
-      'Полностью офлайн: без загрузки проектов и без сети';
-
-  @override
   String get editorTransformPosition => 'Трансформация и положение';
 
   @override
@@ -2979,4 +2948,39 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       'Управление администраторами работает, когда приложение запущено с локальной учётной записью (LocalAuthRepository), поэтому учётные записи читаются с этого устройства.';
+
+  @override
+  String get pdfExportTypeTitle => 'Тип экспорта';
+
+  @override
+  String get pdfExportTypeHint => 'Выберите формат файла перед экспортом.';
+
+  @override
+  String get pdfExportTypeImages => 'Изображения';
+
+  @override
+  String get pdfExportTypeImagesDesc => '100% совпадение — файл больше';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => 'Текст нельзя скопировать';
+
+  @override
+  String get pdfExportTypeVector => 'Вектор';
+
+  @override
+  String get pdfExportTypeVectorDesc => 'Текст можно копировать — файл меньше';
+
+  @override
+  String get pdfExportTypeVectorCopyable => 'Текст можно копировать и искать';
+
+  @override
+  String get pdfExportTypeVectorBestFor =>
+      'Идеально для профессиональной печати';
+
+  @override
+  String get pdfExportTypeComingSoon => 'Скоро';
+
+  @override
+  String get pdfExportTypeComingSoonMessage =>
+      'Векторный экспорт в разработке — скоро будет доступен.';
 }

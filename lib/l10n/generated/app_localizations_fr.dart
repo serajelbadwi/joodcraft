@@ -1094,29 +1094,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashOpenModule => 'Ouvrir le module';
 
   @override
-  String get dashRoadmapSupabase =>
-      'Mise en place de la base Supabase (tables + RLS + triggers)';
-
-  @override
-  String get dashRoadmapModular =>
-      'Une structure modulaire « Feature-First » évolutive';
-
-  @override
-  String get dashRoadmapTheme =>
-      'Le thème visuel de la marque avec support RTL en police Cairo';
-
-  @override
-  String get dashRoadmapAuth =>
-      'Authentification : connexion, création de compte et réinitialisation du mot de passe';
-
-  @override
-  String get dashPhaseOneDone => 'Première phase terminée';
-
-  @override
-  String get dashNextPhase =>
-      'Ensuite : le moteur PDF hors ligne et les polices arabes, puis l’éditeur visuel de modèles.';
-
-  @override
   String get destDashboard => 'Tableau de bord';
 
   @override
@@ -2661,14 +2638,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashRecentOpen => 'Ouvrir le projet';
 
   @override
-  String get dashRoadmapLocal =>
-      'Base de projets locale (table projects) avec enregistrement 100 % hors ligne';
-
-  @override
-  String get dashRoadmapOffline =>
-      'Fonctionnement entièrement hors ligne : aucun envoi de projet, aucune connexion requise';
-
-  @override
   String get editorTransformPosition => 'Transformation et position';
 
   @override
@@ -2997,4 +2966,41 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       'La gestion des administrateurs fonctionne lorsque l\'application tourne avec un compte local (LocalAuthRepository) : les comptes sont alors lus depuis cet appareil.';
+
+  @override
+  String get pdfExportTypeTitle => 'Type d\'export';
+
+  @override
+  String get pdfExportTypeHint =>
+      'Choisissez le format du fichier avant d\'exporter.';
+
+  @override
+  String get pdfExportTypeImages => 'Images';
+
+  @override
+  String get pdfExportTypeImagesDesc =>
+      'Correspondance à 100 % — fichier plus volumineux';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => 'Le texte n\'est pas copiable';
+
+  @override
+  String get pdfExportTypeVector => 'Vecteur';
+
+  @override
+  String get pdfExportTypeVectorDesc => 'Texte copiable — fichier plus léger';
+
+  @override
+  String get pdfExportTypeVectorCopyable => 'Texte copiable et recherchable';
+
+  @override
+  String get pdfExportTypeVectorBestFor =>
+      'Idéal pour l\'impression professionnelle';
+
+  @override
+  String get pdfExportTypeComingSoon => 'Bientôt disponible';
+
+  @override
+  String get pdfExportTypeComingSoonMessage =>
+      'L\'export vectoriel est en cours de développement — bientôt disponible.';
 }

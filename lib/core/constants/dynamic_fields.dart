@@ -31,10 +31,25 @@ abstract final class DynamicFields {
     DynamicField(key: 'اسم_المنشأة', sample: 'جودكرافت'),
   ];
 
-  /// كل الحقول المدعومة (شهادات + عقود) بلا تكرار — قائمة الإدراج في المحرر.
+  /// حقول الدعوات والمناسبات (التوليد الشخصي الجماعي).
+  ///
+  /// [nameKey] هو الحقل الوحيد الإجباري في كل قوالب الدعوات: كل نسخة تُصدَّر
+  /// باسم صاحبها، وسرده يربط تلقائياً بعمود «الاسم» في ملف Excel.
+  static const List<DynamicField> invitation = <DynamicField>[
+    DynamicField(key: 'الاسم', sample: 'أحمد محمد'),
+  ];
+
+  /// مفتاح حقل اسم صاحب الدعوة — يُكتشَف تلقائياً في كل القوالب السبعة.
+  static const String nameKey = 'الاسم';
+
+  /// كل الحقول المدعومة (شهادات + عقود + دعوات) بلا تكرار — قائمة الإدراج في المحرر.
   static List<DynamicField> get all {
     final Map<String, DynamicField> merged = <String, DynamicField>{};
-    for (final DynamicField field in <DynamicField>[...certificate, ...contract]) {
+    for (final DynamicField field in <DynamicField>[
+      ...certificate,
+      ...contract,
+      ...invitation,
+    ]) {
       merged[field.key] = field;
     }
     return merged.values.toList(growable: false);

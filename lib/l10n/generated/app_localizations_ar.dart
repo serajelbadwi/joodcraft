@@ -1081,27 +1081,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashOpenModule => 'فتح الوحدة';
 
   @override
-  String get dashRoadmapSupabase =>
-      'تأسيس قاعدة بيانات Supabase (جداول + RLS + Triggers)';
-
-  @override
-  String get dashRoadmapModular => 'هيكل Modular Feature-First قابل للتوسّع';
-
-  @override
-  String get dashRoadmapTheme => 'الثيم البصري للهوية ودعم RTL بخط Cairo';
-
-  @override
-  String get dashRoadmapAuth =>
-      'المصادقة: تسجيل الدخول وإنشاء الحساب واستعادة كلمة المرور';
-
-  @override
-  String get dashPhaseOneDone => 'المرحلة الأولى مكتملة';
-
-  @override
-  String get dashNextPhase =>
-      'التالية: محرك PDF والخطوط العربية أوفلاين، ثم محرر القوالب البصري.';
-
-  @override
   String get destDashboard => 'لوحة التحكم';
 
   @override
@@ -2626,14 +2605,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashRecentOpen => 'فتح المشروع';
 
   @override
-  String get dashRoadmapLocal =>
-      'قاعدة مشاريع محلية (جدول projects) وحفظ محلي 100% بلا أي خادم';
-
-  @override
-  String get dashRoadmapOffline =>
-      'العمل أوفلاين بالكامل: لا رفع للمشاريع ولا حاجة إلى شبكة';
-
-  @override
   String get editorTransformPosition => 'التحويل والموضع';
 
   @override
@@ -2952,4 +2923,38 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       'إدارة المديرين تعمل عندما يُشغَّل التطبيق بحساب محلي (LocalAuthRepository)، فتُقرأ الحسابات من هذا الجهاز.';
+
+  @override
+  String get pdfExportTypeTitle => 'نوع التصدير';
+
+  @override
+  String get pdfExportTypeHint => 'اختر صيغة الملف قبل التصدير.';
+
+  @override
+  String get pdfExportTypeImages => 'صور';
+
+  @override
+  String get pdfExportTypeImagesDesc => 'مطابقة 100% — حجم أكبر';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => 'النص غير قابل للنسخ';
+
+  @override
+  String get pdfExportTypeVector => 'فيكتور';
+
+  @override
+  String get pdfExportTypeVectorDesc => 'نص قابل للنسخ — حجم أصغر';
+
+  @override
+  String get pdfExportTypeVectorCopyable => 'نص قابل للنسخ والبحث';
+
+  @override
+  String get pdfExportTypeVectorBestFor => 'مثالي للطباعة الاحترافية';
+
+  @override
+  String get pdfExportTypeComingSoon => 'قريباً';
+
+  @override
+  String get pdfExportTypeComingSoonMessage =>
+      'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.';
 }

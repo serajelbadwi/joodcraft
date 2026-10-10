@@ -1058,24 +1058,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dashOpenModule => '打开模块';
 
   @override
-  String get dashRoadmapSupabase => '搭建 Supabase 数据库（表 + RLS + 触发器）';
-
-  @override
-  String get dashRoadmapModular => '可扩展的模块化 Feature-First 架构';
-
-  @override
-  String get dashRoadmapTheme => '品牌视觉主题，使用 Cairo 字体并支持 RTL';
-
-  @override
-  String get dashRoadmapAuth => '身份验证：登录、创建账户和重置密码';
-
-  @override
-  String get dashPhaseOneDone => '第一阶段已完成';
-
-  @override
-  String get dashNextPhase => '接下来：离线 PDF 引擎和阿拉伯字体，然后是可视化模板编辑器。';
-
-  @override
   String get destDashboard => '控制面板';
 
   @override
@@ -2567,12 +2549,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dashRecentOpen => '打开项目';
 
   @override
-  String get dashRoadmapLocal => '本地项目数据库（projects 表），100% 离线保存';
-
-  @override
-  String get dashRoadmapOffline => '完全离线运行：无需上传项目，也不需要网络';
-
-  @override
   String get editorTransformPosition => '变换与位置';
 
   @override
@@ -2879,4 +2855,37 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       '当应用以本地账户（LocalAuthRepository）运行时，管理员管理才可用，因此账户从本设备读取。';
+
+  @override
+  String get pdfExportTypeTitle => '导出类型';
+
+  @override
+  String get pdfExportTypeHint => '导出前请选择文件格式。';
+
+  @override
+  String get pdfExportTypeImages => '图片';
+
+  @override
+  String get pdfExportTypeImagesDesc => '100% 一致 — 文件更大';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => '文字不可复制';
+
+  @override
+  String get pdfExportTypeVector => '矢量';
+
+  @override
+  String get pdfExportTypeVectorDesc => '可复制文字 — 文件更小';
+
+  @override
+  String get pdfExportTypeVectorCopyable => '可复制和搜索文字';
+
+  @override
+  String get pdfExportTypeVectorBestFor => '专业印刷的理想选择';
+
+  @override
+  String get pdfExportTypeComingSoon => '即将推出';
+
+  @override
+  String get pdfExportTypeComingSoonMessage => '矢量导出正在开发中 — 即将推出。';
 }

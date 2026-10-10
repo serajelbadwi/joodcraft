@@ -1085,28 +1085,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashOpenModule => 'ماڈیول کھولیں';
 
   @override
-  String get dashRoadmapSupabase =>
-      'Supabase ڈیٹا بیس کی تشکیل (ٹیبلز + RLS + ٹرگرز)';
-
-  @override
-  String get dashRoadmapModular => 'قابلِ توسیع ماڈیولر فیچر-فرسٹ ڈھانچہ';
-
-  @override
-  String get dashRoadmapTheme =>
-      'Cairo فونٹ میں RTL سپورٹ کے ساتھ برانڈ کا بصری تھیم';
-
-  @override
-  String get dashRoadmapAuth =>
-      'تصدیق: سائن ان، اکاؤنٹ بنانا اور پاس ورڈ ری سیٹ';
-
-  @override
-  String get dashPhaseOneDone => 'پہلا مرحلہ مکمل';
-
-  @override
-  String get dashNextPhase =>
-      'اگلا: آف لائن PDF انجن اور عربی فونٹس، پھر بصری ٹیمپلیٹ ایڈیٹر۔';
-
-  @override
   String get destDashboard => 'ڈیش بورڈ';
 
   @override
@@ -2638,14 +2616,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashRecentOpen => 'پروجیکٹ کھولیں';
 
   @override
-  String get dashRoadmapLocal =>
-      'مقامی پروجیکٹ ڈیٹا بیس (projects ٹیبل) کے ساتھ 100% آف لائن محفوظ';
-
-  @override
-  String get dashRoadmapOffline =>
-      'مکمل آف لائن: پروجیکٹ اپلوڈ نہیں اور نیٹ ورک کی ضرورت نہیں';
-
-  @override
   String get editorTransformPosition => 'تبدیلی اور پوزیشن';
 
   @override
@@ -2965,4 +2935,38 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get admUnavailableBody =>
       'منتظم کا انتظام اس وقت کام کرتا ہے جب ایپ مقامی اکاؤنٹ (LocalAuthRepository) کے ساتھ چلتی ہے، تاکہ اکاؤنٹس اس آلے سے پڑھے جائیں۔';
+
+  @override
+  String get pdfExportTypeTitle => 'ایکسپورٹ کی قسم';
+
+  @override
+  String get pdfExportTypeHint => 'ایکسپورٹ سے پہلے فائل کا فارمیٹ منتخب کریں۔';
+
+  @override
+  String get pdfExportTypeImages => 'تصاویر';
+
+  @override
+  String get pdfExportTypeImagesDesc => '100% مطابقت — بڑی فائل';
+
+  @override
+  String get pdfExportTypeImagesNotCopyable => 'متن کاپی نہیں ہو سکتا';
+
+  @override
+  String get pdfExportTypeVector => 'ویکٹر';
+
+  @override
+  String get pdfExportTypeVectorDesc => 'قابلِ کاپی متن — چھوٹی فائل';
+
+  @override
+  String get pdfExportTypeVectorCopyable => 'متن کاپی اور تلاش ہو سکتا ہے';
+
+  @override
+  String get pdfExportTypeVectorBestFor => 'پروفیشنل پرنٹنگ کے لیے مثالی';
+
+  @override
+  String get pdfExportTypeComingSoon => 'جلد آ رہا ہے';
+
+  @override
+  String get pdfExportTypeComingSoonMessage =>
+      'ویکٹر ایکسپورٹ پر کام جاری ہے — جلدی آ رہا ہے۔';
 }
