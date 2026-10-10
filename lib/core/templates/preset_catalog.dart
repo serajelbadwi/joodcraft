@@ -1,6 +1,7 @@
 import '../constants/app_constants.dart';
 import 'certificate_gallery.dart';
 import 'preset_template.dart';
+import 'royal_gold_gallery.dart';
 
 /// فهرس القوالب الجاهزة المحزومة داخل التطبيق (Preset Templates).
 ///
@@ -28,6 +29,8 @@ abstract final class PresetCatalog {
     _consultingContract,
     // ---- معرض الشهادات الموسّع: 12 تصميماً ليصل مجموع الشهادات إلى 20 ----
     ...CertificateGallery.presets,
+    // ---- ستايل الكحلي/الذهبي: 6 تصاميم بلوحة ألوان موحّدة (A4 أفقي) ----
+    ...RoyalGoldGallery.presets,
   ];
 
   /// كل قوالب **الشهادات** فقط (بلا العقود) — لعدّها وتصفيتها في واجهة المكتبة.

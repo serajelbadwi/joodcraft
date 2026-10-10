@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_constants.dart';
 import '../models/template_document.dart';
+import 'preset_ui_text.dart';
 import 'template_draft.dart';
 import 'template_localization.dart';
 import 'template_record.dart';
@@ -143,8 +144,17 @@ class PresetTemplate {
       TemplateLocalization.localize(document, languageCode);
 
   /// عنوان القالب باللغة المطلوبة (مع الرجوع إلى العنوان العربي).
+  ///
+  /// الأولوية: مفتاح ARB للقالب (نصوص الواجهة) ← حزمة ترجمة محتوى المستند ←
+  /// النصّ العربي الأصلي كمصدر احتياطي دائم.
   String titleFor(String? languageCode) =>
+      PresetUiText.title(languageCode, id) ??
       TemplateLocalization.text(languageCode, titleAr);
+
+  /// وصف القالب باللغة المطلوبة (مع الرجوع إلى الوصف العربي).
+  String descriptionFor(String? languageCode) =>
+      PresetUiText.description(languageCode, id) ??
+      TemplateLocalization.text(languageCode, descriptionAr);
 
   /// مسودة جاهزة لفتح القالب في المحرّر بلا معرّف سجل (حفظ كقالب جديد).
   TemplateDraft toDraft({String? languageCode}) => TemplateDraft(
@@ -168,8 +178,10 @@ class PresetTemplate {
   bool matches(String needle) {
     final String query = needle.trim().toLowerCase();
     if (query.isEmpty) return true;
-    return titleAr.toLowerCase().contains(query) ||
-        descriptionAr.toLowerCase().contains(query) ||
-        tags.any((String tag) => tag.toLowerCase().contains(query));
+    // الوسوم أولاً لأنها عربية وثابتة، ثم العنوان/الوصف المترجمَين (يبقيان
+    // عربيين حين لا يوجد مفتاح ARB) — فالبحث يعمل بكل اللغات بلا قائمة ثانية.
+    return tags.any((String tag) => tag.toLowerCase().contains(query)) ||
+        titleFor(null).toLowerCase().contains(query) ||
+        descriptionFor(null).toLowerCase().contains(query);
   }
 }
