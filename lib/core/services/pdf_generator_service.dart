@@ -24,6 +24,7 @@ import '../pdf/pdf_render_engine.dart';
 import '../pdf/pdf_script_coverage.dart';
 import '../print/crop_marks.dart';
 import '../print/imposition_pdf_builder.dart';
+import '../pdf/rasterized_pdf_builder.dart';
 
 // يبقى `PdfDocumentMetadata` متاحاً من هذا الملف لمن يستورده تاريخياً.
 export '../pdf/pdf_render_engine.dart' show PdfDocumentMetadata;
@@ -331,27 +332,16 @@ class PdfGeneratorService {
     }
 
     try {
-      debugPrint('📄 [PdfGeneratorService] Starting batch generation ($rows rows) using Vector Engine...');
+      debugPrint('📄 [PdfGeneratorService] Starting batch generation ($rows rows) using Rasterized Engine...');
       
-      // **المسار المتجهي** هو المسار المعتمد: خطوط عربية مضمّنة داخل الملف،
-      // وألوان RGB حرفية (لا صورة مُرستَرة)، ونصّ قابل للتحديد والبحث.
-      // المسار النقطي (Rasterized) يُنتج صورة داخل الـ PDF فتضيع تغطية الخطوط
-      // وانزياح الألوان، لذا لا يُستدعى من هنا.
-      final Uint8List bytes = _shouldUseIsolate(rows.length)
-          ? await _generateInBackground(
-              document,
-              rows,
-              metadata,
-              warnings,
-              onProgress,
-            )
-          : await _generateInline(
-              document,
-              rows,
-              metadata,
-              warnings,
-              onProgress,
-            );
+      // المسار النقطي عالي الدقة (Rasterized) لضمان المطابقة 100% مع المحرر (300 DPI).
+      final Uint8List bytes = await RasterizedPdfBuilder.build(
+        document: document,
+        rows: rows,
+        metadata: metadata,
+        compress: compress,
+        onProgress: onProgress,
+      );
 
       stopwatch.stop();
       debugPrint('📄 [PdfGeneratorService] Batch generation complete in ${stopwatch.elapsedMilliseconds} ms.');
@@ -465,75 +455,8 @@ class PdfGeneratorService {
 
 
 
-  /// هل يُنفَّذ البناء في isolate خلفي؟ (يُعطَّل على الويب — لا isolates فيه.)
-  bool _shouldUseIsolate(int rowCount) =>
-      useIsolate && !kIsWeb && rowCount >= isolateThreshold;
-
-  /// المسار المباشر على الخيط الرئيسي (يُستخدم للمعاينة المفردة والصغيرة).
-  Future<Uint8List> _generateInline(
-    TemplateDocument document,
-    List<Map<String, String>> rows,
-    PdfDocumentMetadata? metadata,
-    List<String> warnings,
-    void Function(int done, int total)? onProgress,
-  ) async {
-    await _ensureCustomFonts(document);
-    final Map<String, pw.ImageProvider?> images =
-        await _resolveImages(document, warnings);
-    final PdfRenderer renderer = PdfRenderer(
-      fonts: _fonts,
-      compress: compress,
-      // دقّة المستند نفسها في المسارين (خيط رئيسي/isolate) فلا تختلف النتيجة
-      // باختلاف حجم الدفعة.
-      dpi: document.dpi.toDouble(),
-    );
-    try {
-      return await renderer.build(
-        document: document,
-        rows: rows,
-        images: images,
-        metadata: metadata,
-        onProgress: onProgress,
-      );
-    } catch (error) {
-      throw AppException(
-        AppErrorCode.pdfGeneration,
-        message: 'تعذّر تجميع ملف PDF: $error',
-        cause: error,
-      );
-    }
-  }
-
-  /// المسار الخلفي: بايتات الخطوط والصور ← isolate ← بايتات الـ PDF.
-  Future<Uint8List> _generateInBackground(
-    TemplateDocument document,
-    List<Map<String, String>> rows,
-    PdfDocumentMetadata? metadata,
-    List<String> warnings,
-    void Function(int done, int total)? onProgress,
-  ) async {
-    final Map<String, Uint8List> imageBytes =
-        await _resolveImageBytes(document, warnings);
-    final PdfRenderRequest request = PdfRenderRequest(
-      document: document,
-      rows: rows,
-      imageBytes: imageBytes,
-      // كل الخطوط المضمّنة: الرسم قد يرجع إليها عند عائلة غير صالحة أو ناقصة.
-      embeddedFontBytes: _fonts.bytesByKey,
-      customFonts: await _customFontBytes(document),
-      compress: compress,
-      metadata: metadata,
-    );
-    try {
-      return await renderPdfInBackground(request, onProgress: onProgress);
-    } catch (error) {
-      throw AppException(
-        AppErrorCode.pdfGeneration,
-        message: 'تعذّر توليد ملف PDF في الخلفية: $error',
-        cause: error,
-      );
-    }
-  }
+  // المسارات المتجهية (Vector) السابقة تم استبدالها بـ RasterizedPdfBuilder 
+  // وتمت إزالة _generateInline و _generateInBackground للحفاظ على نظافة الكود
 
   /// يضمّن الخطوط المخصّصة **وخطوط النظام** التي يشير إليها المستند.
   ///

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 import '../models/template_document.dart';
 import 'template_draft.dart';
+import 'template_localization.dart';
 import 'template_record.dart';
 
 /// المجموعة الدلالية للقالب — أدقّ من تصنيف قاعدة البيانات (شهادة/عقد) وتُستخدم
@@ -10,11 +11,11 @@ import 'template_record.dart';
 enum TemplateCollection {
   appreciation('شهادات تقدير', TemplateCategory.certificate,
       Icons.workspace_premium_rounded),
-  completion('شهادات إتمام', TemplateCategory.certificate,
+  completion('دورات وإتمام', TemplateCategory.certificate,
       Icons.school_rounded),
   excellence('شهادات تفوق', TemplateCategory.certificate,
       Icons.emoji_events_rounded),
-  experience('إفادات خبرة', TemplateCategory.certificate,
+  experience('إفادات ونصوص', TemplateCategory.certificate,
       Icons.verified_user_rounded),
   employmentContract('عقود عمل', TemplateCategory.contract,
       Icons.badge_rounded),
@@ -70,8 +71,27 @@ class PresetTemplate {
     required this.collection,
     required this.orientation,
     required List<String> tags,
-    required this.layoutJson,
-  }) : tags = List<String>.unmodifiable(tags);
+    required String layoutJson,
+  })  : _layoutJson = layoutJson,
+        _document = null,
+        tags = List<String>.unmodifiable(tags);
+
+  /// نسخة تُبنى من [TemplateDocument] **برمجياً** بدل JSON نصّي.
+  ///
+  /// تُستخدم لقوالب المعرض المولَّدة بالكود (حيث يُبنى المستند بعناصر مكتوبة
+  /// النوع بلا مخاطرة أخطاء JSON اليدوي)، بينما يبقى المسار النصّي للقوالب
+  /// الأصلية كما هو بلا أي تغيير.
+  PresetTemplate.fromDocument({
+    required this.id,
+    required this.titleAr,
+    required this.descriptionAr,
+    required this.collection,
+    required this.orientation,
+    required List<String> tags,
+    required TemplateDocument document,
+  })  : _layoutJson = null,
+        _document = document,
+        tags = List<String>.unmodifiable(tags);
 
   /// معرّف ثابت داخل الفهرس (بلا بادئة السجل).
   final String id;
@@ -86,12 +106,15 @@ class PresetTemplate {
   /// كلمات مفتاحية للبحث والتصفية.
   final List<String> tags;
 
-  /// حمولة `layout_data` الكاملة (JSON مضمّن).
-  final String layoutJson;
+  /// الحمولة النصّية (JSON) إن بُني القالب منها، وإلا `null` للبناء البرمجي.
+  final String? _layoutJson;
+
+  /// المستند المزوَّد مباشرةً في البناء البرمجي إن وُجد.
+  final TemplateDocument? _document;
 
   /// المستند الجاهز للتحرير/الطباعة — يُبنى مرة واحدة ويُخزَّن.
   late final TemplateDocument document =
-      TemplateDocument.fromJsonString(layoutJson);
+      _document ?? TemplateDocument.fromJsonString(_layoutJson!);
 
   TemplateCategory get category => collection.category;
 
@@ -105,21 +128,33 @@ class PresetTemplate {
 
   static bool isPresetRecordId(String id) => id.startsWith(recordIdPrefix);
 
+  /// مستند القالب بمحتوى اللغة المطلوبة.
+  ///
+  /// للعربية (أو أي لغة بلا حزمة) يُعاد المستند الأصلي كما هو؛ ولغات مثل
+  /// الإنجليزية والفرنسية تُترجم النصوص الثابتة وتُستبدل البيانات التجريبية
+  /// بأسماء وصيغ البلد — بلا أي تغيير في الهندسة أو الألوان.
+  TemplateDocument documentFor(String? languageCode) =>
+      TemplateLocalization.localize(document, languageCode);
+
+  /// عنوان القالب باللغة المطلوبة (مع الرجوع إلى العنوان العربي).
+  String titleFor(String? languageCode) =>
+      TemplateLocalization.text(languageCode, titleAr);
+
   /// مسودة جاهزة لفتح القالب في المحرّر بلا معرّف سجل (حفظ كقالب جديد).
-  TemplateDraft toDraft() => TemplateDraft(
-        title: titleAr,
+  TemplateDraft toDraft({String? languageCode}) => TemplateDraft(
+        title: titleFor(languageCode),
         category: category,
-        document: document,
+        document: documentFor(languageCode),
       );
 
   /// تحويل القالب الجاهز إلى سجل قالب عادي (تُوحَّد كل مصادر المكتبة).
-  TemplateRecord toRecord() => TemplateRecord(
+  TemplateRecord toRecord({String? languageCode}) => TemplateRecord(
         id: recordId,
         userId: presetUserId,
-        title: titleAr,
+        title: titleFor(languageCode),
         category: category,
         orientation: orientation,
-        layoutData: document.toJson(),
+        layoutData: documentFor(languageCode).toJson(),
         isPublic: true,
       );
 

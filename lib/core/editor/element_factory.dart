@@ -18,8 +18,20 @@ enum NewElementKind {
   /// حقل ديناميكي `{{...}}` جاهز للربط بـ Excel.
   dynamicField,
 
-  /// مستطيل/برواز.
+  /// مستطيل/برواز (مفرّغ).
   rectangle,
+
+  /// مستطيل بحواف منحنية (مملوء بتعبئة ناعمة).
+  roundedRect,
+
+  /// دائرة/بيضاوي.
+  ellipse,
+
+  /// نجمة قابلة للضبط (عدد الرؤوس + نصف القطر الداخلي).
+  star,
+
+  /// مضلّع منتظم (عدد الأضلاع).
+  polygon,
 
   /// خط فاصل.
   divider,
@@ -119,6 +131,72 @@ abstract final class ElementFactory {
           strokeHex: '#C7A26B',
           strokeWidth: 2,
           radius: 6,
+        );
+
+      case NewElementKind.roundedRect:
+        return ShapeElement(
+          id: nextId(index, 'rrect'),
+          kind: ShapeKind.rect,
+          box: ElementBox(
+            x: design.width * 0.2 + stagger,
+            y: design.height * 0.34 + stagger,
+            width: design.width * 0.6,
+            height: shortSide * 0.2,
+          ),
+          fillHex: '#F3E3C3',
+          strokeHex: '#C7A26B',
+          strokeWidth: 2,
+          radius: 24,
+        );
+
+      case NewElementKind.ellipse:
+        final double diameter = shortSide * 0.26;
+        return ShapeElement(
+          id: nextId(index, 'ellipse'),
+          kind: ShapeKind.ellipse,
+          box: ElementBox(
+            x: design.width * 0.5 - diameter / 2 + stagger,
+            y: design.height * 0.5 - diameter / 2 + stagger,
+            width: diameter,
+            height: diameter,
+          ),
+          fillHex: '#C7A26B',
+          strokeHex: '#9E7B45',
+          strokeWidth: 2,
+        );
+
+      case NewElementKind.star:
+        final double starSize = shortSide * 0.3;
+        return ShapeElement(
+          id: nextId(index, 'star'),
+          kind: ShapeKind.star,
+          box: ElementBox(
+            x: design.width * 0.5 - starSize / 2 + stagger,
+            y: design.height * 0.5 - starSize / 2 + stagger,
+            width: starSize,
+            height: starSize,
+          ),
+          points: 5,
+          fillHex: '#C7A26B',
+          strokeHex: '#9E7B45',
+          strokeWidth: 1.5,
+        );
+
+      case NewElementKind.polygon:
+        final double polySize = shortSide * 0.28;
+        return ShapeElement(
+          id: nextId(index, 'polygon'),
+          kind: ShapeKind.polygon,
+          box: ElementBox(
+            x: design.width * 0.5 - polySize / 2 + stagger,
+            y: design.height * 0.5 - polySize / 2 + stagger,
+            width: polySize,
+            height: polySize,
+          ),
+          points: 6,
+          fillHex: '#1B2539',
+          strokeHex: '#C7A26B',
+          strokeWidth: 1.5,
         );
 
       case NewElementKind.divider:

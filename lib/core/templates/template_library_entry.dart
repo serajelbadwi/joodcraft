@@ -38,8 +38,25 @@ class TemplateLibraryEntry {
   TemplateDocument toDocument() => record.toDocument();
 
   /// مسودة لفتح القالب في المحرّر بلا معرّف سجل (حفظ كقالب جديد).
-  TemplateDraft toDraft() =>
-      TemplateDraft(title: title, category: category, document: toDocument());
+  ///
+  /// [languageCode] يترجم محتوى القوالب **الجاهزة** فقط (شهادات وعقود) إلى
+  /// نصوص البلد؛ القوالب المحفوظة تبقى كما حرّرها المستخدم.
+  TemplateDraft toDraft({String? languageCode}) {
+    final PresetTemplate? preset = this.preset;
+    if (preset != null) return preset.toDraft(languageCode: languageCode);
+    return TemplateDraft(
+      title: title,
+      category: category,
+      document: toDocument(),
+    );
+  }
+
+  /// سجل القالب بمحتوى اللغة المطلوبة (يُستخدم في التوليد الجماعي).
+  TemplateRecord toRecord({String? languageCode}) {
+    final PresetTemplate? preset = this.preset;
+    if (preset == null) return record;
+    return preset.toRecord(languageCode: languageCode);
+  }
 
   /// هل يطابق عامل تصفية المجموعة؟
   ///

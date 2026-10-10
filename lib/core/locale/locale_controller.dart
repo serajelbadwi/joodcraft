@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_locale.dart';
@@ -53,4 +54,30 @@ class LocaleController extends ChangeNotifier {
         _preferences ??= await SharedPreferences.getInstance();
     await preferences.setString(prefsKey, next.languageCode);
   }
+}
+
+/// لغة **محتوى المستندات** الجارية (لا لغة الواجهة): تُستخدم لترجمة نصوص
+/// الشهادات والعقود والبيانات التجريبية الخاصة بالبلد.
+///
+/// تُقرأ من [LocaleController] إن كان مُزوَّداً في الشجرة (وهو كذلك في
+/// التطبيق عبر `JoodCraftApp`)، وإلا فتُرجَع لغة التطبيق الافتراضية
+/// ([AppLocales.fallback] = العربية).
+///
+/// **لماذا لا نأخذ لغة `MaterialApp` مباشرةً؟** لأن أي شجرة بلا مزوِّد لغة
+/// (كاختبارات الواجهة) ستُعيد لغة المنصّة، فيتغيّر **محتوى** القوالب بالخطأ.
+/// الاعتماد على محرّك اللغة وحده يجعل سلوك الترجمة واحداً في التطبيق والاختبارات.
+/// [listen] يجب أن يكون `true` داخل `build` (فيُعاد البناء عند تغيير اللغة)،
+/// و`false` داخل معالِجات الأحداث (أزرار/قوائم) — فاستدعاء `watch` خارج البناء
+/// يرمي تأكيداً من `provider`.
+String templateContentLanguageOf(
+  BuildContext context, {
+  bool listen = true,
+}) {
+  LocaleController? controller;
+  try {
+    controller = Provider.of<LocaleController?>(context, listen: listen);
+  } on ProviderNotFoundException {
+    controller = null;
+  }
+  return controller?.locale.languageCode ?? AppLocales.fallback.languageCode;
 }

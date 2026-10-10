@@ -4,8 +4,8 @@ import 'package:joodcraft/app/app.dart';
 import 'package:joodcraft/core/locale/app_locale.dart';
 import 'package:joodcraft/core/locale/locale_controller.dart';
 import 'package:joodcraft/core/theme/theme_controller.dart';
-import 'package:joodcraft/core/widgets/configuration_screen.dart';
 import 'package:joodcraft/core/widgets/language_menu_button.dart';
+import 'package:joodcraft/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:joodcraft/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,14 +79,16 @@ void main() {
         localeController: locale,
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     final MaterialApp app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.locale, const Locale('en'));
     expect(app.supportedLocales, AppLocales.locales);
     expect(app.localizationsDelegates, isNotNull);
+    // التطبيق يُفتح مباشرةً على لوحة التحكم (محلي أولاً، بلا بوابة دخول).
+    expect(find.byType(DashboardScreen), findsOneWidget);
     expect(
-      Directionality.of(tester.element(find.byType(ConfigurationScreen))),
+      Directionality.of(tester.element(find.byType(DashboardScreen))),
       TextDirection.ltr,
     );
 
@@ -99,7 +101,7 @@ void main() {
       const Locale('ur'),
     );
     expect(
-      Directionality.of(tester.element(find.byType(ConfigurationScreen))),
+      Directionality.of(tester.element(find.byType(DashboardScreen))),
       TextDirection.rtl,
     );
   });

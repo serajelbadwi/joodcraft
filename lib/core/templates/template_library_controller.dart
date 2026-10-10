@@ -6,6 +6,7 @@ import '../constants/app_constants.dart';
 import '../errors/app_error_code.dart';
 import '../errors/app_exception.dart';
 import '../models/template_document.dart';
+import '../projects/projects_template_store.dart';
 import 'local_template_store.dart';
 import 'preset_catalog.dart';
 import 'preset_template.dart';
@@ -13,20 +14,21 @@ import 'template_library_entry.dart';
 import 'template_record.dart';
 import 'template_repository.dart';
 
-/// متحكم مكتبة القوالب — يجمع ثلاثة مصادر في مساحة واحدة:
+/// متحكم مكتبة القوالب — يجمع المصادر المحلية في مساحة واحدة:
 ///
 /// * **الجاهزة (Preset)**: محزومة في التطبيق، متاحة دائماً بلا شبكة.
-/// * **المحلية (Local)**: محفوظة على الجهاز عبر [LocalTemplateStore]، تُستعاد
-///   عند إعادة فتح التطبيق بلا شبكة.
-/// * **السحابية (Cloud)**: قوالب المستخدم في Supabase عبر [TemplateRepository].
+/// * **المحلية (Local)**: مشاريع المستخدم في قاعدة المشاريع المحلية عبر
+///   [LocalTemplateStore]، وتُقرأ فوراً من الذاكرة بعد الإقلاع.
 ///
-/// يعتمد على واجهات فقط، فيُشغَّل كاملاً في الاختبارات بمستودع ومخزن وهميين.
+/// ولم يبقَ للمكتبة مصدر بعيد: التطبيق محلي 100%، فما يحفظه المحرّر يظهر هنا
+/// مباشرة من نفس الجدول. ويبقى [TemplateRepository] اختيارياً لتشغيل المتحكّم
+/// في الاختبارات بمستودع وهمي.
 class TemplateLibraryController extends ChangeNotifier {
   TemplateLibraryController(
     this._repository, {
     LocalTemplateStore? localStore,
     List<PresetTemplate>? presets,
-  })  : _localStore = localStore ?? SharedPreferencesLocalTemplateStore(),
+  })  : _localStore = localStore ?? ProjectsTemplateStore(),
         _presets = presets ?? PresetCatalog.all;
 
   /// `null` يعني أن التطبيق غير مربوط بـ Supabase بعد.
@@ -137,7 +139,14 @@ class TemplateLibraryController extends ChangeNotifier {
   }) async {
     final TemplateRepository? repository = _repository;
     if (repository == null) {
-      throw const AppException(AppErrorCode.notConfigured);
+      // لا مستودع بعيد: الحفظ محلي دائماً — بنفس العنوان والتصنيف والاتجاه.
+      return _saveLocalRecord(
+        id: id,
+        title: title,
+        category: category,
+        orientation: orientation,
+        layoutData: layoutData,
+      );
     }
 
     _beginBusy();
@@ -179,7 +188,58 @@ class TemplateLibraryController extends ChangeNotifier {
     }
   }
 
-  /// «حفظ كقالب مخصص» — يستورد القالب إلى السحابة تحت عنوان جديد.
+  /// حفظ سجلّ محلي (إنشاء أو تحديث بنفس المعرّف) — العمود الفقري للحفظ بلا
+  /// خادم: يُحدَّث الصفّ في مكانه عند تمرير معرّف قائم، وإلا أُنشئ صفّ جديد.
+  Future<TemplateRecord> _saveLocalRecord({
+    String? id,
+    required String title,
+    required TemplateCategory category,
+    required PageOrientation orientation,
+    required Map<String, dynamic> layoutData,
+  }) async {
+    final DateTime now = DateTime.now();
+    final String clean = title.trim().isEmpty ? 'قالب بلا عنوان' : title.trim();
+    final int index = (id == null || id.isEmpty)
+        ? -1
+        : _localTemplates.indexWhere((TemplateRecord item) => item.id == id);
+
+    final TemplateRecord record = index >= 0
+        ? _localTemplates[index].copyWith(
+            title: clean,
+            category: category,
+            orientation: orientation,
+            layoutData: layoutData,
+            updatedAt: now,
+          )
+        : TemplateRecord(
+            id: (id != null && id.isNotEmpty) ? id : _nextLocalId(now),
+            userId: 'local',
+            title: clean,
+            category: category,
+            orientation: orientation,
+            layoutData: layoutData,
+            createdAt: now,
+            updatedAt: now,
+          );
+
+    if (index >= 0) {
+      _localTemplates = <TemplateRecord>[..._localTemplates]..[index] = record;
+    } else {
+      _localTemplates = <TemplateRecord>[record, ..._localTemplates];
+    }
+    _beginBusy();
+    notifyListeners();
+    try {
+      await _persistLocal();
+    } finally {
+      _endBusy();
+      notifyListeners();
+    }
+    return record;
+  }
+
+  /// «حفظ كقالب مخصص» — يستورد القالب إلى متناول المستخدم تحت عنوان جديد
+  /// (محلياً في هذا الإصدار).
   Future<TemplateRecord> saveAsCustom({
     required String title,
     required TemplateLibraryEntry entry,
@@ -252,7 +312,7 @@ class TemplateLibraryController extends ChangeNotifier {
     final DateTime now = DateTime.now();
     final String clean = (title ?? '').trim();
     final TemplateRecord record = TemplateRecord(
-      id: 'local_${now.microsecondsSinceEpoch}',
+      id: _nextLocalId(now),
       userId: 'local',
       title: clean.isEmpty ? preset.titleAr : clean,
       category: preset.category,
@@ -282,7 +342,7 @@ class TemplateLibraryController extends ChangeNotifier {
   }) async {
     final DateTime now = DateTime.now();
     final TemplateRecord record = TemplateRecord(
-      id: 'local_${now.microsecondsSinceEpoch}',
+      id: _nextLocalId(now),
       userId: 'local',
       title: title.trim().isEmpty ? 'قالب بلا عنوان' : title.trim(),
       category: category,
@@ -322,7 +382,8 @@ class TemplateLibraryController extends ChangeNotifier {
   Future<void> remove(String id) async {
     final TemplateRepository? repository = _repository;
     if (repository == null) {
-      throw const AppException(AppErrorCode.notConfigured);
+      // لا مستودع بعيد: الحذف من المخزن المحلي مباشرةً.
+      return removeLocal(id);
     }
 
     _beginBusy();
@@ -350,6 +411,21 @@ class TemplateLibraryController extends ChangeNotifier {
     final TemplateRepository? repository = _repository;
     if (repository == null) return null;
     return repository.findById(id);
+  }
+
+  /// معرّف محلّي فريد.
+  ///
+  /// `microsecondsSinceEpoch` وحده غير كافٍ: ساعة Windows دقّتها أجزاء من
+  /// الميلي ثانية، فعمليّتان متتاليتان قد تولّدان المعرّف نفسه فيُدهس قالب
+  /// بقالب. نُزامن ترقيمياً عند التصادم.
+  String _nextLocalId(DateTime now) {
+    final int stamp = now.microsecondsSinceEpoch;
+    String candidate = 'local_$stamp';
+    int suffix = 1;
+    while (_localTemplates.any((TemplateRecord item) => item.id == candidate)) {
+      candidate = 'local_${stamp}_${suffix++}';
+    }
+    return candidate;
   }
 
   void _beginBusy() {

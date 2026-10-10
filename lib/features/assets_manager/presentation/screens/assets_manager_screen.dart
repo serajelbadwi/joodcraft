@@ -487,6 +487,9 @@ class _RenameAssetDialogState extends State<_RenameAssetDialog> {
         controller: _field,
         autofocus: true,
         maxLength: AppConstants.maxNameLength,
+        // اسم الأصل عربي بالتصميم — اتجاه صريح يمنع انعكاس تنقّل الأسهم.
+        textDirection: TextDirection.rtl,
+        textAlign: TextAlign.right,
         decoration: InputDecoration(
           labelText: context.l10n?.authName ?? 'الاسم',
         ),

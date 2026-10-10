@@ -17,7 +17,9 @@ import '../../utils/hex_color.dart';
 import '../canvas_geometry.dart';
 import '../element_factory.dart';
 import '../element_hit_picker.dart';
+import '../../fonts/custom_font_controller.dart';
 import '../template_editor_controller.dart';
+import 'editor_controls.dart';
 import 'element_painters.dart';
 import 'element_view.dart';
 
@@ -386,12 +388,16 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
     // `RepaintBoundary` حول محتوى العنصر: يبقى محتواه (خاصةً الصور الكبيرة)
     // مخزّناً كطبقة رَسم مستقلّة، فلا يُعاد رسمه عند تحريك عنصر آخر أو رسم
     // خطوط الإرشاد. والإطار/المقابس تُرسم في طبقة منفصلة عنه.
+    // معاينة الخط الحية للعنصر المحدد (من منتقي الشريط الجانبي): عائلة مؤقتة
+    // تُفرض على العنصر بصريّة فقط — الوثيقة لم تتغيّر.
+    final TemplateElement shown =
+        _fontPreviewElement(element, controller, selected);
     final Widget content = RepaintBoundary(
       child: SizedBox(
         width: rect.width,
         height: rect.height,
         child: ElementView(
-          element: element,
+          element: shown,
           document: controller.document,
           scale: scale,
           gender: controller.previewGender,
@@ -871,6 +877,19 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
     return painter.height;
   }
 
+  /// نسخة العنصر للمعاينة الحيّة للخط: تُفرض عليها عائلة الخط المؤقتة إن كان
+  /// العنصر المحدد نصّاً؛ وإلا يُعاد كما هو.
+  TemplateElement _fontPreviewElement(
+    TemplateElement element,
+    TemplateEditorController controller,
+    bool selected,
+  ) {
+    final String? preview = controller.fontPreviewUiFamily;
+    if (preview == null || preview.isEmpty || !selected) return element;
+    if (element is! TextElement) return element;
+    return element.copyWith(customFont: preview);
+  }
+
   /// مستطيل العنصر بإحداثيات اللوحة (بكسل).
   Rect _screenRect(TemplateElement element, Size design, double scale) {
     final ElementBox box = _designBox(element, design);
@@ -995,6 +1014,10 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
       // في المستند، فلا نُسقط إغلاق المحرّر بسبب فشل إشعار.
       debugPrint('[canvas] تعذّر إنهاء تحرير النص: $error');
     } finally {
+      // إلغاء التركيز قبل التلف: يُغلق مقبض الإدخال ويتحرّر مؤشر النقر فوراً
+      // ليعود سحب العناصر بالمؤشر (GestureDetector) دون أي تعليق أو تدخّل مع
+      // حقل النص المتوفّق.
+      focus?.unfocus();
       field?.dispose();
       focus?.dispose();
     }
@@ -1111,6 +1134,16 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
     final TextAlign align = editorTextAlign(element.align);
     final TextStyle base = editorTextStyle(element, scale);
     final List<StyledTextSpan> spans = _liveSpans(element, current);
+    // معاينة الخط الحية: عائلة مؤقتة من قوائم الخطوط تُفرض على النمط الأساسي
+    // (نطاقات الخط في المقطع المظلل تبقى أسبق منها — المعاينة لا تلغي تدخّلاً
+    // صريحاً).
+    final String? previewFamily = controller.fontPreviewUiFamily;
+    final TextStyle previewBase = previewFamily == null
+        ? base
+        : base.copyWith(
+            fontFamily: previewFamily,
+            fontWeight: FontWeight.w400,
+          );
 
     return Positioned(
       left: rect.left,
@@ -1129,7 +1162,8 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
               Positioned.fill(
                 child: IgnorePointer(
                   child: Text.rich(
-                    editorTextSpan(current, element, spans, scale),
+                    editorTextSpan(current, element, spans, scale,
+                        familyOverride: previewFamily),
                     textDirection: direction,
                     textAlign: align,
                     maxLines: element.maxLines,
@@ -1137,25 +1171,35 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
                   ),
                 ),
               ),
-            TextField(
-              key: const ValueKey<String>('canvas-inline-text'),
-              controller: field,
-              focusNode: focus,
-              // نص الحقل شفّاف: ما يُرى هو طبقة [Text.rich] أو نمط [base]
-              // في الحقل نفسه عندما لا يوجد تنسيق جزئي.
-              style: spans.isEmpty
-                  ? base
-                  : base.copyWith(color: const Color(0x00000000)),
-              cursorColor:
-                  colorFromHex(element.colorHex, fallback: Colors.black),
-              cursorWidth: 1.6,
-              textDirection: direction,
-              textAlign: align,
-              textAlignVertical: TextAlignVertical.top,
-              maxLines: element.maxLines,
-              minLines: 1,
-              expands: false,
-              decoration: InputDecoration.collapsed(hintText: ''),
+            // تظليل التحديد **شبه شفّاف (35%)** كي تبقى الحروف المظللة مرئية
+            // تماماً خلف التظليل أثناء التحديد والتنسيق.
+            Theme(
+              data: Theme.of(context).copyWith(
+                textSelectionTheme: const TextSelectionThemeData(
+                  selectionColor: Color(0x592196F3), // أزرق 35%
+                  selectionHandleColor: Color(0xFF1565C0),
+                ),
+              ),
+              child: TextField(
+                key: const ValueKey<String>('canvas-inline-text'),
+                controller: field,
+                focusNode: focus,
+                // نص الحقل شفّاف: ما يُرى هو طبقة [Text.rich] أو نمط [base]
+                // في الحقل نفسه عندما لا يوجد تنسيق جزئي.
+                style: spans.isEmpty
+                    ? previewBase
+                    : previewBase.copyWith(color: const Color(0x00000000)),
+                cursorColor:
+                    colorFromHex(element.colorHex, fallback: Colors.black),
+                cursorWidth: 1.6,
+                textDirection: direction,
+                textAlign: align,
+                textAlignVertical: TextAlignVertical.top,
+                maxLines: element.maxLines,
+                minLines: 1,
+                expands: false,
+                decoration: InputDecoration.collapsed(hintText: ''),
+              ),
             ),
           ],
         ),
@@ -1364,6 +1408,11 @@ class _TemplateCanvasState extends State<TemplateCanvas> {
         element: element,
         onFont: (PdfFontFamily value) =>
             _applySpanStyle(controller, family: value),
+        onCustomFont: (String value) =>
+            _applySpanStyle(controller, customFont: value),
+        // المعاينة الحيّة للخط: عائلة مؤقتة تُعرض فور المرور فوق الخيار.
+        onPreviewFont: (String? uiFamily) =>
+            controller.setFontPreview(uiFamily),
         onSize: (double value) => _applySpanStyle(controller, size: value),
         onColor: (String value) =>
             _applySpanStyle(controller, colorHex: value),
@@ -1504,6 +1553,8 @@ class _TextSpanToolbar extends StatelessWidget {
     required this.style,
     required this.element,
     required this.onFont,
+    required this.onCustomFont,
+    required this.onPreviewFont,
     required this.onSize,
     required this.onColor,
     required this.onAlign,
@@ -1517,12 +1568,24 @@ class _TextSpanToolbar extends StatelessWidget {
   final TextElement element;
 
   final ValueChanged<PdfFontFamily> onFont;
+
+  /// اختير خط مرفوع/نظامي باسم عائلته.
+  final ValueChanged<String> onCustomFont;
+
+  /// مرّ المؤشر فوق خيار خط (أو خرج): معاينة حيّة بلا تثبيت.
+  final ValueChanged<String?> onPreviewFont;
   final ValueChanged<double> onSize;
   final ValueChanged<String> onColor;
   final ValueChanged<ElementTextAlign> onAlign;
   final ValueChanged<PdfFontWeight> onWeight;
   final ValueChanged<bool> onItalic;
   final ValueChanged<bool> onUnderline;
+
+  /// قيمة بعيدة عن أي لون ‎`#RRGGBB`‎ تفتح المنتقي الشامل عند اختيارها.
+  static const String _customColorValue = '#__full_picker__#';
+
+  /// بادئة خيارات الخطوط المرفوعة/النظامية في القائمة المختلطة.
+  static const String _customIdPrefix = 'custom-font:';
 
   /// مقاسات الخط المنشورة في القائمة.
   static const List<double> sizes = <double>[
@@ -1547,8 +1610,8 @@ class _TextSpanToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    final PdfFontFamily family =
-        style.family ?? element.family;
+    // الخط الفعلي للمقطع المظلل (نطاقه الصريح أو أساس العنصر).
+    final PdfFontFamily family = style.family ?? element.family;
     final double fontSize = style.size ?? element.fontSize;
 
     return Material(
@@ -1565,31 +1628,66 @@ class _TextSpanToolbar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // اختيار الخط — يُطبَّق على المقطع المظلل وحده.
-            PopupMenuButton<PdfFontFamily>(
-              tooltip: 'نوع الخط',
-              padding: EdgeInsets.zero,
-              onSelected: onFont,
-              iconSize: 18,
-              icon: const Icon(Icons.font_download_outlined, size: 18),
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<PdfFontFamily>>[
-                for (final PdfFontFamily option in PdfFontFamily.values)
-                  PopupMenuItem<PdfFontFamily>(
-                    value: option,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        if (option == family)
-                          Icon(Icons.check_rounded,
-                              size: 16, color: scheme.primary)
-                        else
-                          const SizedBox(width: 16),
-                        const SizedBox(width: 6),
-                        Text(option.labelAr),
-                      ],
-                    ),
-                  ),
-              ],
+            // اختيار الخط — المضمّن والمرفوع وخطوط النظام، مع معاينة حيّة
+            // فورية عند المرور فوق أي خيار.
+            ListenableBuilder(
+              listenable: CustomFontController.instance,
+              builder: (BuildContext context, Widget? _) {
+                final CustomFontController fonts = CustomFontController.instance;
+                return PopupMenuButton<String>(
+                  tooltip: 'نوع الخط',
+                  padding: EdgeInsets.zero,
+                  onOpened: () => fonts.scanSystemFonts(),
+                  onSelected: (String value) {
+                    onPreviewFont(null);
+                    if (value.startsWith(_customIdPrefix)) {
+                      onCustomFont(value.substring(_customIdPrefix.length));
+                    } else {
+                      onFont(PdfFontFamily.fromJson(value));
+                    }
+                  },
+                  onCanceled: () => onPreviewFont(null),
+                  iconSize: 18,
+                  icon: const Icon(Icons.font_download_outlined, size: 18),
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    for (final PdfFontFamily option in PdfFontFamily.values)
+                      _fontItem(
+                        context,
+                        value: option.jsonValue,
+                        label: option.labelAr,
+                        previewFamily: option.uiFamily,
+                        selected: style.customFont == null &&
+                            family == option,
+                      ),
+                    if (fonts.families.isNotEmpty) ...<PopupMenuEntry<String>>[
+                      const PopupMenuDivider(),
+                      for (final String name in fonts.families)
+                        _fontItem(
+                          context,
+                          value: '$_customIdPrefix$name',
+                          label: fonts.displayNameOf(name),
+                          previewFamily: name,
+                          selected: style.customFont == name ||
+                              element.customFont == name,
+                        ),
+                    ],
+                    if (fonts.hasSystemFonts) ...<PopupMenuEntry<String>>[
+                      const PopupMenuDivider(),
+                      for (final String name in fonts.systemFamilies
+                          .where((String n) => !fonts.families.contains(n)))
+                        _fontItem(
+                          context,
+                          value: '$_customIdPrefix$name',
+                          label: name,
+                          previewFamily: name,
+                          selected: style.customFont == name ||
+                              element.customFont == name,
+                        ),
+                    ],
+                  ],
+                );
+              },
             ),
             _divider(),
             // حجم الخط.
@@ -1628,11 +1726,17 @@ class _TextSpanToolbar extends StatelessWidget {
               ],
             ),
             _divider(),
-            // لون النص.
+            // لون النص — لوحة سريعة + منتقي شامل لأي درجة HEX/RGB.
             PopupMenuButton<String>(
               tooltip: 'لون النص',
               padding: EdgeInsets.zero,
-              onSelected: onColor,
+              onSelected: (String value) {
+                if (value == _customColorValue) {
+                  _openFullPicker(context);
+                  return;
+                }
+                onColor(value);
+              },
               iconSize: 18,
               icon: Container(
                 width: 18,
@@ -1667,6 +1771,25 @@ class _TextSpanToolbar extends StatelessWidget {
                       ],
                     ),
                   ),
+        const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          value: _customColorValue,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(Icons.colorize_rounded,
+                  size: 16, color: scheme.primary),
+              const SizedBox(width: 8),
+              // مرن ليبقى داخل عرض القائمة حتى بأحرف عريضة (خطوط الاختبار).
+              const Flexible(
+                child: Text(
+                  'منتقي الألوان الشامل…',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
               ],
             ),
             _divider(),
@@ -1766,6 +1889,52 @@ class _TextSpanToolbar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// خيار خط واحد في القائمة: يُرسم بخطه نفسه، ويرسل معاينة حيّة عند المرور
+  /// فوقه فتتغيّر صيغة النص المظلل فوراً قبل الضغط أو الإغلاق.
+  PopupMenuItem<String> _fontItem(
+    BuildContext context, {
+    required String value,
+    required String label,
+    required String previewFamily,
+    required bool selected,
+  }) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: MouseRegion(
+        onEnter: (_) => onPreviewFont(previewFamily),
+        onExit: (_) => onPreviewFont(null),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (selected)
+              Icon(Icons.check_rounded, size: 16, color: Theme.of(context).colorScheme.primary)
+            else
+              const SizedBox(width: 16),
+            const SizedBox(width: 6),
+            // مرن مع قصّ: أسماء خطوط النظام قد تفوق عرض القائمة (256px).
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontFamily: previewFamily),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// يفتح المنتقي الشامل (HEX/RGB) ويُرجع اختياره عبر [onColor].
+  Future<void> _openFullPicker(BuildContext context) async {
+    final String initial = style.colorHex ?? element.colorHex;
+    final String? picked = await showEditorColorPicker(
+      context,
+      initialHex: initial,
+    );
+    if (picked != null) onColor(picked);
   }
 }
 

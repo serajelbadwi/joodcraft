@@ -99,7 +99,13 @@ enum MeasurementUnit {
   inch('in', 'بوصة'),
 
   /// نقطة طباعة (72 نقطة = 1 بوصة).
-  pt('pt', 'نقطة');
+  pt('pt', 'نقطة'),
+
+  /// بكسل (عند 96dpi) — وحدة الشاشة والأبعاد الرقمية كقصص الحالة والمنشورات
+  /// المربّعة. `1px = 72/96 نقطة`، وهي نفس النسبة التي يعتمدها المستند لاشتقاق
+  /// مساحة التصميم (`designWidth = pageWidthPt × 96/72`)، فتعود الأبعاد الرقمية
+  /// الدقيقة كما أُدخلت بلا أي انزياح.
+  px('px', 'بكسل');
 
   const MeasurementUnit(this.jsonValue, this.labelAr);
 
@@ -111,28 +117,97 @@ enum MeasurementUnit {
     final String needle = '${value ?? 'cm'}'.trim().toLowerCase();
     return switch (needle) {
       'mm' || 'مم' => MeasurementUnit.mm,
-      'in' || 'بوصة' => MeasurementUnit.inch,
+      'in' || 'بوصة' || 'inch' => MeasurementUnit.inch,
       'pt' || 'نقطة' => MeasurementUnit.pt,
+      'px' || 'بكسل' => MeasurementUnit.px,
       _ => MeasurementUnit.cm,
     };
   }
 
+  /// مليمتر واحد = ‎72/25.4‎ نقطة ‎≈ 2.8346‎، فالوحدات المطبوعة (بطاقة 90×55
+  /// ملم مثلاً) تخرج بالمقاس الحقيقي نفسه لا بمقاس مُضاعف.
+  static const double _ptPerMm = 72 / 25.4;
+
   /// التحويل من وحدة إلى نقطة فاحصة (نقطة). هذه النقاط هي ما يطعمه
   /// محرّك الـ PDF فعلياً.
   double toPoints(double value) => switch (this) {
-    MeasurementUnit.mm => value / 10 * 72,
+    MeasurementUnit.mm => value * _ptPerMm,
     MeasurementUnit.inch => value * 72,
     MeasurementUnit.pt => value,
+    MeasurementUnit.px => value * 72 / 96,
     MeasurementUnit.cm => value / 2.54 * 72,
   };
 
   /// التحويل من نقطة فاحصة إلى هذه الوحدة.
   double fromPoints(double value) => switch (this) {
-    MeasurementUnit.mm => value * 10 / 72,
+    MeasurementUnit.mm => value / _ptPerMm,
     MeasurementUnit.inch => value / 72,
     MeasurementUnit.pt => value,
+    MeasurementUnit.px => value * 96 / 72,
     MeasurementUnit.cm => value * 2.54 / 72,
   };
+}
+
+/// وحدة دقّة الطباعة — تُعرض في نافذة المستند الجديد بجانب حقل الدقّة.
+///
+/// التخزين الداخلي للنقاط/بوصة (PPI) لأن محرّك الـ PDF والصور يفهم هذه الوحدة
+/// وحدها؛ أما الوحدة المعروضة (PPI/PPCM) فهي **طبقة عرض** تُحوَّل عند الحفظ
+/// والعرض بلا أي تغيير في هندسة المستند.
+enum ResolutionUnit {
+  /// بكسل لكل بوصة — الوحدة الافتراضية في الطباعة والشاشة.
+  ppi('ppi', 'بكسل/بوصة (PPI)'),
+
+  /// بكسل لكل سنتيمتر — مألوفة في أوروبا ووحدات ما قبل الطباعة.
+  ppcm('ppcm', 'بكسل/سنتيمتر (PPCM)');
+
+  const ResolutionUnit(this.jsonValue, this.labelAr);
+
+  final String jsonValue;
+  final String labelAr;
+
+  /// تحويل آمن من قيمة مخزّنة (مع الافتراض `ppi`).
+  static ResolutionUnit fromJson(Object? value) {
+    final String needle = '${value ?? 'ppi'}'.trim().toLowerCase();
+    return switch (needle) {
+      'ppcm' || 'dpcm' || 'بكسل/سنتيمتر' => ResolutionUnit.ppcm,
+      _ => ResolutionUnit.ppi,
+    };
+  }
+
+  /// قيمة الوحدة محوَّلة إلى نقطة/بوصة (وحدة المستند الداخلية).
+  double toDpi(double value) =>
+      this == ResolutionUnit.ppcm ? value * 2.54 : value;
+
+  /// قيمة النقاط/بوصة محوَّلة إلى هذه الوحدة.
+  double fromDpi(double dpi) =>
+      this == ResolutionUnit.ppcm ? dpi / 2.54 : dpi;
+}
+
+/// نمط لون المستند — **نيّة طباعة** تُحفظ مع القالب وتُعرض للمستخدم.
+///
+/// لا يغيّر هندسة المستند ولا ألوان العناصر (تلك تبقى RGBA في المحرّك): دوره
+/// أن يجعل القالب يعلن صراحةً هل هو معدّ للعرض على الشاشة/الويب أم لمطبعة
+/// احترافية، فيقرأه المصمّم والـ PDF والتسعير لاحقاً ويُبنى عليه ما يلزم.
+enum DocumentColorMode {
+  rgb('rgb', 'RGB — 8 بت (شاشة وويب)'),
+  cmyk('cmyk', 'CMYK — طباعة احترافية');
+
+  const DocumentColorMode(this.jsonValue, this.labelAr);
+
+  final String jsonValue;
+  final String labelAr;
+
+  /// هل هو نمط طباعة؟ (يساعد الواجهة على اختيار دقّة افتراضية مناسبة).
+  bool get isPrint => this == DocumentColorMode.cmyk;
+
+  /// تحويل آمن من قيمة مخزّنة (مع الافتراض `rgb`).
+  static DocumentColorMode fromJson(Object? value) {
+    final String needle = '${value ?? 'rgb'}'.trim().toLowerCase();
+    return switch (needle) {
+      'cmyk' || 'طباعة' => DocumentColorMode.cmyk,
+      _ => DocumentColorMode.rgb,
+    };
+  }
 }
 
 /// مستويات الاشتراك — مطابقة لقيود `CHECK` في قاعدة البيانات.

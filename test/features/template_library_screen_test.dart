@@ -6,11 +6,13 @@ import 'package:joodcraft/core/errors/app_error_code.dart';
 import 'package:joodcraft/core/models/template_document.dart';
 import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/templates/local_template_store.dart';
+import 'package:joodcraft/core/templates/preset_catalog.dart';
 import 'package:joodcraft/core/templates/preset_template.dart';
 import 'package:joodcraft/core/templates/template_draft.dart';
 import 'package:joodcraft/core/templates/template_record.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/features/templates/presentation/screens/template_library_screen.dart';
+import 'package:joodcraft/features/templates/presentation/widgets/template_thumbnail.dart';
 
 import '../support/fake_template_repository.dart';
 
@@ -163,9 +165,16 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// يفتح كل أقسام الأكورديون (الافتراضي: كلها مطويّة عند فتح المكتبة).
+  Future<void> expandAll(WidgetTester tester) async {
+    await tester.tap(find.byTooltip('توسيع الكل'));
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('بلا سحابة تعرض القوالب الجاهزة وتعمل أوفلاين',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     expect(
       find.descendant(
@@ -197,6 +206,7 @@ void main() {
       (WidgetTester tester) async {
     repository.failWith = AppErrorCode.network;
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     expect(find.text('شهادة شكر وتقدير'), findsOneWidget);
     expect(find.textContaining('تعذّر تحميل القوالب السحابية'), findsOneWidget);
@@ -204,6 +214,7 @@ void main() {
 
   testWidgets('البحث يُصفّي القوالب الجاهزة', (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     await tester.enterText(find.byType(TextField).first, 'عقد');
     await tester.pumpAndSettle();
@@ -221,6 +232,7 @@ void main() {
   testWidgets('تصفية المصدر تُظهر المحلي فقط (ولا نتائج قبل الاستيراد)',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     await tester.tap(find.byType(DropdownButton<TemplateSource?>));
     await tester.pumpAndSettle();
@@ -234,16 +246,20 @@ void main() {
   testWidgets('استيراد قالب جاهز محلياً يظهر في المكتبة ويُحفظ في المخزن',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(
         of: card('preset:appreciation_certificate'),
         matching: find.byIcon(Icons.more_vert_rounded),
       ),
     );
-    await tester.pumpAndSettle();
     await tester.tap(find.text('استيراد محلياً'));
     await tester.pumpAndSettle();
+
+    // القالب المستورد يظهر في قسم "قوالبي المحفوظة" — نفتحه بعد الاستيراد.
+    await expandAll(tester);
 
     expect(store.records.length, 1);
     expect(card(store.records.single.id), findsOneWidget);
@@ -253,26 +269,30 @@ void main() {
   testWidgets('حذف قالب محلي يطلب تأكيداً ثم يُزيله',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     // استيراد أولاً.
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(
         of: card('preset:appreciation_certificate'),
         matching: find.byIcon(Icons.more_vert_rounded),
       ),
     );
-    await tester.pumpAndSettle();
     await tester.tap(find.text('استيراد محلياً'));
     await tester.pumpAndSettle();
 
+    // القالب المستورد يظهر في قسم "قوالبي المحفوظة" — نفتحه بعد الاستيراد.
+    await expandAll(tester);
+
     final String localId = store.records.single.id;
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(
         of: card(localId),
         matching: find.byIcon(Icons.more_vert_rounded),
       ),
     );
-    await tester.pumpAndSettle();
     await tester.tap(find.text('حذف محلياً'));
     await tester.pumpAndSettle();
 
@@ -287,14 +307,15 @@ void main() {
   testWidgets('فتح قالب جاهز ينقل إلى محرّر الشهادات كمسودة',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(
         of: card('preset:appreciation_certificate'),
         matching: find.text('فتح كقالب'),
       ),
     );
-    await tester.pumpAndSettle();
 
     expect(
       find.text('محرر شهادة:مسودة-شهادة شكر وتقدير'),
@@ -304,6 +325,7 @@ void main() {
 
   testWidgets('فتح عقد جاهز ينقل إلى محرّر العقود', (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     await tapVisible(
       tester,
@@ -320,11 +342,12 @@ void main() {
       (WidgetTester tester) async {
     repository.records.add(cloudRecord());
     await pumpLibrary(tester);
+    await expandAll(tester);
 
-    await tester.tap(
+    await tapVisible(
+      tester,
       find.descendant(of: card('cloud-1'), matching: find.text('فتح')),
     );
-    await tester.pumpAndSettle();
 
     expect(find.text('محرر شهادة:سجل-cloud-1'), findsOneWidget);
   });
@@ -332,6 +355,7 @@ void main() {
   testWidgets('استخدام القالب في التوليد الجماعي ينقل مع السجل',
       (WidgetTester tester) async {
     await pumpLibrary(tester);
+    await expandAll(tester);
 
     await tapVisible(
       tester,
@@ -344,5 +368,150 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('توليد:preset:service_contract'), findsOneWidget);
+  });
+
+  // ========================================================================
+  //  إعادة تصميم المكتبة: أكورديون الأقسام + الصور المصغّرة
+  // ========================================================================
+
+  Finder section(String key) =>
+      find.byKey(ValueKey<String>('library-section-$key'));
+
+  Finder sectionHeader(String key) =>
+      find.byKey(ValueKey<String>('library-section-header-$key'));
+
+  testWidgets('الأقسام مطويّة افتراضياً وتُفتح بالنقر على البانر',
+      (WidgetTester tester) async {
+    await pumpLibrary(tester);
+
+    // كل بانرات التصنيفات ظاهرة، وكل البطاقات مخفيّة افتراضياً.
+    expect(section('collection:appreciation'), findsOneWidget);
+    expect(section('collection:completion'), findsOneWidget);
+    expect(section('contracts'), findsOneWidget);
+    expect(card('preset:appreciation_certificate'), findsNothing);
+    expect(card('preset:employment_contract'), findsNothing);
+
+    // البانر يحمل اسم التصنيف + سهم الفتح.
+    final Finder header = sectionHeader('collection:appreciation');
+    expect(
+      find.descendant(of: header, matching: find.text('شهادات تقدير')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: header,
+        matching: find.byIcon(Icons.expand_more_rounded),
+      ),
+      findsOneWidget,
+    );
+
+    // النقر على البانر يفتح القسم، والنقر ثانيةً يطويه.
+    await tapVisible(tester, header);
+    expect(card('preset:appreciation_certificate'), findsOneWidget);
+    await tapVisible(tester, sectionHeader('collection:appreciation'));
+    expect(card('preset:appreciation_certificate'), findsNothing);
+  });
+
+  testWidgets('القسم الموسّع له منطقة تمرير داخلية بذراع تمرير مرئي',
+      (WidgetTester tester) async {
+    await pumpLibrary(tester);
+    await expandAll(tester);
+
+    final Finder drawer = find.descendant(
+      of: section('collection:appreciation'),
+      matching: find.byType(Scrollbar),
+    );
+    expect(drawer, findsOneWidget);
+    expect(
+      find.descendant(
+        of: drawer,
+        matching: find.byType(SingleChildScrollView),
+      ),
+      findsOneWidget,
+    );
+
+    // ارتفاع القسم محدود، فلا يمدّ المحتوى الصفحة بلا نهاية.
+    final double height =
+        tester.getSize(section('collection:appreciation')).height;
+    expect(height, lessThan(700));
+  });
+
+  testWidgets('أزرار طي الكل/توسيع الكل تعمل على كل الأقسام',
+      (WidgetTester tester) async {
+    await pumpLibrary(tester);
+
+    expect(card('preset:appreciation_certificate'), findsNothing);
+
+    await tester.tap(find.byTooltip('توسيع الكل'));
+    await tester.pumpAndSettle();
+    expect(card('preset:appreciation_certificate'), findsOneWidget);
+    expect(card('preset:employment_contract'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('طي الكل'));
+    await tester.pumpAndSettle();
+    expect(card('preset:appreciation_certificate'), findsNothing);
+    expect(card('preset:employment_contract'), findsNothing);
+  });
+
+  testWidgets('كل بطاقة تعرض صورة مصغّرة متجهية للقالب',
+      (WidgetTester tester) async {
+    await pumpLibrary(tester);
+    await expandAll(tester);
+
+    expect(
+      find.descendant(
+        of: card('preset:appreciation_certificate'),
+        matching: find.byType(TemplateThumbnail),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: card('preset:employment_contract'),
+        matching: find.byType(TemplateThumbnail),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('تفضيل قالب يفعّل زر النجمة في بطاقته',
+      (WidgetTester tester) async {
+    await pumpLibrary(tester);
+    await expandAll(tester);
+
+    final Finder star = find.descendant(
+      of: card('preset:experience_declaration'),
+      matching: find.byTooltip('تفضيل'),
+    );
+    expect(star, findsOneWidget);
+
+    await tapVisible(tester, star);
+
+    expect(
+      find.descendant(
+        of: card('preset:experience_declaration'),
+        matching: find.byTooltip('إزالة التفضيل'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('تصفية الاتجاه تُخفي القوالب ذات الاتجاه المعاكس',
+      (WidgetTester tester) async {
+    await pumpLibrary(tester);
+    await expandAll(tester);
+
+    final PresetTemplate preset =
+        PresetCatalog.byId('appreciation_certificate')!;
+    final PageOrientation opposite = preset.document.isLandscape
+        ? PageOrientation.portrait
+        : PageOrientation.landscape;
+
+    await tester.tap(find.byType(DropdownButton<PageOrientation?>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(opposite.labelAr).last);
+    await tester.pumpAndSettle();
+
+    expect(card('preset:appreciation_certificate'), findsNothing);
   });
 }

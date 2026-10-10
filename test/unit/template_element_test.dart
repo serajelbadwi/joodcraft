@@ -158,6 +158,68 @@ void main() {
     });
   });
 
+  group('تلوين الصورة (tintHex)', () {
+    const ImageElement image = ImageElement(
+      id: 'img-1',
+      box: ElementBox(x: 0, y: 0, width: 100, height: 50),
+      sourceKind: ImageSourceKind.userAsset,
+      path: 'asset_1',
+    );
+
+    test('بلا لون: لا حقل في JSON ولا مفتاح تلوين', () {
+      expect(image.hasTint, isFalse);
+      expect(image.toJson().containsKey('tint'), isFalse);
+      expect(image.imageKey, 'user_asset:asset_1');
+      expect(image.tintedImageKey, isNull);
+    });
+
+    test('اللون يُحفظ ويُقرأ ذهاباً وإياباً مع مفتاح التلوين', () {
+      final ImageElement tinted = image.copyWith(tintHex: '#C7A26B');
+
+      expect(tinted.hasTint, isTrue);
+      expect(tinted.toJson()['tint'], '#C7A26B');
+      expect(tinted.imageKey, 'user_asset:asset_1');
+      expect(tinted.tintedImageKey, 'user_asset:asset_1#c7a26b');
+
+      final ImageElement restored = ImageElement.fromJson(
+        Map<String, dynamic>.from(tinted.toJson()),
+        'img-1',
+      );
+      expect(restored.tintHex, '#C7A26B');
+      expect(restored.tintedImageKey, tinted.tintedImageKey);
+    });
+
+    test('عدم تمرير المعامل يُبقي اللون، وبـ null يُمسح', () {
+      final ImageElement tinted = image.copyWith(tintHex: '#FF0000');
+
+      expect(tinted.copyWith(fit: ImageFit.fill).tintHex, '#FF0000');
+      expect(tinted.copyWith(tintHex: null).tintHex, isNull);
+      expect(tinted.copyWith(tintHex: null).tintedImageKey, isNull);
+    });
+
+    test('يقرأ أسماء بديلة للون من JSON (توافق خلفي)', () {
+      for (final String key in <String>[
+        'tint',
+        'tintColor',
+        'tint_hex',
+        'color',
+      ]) {
+        final ImageElement parsed = ImageElement.fromJson(
+          <String, dynamic>{
+            'x': 0,
+            'y': 0,
+            'w': 10,
+            'h': 10,
+            'path': 'p',
+            key: '#123456',
+          },
+          'i',
+        );
+        expect(parsed.tintHex, '#123456', reason: 'المفتاح $key');
+      }
+    });
+  });
+
   group('التوافق الأمامي', () {
     test('نوع غير معروف يُحفظ كما هو ويُدرج كـ UnknownElement', () {
       final TemplateElement element = TemplateElement.fromJson(

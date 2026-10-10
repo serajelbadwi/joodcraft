@@ -9,6 +9,9 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get editorDone => 'مکمل';
+
+  @override
   String get appTagline => 'سرکاری سرٹیفکیٹ اور معاہدے آف لائن بنائیں';
 
   @override
@@ -31,6 +34,19 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get actionSignOut => 'سائن آؤٹ';
+
+  @override
+  String get actionOpenMenu => 'مینو';
+
+  @override
+  String get editorFitToScreen => 'اسکرین پر فٹ کریں';
+
+  @override
+  String get editorNewTemplate => 'نیا ٹیمپلیٹ';
+
+  @override
+  String get editorNewConfirm =>
+      'نیا ٹیمپلیٹ ڈیفالٹ ڈیزائن سے شروع ہوگا؛ غیر محفوظ تبدیلیاں انڈو ہسٹری میں رہیں گی۔ جاری رکھیں؟';
 
   @override
   String get actionBackToDashboard => 'ڈیش بورڈ پر واپس جائیں';
@@ -366,6 +382,235 @@ class AppLocalizationsUr extends AppLocalizations {
       'گروپ کو ماؤس سے کھینچیں، باریک حرکت کے لیے تیر استعمال کریں (Shift = 10px)، اور انتخاب میں تبدیلی کے لیے Ctrl + کلک کریں۔';
 
   @override
+  String get destBrand => 'شناخت اور پروفائل';
+
+  @override
+  String get destBrandDesc => 'آپ کا لوگو، مہریں، دستخط اور برانڈ رنگ۔';
+
+  @override
+  String get brandTitle => 'شناخت اور پروفائل کی ترتیبات';
+
+  @override
+  String get brandTabVisuals => 'بصری شناخت';
+
+  @override
+  String get brandTabText => 'متن کی معلومات';
+
+  @override
+  String get brandTabColors => 'رنگ اور فونٹ';
+
+  @override
+  String get brandTabPreview => 'شناخت کا پیش منظر';
+
+  @override
+  String get brandPrimaryLogo => 'بنیادی لوگو';
+
+  @override
+  String get brandWatermarkLogo => 'واٹر مارک لوگو';
+
+  @override
+  String get brandSeals => 'سرکاری مہریں';
+
+  @override
+  String get brandAddSeal => 'مہر شامل کریں';
+
+  @override
+  String get brandSealName => 'مہر کا نام';
+
+  @override
+  String get brandSignatures => 'مجاز دستخط';
+
+  @override
+  String get brandAddSignature => 'دستخط شامل کریں';
+
+  @override
+  String get brandSignatureName => 'دستخط کرنے والے کا نام';
+
+  @override
+  String get brandSignatureTitle => 'عہدہ';
+
+  @override
+  String get brandRemove => 'ہٹائیں';
+
+  @override
+  String get brandNoSeals => 'ابھی کوئی مہر شامل نہیں کی گئی۔';
+
+  @override
+  String get brandNoSignatures => 'ابھی کوئی دستخط شامل نہیں کیے گئے۔';
+
+  @override
+  String get brandOrgNameAr => 'ادارے کا نام (عربی)';
+
+  @override
+  String get brandOrgNameEn => 'ادارے کا نام (انگریزی)';
+
+  @override
+  String get brandHeaderText => 'سرخی کا متن';
+
+  @override
+  String get brandFooterText => 'پیر کا متن';
+
+  @override
+  String get brandRegNumber => 'ٹیکس / رجسٹریشن نمبر';
+
+  @override
+  String get brandPrimaryColor => 'بنیادی رنگ';
+
+  @override
+  String get brandSecondaryColor => 'ثانوی رنگ';
+
+  @override
+  String get brandAccentColor => 'نمایاں رنگ';
+
+  @override
+  String get brandHeaderFont => 'سرخی کا فونٹ';
+
+  @override
+  String get brandBodyFont => 'متن کا فونٹ';
+
+  @override
+  String get brandClear => 'شناخت صاف کریں';
+
+  @override
+  String get brandClearConfirm =>
+      'محفوظ تمام شناخت حذف ہو جائے گی۔ جاری رکھیں؟';
+
+  @override
+  String get brandSaved => 'شناخت محفوظ ہو گئی۔';
+
+  @override
+  String get brandPresets => 'شناخت کے عناصر';
+
+  @override
+  String get brandInsertHeader => 'معیاری سرخی شامل کریں';
+
+  @override
+  String get brandInsertFooter => 'معیاری پیر شامل کریں';
+
+  @override
+  String get brandApplyColors => 'رنگ لاگو کریں';
+
+  @override
+  String get brandQuickSeals => 'مہریں';
+
+  @override
+  String get brandQuickSignatures => 'دستخط';
+
+  @override
+  String get brandNoBrand => 'آپ کی شناخت ابھی ترتیب نہیں دی گئی۔';
+
+  @override
+  String get brandOpenSettings => 'شناخت کی ترتیبات کھولیں';
+
+  @override
+  String get brandHeaderInserted => 'معیاری سرخی شامل ہو گئی۔';
+
+  @override
+  String get brandFooterInserted => 'معیاری پیر شامل ہو گیا۔';
+
+  @override
+  String get brandColorsApplied => 'رنگ لاگو ہو گئے۔';
+
+  @override
+  String get brandSealInserted => 'مہر شامل ہو گئی۔';
+
+  @override
+  String get brandSignatureInserted => 'دستخط شامل ہو گیا۔';
+
+  @override
+  String get brandFontDefault => 'طے شدہ';
+
+  @override
+  String get paletteShapes => 'اشکال';
+
+  @override
+  String get paletteRoundedRect => 'گول کونوں والا مستطیل';
+
+  @override
+  String get paletteEllipse => 'دائرہ / بیضوی';
+
+  @override
+  String get editorFillOpacity => 'بھرائی کی شفافیت';
+
+  @override
+  String get editorCollapsePanel => 'سائیڈ پینل سمیٹیں';
+
+  @override
+  String get editorExpandPanel => 'سائیڈ پینل دکھائیں';
+
+  @override
+  String get editorCustomSize => 'اپنی مرضی کا سائز';
+
+  @override
+  String get editorStandardSize => 'معیاری سائز';
+
+  @override
+  String get editorBackgroundTitle => 'ورق کا پس منظر';
+
+  @override
+  String get editorGradientFrom => 'سے';
+
+  @override
+  String get editorGradientTo => 'تک';
+
+  @override
+  String get editorGradientDirection => 'سمت';
+
+  @override
+  String get editorGradientNone => 'تدریج نہیں';
+
+  @override
+  String get editorGradientVertical => 'عمودی';
+
+  @override
+  String get editorGradientHorizontal => 'افقی';
+
+  @override
+  String get editorGradientDiagonal => 'ترچھا';
+
+  @override
+  String get editorLayersTitle => 'تہیں';
+
+  @override
+  String get editorLayerShow => 'عنصر دکھائیں';
+
+  @override
+  String get editorLayerHide => 'عنصر چھپائیں';
+
+  @override
+  String get editorLayerLock => 'عنصر مقفل کریں';
+
+  @override
+  String get editorLayerUnlock => 'عنصر کی قفل کشائی کریں';
+
+  @override
+  String get editorLayersEmpty => 'اس صفحے پر ابھی کوئی عنصر نہیں۔';
+
+  @override
+  String get editorGroupSelected => 'انتخاب گروپ کریں';
+
+  @override
+  String get editorUngroupSelected => 'گروپ ختم کریں';
+
+  @override
+  String get editorAlignLeft => 'بائیں سیدھ';
+
+  @override
+  String get editorAlignCenterH => 'افقی مرکز';
+
+  @override
+  String get editorAlignRight => 'دائیں سیدھ';
+
+  @override
+  String get editorAlignTop => 'اوپر سیدھ';
+
+  @override
+  String get editorAlignCenterV => 'عمودی مرکز';
+
+  @override
+  String get editorAlignBottom => 'نیچے سیدھ';
+
+  @override
   String get editorBringForward => 'آگے لائیں';
 
   @override
@@ -506,6 +751,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get editorSource => 'ماخذ';
+
+  @override
+  String get editorImageTint => 'تصویر کی رنگت';
 
   @override
   String get editorImageFit => 'تصویر کی موافقت';
@@ -1828,4 +2076,893 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cbContractDataTitle => 'معاہدے کے اعداد و شمار (نمونہ)';
+
+  @override
+  String get editorSendBackward => 'پیچھے بھیجیں';
+
+  @override
+  String get editorRotateLeft => '90° بائیں گھمائیں';
+
+  @override
+  String get editorRotateRight => '90° دائیں گھمائیں';
+
+  @override
+  String get editorFlipH => 'افقی پلٹیں';
+
+  @override
+  String get editorFlipV => 'عمودی پلٹیں';
+
+  @override
+  String get editorTransform => 'تبدیلیاں';
+
+  @override
+  String get editorToolSelect => 'انتخاب';
+
+  @override
+  String get editorToolShapes => 'اشکال';
+
+  @override
+  String get editorFillType => 'بھرائی کی قسم';
+
+  @override
+  String get editorFillSolid => 'ٹھوس';
+
+  @override
+  String get editorGradientLinear => 'لکیری گریڈینٹ';
+
+  @override
+  String get editorGradientRadial => 'ریڈیل گریڈینٹ';
+
+  @override
+  String get editorGradientAngle => 'گریڈینٹ زاویہ';
+
+  @override
+  String get editorShadowEnable => 'سایہ شامل کریں';
+
+  @override
+  String get editorShadowColor => 'سائے کا رنگ';
+
+  @override
+  String get editorShadowBlur => 'سائے کی دھندلاہٹ';
+
+  @override
+  String get editorShadowOffsetX => 'افقی ہٹاؤ';
+
+  @override
+  String get editorShadowOffsetY => 'عمودی ہٹاؤ';
+
+  @override
+  String get editorShadowSpread => 'پھیلاؤ';
+
+  @override
+  String get editorShadowRemove => 'سایہ ہٹائیں';
+
+  @override
+  String get editorPoints => 'نوک';
+
+  @override
+  String get editorInnerRadius => 'اندرونی رداس';
+
+  @override
+  String get editorCornerTopLeft => 'اوپر بائیں';
+
+  @override
+  String get editorCornerTopRight => 'اوپر دائیں';
+
+  @override
+  String get editorCornerBottomRight => 'نیچے دائیں';
+
+  @override
+  String get editorCornerBottomLeft => 'نیچے بائیں';
+
+  @override
+  String get editorDashPattern => 'ڈیش پیٹرن';
+
+  @override
+  String get editorBooleanOps => 'بولین عمل';
+
+  @override
+  String get editorBooleanUnion => 'ضم کریں';
+
+  @override
+  String get editorBooleanSubtract => 'تفریق';
+
+  @override
+  String get editorBooleanIntersect => 'تقاطع';
+
+  @override
+  String get editorBooleanUngroup => 'الگ کریں';
+
+  @override
+  String get paletteStar => 'ستارہ';
+
+  @override
+  String get palettePolygon => 'کثیرالاضلاع';
+
+  @override
+  String get editorBooleanExclude => 'استثناء';
+
+  @override
+  String get editorBooleanHint =>
+      'ملحق شدہ راستہ ایک ہی بولین نتیجہ ہے (اندرونی حدود کے بغیر) اور کسی بھی وقت الگ کیا جا سکتا ہے۔';
+
+  @override
+  String get editorDockTools => 'ٹول پینل';
+
+  @override
+  String get editorDockAnchor => 'ڈاک کی جگہ';
+
+  @override
+  String get editorDockTopBar => 'اوپری پٹی';
+
+  @override
+  String get editorDockInspector => 'سائیڈ پینل';
+
+  @override
+  String get editorDockLeftRail => 'سائیڈ ریل';
+
+  @override
+  String get editorDockFloating => 'تیرتا ہوا';
+
+  @override
+  String get editorDockCollapse => 'ٹولز سکیڑیں';
+
+  @override
+  String get editorDockExpand => 'ٹولز پھیلائیں';
+
+  @override
+  String get editorDockResize => 'سائز بدلنے کے لیے کھینچیں';
+
+  @override
+  String get editorDockDropHint => 'یہاں چھوڑ کر منسلک کریں';
+
+  @override
+  String get editorMoreTools => 'مزید ٹولز';
+
+  @override
+  String get editorDocumentProperties => 'دستاویز کی خصوصیات';
+
+  @override
+  String get editorDockReset => 'ڈیفالٹ ڈاکنگ بحال کریں';
+
+  @override
+  String get editorTextShadow => 'متن کا سایہ';
+
+  @override
+  String get editorTextShadowAdd => 'متن پر سایہ شامل کریں';
+
+  @override
+  String get editorShadowOpacity => 'سائے کی شفافیت';
+
+  @override
+  String get genderMale => 'مذکر';
+
+  @override
+  String get genderFemale => 'مؤنث';
+
+  @override
+  String get genderPreviewAutoHint => 'جبر ہٹانے کے لیے کلک کریں (خودکار)';
+
+  @override
+  String get genderPresetCompleted => '”completed“ (مذکر/مؤنث)';
+
+  @override
+  String get genderPresetPassed => '”passed“ (مذکر/مؤنث)';
+
+  @override
+  String get genderPresetForStudent => '”for the student“ (مذکر/مؤنث)';
+
+  @override
+  String get genderPresetStudent => '”the student“ (مذکر/مؤنث)';
+
+  @override
+  String get genderPresetToHim => '”to him / to her“';
+
+  @override
+  String get genderPresetHonoring => '”the outstanding trainee“ (مذکر/مؤنث)';
+
+  @override
+  String get editorGenderSnippet => 'مشروط جملہ شامل کریں';
+
+  @override
+  String get editorGenderSnippetHint =>
+      'ایک جملہ شامل کرتا ہے جو وصول کنندہ کی جنس کے مطابق خود بدلتا ہے۔';
+
+  @override
+  String get bpGenderReviewTitle => 'جنس کا جائزہ (مذکر/مؤنث)';
+
+  @override
+  String get bpGenderReviewSubtitle =>
+      'جنس نام یا ”جنس“ کالم سے معلوم ہوتی ہے — چھاپنے سے پہلے غیر معمولی کیس درست کریں۔';
+
+  @override
+  String get bpGenderRow => 'قطار';
+
+  @override
+  String get bpGenderDetected => 'معلوم شدہ';
+
+  @override
+  String get bpGenderEffective => 'لاگو';
+
+  @override
+  String get bpGenderNameColumn => 'نام';
+
+  @override
+  String get bpGenderEditName => 'نام میں ترمیم کریں';
+
+  @override
+  String get bpGenderNameHint => 'درست نام لکھیں';
+
+  @override
+  String get bpGenderClearOverrides => 'ترامیم صاف کریں';
+
+  @override
+  String get bpGenderOverridden => 'دستی طور پر درست';
+
+  @override
+  String get bpGenderUnknownName => '—';
+
+  @override
+  String get bpOutputTitle => 'سرٹیفکیٹ محفوظ کرنے کی جگہ';
+
+  @override
+  String get bpOutputHint =>
+      'تیار کردہ PDF محفوظ کرنے کے لیے فولڈر منتخب کریں، یا طے شدہ مقام سے شروع کریں۔';
+
+  @override
+  String get bpOutputPickFolder => 'فولڈر منتخب کریں…';
+
+  @override
+  String get bpOutputStart => 'تیاری شروع کریں';
+
+  @override
+  String get bpOutputPathLabel => 'منتخب فولڈر';
+
+  @override
+  String get bpOutputNoFolder => 'کوئی فولڈر منتخب نہیں — صرف پرنٹ اور برآمد۔';
+
+  @override
+  String get bpOpenFolder => 'فولڈر کھولیں';
+
+  @override
+  String get bpOutputSavedTitle => 'PDF فائل محفوظ ہو گئی';
+
+  @override
+  String get bpOpenFolderFailed => 'فولڈر نہیں کھل سکا۔';
+
+  @override
+  String get bpOutputNameLabel => 'برآمد فائل کا نام';
+
+  @override
+  String get bpOutputNameHint => 'بغیر توسیع کے نام لکھیں';
+
+  @override
+  String get bpOutputNamePreviewLabel => 'اس نام سے محفوظ ہوگا';
+
+  @override
+  String get bpOutputModeLabel => 'محفوظ کرنے کا انداز';
+
+  @override
+  String get bpOutputModeCombined => 'ایک مرکب فائل';
+
+  @override
+  String get bpOutputModeIndividual => 'ہر شخص کے لیے الگ فائل';
+
+  @override
+  String get hubTitle => 'نیا پروجیکٹ';
+
+  @override
+  String get hubSubtitle =>
+      'تیار سائز منتخب کریں یا اپنا مقرر کریں — کینوس بالکل درست سائز اور تناسب کے ساتھ کھلے گا۔';
+
+  @override
+  String get hubKindSingle => 'ایک ورق کی مطبوعات اور دستاویزات';
+
+  @override
+  String get hubKindMulti => 'کثیر الصفحات کتابیں اور مطبوعات';
+
+  @override
+  String get hubKindSingleHint =>
+      'ایک ورق: سرٹیفکیٹ، معاہدے، کارڈ، نشست نمبر، مبارکبادی کارڈ۔';
+
+  @override
+  String get hubKindMultiHint =>
+      'کثیر الصفحات: کتاب، رسالہ، کتابچہ، رپورٹ، کیٹلاگ۔';
+
+  @override
+  String get hubGroupCertificates => 'سرٹیفکیٹ اور معاہدے';
+
+  @override
+  String get hubGroupCards => 'کارڈ اور شناختی بیج';
+
+  @override
+  String get hubGroupSeat => 'نشست نمبر اور لیبل';
+
+  @override
+  String get hubGroupGreeting => 'مبارکبادی کارڈ';
+
+  @override
+  String get hubGroupPublications => 'کتابیں اور مطبوعات';
+
+  @override
+  String get hubGroupCustom => 'اپنی مرضی کا سائز';
+
+  @override
+  String get hubDigitalBadge => 'ڈیجیٹل';
+
+  @override
+  String get hubCreate => 'بنائیں';
+
+  @override
+  String get hubCustomCardBody =>
+      'اپنے پیمانے کسی بھی اکائی میں درج کریں اور اپنے سائز کے کینوس سے آغاز کریں۔';
+
+  @override
+  String get hubCustomName => 'پروجیکٹ کا نام';
+
+  @override
+  String get hubCustomNameHint => 'مثلاً دعوتی کارڈ';
+
+  @override
+  String get hubCustomPreview => 'آخری سائز';
+
+  @override
+  String get hubCustomCreate => 'کینوس بنائیں';
+
+  @override
+  String get hubCustomType => 'پروجیکٹ کی قسم';
+
+  @override
+  String get hubSearchHint => 'سائز تلاش کریں…';
+
+  @override
+  String get hubNoResults => 'کوئی مماثل سائز نہیں — دوسرا لفظ آزمائیں۔';
+
+  @override
+  String get hubAspectRatio => 'تناسب';
+
+  @override
+  String get destNewProject => 'نیا پروجیکٹ';
+
+  @override
+  String get destNewProjectDesc =>
+      'تیار یا اپنی مرضی کا سائز منتخب کریں اور فوراً ڈیزائن شروع کریں۔';
+
+  @override
+  String get ptpImpositionToggle => 'پرنٹ ترتیب';
+
+  @override
+  String get ptpImpositionNoFit =>
+      'ورق اس آئٹم کے لیے بہت چھوٹا ہے — حاشیے کم کریں یا بڑا ورق منتخب کریں۔';
+
+  @override
+  String get editorEffectsTitle => 'اثرات اور رنگ کی ایڈجسٹمنٹ';
+
+  @override
+  String get editorShadowGroup => 'سایہ';
+
+  @override
+  String get editorOuterGlow => 'بیرونی چمک';
+
+  @override
+  String get editorInnerGlow => 'اندرونی چمک';
+
+  @override
+  String get editorGlowAdd => 'چمک شامل کریں';
+
+  @override
+  String get editorGlowRemove => 'چمک ہٹائیں';
+
+  @override
+  String get editorGlowColor => 'چمک کا رنگ';
+
+  @override
+  String get editorGlowRadius => 'چمک کا دائرہ';
+
+  @override
+  String get editorGlowSpread => 'چمک کا پھیلاؤ';
+
+  @override
+  String get editorGlowOpacity => 'چمک کی شفافیت';
+
+  @override
+  String get editorAdjustGroup => 'رنگ کی ایڈجسٹمنٹ';
+
+  @override
+  String get editorAdjustBrightness => 'روشنی';
+
+  @override
+  String get editorAdjustContrast => 'تضاد';
+
+  @override
+  String get editorAdjustSaturation => 'سیرابی';
+
+  @override
+  String get editorAdjustHue => 'رنگت';
+
+  @override
+  String get editorAdjustReset => 'ری سیٹ';
+
+  @override
+  String get bpOutputSavedFolderTitle => 'فائلیں الگ فولڈر میں محفوظ ہیں';
+
+  @override
+  String get hubDetailsTitle => 'سائز کی تفصیلات';
+
+  @override
+  String get hubDetailsHint =>
+      'پیش فرض تفصیلات بھری ہوئی — گرڈ سے سائز چنیں یا پیمائش تبدیل کریں۔';
+
+  @override
+  String get hubFilterAll => 'سب';
+
+  @override
+  String get hubFilterRecent => 'حالیہ سائز';
+
+  @override
+  String get hubFilterSeat => 'نشست نمبر';
+
+  @override
+  String get hubFilterGreeting => 'مبارکبادیں اور اسکرینیں';
+
+  @override
+  String get hubRecentEmpty =>
+      'ابھی کوئی حالیہ سائز نہیں — آپ کا بنایا ہوا کوئی بھی پروجیکٹ یہاں آئے گا۔';
+
+  @override
+  String get hubDocTitle => 'پروجیکٹ کا نام';
+
+  @override
+  String get hubDocTitleHint => 'نیا پروجیکٹ - 1';
+
+  @override
+  String get hubWidth => 'چوڑائی';
+
+  @override
+  String get hubHeight => 'اونچائی';
+
+  @override
+  String get hubUnitLabel => 'اکائی';
+
+  @override
+  String get hubOrientationLabel => 'رخ';
+
+  @override
+  String get hubPortrait => 'عمودی';
+
+  @override
+  String get hubLandscape => 'افقی';
+
+  @override
+  String get hubVariantLabel => 'قسم';
+
+  @override
+  String get hubResolutionLabel => 'ریزولوشن';
+
+  @override
+  String get hubResolutionUnitLabel => 'ریزولوشن اکائی';
+
+  @override
+  String get hubColorModeLabel => 'رنگ موڈ';
+
+  @override
+  String get hubBackgroundLabel => 'پس منظر کا رنگ';
+
+  @override
+  String get hubBackgroundWhite => 'سفید';
+
+  @override
+  String get hubBackgroundTransparent => 'شفاف';
+
+  @override
+  String get hubBackgroundBlack => 'سیاہ';
+
+  @override
+  String get hubBackgroundCustom => 'اپنی رنگت';
+
+  @override
+  String get hubCreateProject => 'پروجیکٹ بنائیں';
+
+  @override
+  String get hubCustomFamilyTitle => 'اپنا سائز';
+
+  @override
+  String get newDocTitle => 'نیا دستاویز';
+
+  @override
+  String get newDocScopeSocial => 'اسکرینیں اور مبارکبادیں';
+
+  @override
+  String get newDocFilterCertificates => 'اسناد';
+
+  @override
+  String get newDocFilterCards => 'کارڈز';
+
+  @override
+  String get newDocFilterGreeting => 'مبارکبادیں';
+
+  @override
+  String get newDocFilterPublications => 'مطبوعات';
+
+  @override
+  String get menuFile => 'فائل';
+
+  @override
+  String get menuEdit => 'ترمیم';
+
+  @override
+  String get menuView => 'منظر';
+
+  @override
+  String get menuTools => 'اوزار';
+
+  @override
+  String get menuHelp => 'مدد';
+
+  @override
+  String get menuNewDocument => 'نیا دستاویز…';
+
+  @override
+  String get menuPurgeRecent => 'حالیہ سائز صاف کریں';
+
+  @override
+  String get menuPurgeImageCache => 'تصاویر کیشے صاف کریں';
+
+  @override
+  String get menuPreviewCertificate => 'نمونہ سرٹیفکیٹ دیکھیں';
+
+  @override
+  String get menuPreviewContract => 'نمونہ معاہدہ دیکھیں';
+
+  @override
+  String get menuAbout => 'JoodCraft کے بارے میں';
+
+  @override
+  String get actionNewShort => '+ نیا';
+
+  @override
+  String get dashLocalMode => 'مقامی';
+
+  @override
+  String get dashLocalStorage =>
+      'اس ڈیوائس پر مقامی طور پر محفوظ — کوئی پروجیکٹ سرور پر اپلوڈ نہیں ہوتا۔';
+
+  @override
+  String get dashRecentProjects => 'حالیہ پروجیکٹس';
+
+  @override
+  String get dashRecentEmpty =>
+      'اس ڈیوائس پر ابھی کوئی محفوظ پروجیکٹ نہیں — نیا دستاویز بنائیں، یہاں فوراً نظر آئے گا۔';
+
+  @override
+  String get dashRecentOpen => 'پروجیکٹ کھولیں';
+
+  @override
+  String get dashRoadmapLocal =>
+      'مقامی پروجیکٹ ڈیٹا بیس (projects ٹیبل) کے ساتھ 100% آف لائن محفوظ';
+
+  @override
+  String get dashRoadmapOffline =>
+      'مکمل آف لائن: پروجیکٹ اپلوڈ نہیں اور نیٹ ورک کی ضرورت نہیں';
+
+  @override
+  String get editorTransformPosition => 'تبدیلی اور پوزیشن';
+
+  @override
+  String get editorTransformPositionHint => 'پوزیشن، سائز اور گردش کا زاویہ';
+
+  @override
+  String get editorAppearanceEffects => 'ظاہری شکل اور اثرات';
+
+  @override
+  String get editorAppearanceEffectsHint => 'بھرائی، بارڈر، چمک اور سائے';
+
+  @override
+  String get editorTypographyHint => 'فونٹ، سائز، سیدھ اور وقفہ';
+
+  @override
+  String get editorPageSettingsHint => 'سائز اور پیمائش کی اکائی';
+
+  @override
+  String get editorBackgroundHint => 'صفحے کا رنگ یا گریڈینٹ';
+
+  @override
+  String get editorPrecisionHint => 'باریک حرکت اور پیمانہ';
+
+  @override
+  String get joodExportProject => 'پروجیکٹ برآمد کریں (.jood)';
+
+  @override
+  String get joodImportProject => 'پروجیکٹ کھولیں (.jood)';
+
+  @override
+  String get joodExportReady => 'پروجیکٹ فائل محفوظ کرنے کے لیے تیار ہے۔';
+
+  @override
+  String get joodExportFailed => 'پروجیکٹ فائل برآمد نہیں ہو سکی۔';
+
+  @override
+  String get joodImportOpened => 'درآمد شدہ پروجیکٹ کھل گیا۔';
+
+  @override
+  String get joodImportFailed => 'پروجیکٹ فائل کھولی نہیں جا سکی۔';
+
+  @override
+  String get joodRecoveryTitle => 'غیر محفوظ مسودہ';
+
+  @override
+  String get joodRecoveryMessage =>
+      'پچھلی نشست سے ایک غیر محفوظ مسودہ موجود ہے۔ کیا آپ اسے بحال کرنا چاہتے ہیں؟';
+
+  @override
+  String get joodRecoveryRestore => 'بحال کریں';
+
+  @override
+  String get joodRecoveryDiscard => 'نظر انداز کریں';
+
+  @override
+  String get joodRecoveryRestored => 'مسودہ بحال ہو گیا۔';
+
+  @override
+  String get joodAutosaveSaved => 'خودکار محفوظ ہو گیا';
+
+  @override
+  String get joodAutosaveSaving => 'محفوظ ہو رہا ہے…';
+
+  @override
+  String get editorConfirm => 'تصدیق کریں';
+
+  @override
+  String get admTitle => 'مقامی منتظم کا انتظام';
+
+  @override
+  String get admRefresh => 'تازہ کریں';
+
+  @override
+  String get admTabAdmins => 'منتظمین';
+
+  @override
+  String get admTabTransfer => 'آلات کے درمیان منتقلی';
+
+  @override
+  String get admTabAudit => 'برآمد لاگ';
+
+  @override
+  String get admListTitle => 'اس آلے پر منتظم اکاؤنٹس';
+
+  @override
+  String get admAdd => 'منتظم شامل کریں';
+
+  @override
+  String get admNoAdmins => 'ابھی کوئی منتظم اکاؤنٹ نہیں۔';
+
+  @override
+  String get admLoading => 'اس ڈیوائس پر ایڈمن اکاؤنٹس لوڈ ہو رہے ہیں…';
+
+  @override
+  String get admRoleOwner => 'بنیادی منتظم';
+
+  @override
+  String get admCurrent => 'آپ';
+
+  @override
+  String get admCurrentCardTitle => 'اس ڈیوائس پر موجودہ اکاؤنٹ';
+
+  @override
+  String get admRoleAdmin => 'پرشفار';
+
+  @override
+  String get admSwitchTitle => 'تیز اکاؤنٹ تبدیلی';
+
+  @override
+  String get admSwitchPrompt =>
+      'اس ڈیوائس پر کسی ذیلی ایڈمن کا مقامی صارف نام منتخب کریں اور اس کا مقامی پاس ورڈ درج کریں تاکہ فوراً اس کے سیشن میں جا سکیں — کھلے پروجیکٹ ڈرافٹ پہلے محفوظ ہو جاتے ہیں اور ماسٹر لائسنس متاثر نہیں ہوتا۔';
+
+  @override
+  String get admSwitchNoOthers =>
+      'اس ڈیوائس پر کوئی دوسرا ذیلی ایڈمن نہیں۔ پہلے ایڈمن اسکرین سے نیا ایڈمن شامل کریں۔';
+
+  @override
+  String get admSwitchPick => 'مقامی صارف نام';
+
+  @override
+  String get admSwitchPassword => 'منتخب اکاؤنٹ کا مقامی پاس ورڈ';
+
+  @override
+  String get admSwitchPickPassword =>
+      'صارف نام منتخب کریں اور پاس ورڈ درج کریں۔';
+
+  @override
+  String get admSwitchWrongPassword => 'پاس ورڈ غلط ہے۔';
+
+  @override
+  String get admSwitchFailed => 'اکاؤنٹ تبدیل نہیں ہو سکا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get admSwitchSuccess => 'اکاؤنٹ کامیابی سے تبدیل ہو گیا۔';
+
+  @override
+  String get admSwitchAccount => 'اکاؤنٹ تبدیل کریں';
+
+  @override
+  String get admSwitchAction => 'ابھی تبدیل کریں';
+
+  @override
+  String get admColAdmin => 'ایڈمن';
+
+  @override
+  String get admColUsername => 'مقامی صارف نام';
+
+  @override
+  String get admColRole => 'کردار';
+
+  @override
+  String get admColCreated => 'شامل کرنے کی تاریخ';
+
+  @override
+  String get admColActions => 'اقدامات';
+
+  @override
+  String get destJoodWriter => 'جود رائٹر';
+
+  @override
+  String get destJoodWriterDesc =>
+      'خودکار صفحہ بندی کے ساتھ متن دستاویزات اور رپورٹس۔';
+
+  @override
+  String get admCreatedAt => 'بنایا گیا';
+
+  @override
+  String get admEdit => 'تفصیلات میں ترمیم کریں';
+
+  @override
+  String get admChangePassword => 'پاس ورڈ تبدیل کریں';
+
+  @override
+  String get admPromote => 'بنیادی منتظم بنائیں';
+
+  @override
+  String get admDemote => 'منتظم بنا دیں';
+
+  @override
+  String get admDelete => 'اکاؤنٹ حذف کریں';
+
+  @override
+  String admDeleteConfirm(Object name) {
+    return '“$name” اس آلے سے ہمیشہ کے لیے حذف کر دیا جائے گا۔ اسے واپس نہیں کیا جا سکتا۔';
+  }
+
+  @override
+  String get admPromoted => 'بنیادی منتظم بنا دیا گیا۔';
+
+  @override
+  String get admDemoted => 'منتظم بنا دیا گیا۔';
+
+  @override
+  String get admDeleted => 'اکاؤنٹ حذف کر دیا گیا۔';
+
+  @override
+  String get admCreated => 'نیا منتظم شامل کر دیا گیا۔';
+
+  @override
+  String get admUpdated => 'منتظم کی تفصیلات اپ ڈیٹ ہو گئیں۔';
+
+  @override
+  String get admPasswordChanged => 'پاس ورڈ تبدیل ہو گیا۔';
+
+  @override
+  String get admTransferInfoTitle => 'منتقلی کیسے کام کرتی ہے؟';
+
+  @override
+  String get admTransferInfo1 =>
+      'اکاؤنٹ کا جدول (پاس ورڈ ہیش کے ساتھ، کبھی پاس ورڈ کے ساتھ نہیں) آپ کی منتخب کردہ پاس فریز سے خفیہ کردہ فائل کے اندر برآمد کیا جاتا ہے۔';
+
+  @override
+  String get admTransferInfo2 =>
+      'فائل یا کوڈ دوسرے آلے پر منتقل کریں اور وہاں اسی پاس فریز کے ساتھ درآمد کریں، اور اکاؤنٹس وہی اجازتوں کے ساتھ کام کریں گے۔';
+
+  @override
+  String get admTransferInfo3 =>
+      'کسی سرور کو کچھ نہیں بھیجا جاتا: منتقلی مقامی آلات کے درمیان مکمل طور پر دستی ہے۔';
+
+  @override
+  String get admExport => 'اکاؤنٹس برآمد کریں';
+
+  @override
+  String get admExportPassphrase => 'برآمد پاس فریز';
+
+  @override
+  String get admPassphraseConfirm => 'پاس فریز کی تصدیق کریں';
+
+  @override
+  String get admExportRisk =>
+      'میں سمجھتا ہوں کہ اس کوڈ اور اس کے پاس فریز کے حامل کوئی بھی شخص ان اکاؤنٹس سے سائن ان کر سکتا ہے، اس لیے میں اسے احتیاط سے شیئر کروں گا۔';
+
+  @override
+  String get admExportGenerate => 'خفیہ کوڈ بنائیں';
+
+  @override
+  String get admExportFile => 'مخصوص فائل میں محفوظ کریں';
+
+  @override
+  String get admExportDone =>
+      'خفیہ کوڈ بن گیا۔ اسے کاپی کریں یا فائل میں محفوظ کریں۔';
+
+  @override
+  String get admExportFileSaved => 'اکاؤنٹس کی خفیہ فائل محفوظ ہو گئی۔';
+
+  @override
+  String get admPassphraseTooShort =>
+      'پاس فریز کے لیے کم از کم 6 حروف استعمال کریں۔';
+
+  @override
+  String get admPassphraseMismatch => 'پاس فریز مماثل نہیں ہیں۔';
+
+  @override
+  String get admAcceptRiskRequired =>
+      'پہلے تصدیق کریں کہ آپ کوڈ شیئر کرنے کے خطرے کو سمجھتے ہیں۔';
+
+  @override
+  String admFileError(Object error) {
+    return 'فائل سنبھالی نہیں جا سکی: $error';
+  }
+
+  @override
+  String get admImport => 'اکاؤنٹس درآمد کریں';
+
+  @override
+  String get admImportCode => 'اکاؤنٹ کوڈ';
+
+  @override
+  String get admImportPassphrase => 'فائل پاس فریز';
+
+  @override
+  String get admImportReplace => 'موجودہ اکاؤنٹس کے پاس ورڈ بدلیں';
+
+  @override
+  String get admImportPick => 'فائل منتخب کریں';
+
+  @override
+  String get admImportRun => 'ابھی درآمد کریں';
+
+  @override
+  String get admImportCodeRequired => 'پہلے کوڈ پیسٹ کریں یا فائل منتخب کریں۔';
+
+  @override
+  String get admImportPassphraseRequired => 'فائل کا پاس فریز درج کریں۔';
+
+  @override
+  String admImportDone(int added, int updated, int skipped) {
+    return 'درآمد: $added نئے، $updated اپ ڈیٹ، $skipped نظرانداز۔';
+  }
+
+  @override
+  String get admAuditTitle => 'جاری کردہ سرٹیفکیٹس اور دستاویزات کا لاگ';
+
+  @override
+  String get admAuditClear => 'لاگ صاف کریں';
+
+  @override
+  String get admAuditEmpty =>
+      'ابھی کوئی برآمد نہیں۔ آپ جو بھی سرٹیفکیٹ یا معاہدہ برآمد کریں گے وہ اس کی تاریخ اور جاری کرنے والے منتظم کے ساتھ یہاں درج ہوگا۔';
+
+  @override
+  String get admAuditBy => 'از';
+
+  @override
+  String get admAuditPages => 'صفحات';
+
+  @override
+  String get admAuditClearConfirm =>
+      'پورا برآمد لاگ اس آلے سے حذف کر دیا جائے گا۔ اسے واپس نہیں کیا جا سکتا۔';
+
+  @override
+  String get admAuditCleared => 'لاگ صاف ہو گیا۔';
+
+  @override
+  String get admUnavailableTitle => 'انتظام فی الحال دستیاب نہیں';
+
+  @override
+  String get admUnavailableBody =>
+      'منتظم کا انتظام اس وقت کام کرتا ہے جب ایپ مقامی اکاؤنٹ (LocalAuthRepository) کے ساتھ چلتی ہے، تاکہ اکاؤنٹس اس آلے سے پڑھے جائیں۔';
 }

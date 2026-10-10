@@ -303,4 +303,99 @@ void main() {
     expect(paper.width, viewport.width);
     expect(controller.selected, isNull);
   });
+
+  // ==========================================================================
+  //  اختبار الإصابة: العنصر الأصغر/الأدلى تحت المؤشر
+  // ==========================================================================
+
+  /// يُنشئ وثيقة جديدة ويُعيد ضبط المقياس ليطابق ما يبنيه المحرّر فعلياً.
+  void useDocument(List<TemplateElement> elements) {
+    controller.dispose();
+    controller = TemplateEditorController(
+      document: TemplateDocument(elements: elements),
+      category: TemplateCategory.certificate,
+    );
+    design = controller.designSize;
+    geometry = CanvasGeometry.fit(viewport: viewport, design: design);
+  }
+
+  ShapeElement solidRect(String id, ElementBox box) => ShapeElement(
+        id: id,
+        box: box,
+        kind: ShapeKind.rect,
+        fillHex: '#FFFFFFFF',
+      );
+
+  /// حاوية مفرغة: حدود فقط بلا تعبئة (كالإطار).
+  ShapeElement outlineRect(String id, ElementBox box) => ShapeElement(
+        id: id,
+        box: box,
+        kind: ShapeKind.rect,
+        strokeHex: '#FF1B2539',
+        strokeWidth: 6,
+      );
+
+  /// نقرة واحدة على نقطة بوحدات التصميم، مع تجاوز مؤقّت النقر المزدوج.
+  Future<void> tapDesign(WidgetTester tester, Offset designPoint) async {
+    await tester.tapAt(geometry.toScreen(designPoint));
+    await tester.pump(const Duration(milliseconds: 400));
+  }
+
+  testWidgets('نقرة أولى على عنصر صغير داخل عنصر أكبر تحدّد الصغير',
+      (WidgetTester tester) async {
+    // الأكبر **آخر** في القائمة ⇒ مرسوم فوق الصغير؛ ومع ذلك يفوز الأصغر.
+    useDocument(<TemplateElement>[
+      TextElement(
+        id: 'small-1',
+        box: const ElementBox(x: 350, y: 250, width: 120, height: 60),
+        text: 'عنصر صغير',
+      ),
+      solidRect(
+        'big-1',
+        const ElementBox(x: 100, y: 100, width: 600, height: 400),
+      ),
+    ]);
+    await pumpCanvas(tester);
+    expect(controller.hasSelection, isFalse);
+
+    // النقرة على مركز الصغير — من أول نقرة ودون تردد.
+    await tapDesign(tester, const Offset(410, 280));
+    expect(controller.selectedId, 'small-1');
+
+    // والنقرة خارج الصغير داخل الكبير تُصيب الكبير (هو المرشّح الوحيد هناك).
+    controller.clearSelection();
+    await tester.pump();
+    await tapDesign(tester, const Offset(150, 150));
+    expect(controller.selectedId, 'big-1');
+  });
+
+  testWidgets('الحاوية المفرغة لا تسرق نقرة ما داخلها إلا على حدّها',
+      (WidgetTester tester) async {
+    useDocument(<TemplateElement>[
+      TextElement(
+        id: 'small-1',
+        box: const ElementBox(x: 350, y: 250, width: 120, height: 60),
+        text: 'عنصر صغير',
+      ),
+      outlineRect(
+        'frame-1',
+        const ElementBox(x: 100, y: 100, width: 600, height: 400),
+      ),
+    ]);
+    await pumpCanvas(tester);
+
+    // 1) النقرة على الصغير داخل الحاوية ⇒ الصغير من أول نقرة.
+    await tapDesign(tester, const Offset(410, 280));
+    expect(controller.selectedId, 'small-1');
+
+    // 2) النقرة في قلب الحاوية المفرغة (بعيداً عن حدّها وعن الصغير) ⇒ لا شيء:
+    //    لا تُخطِف الحاوية النقرة بل تمرّ إلى الورقة فتُلغى.
+    await tapDesign(tester, const Offset(550, 400));
+    expect(controller.hasSelection, isFalse);
+    expect(controller.selectedId, isNot('frame-1'));
+
+    // 3) النقرة على حدّ الحاوية ⇒ الحاوية هي المستهدف.
+    await tapDesign(tester, const Offset(110, 400));
+    expect(controller.selectedId, 'frame-1');
+  });
 }

@@ -114,6 +114,12 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
+  /// No description provided for @editorDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم'**
+  String get editorDone;
+
   /// No description provided for @appTagline.
   ///
   /// In ar, this message translates to:
@@ -161,6 +167,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تسجيل الخروج'**
   String get actionSignOut;
+
+  /// No description provided for @actionOpenMenu.
+  ///
+  /// In ar, this message translates to:
+  /// **'القائمة'**
+  String get actionOpenMenu;
+
+  /// No description provided for @editorFitToScreen.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاءمة الشاشة'**
+  String get editorFitToScreen;
+
+  /// No description provided for @editorNewTemplate.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب جديد'**
+  String get editorNewTemplate;
+
+  /// No description provided for @editorNewConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيبدأ قالب جديد من التصميم الافتراضي؛ أي تعديلات غير محفوظة ستبقى في سجل التراجع. متابعة؟'**
+  String get editorNewConfirm;
 
   /// No description provided for @actionBackToDashboard.
   ///
@@ -804,6 +834,462 @@ abstract class AppLocalizations {
   /// **'اسحب المجموعة بالماوس، والأسهم للتحريك الدقيق (Shift = 10px)، و Ctrl + نقر لتعديل التحديد.'**
   String get editorGroupDragHint;
 
+  /// No description provided for @destBrand.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهوية والبروفايل'**
+  String get destBrand;
+
+  /// No description provided for @destBrandDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'شعارك وأختامك وتوقيعاتك وألوان هويتك.'**
+  String get destBrandDesc;
+
+  /// No description provided for @brandTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الهوية والبروفايل'**
+  String get brandTitle;
+
+  /// No description provided for @brandTabVisuals.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهوية والبصريات'**
+  String get brandTabVisuals;
+
+  /// No description provided for @brandTabText.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيانات النصية'**
+  String get brandTabText;
+
+  /// No description provided for @brandTabColors.
+  ///
+  /// In ar, this message translates to:
+  /// **'الألوان والخطوط'**
+  String get brandTabColors;
+
+  /// No description provided for @brandTabPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة الهوية'**
+  String get brandTabPreview;
+
+  /// No description provided for @brandPrimaryLogo.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشعار الرئيسي'**
+  String get brandPrimaryLogo;
+
+  /// No description provided for @brandWatermarkLogo.
+  ///
+  /// In ar, this message translates to:
+  /// **'شعار العلامة المائية'**
+  String get brandWatermarkLogo;
+
+  /// No description provided for @brandSeals.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأختام الرسمية'**
+  String get brandSeals;
+
+  /// No description provided for @brandAddSeal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة ختم'**
+  String get brandAddSeal;
+
+  /// No description provided for @brandSealName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الختم'**
+  String get brandSealName;
+
+  /// No description provided for @brandSignatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'التوقيعات المعتمدة'**
+  String get brandSignatures;
+
+  /// No description provided for @brandAddSignature.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة توقيع'**
+  String get brandAddSignature;
+
+  /// No description provided for @brandSignatureName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم صاحب التوقيع'**
+  String get brandSignatureName;
+
+  /// No description provided for @brandSignatureTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسمّى الوظيفي'**
+  String get brandSignatureTitle;
+
+  /// No description provided for @brandRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة'**
+  String get brandRemove;
+
+  /// No description provided for @brandNoSeals.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُضف أختاماً بعد.'**
+  String get brandNoSeals;
+
+  /// No description provided for @brandNoSignatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُضف توقيعات بعد.'**
+  String get brandNoSignatures;
+
+  /// No description provided for @brandOrgNameAr.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المؤسسة (عربي)'**
+  String get brandOrgNameAr;
+
+  /// No description provided for @brandOrgNameEn.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المؤسسة (إنجليزي)'**
+  String get brandOrgNameEn;
+
+  /// No description provided for @brandHeaderText.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص الترويسة'**
+  String get brandHeaderText;
+
+  /// No description provided for @brandFooterText.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص التذييل'**
+  String get brandFooterText;
+
+  /// No description provided for @brandRegNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم الضريبي/السجل التجاري'**
+  String get brandRegNumber;
+
+  /// No description provided for @brandPrimaryColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون الأساسي'**
+  String get brandPrimaryColor;
+
+  /// No description provided for @brandSecondaryColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللون الثانوي'**
+  String get brandSecondaryColor;
+
+  /// No description provided for @brandAccentColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون التمييز'**
+  String get brandAccentColor;
+
+  /// No description provided for @brandHeaderFont.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط العناوين'**
+  String get brandHeaderFont;
+
+  /// No description provided for @brandBodyFont.
+  ///
+  /// In ar, this message translates to:
+  /// **'خط المتن'**
+  String get brandBodyFont;
+
+  /// No description provided for @brandClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح الهوية'**
+  String get brandClear;
+
+  /// No description provided for @brandClearConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف كل محتوى الهوية المحفوظ. هل تريد المتابعة؟'**
+  String get brandClearConfirm;
+
+  /// No description provided for @brandSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُفظت الهوية.'**
+  String get brandSaved;
+
+  /// No description provided for @brandPresets.
+  ///
+  /// In ar, this message translates to:
+  /// **'عناصر الهوية الجاهزة'**
+  String get brandPresets;
+
+  /// No description provided for @brandInsertHeader.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج الترويسة القياسية'**
+  String get brandInsertHeader;
+
+  /// No description provided for @brandInsertFooter.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج التذييل القياسي'**
+  String get brandInsertFooter;
+
+  /// No description provided for @brandApplyColors.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق ألوان الهوية'**
+  String get brandApplyColors;
+
+  /// No description provided for @brandQuickSeals.
+  ///
+  /// In ar, this message translates to:
+  /// **'أختام'**
+  String get brandQuickSeals;
+
+  /// No description provided for @brandQuickSignatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'توقيعات'**
+  String get brandQuickSignatures;
+
+  /// No description provided for @brandNoBrand.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُعدّ هويتك بعد.'**
+  String get brandNoBrand;
+
+  /// No description provided for @brandOpenSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح إعدادات الهوية'**
+  String get brandOpenSettings;
+
+  /// No description provided for @brandHeaderInserted.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُدرجت الترويسة القياسية.'**
+  String get brandHeaderInserted;
+
+  /// No description provided for @brandFooterInserted.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُدرج التذييل القياسي.'**
+  String get brandFooterInserted;
+
+  /// No description provided for @brandColorsApplied.
+  ///
+  /// In ar, this message translates to:
+  /// **'طُبّقت ألوان الهوية.'**
+  String get brandColorsApplied;
+
+  /// No description provided for @brandSealInserted.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُدرج الختم.'**
+  String get brandSealInserted;
+
+  /// No description provided for @brandSignatureInserted.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُدرج التوقيع.'**
+  String get brandSignatureInserted;
+
+  /// No description provided for @brandFontDefault.
+  ///
+  /// In ar, this message translates to:
+  /// **'الافتراضي'**
+  String get brandFontDefault;
+
+  /// No description provided for @paletteShapes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أشكال هندسية'**
+  String get paletteShapes;
+
+  /// No description provided for @paletteRoundedRect.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستطيل بحواف منحنية'**
+  String get paletteRoundedRect;
+
+  /// No description provided for @paletteEllipse.
+  ///
+  /// In ar, this message translates to:
+  /// **'دائرة/بيضاوي'**
+  String get paletteEllipse;
+
+  /// No description provided for @editorFillOpacity.
+  ///
+  /// In ar, this message translates to:
+  /// **'شفافية التعبئة'**
+  String get editorFillOpacity;
+
+  /// No description provided for @editorCollapsePanel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيّ اللوحة الجانبية'**
+  String get editorCollapsePanel;
+
+  /// No description provided for @editorExpandPanel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار اللوحة الجانبية'**
+  String get editorExpandPanel;
+
+  /// No description provided for @editorCustomSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس مخصّص'**
+  String get editorCustomSize;
+
+  /// No description provided for @editorStandardSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس قياسي'**
+  String get editorStandardSize;
+
+  /// No description provided for @editorBackgroundTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلفية الورقة'**
+  String get editorBackgroundTitle;
+
+  /// No description provided for @editorGradientFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'من'**
+  String get editorGradientFrom;
+
+  /// No description provided for @editorGradientTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى'**
+  String get editorGradientTo;
+
+  /// No description provided for @editorGradientDirection.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه'**
+  String get editorGradientDirection;
+
+  /// No description provided for @editorGradientNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا تدرّج'**
+  String get editorGradientNone;
+
+  /// No description provided for @editorGradientVertical.
+  ///
+  /// In ar, this message translates to:
+  /// **'رأسي'**
+  String get editorGradientVertical;
+
+  /// No description provided for @editorGradientHorizontal.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفقي'**
+  String get editorGradientHorizontal;
+
+  /// No description provided for @editorGradientDiagonal.
+  ///
+  /// In ar, this message translates to:
+  /// **'قطري'**
+  String get editorGradientDiagonal;
+
+  /// No description provided for @editorLayersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطبقات'**
+  String get editorLayersTitle;
+
+  /// No description provided for @editorLayerShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار العنصر'**
+  String get editorLayerShow;
+
+  /// No description provided for @editorLayerHide.
+  ///
+  /// In ar, this message translates to:
+  /// **'إخفاء العنصر'**
+  String get editorLayerHide;
+
+  /// No description provided for @editorLayerLock.
+  ///
+  /// In ar, this message translates to:
+  /// **'قفل العنصر'**
+  String get editorLayerLock;
+
+  /// No description provided for @editorLayerUnlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'فك قفل العنصر'**
+  String get editorLayerUnlock;
+
+  /// No description provided for @editorLayersEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد عناصر على هذه الصفحة بعد.'**
+  String get editorLayersEmpty;
+
+  /// No description provided for @editorGroupSelected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجميع المحدد'**
+  String get editorGroupSelected;
+
+  /// No description provided for @editorUngroupSelected.
+  ///
+  /// In ar, this message translates to:
+  /// **'فك التجميع'**
+  String get editorUngroupSelected;
+
+  /// No description provided for @editorAlignLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة لليسار'**
+  String get editorAlignLeft;
+
+  /// No description provided for @editorAlignCenterH.
+  ///
+  /// In ar, this message translates to:
+  /// **'توسيط أفقياً'**
+  String get editorAlignCenterH;
+
+  /// No description provided for @editorAlignRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة لليمين'**
+  String get editorAlignRight;
+
+  /// No description provided for @editorAlignTop.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة للأعلى'**
+  String get editorAlignTop;
+
+  /// No description provided for @editorAlignCenterV.
+  ///
+  /// In ar, this message translates to:
+  /// **'توسيط رأسياً'**
+  String get editorAlignCenterV;
+
+  /// No description provided for @editorAlignBottom.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة للأسفل'**
+  String get editorAlignBottom;
+
   /// No description provided for @editorBringForward.
   ///
   /// In ar, this message translates to:
@@ -1085,6 +1571,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'المصدر'**
   String get editorSource;
+
+  /// No description provided for @editorImageTint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلوين الصورة'**
+  String get editorImageTint;
 
   /// No description provided for @editorImageFit.
   ///
@@ -2403,7 +2895,7 @@ abstract class AppLocalizations {
   /// No description provided for @tevSaveNeedsSupabase.
   ///
   /// In ar, this message translates to:
-  /// **'الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك (env.json) لتتمكن من حفظ القوالب.'**
+  /// **'الحفظ المحلي غير متاح في هذه الجلسة — تعذّر فتح مخزن المشاريع على هذا الجهاز.'**
   String get tevSaveNeedsSupabase;
 
   /// No description provided for @tevMissingAssets.
@@ -2415,7 +2907,7 @@ abstract class AppLocalizations {
   /// No description provided for @tevTemplateLibraryNeedsSupabase.
   ///
   /// In ar, this message translates to:
-  /// **'مكتبة القوالب تتطلب الاتصال بمشروع Supabase.'**
+  /// **'مكتبة المشاريع المحلية غير متاحة في هذه الجلسة.'**
   String get tevTemplateLibraryNeedsSupabase;
 
   /// No description provided for @tevOpenedTemplate.
@@ -3323,6 +3815,1710 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'بيانات العقد (تجريبية)'**
   String get cbContractDataTitle;
+
+  /// No description provided for @editorSendBackward.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى الخلف خطوة'**
+  String get editorSendBackward;
+
+  /// No description provided for @editorRotateLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدوير ٩٠° يساراً'**
+  String get editorRotateLeft;
+
+  /// No description provided for @editorRotateRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدوير ٩٠° يميناً'**
+  String get editorRotateRight;
+
+  /// No description provided for @editorFlipH.
+  ///
+  /// In ar, this message translates to:
+  /// **'قلب أفقي'**
+  String get editorFlipH;
+
+  /// No description provided for @editorFlipV.
+  ///
+  /// In ar, this message translates to:
+  /// **'قلب رأسي'**
+  String get editorFlipV;
+
+  /// No description provided for @editorTransform.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحويلات'**
+  String get editorTransform;
+
+  /// No description provided for @editorToolSelect.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد'**
+  String get editorToolSelect;
+
+  /// No description provided for @editorToolShapes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أشكال'**
+  String get editorToolShapes;
+
+  /// No description provided for @editorFillType.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع التعبئة'**
+  String get editorFillType;
+
+  /// No description provided for @editorFillSolid.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون موحّد'**
+  String get editorFillSolid;
+
+  /// No description provided for @editorGradientLinear.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدرّج خطي'**
+  String get editorGradientLinear;
+
+  /// No description provided for @editorGradientRadial.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدرّج شعاعي'**
+  String get editorGradientRadial;
+
+  /// No description provided for @editorGradientAngle.
+  ///
+  /// In ar, this message translates to:
+  /// **'زاوية التدرّج'**
+  String get editorGradientAngle;
+
+  /// No description provided for @editorShadowEnable.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة ظل'**
+  String get editorShadowEnable;
+
+  /// No description provided for @editorShadowColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الظل'**
+  String get editorShadowColor;
+
+  /// No description provided for @editorShadowBlur.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمويه الظل'**
+  String get editorShadowBlur;
+
+  /// No description provided for @editorShadowOffsetX.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاحة أفقية'**
+  String get editorShadowOffsetX;
+
+  /// No description provided for @editorShadowOffsetY.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاحة رأسية'**
+  String get editorShadowOffsetY;
+
+  /// No description provided for @editorShadowSpread.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتشار الظل'**
+  String get editorShadowSpread;
+
+  /// No description provided for @editorShadowRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الظل'**
+  String get editorShadowRemove;
+
+  /// No description provided for @editorPoints.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الرؤوس'**
+  String get editorPoints;
+
+  /// No description provided for @editorInnerRadius.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصف القطر الداخلي'**
+  String get editorInnerRadius;
+
+  /// No description provided for @editorCornerTopLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعلى-يسار'**
+  String get editorCornerTopLeft;
+
+  /// No description provided for @editorCornerTopRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعلى-يمين'**
+  String get editorCornerTopRight;
+
+  /// No description provided for @editorCornerBottomRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسفل-يمين'**
+  String get editorCornerBottomRight;
+
+  /// No description provided for @editorCornerBottomLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسفل-يسار'**
+  String get editorCornerBottomLeft;
+
+  /// No description provided for @editorDashPattern.
+  ///
+  /// In ar, this message translates to:
+  /// **'نمط الشرطات'**
+  String get editorDashPattern;
+
+  /// No description provided for @editorBooleanOps.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمليات الدمج'**
+  String get editorBooleanOps;
+
+  /// No description provided for @editorBooleanUnion.
+  ///
+  /// In ar, this message translates to:
+  /// **'دمج'**
+  String get editorBooleanUnion;
+
+  /// No description provided for @editorBooleanSubtract.
+  ///
+  /// In ar, this message translates to:
+  /// **'طرح'**
+  String get editorBooleanSubtract;
+
+  /// No description provided for @editorBooleanIntersect.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقاطع'**
+  String get editorBooleanIntersect;
+
+  /// No description provided for @editorBooleanUngroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'فصل الشكل المركّب'**
+  String get editorBooleanUngroup;
+
+  /// No description provided for @paletteStar.
+  ///
+  /// In ar, this message translates to:
+  /// **'نجمة'**
+  String get paletteStar;
+
+  /// No description provided for @palettePolygon.
+  ///
+  /// In ar, this message translates to:
+  /// **'مضلّع'**
+  String get palettePolygon;
+
+  /// No description provided for @editorBooleanExclude.
+  ///
+  /// In ar, this message translates to:
+  /// **'استثناء'**
+  String get editorBooleanExclude;
+
+  /// No description provided for @editorBooleanHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُبنى المسار المدمج كناتج عملية منطقية واحدة (بلا حدود متداخلة) ويمكن فكه في أي وقت.'**
+  String get editorBooleanHint;
+
+  /// No description provided for @editorDockTools.
+  ///
+  /// In ar, this message translates to:
+  /// **'لوحة الأدوات'**
+  String get editorDockTools;
+
+  /// No description provided for @editorDockAnchor.
+  ///
+  /// In ar, this message translates to:
+  /// **'موضع الإرساء'**
+  String get editorDockAnchor;
+
+  /// No description provided for @editorDockTopBar.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشريط العلوي'**
+  String get editorDockTopBar;
+
+  /// No description provided for @editorDockInspector.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللوحة الجانبية'**
+  String get editorDockInspector;
+
+  /// No description provided for @editorDockLeftRail.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشريط الجانبي'**
+  String get editorDockLeftRail;
+
+  /// No description provided for @editorDockFloating.
+  ///
+  /// In ar, this message translates to:
+  /// **'عائمة'**
+  String get editorDockFloating;
+
+  /// No description provided for @editorDockCollapse.
+  ///
+  /// In ar, this message translates to:
+  /// **'طيّ الأدوات'**
+  String get editorDockCollapse;
+
+  /// No description provided for @editorDockExpand.
+  ///
+  /// In ar, this message translates to:
+  /// **'توسيع الأدوات'**
+  String get editorDockExpand;
+
+  /// No description provided for @editorDockResize.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب لتغيير الحجم'**
+  String get editorDockResize;
+
+  /// No description provided for @editorDockDropHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'إفلات للالتقاط في'**
+  String get editorDockDropHint;
+
+  /// No description provided for @editorMoreTools.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدوات أخرى'**
+  String get editorMoreTools;
+
+  /// No description provided for @editorDocumentProperties.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصائص المستند'**
+  String get editorDocumentProperties;
+
+  /// No description provided for @editorDockReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الإرساء الافتراضي'**
+  String get editorDockReset;
+
+  /// No description provided for @editorTextShadow.
+  ///
+  /// In ar, this message translates to:
+  /// **'ظل النص'**
+  String get editorTextShadow;
+
+  /// No description provided for @editorTextShadowAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة ظل للنص'**
+  String get editorTextShadowAdd;
+
+  /// No description provided for @editorShadowOpacity.
+  ///
+  /// In ar, this message translates to:
+  /// **'شفافية الظل'**
+  String get editorShadowOpacity;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذكر'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنثى'**
+  String get genderFemale;
+
+  /// No description provided for @genderPreviewAutoHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقر لإلغاء الفرض (تلقائي)'**
+  String get genderPreviewAutoHint;
+
+  /// No description provided for @genderPresetCompleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'أتمّ / أتمّت'**
+  String get genderPresetCompleted;
+
+  /// No description provided for @genderPresetPassed.
+  ///
+  /// In ar, this message translates to:
+  /// **'اجتاز / اجتازت'**
+  String get genderPresetPassed;
+
+  /// No description provided for @genderPresetForStudent.
+  ///
+  /// In ar, this message translates to:
+  /// **'للطالب / للطالبة'**
+  String get genderPresetForStudent;
+
+  /// No description provided for @genderPresetStudent.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطالب / الطالبة'**
+  String get genderPresetStudent;
+
+  /// No description provided for @genderPresetToHim.
+  ///
+  /// In ar, this message translates to:
+  /// **'له / لها'**
+  String get genderPresetToHim;
+
+  /// No description provided for @genderPresetHonoring.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتدرّب / المتدرّبة'**
+  String get genderPresetHonoring;
+
+  /// No description provided for @editorGenderSnippet.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج صيغة شرطية'**
+  String get editorGenderSnippet;
+
+  /// No description provided for @editorGenderSnippetHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُدرج صيغة تتبدّل تلقائياً حسب جنس المستفيد.'**
+  String get editorGenderSnippetHint;
+
+  /// No description provided for @bpGenderReviewTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مراجعة الجنس (تذكير/تأنيث)'**
+  String get bpGenderReviewTitle;
+
+  /// No description provided for @bpGenderReviewSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الجنس مُكتشف من الاسم أو من عمود «الجنس» — صحّح أي حالة حدّية قبل الطباعة.'**
+  String get bpGenderReviewSubtitle;
+
+  /// No description provided for @bpGenderRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصف'**
+  String get bpGenderRow;
+
+  /// No description provided for @bpGenderDetected.
+  ///
+  /// In ar, this message translates to:
+  /// **'المكتشف'**
+  String get bpGenderDetected;
+
+  /// No description provided for @bpGenderEffective.
+  ///
+  /// In ar, this message translates to:
+  /// **'المطبَّق'**
+  String get bpGenderEffective;
+
+  /// No description provided for @bpGenderNameColumn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get bpGenderNameColumn;
+
+  /// No description provided for @bpGenderEditName.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الاسم'**
+  String get bpGenderEditName;
+
+  /// No description provided for @bpGenderNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب الاسم الصحيح'**
+  String get bpGenderNameHint;
+
+  /// No description provided for @bpGenderClearOverrides.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء التصحيحات'**
+  String get bpGenderClearOverrides;
+
+  /// No description provided for @bpGenderOverridden.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُصحَّح يدوياً'**
+  String get bpGenderOverridden;
+
+  /// No description provided for @bpGenderUnknownName.
+  ///
+  /// In ar, this message translates to:
+  /// **'—'**
+  String get bpGenderUnknownName;
+
+  /// No description provided for @bpOutputTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجهة حفظ الشهادات'**
+  String get bpOutputTitle;
+
+  /// No description provided for @bpOutputHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر المجلد الذي يُحفظ فيه ملف الـ PDF، أو ابدأ بالموقع الافتراضي.'**
+  String get bpOutputHint;
+
+  /// No description provided for @bpOutputPickFolder.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار مجلد…'**
+  String get bpOutputPickFolder;
+
+  /// No description provided for @bpOutputStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدء التوليد'**
+  String get bpOutputStart;
+
+  /// No description provided for @bpOutputPathLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المجلد المختار'**
+  String get bpOutputPathLabel;
+
+  /// No description provided for @bpOutputNoFolder.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُختَر مجلد — الطباعة والتصدير فقط.'**
+  String get bpOutputNoFolder;
+
+  /// No description provided for @bpOpenFolder.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح المجلد'**
+  String get bpOpenFolder;
+
+  /// No description provided for @bpOutputSavedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ ملف الـ PDF'**
+  String get bpOutputSavedTitle;
+
+  /// No description provided for @bpOpenFolderFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر فتح المجلد.'**
+  String get bpOpenFolderFailed;
+
+  /// No description provided for @bpOutputNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم ملف التصدير'**
+  String get bpOutputNameLabel;
+
+  /// No description provided for @bpOutputNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب اسماً للملف بلا امتداد'**
+  String get bpOutputNameHint;
+
+  /// No description provided for @bpOutputNamePreviewLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحفظ باسم'**
+  String get bpOutputNamePreviewLabel;
+
+  /// No description provided for @bpOutputModeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نمط الحفظ'**
+  String get bpOutputModeLabel;
+
+  /// No description provided for @bpOutputModeCombined.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف واحد مجمع'**
+  String get bpOutputModeCombined;
+
+  /// No description provided for @bpOutputModeIndividual.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملفات منفصلة لكل شخص'**
+  String get bpOutputModeIndividual;
+
+  /// No description provided for @hubTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء مشروع جديد'**
+  String get hubTitle;
+
+  /// No description provided for @hubSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر مقاساً جاهزاً أو حدّد أبعادك — تُفتح اللوحة بالمقاس والنسبة بالضبط.'**
+  String get hubSubtitle;
+
+  /// No description provided for @hubKindSingle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المطبوعات والوثائق المفردة'**
+  String get hubKindSingle;
+
+  /// No description provided for @hubKindMulti.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكتب والمنشورات متعددة الصفحات'**
+  String get hubKindMulti;
+
+  /// No description provided for @hubKindSingleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ورقة واحدة: شهادات وعقود، بطاقات، أرقام جلوس، كروت معايدة.'**
+  String get hubKindSingleHint;
+
+  /// No description provided for @hubKindMultiHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'متعدد الصفحات: كتاب، مجلة، كتيّب، تقرير، كتالوج.'**
+  String get hubKindMultiHint;
+
+  /// No description provided for @hubGroupCertificates.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهادات والعقود'**
+  String get hubGroupCertificates;
+
+  /// No description provided for @hubGroupCards.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكروت وبطاقات الهوية'**
+  String get hubGroupCards;
+
+  /// No description provided for @hubGroupSeat.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام الجلوس والبطاقات'**
+  String get hubGroupSeat;
+
+  /// No description provided for @hubGroupGreeting.
+  ///
+  /// In ar, this message translates to:
+  /// **'كروت المعايدات'**
+  String get hubGroupGreeting;
+
+  /// No description provided for @hubGroupPublications.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكتب والمنشورات'**
+  String get hubGroupPublications;
+
+  /// No description provided for @hubGroupCustom.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس مخصّص'**
+  String get hubGroupCustom;
+
+  /// No description provided for @hubDigitalBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقمي'**
+  String get hubDigitalBadge;
+
+  /// No description provided for @hubCreate.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء'**
+  String get hubCreate;
+
+  /// No description provided for @hubCustomCardBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل أبعادك بالوحدة التي تريدها لتبدأ بلوحة على مقاسك.'**
+  String get hubCustomCardBody;
+
+  /// No description provided for @hubCustomName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المشروع'**
+  String get hubCustomName;
+
+  /// No description provided for @hubCustomNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: بطاقة دعوة'**
+  String get hubCustomNameHint;
+
+  /// No description provided for @hubCustomPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'المقاس النهائي'**
+  String get hubCustomPreview;
+
+  /// No description provided for @hubCustomCreate.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء اللوحة'**
+  String get hubCustomCreate;
+
+  /// No description provided for @hubCustomType.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المشروع'**
+  String get hubCustomType;
+
+  /// No description provided for @hubSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث في المقاسات…'**
+  String get hubSearchHint;
+
+  /// No description provided for @hubNoResults.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد مقاس مطابق — جرّب كلمة بحث أخرى.'**
+  String get hubNoResults;
+
+  /// No description provided for @hubAspectRatio.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسبة'**
+  String get hubAspectRatio;
+
+  /// No description provided for @destNewProject.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشروع جديد'**
+  String get destNewProject;
+
+  /// No description provided for @destNewProjectDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر مقاساً جاهزاً أو مخصّصاً وابدأ التصميم مباشرةً.'**
+  String get destNewProjectDesc;
+
+  /// No description provided for @ptpImpositionToggle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجميع للطباعة'**
+  String get ptpImpositionToggle;
+
+  /// No description provided for @ptpImpositionNoFit.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا تتسع الورقة لهذه القطعة — صغّر الهوامش أو اختر ورقة أكبر.'**
+  String get ptpImpositionNoFit;
+
+  /// No description provided for @editorEffectsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التأثيرات والضبط اللوني'**
+  String get editorEffectsTitle;
+
+  /// No description provided for @editorShadowGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الظل'**
+  String get editorShadowGroup;
+
+  /// No description provided for @editorOuterGlow.
+  ///
+  /// In ar, this message translates to:
+  /// **'توهّج خارجي'**
+  String get editorOuterGlow;
+
+  /// No description provided for @editorInnerGlow.
+  ///
+  /// In ar, this message translates to:
+  /// **'توهّج داخلي'**
+  String get editorInnerGlow;
+
+  /// No description provided for @editorGlowAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة توهّج'**
+  String get editorGlowAdd;
+
+  /// No description provided for @editorGlowRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة التوهّج'**
+  String get editorGlowRemove;
+
+  /// No description provided for @editorGlowColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون التوهّج'**
+  String get editorGlowColor;
+
+  /// No description provided for @editorGlowRadius.
+  ///
+  /// In ar, this message translates to:
+  /// **'نطاق التوهّج'**
+  String get editorGlowRadius;
+
+  /// No description provided for @editorGlowSpread.
+  ///
+  /// In ar, this message translates to:
+  /// **'توسّع التوهّج'**
+  String get editorGlowSpread;
+
+  /// No description provided for @editorGlowOpacity.
+  ///
+  /// In ar, this message translates to:
+  /// **'شفافية التوهّج'**
+  String get editorGlowOpacity;
+
+  /// No description provided for @editorAdjustGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'الضبط اللوني'**
+  String get editorAdjustGroup;
+
+  /// No description provided for @editorAdjustBrightness.
+  ///
+  /// In ar, this message translates to:
+  /// **'السطوع'**
+  String get editorAdjustBrightness;
+
+  /// No description provided for @editorAdjustContrast.
+  ///
+  /// In ar, this message translates to:
+  /// **'التباين'**
+  String get editorAdjustContrast;
+
+  /// No description provided for @editorAdjustSaturation.
+  ///
+  /// In ar, this message translates to:
+  /// **'التشبّع'**
+  String get editorAdjustSaturation;
+
+  /// No description provided for @editorAdjustHue.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدوير اللون'**
+  String get editorAdjustHue;
+
+  /// No description provided for @editorAdjustReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الضبط'**
+  String get editorAdjustReset;
+
+  /// No description provided for @bpOutputSavedFolderTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُفظت الملفات في مجلد مخصص'**
+  String get bpOutputSavedFolderTitle;
+
+  /// No description provided for @hubDetailsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل المقاس'**
+  String get hubDetailsTitle;
+
+  /// No description provided for @hubDetailsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مواصفة افتراضية معبّأة مسبقاً — اختر مقاساً من الشبكة أو عدّل الأبعاد لتبدأ.'**
+  String get hubDetailsHint;
+
+  /// No description provided for @hubFilterAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get hubFilterAll;
+
+  /// No description provided for @hubFilterRecent.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأبعاد الأخيرة'**
+  String get hubFilterRecent;
+
+  /// No description provided for @hubFilterSeat.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام الجلوس'**
+  String get hubFilterSeat;
+
+  /// No description provided for @hubFilterGreeting.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعايدات والشاشات'**
+  String get hubFilterGreeting;
+
+  /// No description provided for @hubRecentEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا مقاسات أخيرة بعد — أي مشروع تنشئه يظهر هنا.'**
+  String get hubRecentEmpty;
+
+  /// No description provided for @hubDocTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المشروع'**
+  String get hubDocTitle;
+
+  /// No description provided for @hubDocTitleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشروع جديد - 1'**
+  String get hubDocTitleHint;
+
+  /// No description provided for @hubWidth.
+  ///
+  /// In ar, this message translates to:
+  /// **'العرض'**
+  String get hubWidth;
+
+  /// No description provided for @hubHeight.
+  ///
+  /// In ar, this message translates to:
+  /// **'الارتفاع'**
+  String get hubHeight;
+
+  /// No description provided for @hubUnitLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوحدة'**
+  String get hubUnitLabel;
+
+  /// No description provided for @hubOrientationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاتجاه'**
+  String get hubOrientationLabel;
+
+  /// No description provided for @hubPortrait.
+  ///
+  /// In ar, this message translates to:
+  /// **'رأسي'**
+  String get hubPortrait;
+
+  /// No description provided for @hubLandscape.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفقي'**
+  String get hubLandscape;
+
+  /// No description provided for @hubVariantLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get hubVariantLabel;
+
+  /// No description provided for @hubResolutionLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدقّة'**
+  String get hubResolutionLabel;
+
+  /// No description provided for @hubResolutionUnitLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وحدة الدقّة'**
+  String get hubResolutionUnitLabel;
+
+  /// No description provided for @hubColorModeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نمط اللون'**
+  String get hubColorModeLabel;
+
+  /// No description provided for @hubBackgroundLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الخلفية'**
+  String get hubBackgroundLabel;
+
+  /// No description provided for @hubBackgroundWhite.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبيض'**
+  String get hubBackgroundWhite;
+
+  /// No description provided for @hubBackgroundTransparent.
+  ///
+  /// In ar, this message translates to:
+  /// **'شفاف'**
+  String get hubBackgroundTransparent;
+
+  /// No description provided for @hubBackgroundBlack.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسود'**
+  String get hubBackgroundBlack;
+
+  /// No description provided for @hubBackgroundCustom.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون مخصّص'**
+  String get hubBackgroundCustom;
+
+  /// No description provided for @hubCreateProject.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء المشروع'**
+  String get hubCreateProject;
+
+  /// No description provided for @hubCustomFamilyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس مخصّص'**
+  String get hubCustomFamilyTitle;
+
+  /// No description provided for @newDocTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستند جديد'**
+  String get newDocTitle;
+
+  /// No description provided for @newDocScopeSocial.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشاشات والمعايدات'**
+  String get newDocScopeSocial;
+
+  /// No description provided for @newDocFilterCertificates.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهادات'**
+  String get newDocFilterCertificates;
+
+  /// No description provided for @newDocFilterCards.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكروت'**
+  String get newDocFilterCards;
+
+  /// No description provided for @newDocFilterGreeting.
+  ///
+  /// In ar, this message translates to:
+  /// **'المعايدات'**
+  String get newDocFilterGreeting;
+
+  /// No description provided for @newDocFilterPublications.
+  ///
+  /// In ar, this message translates to:
+  /// **'المنشورات'**
+  String get newDocFilterPublications;
+
+  /// No description provided for @menuFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملف'**
+  String get menuFile;
+
+  /// No description provided for @menuEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get menuEdit;
+
+  /// No description provided for @menuView.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض'**
+  String get menuView;
+
+  /// No description provided for @menuTools.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدوات'**
+  String get menuTools;
+
+  /// No description provided for @menuHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساعدة'**
+  String get menuHelp;
+
+  /// No description provided for @menuNewDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستند جديد…'**
+  String get menuNewDocument;
+
+  /// No description provided for @menuPurgeRecent.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفريغ قائمة الأبعاد الأخيرة'**
+  String get menuPurgeRecent;
+
+  /// No description provided for @menuPurgeImageCache.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفريغ ذاكرة الصور المؤقتة'**
+  String get menuPurgeImageCache;
+
+  /// No description provided for @menuPreviewCertificate.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة الشهادة النموذجية'**
+  String get menuPreviewCertificate;
+
+  /// No description provided for @menuPreviewContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة العقد النموذجي'**
+  String get menuPreviewContract;
+
+  /// No description provided for @menuAbout.
+  ///
+  /// In ar, this message translates to:
+  /// **'حول JoodCraft'**
+  String get menuAbout;
+
+  /// No description provided for @actionNewShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'+ جديد'**
+  String get actionNewShort;
+
+  /// No description provided for @dashLocalMode.
+  ///
+  /// In ar, this message translates to:
+  /// **'محلي'**
+  String get dashLocalMode;
+
+  /// No description provided for @dashLocalStorage.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحفظ محلي على هذا الجهاز — لا يُرفع أي مشروع إلى سيرفر.'**
+  String get dashLocalStorage;
+
+  /// No description provided for @dashRecentProjects.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشاريع الأخيرة'**
+  String get dashRecentProjects;
+
+  /// No description provided for @dashRecentEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مشاريع محفوظة على هذا الجهاز بعد — أنشئ مستنداً جديداً وستجده هنا فوراً.'**
+  String get dashRecentEmpty;
+
+  /// No description provided for @dashRecentOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح المشروع'**
+  String get dashRecentOpen;
+
+  /// No description provided for @dashRoadmapLocal.
+  ///
+  /// In ar, this message translates to:
+  /// **'قاعدة مشاريع محلية (جدول projects) وحفظ محلي 100% بلا أي خادم'**
+  String get dashRoadmapLocal;
+
+  /// No description provided for @dashRoadmapOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'العمل أوفلاين بالكامل: لا رفع للمشاريع ولا حاجة إلى شبكة'**
+  String get dashRoadmapOffline;
+
+  /// No description provided for @editorTransformPosition.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحويل والموضع'**
+  String get editorTransformPosition;
+
+  /// No description provided for @editorTransformPositionHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإحداثيات والأبعاد وزاوية الدوران'**
+  String get editorTransformPositionHint;
+
+  /// No description provided for @editorAppearanceEffects.
+  ///
+  /// In ar, this message translates to:
+  /// **'المظهر والمؤثرات'**
+  String get editorAppearanceEffects;
+
+  /// No description provided for @editorAppearanceEffectsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعبئة والحدود والتوهّج والظلال'**
+  String get editorAppearanceEffectsHint;
+
+  /// No description provided for @editorTypographyHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخط والحجم والمحاذاة والتباعد'**
+  String get editorTypographyHint;
+
+  /// No description provided for @editorPageSettingsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'المقاس ووحدة القياس'**
+  String get editorPageSettingsHint;
+
+  /// No description provided for @editorBackgroundHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الورقة أو تدرّجها'**
+  String get editorBackgroundHint;
+
+  /// No description provided for @editorPrecisionHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقل الدقيق والتحجيم'**
+  String get editorPrecisionHint;
+
+  /// No description provided for @joodExportProject.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير مشروع (.jood)'**
+  String get joodExportProject;
+
+  /// No description provided for @joodImportProject.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح مشروع (.jood)'**
+  String get joodImportProject;
+
+  /// No description provided for @joodExportReady.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تجهيز ملف المشروع للحفظ.'**
+  String get joodExportReady;
+
+  /// No description provided for @joodExportFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تصدير ملف المشروع.'**
+  String get joodExportFailed;
+
+  /// No description provided for @joodImportOpened.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم فتح المشروع المستورد.'**
+  String get joodImportOpened;
+
+  /// No description provided for @joodImportFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر فتح ملف المشروع.'**
+  String get joodImportFailed;
+
+  /// No description provided for @joodRecoveryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسودة غير محفوظة'**
+  String get joodRecoveryTitle;
+
+  /// No description provided for @joodRecoveryMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'توجد مسودة غير محفوظة من جلسة سابقة. هل ترغب في استعادتها؟'**
+  String get joodRecoveryMessage;
+
+  /// No description provided for @joodRecoveryRestore.
+  ///
+  /// In ar, this message translates to:
+  /// **'استعادة'**
+  String get joodRecoveryRestore;
+
+  /// No description provided for @joodRecoveryDiscard.
+  ///
+  /// In ar, this message translates to:
+  /// **'إهمال'**
+  String get joodRecoveryDiscard;
+
+  /// No description provided for @joodRecoveryRestored.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم استعادة المسودة.'**
+  String get joodRecoveryRestored;
+
+  /// No description provided for @joodAutosaveSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الحفظ تلقائياً'**
+  String get joodAutosaveSaved;
+
+  /// No description provided for @joodAutosaveSaving.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الحفظ…'**
+  String get joodAutosaveSaving;
+
+  /// No description provided for @editorConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد'**
+  String get editorConfirm;
+
+  /// No description provided for @admTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة المديرين المحليين'**
+  String get admTitle;
+
+  /// No description provided for @admRefresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get admRefresh;
+
+  /// No description provided for @admTabAdmins.
+  ///
+  /// In ar, this message translates to:
+  /// **'المديرون'**
+  String get admTabAdmins;
+
+  /// No description provided for @admTabTransfer.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقل بين الأجهزة'**
+  String get admTabTransfer;
+
+  /// No description provided for @admTabAudit.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التصدير'**
+  String get admTabAudit;
+
+  /// No description provided for @admListTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابات المديرين على هذا الجهاز'**
+  String get admListTitle;
+
+  /// No description provided for @admAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة مدير'**
+  String get admAdd;
+
+  /// No description provided for @admNoAdmins.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا حسابات مديرين بعد.'**
+  String get admNoAdmins;
+
+  /// No description provided for @admLoading.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ تحميل حسابات المديرين على هذا الجهاز…'**
+  String get admLoading;
+
+  /// No description provided for @admRoleOwner.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدير الرئيسي'**
+  String get admRoleOwner;
+
+  /// No description provided for @admCurrent.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت'**
+  String get admCurrent;
+
+  /// No description provided for @admCurrentCardTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب الحالي على الجهاز'**
+  String get admCurrentCardTitle;
+
+  /// No description provided for @admRoleAdmin.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدير'**
+  String get admRoleAdmin;
+
+  /// No description provided for @admSwitchTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبديل الحساب السريع'**
+  String get admSwitchTitle;
+
+  /// No description provided for @admSwitchPrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر اسم المستخدم المحلي لحساب فرعي على هذا الجهاز وأدخل كلمة مروره المحلية للانتقال إلى جلساته فوراً — تُحفظ مسودّات المشاريع المفتوحة أولاً، ولا يتأثر ترخيص الاشتراك الأساسي.'**
+  String get admSwitchPrompt;
+
+  /// No description provided for @admSwitchNoOthers.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا حسابات فرعية أخرى على هذا الجهاز. أضِف مديراً جديداً من شاشة إدارة المديرين أولاً.'**
+  String get admSwitchNoOthers;
+
+  /// No description provided for @admSwitchPick.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المستخدم المحلي'**
+  String get admSwitchPick;
+
+  /// No description provided for @admSwitchPassword.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور المحلية للحساب المختار'**
+  String get admSwitchPassword;
+
+  /// No description provided for @admSwitchPickPassword.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر اسم المستخدم وأدخل كلمة المرور.'**
+  String get admSwitchPickPassword;
+
+  /// No description provided for @admSwitchWrongPassword.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور غير صحيحة.'**
+  String get admSwitchWrongPassword;
+
+  /// No description provided for @admSwitchFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تبديل الحساب. حاول مرة أخرى.'**
+  String get admSwitchFailed;
+
+  /// No description provided for @admSwitchSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تبديل الحساب بنجاح.'**
+  String get admSwitchSuccess;
+
+  /// No description provided for @admSwitchAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبديل الحساب'**
+  String get admSwitchAccount;
+
+  /// No description provided for @admSwitchAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تبديل الآن'**
+  String get admSwitchAction;
+
+  /// No description provided for @admColAdmin.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدير'**
+  String get admColAdmin;
+
+  /// No description provided for @admColUsername.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المستخدم المحلي'**
+  String get admColUsername;
+
+  /// No description provided for @admColRole.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلاحية'**
+  String get admColRole;
+
+  /// No description provided for @admColCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الإضافة'**
+  String get admColCreated;
+
+  /// No description provided for @admColActions.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجراءات'**
+  String get admColActions;
+
+  /// No description provided for @destJoodWriter.
+  ///
+  /// In ar, this message translates to:
+  /// **'جود كاتب'**
+  String get destJoodWriter;
+
+  /// No description provided for @destJoodWriterDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستندات وتقارير نصّية بصفحات متتالية وتدفّق تلقائي للنص.'**
+  String get destJoodWriterDesc;
+
+  /// No description provided for @admCreatedAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُنشئ'**
+  String get admCreatedAt;
+
+  /// No description provided for @admEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل البيانات'**
+  String get admEdit;
+
+  /// No description provided for @admChangePassword.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير كلمة المرور'**
+  String get admChangePassword;
+
+  /// No description provided for @admPromote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترقية إلى «مدير رئيسي»'**
+  String get admPromote;
+
+  /// No description provided for @admDemote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخفيض إلى «مدير»'**
+  String get admDemote;
+
+  /// No description provided for @admDelete.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف الحساب'**
+  String get admDelete;
+
+  /// No description provided for @admDeleteConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف «{name}» من هذا الجهاز نهائياً. لا يمكن التراجع.'**
+  String admDeleteConfirm(Object name);
+
+  /// No description provided for @admPromoted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت الترقية إلى «مدير رئيسي».'**
+  String get admPromoted;
+
+  /// No description provided for @admDemoted.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم التخفيض إلى «مدير».'**
+  String get admDemoted;
+
+  /// No description provided for @admDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُذف الحساب.'**
+  String get admDeleted;
+
+  /// No description provided for @admCreated.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُضيف المدير الجديد.'**
+  String get admCreated;
+
+  /// No description provided for @admUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُدّثت بيانات المدير.'**
+  String get admUpdated;
+
+  /// No description provided for @admPasswordChanged.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيّرت كلمة المرور.'**
+  String get admPasswordChanged;
+
+  /// No description provided for @admTransferInfoTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كيف يعمل النقل؟'**
+  String get admTransferInfoTitle;
+
+  /// No description provided for @admTransferInfo1.
+  ///
+  /// In ar, this message translates to:
+  /// **'يُصدَّر جدول الحسابات (ببصمات كلمات المرور لا كلماتها) داخل ملف مشفّر بعبارة مرور تختارها أنت.'**
+  String get admTransferInfo1;
+
+  /// No description provided for @admTransferInfo2.
+  ///
+  /// In ar, this message translates to:
+  /// **'انقل الملف أو الشفرة إلى الجهاز الآخر ثم استوردها هناك بالعبارة نفسها، فتعمل الحسابات بنفس الصلاحيات.'**
+  String get admTransferInfo2;
+
+  /// No description provided for @admTransferInfo3.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يُرسل شيء إلى أي سيرفر: النقل يدوي بالكامل بين أجهزة محلية.'**
+  String get admTransferInfo3;
+
+  /// No description provided for @admExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير الحسابات'**
+  String get admExport;
+
+  /// No description provided for @admExportPassphrase.
+  ///
+  /// In ar, this message translates to:
+  /// **'عبارة مرور التصدير'**
+  String get admExportPassphrase;
+
+  /// No description provided for @admPassphraseConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد العبارة'**
+  String get admPassphraseConfirm;
+
+  /// No description provided for @admExportRisk.
+  ///
+  /// In ar, this message translates to:
+  /// **'أفهم أن من يملك هذه الشفرة وعبارتها يستطيع الدخول بالحسابات، فسأشاركها بضبط.'**
+  String get admExportRisk;
+
+  /// No description provided for @admExportGenerate.
+  ///
+  /// In ar, this message translates to:
+  /// **'توليد الشفرة المشفّرة'**
+  String get admExportGenerate;
+
+  /// No description provided for @admExportFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ في ملف خاص'**
+  String get admExportFile;
+
+  /// No description provided for @admExportDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'توليدت الشفرة المشفّرة. انسخها أو احفظها في ملف.'**
+  String get admExportDone;
+
+  /// No description provided for @admExportFileSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُفظ ملف الحسابات المشفّر.'**
+  String get admExportFileSaved;
+
+  /// No description provided for @admPassphraseTooShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'اجعل عبارة المرور 6 أحرف على الأقل.'**
+  String get admPassphraseTooShort;
+
+  /// No description provided for @admPassphraseMismatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'العبارتان غير متطابقتين.'**
+  String get admPassphraseMismatch;
+
+  /// No description provided for @admAcceptRiskRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد أولاً أنك تفهم مخاطر مشاركة الشفرة.'**
+  String get admAcceptRiskRequired;
+
+  /// No description provided for @admFileError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر التعامل مع الملف: {error}'**
+  String admFileError(Object error);
+
+  /// No description provided for @admImport.
+  ///
+  /// In ar, this message translates to:
+  /// **'استيراد الحسابات'**
+  String get admImport;
+
+  /// No description provided for @admImportCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'شفرة الحسابات'**
+  String get admImportCode;
+
+  /// No description provided for @admImportPassphrase.
+  ///
+  /// In ar, this message translates to:
+  /// **'عبارة مرور الملف'**
+  String get admImportPassphrase;
+
+  /// No description provided for @admImportReplace.
+  ///
+  /// In ar, this message translates to:
+  /// **'استبدال كلمات مرور الحسابات الموجودة'**
+  String get admImportReplace;
+
+  /// No description provided for @admImportPick.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار ملف'**
+  String get admImportPick;
+
+  /// No description provided for @admImportRun.
+  ///
+  /// In ar, this message translates to:
+  /// **'استيراد الآن'**
+  String get admImportRun;
+
+  /// No description provided for @admImportCodeRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'ألصق الشفرة أو اختر ملفاً أولاً.'**
+  String get admImportCodeRequired;
+
+  /// No description provided for @admImportPassphraseRequired.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل عبارة مرور الملف.'**
+  String get admImportPassphraseRequired;
+
+  /// No description provided for @admImportDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمّ الاستيراد: {added} جديد، {updated} مُحدَّث، {skipped} مُتخطّى.'**
+  String admImportDone(int added, int updated, int skipped);
+
+  /// No description provided for @admAuditTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل الشهادات والمستندات الصادرة'**
+  String get admAuditTitle;
+
+  /// No description provided for @admAuditClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفريغ السجل'**
+  String get admAuditClear;
+
+  /// No description provided for @admAuditEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا سجلات تصدير بعد. كل شهادة أو عقد تصدّره سيُسجَّل هنا بالتاريخ والمدير الذي أصدره.'**
+  String get admAuditEmpty;
+
+  /// No description provided for @admAuditBy.
+  ///
+  /// In ar, this message translates to:
+  /// **'بواسطة'**
+  String get admAuditBy;
+
+  /// No description provided for @admAuditPages.
+  ///
+  /// In ar, this message translates to:
+  /// **'صفحة'**
+  String get admAuditPages;
+
+  /// No description provided for @admAuditClearConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيُحذف كل سجل التصدير من هذا الجهاز. لا يمكن التراجع.'**
+  String get admAuditClearConfirm;
+
+  /// No description provided for @admAuditCleared.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تفريغ السجل.'**
+  String get admAuditCleared;
+
+  /// No description provided for @admUnavailableTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإدارة غير متاحة الآن'**
+  String get admUnavailableTitle;
+
+  /// No description provided for @admUnavailableBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدارة المديرين تعمل عندما يُشغَّل التطبيق بحساب محلي (LocalAuthRepository)، فتُقرأ الحسابات من هذا الجهاز.'**
+  String get admUnavailableBody;
 }
 
 class _AppLocalizationsDelegate

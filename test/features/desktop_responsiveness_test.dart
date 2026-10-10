@@ -86,7 +86,12 @@ void main() {
           draft: PresetCatalog.byId('appreciation_certificate')!.toDraft(),
         ),
       );
-      expect(find.textContaining('عنصراً'), findsOneWidget);
+      // لوحة التصميم مرسومة دائماً (وصف حالة القالب صار داخل قائمة الشريط
+      // عند ضيق المساحة، فلا يصلح دليلاً على البناء).
+      expect(
+        find.byKey(const ValueKey<String>('editor-canvas-viewport')),
+        findsOneWidget,
+      );
     }
   });
 

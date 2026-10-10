@@ -9,11 +9,13 @@ import 'package:joodcraft/core/constants/app_constants.dart';
 import 'package:joodcraft/core/models/template_document.dart';
 import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/pdf/pdf_font_catalog.dart';
+import 'package:joodcraft/core/services/batch_output_service.dart';
 import 'package:joodcraft/core/templates/local_template_store.dart';
 import 'package:joodcraft/core/templates/template_record.dart';
 import 'package:joodcraft/core/services/pdf_generator_service.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/features/batch_processor/domain/bulk_generation.dart';
+import 'package:joodcraft/features/batch_processor/domain/output_file_name.dart';
 import 'package:joodcraft/features/batch_processor/presentation/providers/batch_processor_controller.dart';
 import 'package:joodcraft/features/batch_processor/presentation/screens/batch_processor_screen.dart';
 
@@ -57,6 +59,62 @@ Uint8List _twoSheetWorkbook() {
   return Uint8List.fromList(excel.encode()!);
 }
 
+/// خدمة مخرجات وهمية: تتفادى لمس نظام الملفات وتتيح فحص منطق اختيار المجلد
+/// وحفظ الملف وفتحه.
+class _FakeBatchOutput implements BatchOutputService {
+  _FakeBatchOutput({this.defaultDir, this.picked});
+
+  /// المجلد الافتراضي (التنزيلات/المستندات).
+  String? defaultDir;
+
+  /// ما يُرجعه منتقي المجلدات (‏`null` = أُغلق بلا اختيار).
+  String? picked;
+
+  /// نداءات الحفظ: كل عنصر فيه المجلد واسم الملف.
+  final List<Map<String, String>> saved = <Map<String, String>>[];
+
+  /// المجلدات التي طُلب فتحها.
+  final List<String> opened = <String>[];
+
+  @override
+  Future<String?> defaultDirectory() async => defaultDir;
+
+  @override
+  Future<String?> pickDirectory({String? dialogTitle}) async => picked;
+
+  /// المجلدات الفرعية التي طُلب إنشاؤها (ملفات الوضع المنفصل).
+  final List<String> createdSubdirectories = <String>[];
+
+  @override
+  Future<String?> savePdf({
+    required String directory,
+    required String fileName,
+    required Uint8List bytes,
+  }) async {
+    saved.add(<String, String>{
+      'directory': directory,
+      'fileName': fileName,
+    });
+    return '$directory/$fileName';
+  }
+
+  @override
+  Future<String?> createSubdirectory({
+    required String directory,
+    required String name,
+  }) async {
+    final String path = '$directory/$name';
+    createdSubdirectories.add(path);
+    return path;
+  }
+
+  @override
+  Future<bool> openDirectory(String directory) async {
+    opened.add(directory);
+    return true;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -83,6 +141,7 @@ void main() {
     Size size = const Size(1400, 1000),
     FakeTemplateRepository? repository,
     LocalTemplateStore? localStore,
+    BatchOutputService? output,
   }) async {
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -101,12 +160,48 @@ void main() {
               controller: controller,
               repository: repository,
               localStore: localStore,
+              output: output,
             ),
           ),
         ),
       ),
     );
     await tester.pumpAndSettle();
+  }
+
+  /// يضغط «توليد الشهادات» ويمرّ بنافذة الوجهة ثم ينتظر انتهاء التوليد والحفظ.
+  Future<void> generateThroughDialog(
+    WidgetTester tester, {
+    bool confirm = true,
+  }) async {
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(
+        ValueKey<String>(confirm ? 'bp-output-confirm' : 'bp-output-cancel'),
+      ),
+    );
+    if (!confirm) {
+      await tester.pumpAndSettle();
+      return;
+    }
+
+    // نرسم إطاراً واحداً فقط بعد الضغط: شريط التقدّم غير محدّد المدة فلا ينتهي.
+    await tester.pump();
+    await tester.runAsync(() async {
+      while (controller.busy) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      // مهلة قصيرة حتى يكتمل حفظ الملف (يقع بعد انتهاء التوليد).
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    // لا نستعمل `pumpAndSettle`: بعد التوليد تُعرض معاينة PDF بمؤشّر تحميل
+    // غير محدّد المدة لا يستقرّ أبداً. نرسم إطارات محدودة تكفي لتحديث الواجهة.
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
   }
 
   /// قالب مستخدم مخصّص فيه حقلا `{{اسم_المتدرب}}` و`{{رقم_الشهادة}}`.
@@ -174,33 +269,22 @@ void main() {
     // ربط تلقائي من العناوين العربية.
     expect(controller.mapping.mappedCount, greaterThanOrEqualTo(2));
     expect(find.textContaining('مرتبط'), findsWidgets);
-    expect(find.text('أحمد الشمري'), findsOneWidget);
+    // الاسم يظهر مرتين: في معاينة الربط وفي جدول مراجعة الجنس.
+    expect(find.text('أحمد الشمري'), findsWidgets);
   });
 
   testWidgets('التوليد يُنتج تقريراً ويُظهر معاينة الملف',
       (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
     // سطّح أعلى حتى يظهر زر التوليد أسفل العمود الأيسر دون تمرير.
-    await pumpScreen(tester, size: const Size(1400, 1500));
+    await pumpScreen(tester, size: const Size(1400, 1500), output: output);
 
     controller.loadBytes(fileName: 'students.csv', bytes: _csv);
     await tester.pumpAndSettle();
 
     // سياسة «تخطَّ الصف الناقص» (الافتراضية) تُسقط سارة بلا رقم شهادة.
-    // `runAsync` يسمح بالعمل الحقيقي (تحميل الخطوط + توليد الملف) قبل أن يرتجع
-    // المزيف الزمني لـ pumpAndSettle.
-    await tester.tap(find.text('توليد الشهادات'));
-    // نرسم إطاراً واحداً فقط بعد الضغط: شريط التقدّم غير محدّد المدة فلا ينتهي
-    // أبداً، لذا لا نستعمل `pumpAndSettle` أثناء التوليد.
-    await tester.pump();
-    await tester.runAsync(() async {
-      while (controller.busy) {
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-      }
-    });
-    // لا نستعمل `pumpAndSettle`: بعد التوليد تُعرض معاينة PDF بمؤشّر تحميل
-    // غير محدّد المدة لا يستقرّ أبداً. نرسم إطارات محدودة تكفي لتحديث الواجهة.
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump(const Duration(milliseconds: 100));
+    await generateThroughDialog(tester);
 
     final BulkGenerationReport? report = controller.report;
     expect(report, isNotNull);
@@ -216,7 +300,296 @@ void main() {
     expect(find.text('صفوف لم تُصدر:'), findsOneWidget);
     // المعاينة استُبدلت بمشغّل PDF.
     expect(find.text('المعاينة تظهر هنا'), findsNothing);
+
+    // الملف حُفظ في المجلد الافتراضي وباسم PDF.
+    expect(output.saved, hasLength(1));
+    expect(output.saved.single['directory'], r'C:\Users\gh\Downloads');
+    expect(output.saved.single['fileName'], endsWith('.pdf'));
+    // بطاقة الحفظ والشريط الثابت يعرضان المسار وزرّ الفتح.
+    expect(
+      find.byKey(const ValueKey<String>('bp-output-saved-card')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('bp-output-saved-path')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey<String>('bp-open-folder')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey<String>('bp-output-banner')),
+      findsOneWidget,
+    );
   }, timeout: const Timeout(Duration(minutes: 2)));
+
+  testWidgets('نافذة وجهة الحفظ تعرض المسار الافتراضي وتسمح بتغييره',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output = _FakeBatchOutput(
+      defaultDir: r'C:\Users\gh\Downloads',
+      picked: r'C:\Users\gh\Certificates',
+    );
+    await pumpScreen(tester, output: output);
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+
+    // المسار الافتراضي ظاهر قبل التوليد.
+    expect(
+      find.byKey(const ValueKey<String>('bp-output-dialog')),
+      findsOneWidget,
+    );
+    expect(find.text(r'C:\Users\gh\Downloads'), findsOneWidget);
+
+    // اختيار مجلد يحدّث المسار المعروض فوراً.
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-pick')));
+    await tester.pumpAndSettle();
+    expect(find.text(r'C:\Users\gh\Certificates'), findsOneWidget);
+    expect(find.text(r'C:\Users\gh\Downloads'), findsNothing);
+
+    // الإلغاء لا يولّد شيئاً.
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-cancel')));
+    await tester.pumpAndSettle();
+    expect(controller.report, isNull);
+    expect(output.saved, isEmpty);
+  });
+
+  testWidgets('إغلاق منتقي المجلدات بلا اختيار يُبقي المسار الافتراضي',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
+    await pumpScreen(tester, output: output);
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+
+    // منتقي المجلدات يُغلق بلا اختيار (‏`picked` فارغ) ← يبقى الافتراضي.
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-pick')));
+    await tester.pumpAndSettle();
+    expect(find.text(r'C:\Users\gh\Downloads'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-confirm')));
+    await tester.pump();
+    await tester.runAsync(() async {
+      while (controller.busy) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(controller.report, isNotNull);
+    expect(output.saved.single['directory'], r'C:\Users\gh\Downloads');
+  });
+
+  testWidgets('بعد الحفظ: زرّ «فتح المجلد» يفتح مجلد المخرجات',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
+    await pumpScreen(tester, size: const Size(1400, 1500), output: output);
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    await generateThroughDialog(tester);
+
+    // الشريط الثابت يعرض الزرّ ويفتح المجلد فعلاً.
+    final Finder bannerButton =
+        find.byKey(const ValueKey<String>('bp-open-folder-banner'));
+    expect(bannerButton, findsOneWidget);
+    await tester.tap(bannerButton);
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 30)),
+    );
+    await tester.pump();
+    expect(output.opened, <String>[r'C:\Users\gh\Downloads']);
+
+    // وبطاقة الحفظ فيها زرّ فتح آخر يعمل أيضاً.
+    final Finder cardButton =
+        find.byKey(const ValueKey<String>('bp-open-folder'));
+    await tester.ensureVisible(cardButton);
+    await tester.pump();
+    await tester.tap(cardButton);
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 30)),
+    );
+    await tester.pump();
+    expect(output.opened, hasLength(2));
+  });
+
+  testWidgets('الوضع المنفصل: «فتح المجلد» يفتح مجلد الملفات المنفصلة مباشرة',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
+    await pumpScreen(tester, size: const Size(1400, 1500), output: output);
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    // فتح نافذة الوجهة واختيار الوضع المنفصل قبل التأكيد.
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('ملفات منفصلة لكل شخص'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-confirm')));
+    await tester.pump();
+
+    await tester.runAsync(() async {
+      while (controller.busy) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(controller.report, isNotNull);
+    expect(controller.report!.mode, BulkOutputMode.individual);
+
+    // أُنشئ مجلد فرعي واحد داخل المجلد المختار، وحُفظت كل الملفات داخله.
+    expect(output.createdSubdirectories, hasLength(1));
+    final String subdirectory = output.createdSubdirectories.single;
+    expect(subdirectory, startsWith(r'C:\Users\gh\Downloads'));
+    expect(output.saved, isNotEmpty);
+    for (final Map<String, String> entry in output.saved) {
+      expect(entry['directory'], subdirectory);
+    }
+
+    // زرّ «فتح المجلد» يفتح المجلد الفرعي نفسه مباشرةً لا الأصل.
+    final Finder bannerButton =
+        find.byKey(const ValueKey<String>('bp-open-folder-banner'));
+    expect(bannerButton, findsOneWidget);
+    await tester.tap(bannerButton);
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 30)),
+    );
+    await tester.pump();
+    expect(output.opened, <String>[subdirectory]);
+  });
+
+  testWidgets('حقل اسم التصدير يظهر بقيمة افتراضية ويعرض الاسم النهائي',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
+    await pumpScreen(tester, output: output);
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+
+    // حقل الاسم ظاهر بقيمة افتراضية (بلا قالب مسمّى ← الاسم الاحتياطي).
+    final Finder field = find.byKey(const ValueKey<String>('bp-output-name'));
+    expect(field, findsOneWidget);
+    expect(
+      tester.widget<TextField>(field).controller!.text,
+      OutputFileName.fallback,
+    );
+    // والمعاينة تُظهر الاسم النهائي بالامتداد قبل التوليد.
+    expect(
+      find.text('سيُحفظ باسم: ${OutputFileName.fallback}.pdf'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-cancel')));
+    await tester.pumpAndSettle();
+    expect(controller.report, isNull);
+  });
+
+  testWidgets('اسم التصدير المخصّص يُنقّى ويُحفظ بالامتداد',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
+    await pumpScreen(tester, size: const Size(1400, 1500), output: output);
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+
+    // إدخال فيه محارف ممنوعة لنظام الملفات.
+    await tester.enterText(
+      find.byKey(const ValueKey<String>('bp-output-name')),
+      'كشف/التدريب:2026*',
+    );
+    await tester.pump();
+
+    // المعاينة تعرض الاسم النهائي منقّى وبامتداد .pdf.
+    expect(find.text('سيُحفظ باسم: كشفالتدريب2026.pdf'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-confirm')));
+    await tester.pump();
+    await tester.runAsync(() async {
+      while (controller.busy) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // الاسم المخصّص المنقّى وصل إلى التقرير وإلى الملف المكتوب.
+    expect(controller.report!.fileName, 'كشفالتدريب2026.pdf');
+    expect(output.saved.single['fileName'], 'كشفالتدريب2026.pdf');
+  });
+
+  testWidgets('الاسم الافتراضي مشتقّ من عنوان القالب النشط',
+      (WidgetTester tester) async {
+    final _FakeBatchOutput output =
+        _FakeBatchOutput(defaultDir: r'C:\Users\gh\Downloads');
+    final FakeTemplateRepository repository = FakeTemplateRepository();
+    repository.records.add(customTemplate(title: 'كشف/التدريب'));
+    await pumpScreen(
+      tester,
+      output: output,
+      repository: repository,
+      localStore: InMemoryLocalTemplateStore(),
+    );
+
+    await tester.tap(find.byType(DropdownButtonFormField<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.textContaining('كشف/التدريب').last);
+    await tester.pumpAndSettle();
+
+    controller.loadBytes(fileName: 'students.csv', bytes: _csv);
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('توليد الشهادات'));
+    await tester.pumpAndSettle();
+
+    // عنوان القالب يحمل محرفاً ممنوعاً ← يُنقّى في الاسم الافتراضي.
+    expect(
+      tester
+          .widget<TextField>(
+            find.byKey(const ValueKey<String>('bp-output-name')),
+          )
+          .controller!
+          .text,
+      'كشفالتدريب',
+    );
+
+    await tester.tap(find.byKey(const ValueKey<String>('bp-output-cancel')));
+    await tester.pumpAndSettle();
+  });
 
   testWidgets('يُظهر رسالة عربية واضحة عند ملف غير مدعوم',
       (WidgetTester tester) async {

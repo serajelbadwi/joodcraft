@@ -9,6 +9,9 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
+  String get editorDone => 'Готово';
+
+  @override
   String get appTagline =>
       'Создавайте официальные сертификаты и договоры офлайн';
 
@@ -32,6 +35,19 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get actionSignOut => 'Выйти';
+
+  @override
+  String get actionOpenMenu => 'Меню';
+
+  @override
+  String get editorFitToScreen => 'По размеру экрана';
+
+  @override
+  String get editorNewTemplate => 'Новый шаблон';
+
+  @override
+  String get editorNewConfirm =>
+      'Новый шаблон будет создан на основе дизайна по умолчанию; несохранённые изменения останутся в истории. Продолжить?';
 
   @override
   String get actionBackToDashboard => 'Вернуться к панели';
@@ -369,6 +385,235 @@ class AppLocalizationsRu extends AppLocalizations {
       'Перетаскивайте группу мышью, используйте стрелки для точного сдвига (Shift = 10px) и Ctrl + щелчок для изменения выделения.';
 
   @override
+  String get destBrand => 'Бренд и профиль';
+
+  @override
+  String get destBrandDesc => 'Ваш логотип, печати, подписи и фирменные цвета.';
+
+  @override
+  String get brandTitle => 'Настройки бренда и профиля';
+
+  @override
+  String get brandTabVisuals => 'Визуальная идентичность';
+
+  @override
+  String get brandTabText => 'Текстовые данные';
+
+  @override
+  String get brandTabColors => 'Цвета и шрифты';
+
+  @override
+  String get brandTabPreview => 'Предпросмотр бренда';
+
+  @override
+  String get brandPrimaryLogo => 'Основной логотип';
+
+  @override
+  String get brandWatermarkLogo => 'Логотип-водяной знак';
+
+  @override
+  String get brandSeals => 'Официальные печати';
+
+  @override
+  String get brandAddSeal => 'Добавить печать';
+
+  @override
+  String get brandSealName => 'Название печати';
+
+  @override
+  String get brandSignatures => 'Уполномоченные подписи';
+
+  @override
+  String get brandAddSignature => 'Добавить подпись';
+
+  @override
+  String get brandSignatureName => 'Имя подписанта';
+
+  @override
+  String get brandSignatureTitle => 'Должность';
+
+  @override
+  String get brandRemove => 'Удалить';
+
+  @override
+  String get brandNoSeals => 'Печати ещё не добавлены.';
+
+  @override
+  String get brandNoSignatures => 'Подписи ещё не добавлены.';
+
+  @override
+  String get brandOrgNameAr => 'Название организации (арабский)';
+
+  @override
+  String get brandOrgNameEn => 'Название организации (английский)';
+
+  @override
+  String get brandHeaderText => 'Текст верхнего колонтитула';
+
+  @override
+  String get brandFooterText => 'Текст нижнего колонтитула';
+
+  @override
+  String get brandRegNumber => 'Налоговый / регистрационный номер';
+
+  @override
+  String get brandPrimaryColor => 'Основной цвет';
+
+  @override
+  String get brandSecondaryColor => 'Дополнительный цвет';
+
+  @override
+  String get brandAccentColor => 'Акцентный цвет';
+
+  @override
+  String get brandHeaderFont => 'Шрифт заголовков';
+
+  @override
+  String get brandBodyFont => 'Шрифт текста';
+
+  @override
+  String get brandClear => 'Очистить бренд';
+
+  @override
+  String get brandClearConfirm =>
+      'Всё сохранённое содержимое бренда будет удалено. Продолжить?';
+
+  @override
+  String get brandSaved => 'Бренд сохранён.';
+
+  @override
+  String get brandPresets => 'Элементы бренда';
+
+  @override
+  String get brandInsertHeader => 'Вставить стандартную шапку';
+
+  @override
+  String get brandInsertFooter => 'Вставить стандартный подвал';
+
+  @override
+  String get brandApplyColors => 'Применить цвета';
+
+  @override
+  String get brandQuickSeals => 'Печати';
+
+  @override
+  String get brandQuickSignatures => 'Подписи';
+
+  @override
+  String get brandNoBrand => 'Ваш бренд ещё не настроен.';
+
+  @override
+  String get brandOpenSettings => 'Открыть настройки бренда';
+
+  @override
+  String get brandHeaderInserted => 'Стандартная шапка вставлена.';
+
+  @override
+  String get brandFooterInserted => 'Стандартный подвал вставлен.';
+
+  @override
+  String get brandColorsApplied => 'Цвета применены.';
+
+  @override
+  String get brandSealInserted => 'Печать вставлена.';
+
+  @override
+  String get brandSignatureInserted => 'Подпись вставлена.';
+
+  @override
+  String get brandFontDefault => 'По умолчанию';
+
+  @override
+  String get paletteShapes => 'Фигуры';
+
+  @override
+  String get paletteRoundedRect => 'Скруглённый прямоугольник';
+
+  @override
+  String get paletteEllipse => 'Круг / эллипс';
+
+  @override
+  String get editorFillOpacity => 'Непрозрачность заливки';
+
+  @override
+  String get editorCollapsePanel => 'Свернуть боковую панель';
+
+  @override
+  String get editorExpandPanel => 'Показать боковую панель';
+
+  @override
+  String get editorCustomSize => 'Свой размер';
+
+  @override
+  String get editorStandardSize => 'Стандартный размер';
+
+  @override
+  String get editorBackgroundTitle => 'Фон листа';
+
+  @override
+  String get editorGradientFrom => 'От';
+
+  @override
+  String get editorGradientTo => 'До';
+
+  @override
+  String get editorGradientDirection => 'Направление';
+
+  @override
+  String get editorGradientNone => 'Без градиента';
+
+  @override
+  String get editorGradientVertical => 'Вертикальный';
+
+  @override
+  String get editorGradientHorizontal => 'Горизонтальный';
+
+  @override
+  String get editorGradientDiagonal => 'Диагональный';
+
+  @override
+  String get editorLayersTitle => 'Слои';
+
+  @override
+  String get editorLayerShow => 'Показать элемент';
+
+  @override
+  String get editorLayerHide => 'Скрыть элемент';
+
+  @override
+  String get editorLayerLock => 'Заблокировать элемент';
+
+  @override
+  String get editorLayerUnlock => 'Разблокировать элемент';
+
+  @override
+  String get editorLayersEmpty => 'На этой странице пока нет элементов.';
+
+  @override
+  String get editorGroupSelected => 'Сгруппировать выделение';
+
+  @override
+  String get editorUngroupSelected => 'Разгруппировать';
+
+  @override
+  String get editorAlignLeft => 'Выровнять по левому краю';
+
+  @override
+  String get editorAlignCenterH => 'По центру по горизонтали';
+
+  @override
+  String get editorAlignRight => 'Выровнять по правому краю';
+
+  @override
+  String get editorAlignTop => 'Выровнять по верху';
+
+  @override
+  String get editorAlignCenterV => 'По центру по вертикали';
+
+  @override
+  String get editorAlignBottom => 'Выровнять по низу';
+
+  @override
   String get editorBringForward => 'На шаг вперёд';
 
   @override
@@ -510,6 +755,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editorSource => 'Источник';
+
+  @override
+  String get editorImageTint => 'Цвет изображения';
 
   @override
   String get editorImageFit => 'Вписывание изображения';
@@ -1836,4 +2084,899 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cbContractDataTitle => 'Данные договора (образец)';
+
+  @override
+  String get editorSendBackward => 'Назад';
+
+  @override
+  String get editorRotateLeft => 'Повернуть на 90° влево';
+
+  @override
+  String get editorRotateRight => 'Повернуть на 90° вправо';
+
+  @override
+  String get editorFlipH => 'Отразить по горизонтали';
+
+  @override
+  String get editorFlipV => 'Отразить по вертикали';
+
+  @override
+  String get editorTransform => 'Преобразования';
+
+  @override
+  String get editorToolSelect => 'Выбор';
+
+  @override
+  String get editorToolShapes => 'Фигуры';
+
+  @override
+  String get editorFillType => 'Тип заливки';
+
+  @override
+  String get editorFillSolid => 'Сплошной';
+
+  @override
+  String get editorGradientLinear => 'Линейный градиент';
+
+  @override
+  String get editorGradientRadial => 'Радиальный градиент';
+
+  @override
+  String get editorGradientAngle => 'Угол градиента';
+
+  @override
+  String get editorShadowEnable => 'Добавить тень';
+
+  @override
+  String get editorShadowColor => 'Цвет тени';
+
+  @override
+  String get editorShadowBlur => 'Размытие тени';
+
+  @override
+  String get editorShadowOffsetX => 'Смещение X';
+
+  @override
+  String get editorShadowOffsetY => 'Смещение Y';
+
+  @override
+  String get editorShadowSpread => 'Расширение';
+
+  @override
+  String get editorShadowRemove => 'Убрать тень';
+
+  @override
+  String get editorPoints => 'Точек';
+
+  @override
+  String get editorInnerRadius => 'Внутренний радиус';
+
+  @override
+  String get editorCornerTopLeft => 'Сверху слева';
+
+  @override
+  String get editorCornerTopRight => 'Сверху справа';
+
+  @override
+  String get editorCornerBottomRight => 'Снизу справа';
+
+  @override
+  String get editorCornerBottomLeft => 'Снизу слева';
+
+  @override
+  String get editorDashPattern => 'Штриховой узор';
+
+  @override
+  String get editorBooleanOps => 'Булевы операции';
+
+  @override
+  String get editorBooleanUnion => 'Объединить';
+
+  @override
+  String get editorBooleanSubtract => 'Вычесть';
+
+  @override
+  String get editorBooleanIntersect => 'Пересечение';
+
+  @override
+  String get editorBooleanUngroup => 'Разъединить';
+
+  @override
+  String get paletteStar => 'Звезда';
+
+  @override
+  String get palettePolygon => 'Многоугольник';
+
+  @override
+  String get editorBooleanExclude => 'Исключить';
+
+  @override
+  String get editorBooleanHint =>
+      'Объединённый контур — единый результат булевой операции (без внутренних границ), его можно разделить в любой момент.';
+
+  @override
+  String get editorDockTools => 'Панель инструментов';
+
+  @override
+  String get editorDockAnchor => 'Позиция закрепления';
+
+  @override
+  String get editorDockTopBar => 'Верхняя панель';
+
+  @override
+  String get editorDockInspector => 'Боковая панель';
+
+  @override
+  String get editorDockLeftRail => 'Боковая рейка';
+
+  @override
+  String get editorDockFloating => 'Плавающая';
+
+  @override
+  String get editorDockCollapse => 'Свернуть инструменты';
+
+  @override
+  String get editorDockExpand => 'Развернуть инструменты';
+
+  @override
+  String get editorDockResize => 'Перетащите для изменения размера';
+
+  @override
+  String get editorDockDropHint => 'Отпустите для закрепления в';
+
+  @override
+  String get editorMoreTools => 'Другие инструменты';
+
+  @override
+  String get editorDocumentProperties => 'Свойства документа';
+
+  @override
+  String get editorDockReset => 'Вернуть закрепление по умолчанию';
+
+  @override
+  String get editorTextShadow => 'Тень текста';
+
+  @override
+  String get editorTextShadowAdd => 'Добавить тень текста';
+
+  @override
+  String get editorShadowOpacity => 'Прозрачность тени';
+
+  @override
+  String get genderMale => 'Мужской';
+
+  @override
+  String get genderFemale => 'Женский';
+
+  @override
+  String get genderPreviewAutoHint =>
+      'Нажмите, чтобы отменить принудительный выбор (авто)';
+
+  @override
+  String get genderPresetCompleted => '«completed» (м./ж.)';
+
+  @override
+  String get genderPresetPassed => '«passed» (м./ж.)';
+
+  @override
+  String get genderPresetForStudent => '«для студента» (м./ж.)';
+
+  @override
+  String get genderPresetStudent => '«студент» (м./ж.)';
+
+  @override
+  String get genderPresetToHim => '«ему / ей»';
+
+  @override
+  String get genderPresetHonoring => '«отличившийся слушатель» (м./ж.)';
+
+  @override
+  String get editorGenderSnippet => 'Вставить условный фрагмент';
+
+  @override
+  String get editorGenderSnippetHint =>
+      'Вставляет фразу, которая автоматически меняется по полу получателя.';
+
+  @override
+  String get bpGenderReviewTitle => 'Проверка рода (мужской/женский)';
+
+  @override
+  String get bpGenderReviewSubtitle =>
+      'Род определяется по имени или столбцу «Пол» — исправьте пограничные случаи перед печатью.';
+
+  @override
+  String get bpGenderRow => 'Строка';
+
+  @override
+  String get bpGenderDetected => 'Определено';
+
+  @override
+  String get bpGenderEffective => 'Применено';
+
+  @override
+  String get bpGenderNameColumn => 'Имя';
+
+  @override
+  String get bpGenderEditName => 'Изменить имя';
+
+  @override
+  String get bpGenderNameHint => 'Введите правильное имя';
+
+  @override
+  String get bpGenderClearOverrides => 'Очистить правки';
+
+  @override
+  String get bpGenderOverridden => 'Исправлено вручную';
+
+  @override
+  String get bpGenderUnknownName => '—';
+
+  @override
+  String get bpOutputTitle => 'Папка сохранения сертификатов';
+
+  @override
+  String get bpOutputHint =>
+      'Выберите папку для сохранения созданного PDF или начните с расположения по умолчанию.';
+
+  @override
+  String get bpOutputPickFolder => 'Выбрать папку…';
+
+  @override
+  String get bpOutputStart => 'Начать создание';
+
+  @override
+  String get bpOutputPathLabel => 'Выбранная папка';
+
+  @override
+  String get bpOutputNoFolder => 'Папка не выбрана — только печать и экспорт.';
+
+  @override
+  String get bpOpenFolder => 'Открыть папку';
+
+  @override
+  String get bpOutputSavedTitle => 'PDF-файл сохранён';
+
+  @override
+  String get bpOpenFolderFailed => 'Не удалось открыть папку.';
+
+  @override
+  String get bpOutputNameLabel => 'Имя файла экспорта';
+
+  @override
+  String get bpOutputNameHint => 'Введите имя без расширения';
+
+  @override
+  String get bpOutputNamePreviewLabel => 'Будет сохранено как';
+
+  @override
+  String get bpOutputModeLabel => 'Режим сохранения';
+
+  @override
+  String get bpOutputModeCombined => 'Один объединённый файл';
+
+  @override
+  String get bpOutputModeIndividual => 'Отдельный файл для каждого';
+
+  @override
+  String get hubTitle => 'Новый проект';
+
+  @override
+  String get hubSubtitle =>
+      'Выберите готовый размер или задайте свой — холст откроется с точным размером и пропорцией.';
+
+  @override
+  String get hubKindSingle => 'Одностраничные материалы и документы';
+
+  @override
+  String get hubKindMulti => 'Многостраничные книги и издания';
+
+  @override
+  String get hubKindSingleHint =>
+      'Один лист: сертификаты, договоры, карточки, номера мест, открытки.';
+
+  @override
+  String get hubKindMultiHint =>
+      'Много страниц: книга, журнал, буклет, отчёт, каталог.';
+
+  @override
+  String get hubGroupCertificates => 'Сертификаты и договоры';
+
+  @override
+  String get hubGroupCards => 'Карточки и бейджи';
+
+  @override
+  String get hubGroupSeat => 'Номера мест и таблички';
+
+  @override
+  String get hubGroupGreeting => 'Поздравительные открытки';
+
+  @override
+  String get hubGroupPublications => 'Книги и издания';
+
+  @override
+  String get hubGroupCustom => 'Свой размер';
+
+  @override
+  String get hubDigitalBadge => 'Цифровой';
+
+  @override
+  String get hubCreate => 'Создать';
+
+  @override
+  String get hubCustomCardBody =>
+      'Введите размеры в любой единице и начните с холстом своего размера.';
+
+  @override
+  String get hubCustomName => 'Название проекта';
+
+  @override
+  String get hubCustomNameHint => 'напр. Приглашение';
+
+  @override
+  String get hubCustomPreview => 'Итоговый размер';
+
+  @override
+  String get hubCustomCreate => 'Создать холст';
+
+  @override
+  String get hubCustomType => 'Тип проекта';
+
+  @override
+  String get hubSearchHint => 'Поиск размеров…';
+
+  @override
+  String get hubNoResults =>
+      'Нет подходящего размера — попробуйте другое слово.';
+
+  @override
+  String get hubAspectRatio => 'Пропорция';
+
+  @override
+  String get destNewProject => 'Новый проект';
+
+  @override
+  String get destNewProjectDesc =>
+      'Выберите готовый или свой размер и сразу приступайте к дизайну.';
+
+  @override
+  String get ptpImpositionToggle => 'Раскладка печати';
+
+  @override
+  String get ptpImpositionNoFit =>
+      'Лист слишком мал для этого элемента — уменьшите поля или выберите лист большего размера.';
+
+  @override
+  String get editorEffectsTitle => 'Эффекты и цветокоррекция';
+
+  @override
+  String get editorShadowGroup => 'Тень';
+
+  @override
+  String get editorOuterGlow => 'Внешнее свечение';
+
+  @override
+  String get editorInnerGlow => 'Внутреннее свечение';
+
+  @override
+  String get editorGlowAdd => 'Добавить свечение';
+
+  @override
+  String get editorGlowRemove => 'Убрать свечение';
+
+  @override
+  String get editorGlowColor => 'Цвет свечения';
+
+  @override
+  String get editorGlowRadius => 'Радиус свечения';
+
+  @override
+  String get editorGlowSpread => 'Расширение свечения';
+
+  @override
+  String get editorGlowOpacity => 'Прозрачность свечения';
+
+  @override
+  String get editorAdjustGroup => 'Цветокоррекция';
+
+  @override
+  String get editorAdjustBrightness => 'Яркость';
+
+  @override
+  String get editorAdjustContrast => 'Контраст';
+
+  @override
+  String get editorAdjustSaturation => 'Насыщенность';
+
+  @override
+  String get editorAdjustHue => 'Оттенок';
+
+  @override
+  String get editorAdjustReset => 'Сбросить';
+
+  @override
+  String get bpOutputSavedFolderTitle => 'Файлы сохранены в отдельную папку';
+
+  @override
+  String get hubDetailsTitle => 'Параметры размера';
+
+  @override
+  String get hubDetailsHint =>
+      'Предзаполненные значения по умолчанию — выберите размер в сетке или измените габариты.';
+
+  @override
+  String get hubFilterAll => 'Все';
+
+  @override
+  String get hubFilterRecent => 'Недавние размеры';
+
+  @override
+  String get hubFilterSeat => 'Номера мест';
+
+  @override
+  String get hubFilterGreeting => 'Открытки и экраны';
+
+  @override
+  String get hubRecentEmpty =>
+      'Недавних размеров пока нет — любой созданный проект появится здесь.';
+
+  @override
+  String get hubDocTitle => 'Название проекта';
+
+  @override
+  String get hubDocTitleHint => 'Новый проект - 1';
+
+  @override
+  String get hubWidth => 'Ширина';
+
+  @override
+  String get hubHeight => 'Высота';
+
+  @override
+  String get hubUnitLabel => 'Единица';
+
+  @override
+  String get hubOrientationLabel => 'Ориентация';
+
+  @override
+  String get hubPortrait => 'Книжная';
+
+  @override
+  String get hubLandscape => 'Альбомная';
+
+  @override
+  String get hubVariantLabel => 'Тип';
+
+  @override
+  String get hubResolutionLabel => 'Разрешение';
+
+  @override
+  String get hubResolutionUnitLabel => 'Единица разрешения';
+
+  @override
+  String get hubColorModeLabel => 'Цветовой режим';
+
+  @override
+  String get hubBackgroundLabel => 'Цвет фона';
+
+  @override
+  String get hubBackgroundWhite => 'Белый';
+
+  @override
+  String get hubBackgroundTransparent => 'Прозрачный';
+
+  @override
+  String get hubBackgroundBlack => 'Чёрный';
+
+  @override
+  String get hubBackgroundCustom => 'Свой цвет';
+
+  @override
+  String get hubCreateProject => 'Создать проект';
+
+  @override
+  String get hubCustomFamilyTitle => 'Свой размер';
+
+  @override
+  String get newDocTitle => 'Новый документ';
+
+  @override
+  String get newDocScopeSocial => 'Экраны и открытки';
+
+  @override
+  String get newDocFilterCertificates => 'Сертификаты';
+
+  @override
+  String get newDocFilterCards => 'Карточки';
+
+  @override
+  String get newDocFilterGreeting => 'Открытки';
+
+  @override
+  String get newDocFilterPublications => 'Публикации';
+
+  @override
+  String get menuFile => 'Файл';
+
+  @override
+  String get menuEdit => 'Правка';
+
+  @override
+  String get menuView => 'Вид';
+
+  @override
+  String get menuTools => 'Инструменты';
+
+  @override
+  String get menuHelp => 'Справка';
+
+  @override
+  String get menuNewDocument => 'Новый документ…';
+
+  @override
+  String get menuPurgeRecent => 'Очистить недавние размеры';
+
+  @override
+  String get menuPurgeImageCache => 'Очистить кеш изображений';
+
+  @override
+  String get menuPreviewCertificate => 'Просмотр образца сертификата';
+
+  @override
+  String get menuPreviewContract => 'Просмотр образца договора';
+
+  @override
+  String get menuAbout => 'О JoodCraft';
+
+  @override
+  String get actionNewShort => '+ Создать';
+
+  @override
+  String get dashLocalMode => 'Локально';
+
+  @override
+  String get dashLocalStorage =>
+      'Сохраняется локально на этом устройстве — проекты не загружаются на сервер.';
+
+  @override
+  String get dashRecentProjects => 'Недавние проекты';
+
+  @override
+  String get dashRecentEmpty =>
+      'На этом устройстве пока нет сохранённых проектов — создайте документ, и он появится здесь сразу.';
+
+  @override
+  String get dashRecentOpen => 'Открыть проект';
+
+  @override
+  String get dashRoadmapLocal =>
+      'Локальная база проектов (таблица projects) с 100 % офлайн-сохранением';
+
+  @override
+  String get dashRoadmapOffline =>
+      'Полностью офлайн: без загрузки проектов и без сети';
+
+  @override
+  String get editorTransformPosition => 'Трансформация и положение';
+
+  @override
+  String get editorTransformPositionHint => 'Положение, размер и угол поворота';
+
+  @override
+  String get editorAppearanceEffects => 'Внешний вид и эффекты';
+
+  @override
+  String get editorAppearanceEffectsHint => 'Заливка, обводка, свечение и тени';
+
+  @override
+  String get editorTypographyHint => 'Шрифт, размер, выравнивание и интервал';
+
+  @override
+  String get editorPageSettingsHint => 'Размер и единица измерения';
+
+  @override
+  String get editorBackgroundHint => 'Цвет или градиент страницы';
+
+  @override
+  String get editorPrecisionHint => 'Точное смещение и масштаб';
+
+  @override
+  String get joodExportProject => 'Экспорт проекта (.jood)';
+
+  @override
+  String get joodImportProject => 'Открыть проект (.jood)';
+
+  @override
+  String get joodExportReady => 'Файл проекта готов к сохранению.';
+
+  @override
+  String get joodExportFailed => 'Не удалось экспортировать файл проекта.';
+
+  @override
+  String get joodImportOpened => 'Импортированный проект открыт.';
+
+  @override
+  String get joodImportFailed => 'Не удалось открыть файл проекта.';
+
+  @override
+  String get joodRecoveryTitle => 'Несохранённый черновик';
+
+  @override
+  String get joodRecoveryMessage =>
+      'Есть несохранённый черновик из предыдущего сеанса. Восстановить его?';
+
+  @override
+  String get joodRecoveryRestore => 'Восстановить';
+
+  @override
+  String get joodRecoveryDiscard => 'Отклонить';
+
+  @override
+  String get joodRecoveryRestored => 'Черновик восстановлен.';
+
+  @override
+  String get joodAutosaveSaved => 'Сохранено автоматически';
+
+  @override
+  String get joodAutosaveSaving => 'Сохранение…';
+
+  @override
+  String get editorConfirm => 'Подтвердить';
+
+  @override
+  String get admTitle => 'Управление локальными администраторами';
+
+  @override
+  String get admRefresh => 'Обновить';
+
+  @override
+  String get admTabAdmins => 'Администраторы';
+
+  @override
+  String get admTabTransfer => 'Перенос между устройствами';
+
+  @override
+  String get admTabAudit => 'Журнал экспорта';
+
+  @override
+  String get admListTitle =>
+      'Учётные записи администраторов на этом устройстве';
+
+  @override
+  String get admAdd => 'Добавить администратора';
+
+  @override
+  String get admNoAdmins => 'Учётных записей администраторов пока нет.';
+
+  @override
+  String get admLoading =>
+      'Загрузка учётных записей администратора на этом устройстве…';
+
+  @override
+  String get admRoleOwner => 'Главный администратор';
+
+  @override
+  String get admCurrent => 'Вы';
+
+  @override
+  String get admCurrentCardTitle => 'Текущий аккаунт на этом устройстве';
+
+  @override
+  String get admRoleAdmin => 'Администратор';
+
+  @override
+  String get admSwitchTitle => 'Быстрая смена аккаунта';
+
+  @override
+  String get admSwitchPrompt =>
+      'Выберите локальное имя пользователя подчинённого администратора на этом устройстве и введите его локальный пароль, чтобы сразу перейти в его сеанс — черновики открытых проектов сохраняются заранее, а основная лицензия не затрагивается.';
+
+  @override
+  String get admSwitchNoOthers =>
+      'На этом устройстве нет других подчинённых администраторов. Сначала добавьте администратора на экране управления.';
+
+  @override
+  String get admSwitchPick => 'Локальное имя пользователя';
+
+  @override
+  String get admSwitchPassword => 'Локальный пароль выбранной учётной записи';
+
+  @override
+  String get admSwitchPickPassword =>
+      'Выберите имя пользователя и введите пароль.';
+
+  @override
+  String get admSwitchWrongPassword => 'Неверный пароль.';
+
+  @override
+  String get admSwitchFailed =>
+      'Не удалось сменить аккаунт. Попробуйте ещё раз.';
+
+  @override
+  String get admSwitchSuccess => 'Аккаунт успешно сменён.';
+
+  @override
+  String get admSwitchAccount => 'Сменить аккаунт';
+
+  @override
+  String get admSwitchAction => 'Переключить';
+
+  @override
+  String get admColAdmin => 'Администратор';
+
+  @override
+  String get admColUsername => 'Локальное имя пользователя';
+
+  @override
+  String get admColRole => 'Роль';
+
+  @override
+  String get admColCreated => 'Добавлен';
+
+  @override
+  String get admColActions => 'Действия';
+
+  @override
+  String get destJoodWriter => 'Jood Writer';
+
+  @override
+  String get destJoodWriterDesc =>
+      'Текстовые документы и отчёты с автоматической разбивкой на страницы.';
+
+  @override
+  String get admCreatedAt => 'Создано';
+
+  @override
+  String get admEdit => 'Изменить данные';
+
+  @override
+  String get admChangePassword => 'Изменить пароль';
+
+  @override
+  String get admPromote => 'Назначить главным администратором';
+
+  @override
+  String get admDemote => 'Понизить до администратора';
+
+  @override
+  String get admDelete => 'Удалить учётную запись';
+
+  @override
+  String admDeleteConfirm(Object name) {
+    return '«$name» будет навсегда удалён с этого устройства. Это действие нельзя отменить.';
+  }
+
+  @override
+  String get admPromoted => 'Назначен главным администратором.';
+
+  @override
+  String get admDemoted => 'Понижен до администратора.';
+
+  @override
+  String get admDeleted => 'Учётная запись удалена.';
+
+  @override
+  String get admCreated => 'Новый администратор добавлен.';
+
+  @override
+  String get admUpdated => 'Данные администратора обновлены.';
+
+  @override
+  String get admPasswordChanged => 'Пароль изменён.';
+
+  @override
+  String get admTransferInfoTitle => 'Как работает перенос?';
+
+  @override
+  String get admTransferInfo1 =>
+      'Таблица учётных записей (с хешами паролей, но никогда с самими паролями) экспортируется в файл, зашифрованный выбранной вами парольной фразой.';
+
+  @override
+  String get admTransferInfo2 =>
+      'Перенесите файл или код на другое устройство и импортируйте его там с той же парольной фразой — учётные записи будут работать с теми же правами.';
+
+  @override
+  String get admTransferInfo3 =>
+      'Ничего не отправляется на какой-либо сервер: перенос выполняется полностью вручную между локальными устройствами.';
+
+  @override
+  String get admExport => 'Экспортировать учётные записи';
+
+  @override
+  String get admExportPassphrase => 'Парольная фраза экспорта';
+
+  @override
+  String get admPassphraseConfirm => 'Подтвердите парольную фразу';
+
+  @override
+  String get admExportRisk =>
+      'Я понимаю, что любой, у кого есть этот код и его парольная фраза, сможет войти под этими учётными записями, поэтому буду делиться им осторожно.';
+
+  @override
+  String get admExportGenerate => 'Создать зашифрованный код';
+
+  @override
+  String get admExportFile => 'Сохранить в отдельный файл';
+
+  @override
+  String get admExportDone =>
+      'Зашифрованный код создан. Скопируйте его или сохраните в файл.';
+
+  @override
+  String get admExportFileSaved =>
+      'Зашифрованный файл учётных записей сохранён.';
+
+  @override
+  String get admPassphraseTooShort =>
+      'Используйте не менее 6 символов для парольной фразы.';
+
+  @override
+  String get admPassphraseMismatch => 'Парольные фразы не совпадают.';
+
+  @override
+  String get admAcceptRiskRequired =>
+      'Сначала подтвердите, что понимаете риск передачи кода.';
+
+  @override
+  String admFileError(Object error) {
+    return 'Не удалось обработать файл: $error';
+  }
+
+  @override
+  String get admImport => 'Импортировать учётные записи';
+
+  @override
+  String get admImportCode => 'Код учётных записей';
+
+  @override
+  String get admImportPassphrase => 'Парольная фраза файла';
+
+  @override
+  String get admImportReplace => 'Заменить пароли существующих учётных записей';
+
+  @override
+  String get admImportPick => 'Выбрать файл';
+
+  @override
+  String get admImportRun => 'Импортировать сейчас';
+
+  @override
+  String get admImportCodeRequired => 'Сначала вставьте код или выберите файл.';
+
+  @override
+  String get admImportPassphraseRequired => 'Введите парольную фразу файла.';
+
+  @override
+  String admImportDone(int added, int updated, int skipped) {
+    return 'Импортировано: $added новых, $updated обновлено, $skipped пропущено.';
+  }
+
+  @override
+  String get admAuditTitle => 'Журнал выданных сертификатов и документов';
+
+  @override
+  String get admAuditClear => 'Очистить журнал';
+
+  @override
+  String get admAuditEmpty =>
+      'Экспортов пока нет. Каждый экспортированный сертификат или договор будет записан здесь с датой и администратором, который его выдал.';
+
+  @override
+  String get admAuditBy => 'Кем';
+
+  @override
+  String get admAuditPages => 'стр.';
+
+  @override
+  String get admAuditClearConfirm =>
+      'Весь журнал экспорта будет удалён с этого устройства. Это действие нельзя отменить.';
+
+  @override
+  String get admAuditCleared => 'Журнал очищен.';
+
+  @override
+  String get admUnavailableTitle => 'Управление сейчас недоступно';
+
+  @override
+  String get admUnavailableBody =>
+      'Управление администраторами работает, когда приложение запущено с локальной учётной записью (LocalAuthRepository), поэтому учётные записи читаются с этого устройства.';
 }

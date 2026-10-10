@@ -176,8 +176,16 @@ InlineSpan editorTextSpan(
   List<StyledTextSpan> spans,
   double scale, {
   Paint? foreground,
+
+  /// معاينة خط حيّة: عائلة مؤقتة تُفرض على النمط الأساسي عند المرور فوق خيار
+  /// خط في القوائم — لا تُمسّ الوثيقة وتزول بخروج المؤشر. نطاقات الخط الصريحة
+  /// داخل النص تبقى أسبق منها.
+  String? familyOverride,
 }) {
-  final TextStyle base = editorTextStyle(element, scale, foreground: foreground);
+  TextStyle base = editorTextStyle(element, scale, foreground: foreground);
+  if (familyOverride != null && familyOverride.isNotEmpty) {
+    base = base.copyWith(fontFamily: familyOverride, fontWeight: FontWeight.w400);
+  }
   final List<StyledTextRun> runs = splitStyledRuns(source, spans);
   if (runs.length == 1 && runs.first.isBase) {
     return TextSpan(text: source, style: base);

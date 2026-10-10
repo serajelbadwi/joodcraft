@@ -88,13 +88,16 @@ abstract final class AppTheme {
         inversePrimary: AppColors.gold,
       );
 
-  /// لوحة الألوان الداكنة — مشتقات الهوية نفسها بإضاءة معكوسة.
+  /// لوحة الألوان الداكنة — **سليت موحّد** (Unified Slate): الهيكل الخارجي
+  /// `#3E3E3E` (الخلفية والسطح معاً) ← مرتفع `#454545` ← مساحة عمل `#4A4A4A`
+  /// ← حدود `#4F4F4F`، والنصوص `#F0F0F0`/`#A0A0A0`. لا وجود لأي درجة شبه
+  /// سوداء، ويبقى الذهبي لون الإبراز الوحيد الدافئ لتبقى هوية المنصة واضحة.
   static ColorScheme _darkScheme() => const ColorScheme(
         brightness: Brightness.dark,
         primary: AppColors.gold,
         onPrimary: AppColors.navy,
         primaryContainer: AppColors.darkNavyWash,
-        onPrimaryContainer: AppColors.onNavy,
+        onPrimaryContainer: AppColors.darkInk,
         secondary: AppColors.gold,
         onSecondary: AppColors.navy,
         secondaryContainer: AppColors.darkGoldSoft,
@@ -107,10 +110,16 @@ abstract final class AppTheme {
         onErrorContainer: Color(0xFFFFC9C2),
         surface: AppColors.darkSurface,
         onSurface: AppColors.darkInk,
+        // الهيكل الخارجي موحّد (لا فرق مُظلم بين الخلفية والسطح).
+        surfaceContainerLowest: Color(0xFF383838),
+        surfaceContainerLow: AppColors.darkBackground,
+        surfaceContainer: Color(0xFF424242),
+        // الأسطح المرتفعة (البطاقات/النوافذ/القوائم المنبثقة).
+        surfaceContainerHigh: AppColors.darkElevated,
         surfaceContainerHighest: AppColors.darkBackground,
         onSurfaceVariant: AppColors.darkInkMuted,
         outline: AppColors.darkBorder,
-        outlineVariant: AppColors.darkBorder,
+        outlineVariant: AppColors.darkBorderFaint,
         shadow: Color(0x66000000),
         inverseSurface: AppColors.navy,
         onInverseSurface: AppColors.onNavy,
@@ -132,7 +141,10 @@ abstract final class AppTheme {
 
     // إبراز الهوية: الذهبي يعمل فوق أي سطح، والكحلي الداكن يبقى للفاتح.
     final Color gold = AppColors.gold;
-    final Color elevatedBg = isDark ? AppColors.navySoft : AppColors.navy;
+    // الأساس الإرشادي: فحمي مرتفع ليلاً، كحلي نهاراً.
+    final Color elevatedBg = isDark ? AppColors.darkElevated : AppColors.navy;
+    // أسطح البطاقات والنوافذ والحقول: مرتفعة ليلاً (‎#454545‎) بيضاء نهاراً.
+    final Color cardSurface = isDark ? AppColors.darkElevated : scheme.surface;
     final Color disabledFg =
         isDark ? AppColors.darkInkDisabled : AppColors.inkDisabled;
     final Color hint =
@@ -230,7 +242,7 @@ abstract final class AppTheme {
       // (3) حقول الإدخال ----------------------------------------------------
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.surface,
+        fillColor: cardSurface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: space16,
           vertical: space16,
@@ -255,7 +267,7 @@ abstract final class AppTheme {
 
       // (4) الأسطح ----------------------------------------------------------
       cardTheme: CardThemeData(
-        color: scheme.surface,
+        color: cardSurface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.zero,
@@ -266,7 +278,7 @@ abstract final class AppTheme {
         ),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: scheme.surface,
+        backgroundColor: cardSurface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -300,7 +312,8 @@ abstract final class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: scheme.inverseSurface,
+        // فحمي مرتفع ليلاً، كحلي نهاراً — فلا تظهر كتلة كحلية في المظهر الداكن.
+        backgroundColor: isDark ? AppColors.darkElevated : AppColors.navy,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
           color: scheme.onInverseSurface,
         ),

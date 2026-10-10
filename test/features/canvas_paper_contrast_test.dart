@@ -7,13 +7,16 @@ import 'package:joodcraft/core/editor/template_editor_controller.dart';
 import 'package:joodcraft/core/editor/widgets/template_canvas.dart';
 import 'package:joodcraft/core/models/template_document.dart';
 import 'package:joodcraft/core/models/template_element.dart';
+import 'package:joodcraft/core/theme/app_colors.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 
 /// حدود ورقة التصميم: تظل متباينة عن مساحة العمل في الوضعين.
 ///
-/// في الوضع الداكن يكفي تباين الألوان (ورقة بيضاء فوق خلفية داكنة)، وفي
-/// الوضع الفاتح (خلفية شبه بيضاء) تُضمن الحدود بحدٍّ مرسوم حول الورقة وظل
-/// يرفعها عن الخلفية.
+/// في الوضع الداكن تكون مساحة العمل **أفتح من الهيكل الموحّد**
+/// (رمادي ‎#4A4A4A‎ فوق هيكل سليت ‎#3E3E3E‎)، فيقلّ التباين الحادّ حول
+/// الورقة البيضاء ويقلّ إجهاد العين، ويرفعها ظل ناعم منتشر (مُقوّى قليلاً
+/// على الطنّ الأفتح). وفي الوضع الفاتح (خلفية شبه بيضاء) تُضمن الحدود بحدٍّ
+/// مرسوم حول الورقة وظل يرفعها عن الخلفية.
 void main() {
   /// السطوع النسبي (WCAG) للون.
   double luminance(Color color) {
@@ -91,10 +94,11 @@ void main() {
 
     // الحدّ يختلف عن لون الورقة فلا تلتصق ألوان التصميم بالخلفية.
     expect(contrast(paperColor, borderColor), greaterThan(1.1));
-    // الظل يرفع الورقة عن مساحة العمل الفاتحة.
+    // الظل الناعم يرفع الورقة عن مساحة العمل الفاتحة.
     expect(decoration.boxShadow, isNotEmpty);
+    expect(decoration.boxShadow!.first.blurRadius, greaterThanOrEqualTo(10));
     expect(
-      contrast(paperColor, AppTheme.light.colorScheme.surfaceContainerHighest),
+      contrast(paperColor, AppTheme.light.colorScheme.canvasViewport),
       greaterThan(1.0),
     );
   });
@@ -120,20 +124,25 @@ void main() {
     final BoxDecoration decoration =
         tester.widget<DecoratedBox>(paper).decoration as BoxDecoration;
     final Color paperColor = decoration.color!;
-    final Color workspace = AppTheme.dark.colorScheme.surfaceContainerHighest;
+    final ColorScheme scheme = AppTheme.dark.colorScheme;
+    final Color workspace = scheme.canvasViewport;
+
+    // مساحة العمل فحمي أفتح من اللوحات المحيطة (فحمي متوسط لا أسود).
+    expect(workspace, AppColors.darkCanvas);
+    expect(
+      workspace.computeLuminance(),
+      greaterThan(scheme.surface.computeLuminance()),
+      reason: 'مساحة عمل اللوحة يجب أن تكون أفتح من اللوحات والأشرطة.',
+    );
 
     // WCAG AA: التباين ≥ 4.5 بين الورقة وخلفية البرنامج الداكنة.
     expect(contrast(paperColor, workspace), greaterThanOrEqualTo(4.5));
-    // وظل داكن يبرزها أكثر.
-    expect(decoration.boxShadow, isNotEmpty);
-    expect(
-      decoration.boxShadow!.first.color.a,
-      greaterThan(AppColorsLike.darkShadowAlpha),
-    );
-  });
-}
 
-/// قيمة ألفا مميزة للظل الداكن (أسود شبه معتم) — لفحص أن الظل تحوّل ليلاً.
-abstract final class AppColorsLike {
-  static const double darkShadowAlpha = 0.4;
+    // ظل أسود شفّاف ناعم منشر (لا حدّ صلب) يبرز الورقة.
+    expect(decoration.boxShadow, isNotEmpty);
+    final BoxShadow shadow = decoration.boxShadow!.first;
+    expect(shadow.color.a, greaterThanOrEqualTo(0.24));
+    expect(shadow.blurRadius, greaterThanOrEqualTo(10));
+    expect(shadow.spreadRadius, greaterThanOrEqualTo(1));
+  });
 }

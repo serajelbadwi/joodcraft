@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/constants/app_constants.dart';
 import 'package:joodcraft/core/errors/app_error_code.dart';
-import 'package:joodcraft/core/errors/app_exception.dart';
 import 'package:joodcraft/core/models/template_document.dart';
 import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/templates/local_template_store.dart';
@@ -115,16 +114,54 @@ void main() {
       );
     });
 
-    test('save يحفظ في السحابة يرمي notConfigured', () async {
-      await expectLater(
-        controller.save(
-          title: 'x',
-          category: PresetCatalog.all.first.category,
-          orientation: PresetCatalog.all.first.orientation,
-          layoutData: <String, dynamic>{'schema_version': 1},
-        ),
-        throwsA(isA<AppException>()),
+    test('save بلا مستودع يحفظ محلياً في المخزن (لا يرمي)', () async {
+      final TemplateRecord saved = await controller.save(
+        title: 'قالب محلي',
+        category: PresetCatalog.all.first.category,
+        orientation: PresetCatalog.all.first.orientation,
+        layoutData: <String, dynamic>{'schema_version': 1},
       );
+
+      expect(saved.id.startsWith('local_'), isTrue);
+      expect(saved.title, 'قالب محلي');
+      expect(controller.localTemplates.single.id, saved.id);
+      // مكتوب على الجهاز فعلاً لا في الذاكرة فقط.
+      expect(store.records.single.id, saved.id);
+    });
+
+    test('save بمعرّف قائم يُحدّث الصفّ نفسه ولا يُنشئ نسخة', () async {
+      final TemplateRecord saved = await controller.save(
+        title: 'أول',
+        category: PresetCatalog.all.first.category,
+        orientation: PresetCatalog.all.first.orientation,
+        layoutData: <String, dynamic>{'schema_version': 1},
+      );
+      final TemplateRecord updated = await controller.save(
+        id: saved.id,
+        title: 'ثانٍ',
+        category: PresetCatalog.all.first.category,
+        orientation: PresetCatalog.all.first.orientation,
+        layoutData: <String, dynamic>{'schema_version': 1},
+      );
+
+      expect(updated.id, saved.id);
+      expect(updated.title, 'ثانٍ');
+      expect(controller.localTemplates.length, 1);
+      expect(store.records.length, 1);
+    });
+
+    test('remove بلا مستودع يحذف المحلي بدل الرمي', () async {
+      final TemplateRecord saved = await controller.save(
+        title: 'x',
+        category: PresetCatalog.all.first.category,
+        orientation: PresetCatalog.all.first.orientation,
+        layoutData: <String, dynamic>{'schema_version': 1},
+      );
+
+      await controller.remove(saved.id);
+
+      expect(controller.localTemplates, isEmpty);
+      expect(store.records, isEmpty);
     });
   });
 

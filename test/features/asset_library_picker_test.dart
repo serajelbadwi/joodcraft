@@ -121,7 +121,8 @@ void main() {
       (WidgetTester tester) async {
     final UserAsset frame = await add(AssetType.border, 'إطار المستند');
 
-    await tester.binding.setSurfaceSize(const Size(1280, 900));
+    // شاشة واسعة تُظهر الشريط العلوي كاملاً بلا قائمة فيض.
+    await tester.binding.setSurfaceSize(const Size(3600, 1000));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(
@@ -144,6 +145,10 @@ void main() {
     );
     await tester.pump();
 
+    // خصائص المستند في قائمة منسدلة أعلى الشريط — نفتحها للوصول إلى زرّ الإطار.
+    await tester.tap(find.byKey(const ValueKey<String>('editor-document-menu')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('إطار من مكتبة أصولي'));
     await tester.tap(find.text('إطار من مكتبة أصولي'));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(ValueKey<String>('asset-option-${frame.id}')));
@@ -161,6 +166,55 @@ void main() {
     expect(find.byType(ElementView), findsNWidgets(2));
 
     await tester.pump(const Duration(seconds: 5));
+  });
+
+  testWidgets('منتقي خلفية المستند يعرض كل الأنواع المرفوعة (أختام وتوقيعات)',
+      (WidgetTester tester) async {
+    final UserAsset stamp = await add(AssetType.stamp, 'ختم الإدارة');
+    final UserAsset signature = await add(AssetType.signature, 'توقيع المدير');
+
+    // شاشة واسعة تُظهر الشريط العلوي كاملاً بلا قائمة فيض.
+    await tester.binding.setSurfaceSize(const Size(3600, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      host(
+        TemplateEditorView(
+          category: TemplateCategory.certificate,
+          initialTemplateAsset: AppAssets.sampleCertificateTemplate,
+          exportFileName: 'joodcraft-certificate.pdf',
+          document: const TemplateDocument(
+            elements: <TemplateElement>[
+              TextElement(
+                id: 't1',
+                box: ElementBox(x: 40, y: 40, width: 300, height: 60),
+                text: 'شهادة',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // خصائص المستند في قائمة منسدلة أعلى الشريط — نفتحها للوصول إلى زرّ الإطار.
+    await tester.tap(find.byKey(const ValueKey<String>('editor-document-menu')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('إطار من مكتبة أصولي'));
+    await tester.tap(find.text('إطار من مكتبة أصولي'));
+    await tester.pumpAndSettle();
+
+    // الأختام والتوقيعات كانت مُستبعدة سابقاً من منتقي الخلفية، فصارت مرئية.
+    expect(find.byKey(ValueKey<String>('asset-option-${stamp.id}')),
+        findsOneWidget);
+    expect(find.byKey(ValueKey<String>('asset-option-${signature.id}')),
+        findsOneWidget);
+    await tester.tap(find.byKey(ValueKey<String>('asset-option-${stamp.id}')));
+    await tester.pumpAndSettle();
+
+    final TemplateCanvas canvas =
+        tester.widget<TemplateCanvas>(find.byType(TemplateCanvas));
+    expect(canvas.controller.document.elements.first, isA<ImageElement>());
   });
 
   test('ElementFactory.fromUserAsset يضبط الملاءمة حسب النوع', () {

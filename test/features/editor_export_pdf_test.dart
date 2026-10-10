@@ -83,7 +83,9 @@ void main() {
       (WidgetTester tester) async {
     await pumpEditor(tester, doc: document());
 
-    await tester.tap(find.byKey(const ValueKey<String>('editor-export-pdf')));
+    final Finder export = find.byKey(const ValueKey<String>('editor-export-pdf'));
+    await tester.ensureVisible(export);
+    await tester.tap(export);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 

@@ -5,8 +5,10 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/dynamic_fields.dart';
 import '../../domain/field_aliases.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/gender/arabic_gender.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/models/template_element.dart';
+import '../../../../core/services/batch_output_service.dart';
 import '../../../../core/services/pdf_generator_service.dart';
 import '../../data/sheet_parse_isolate.dart';
 import '../../domain/bulk_generation.dart';
@@ -315,6 +317,133 @@ class BatchProcessorController extends ChangeNotifier {
       !_busy && _sheet.isNotEmpty && _mapping.isNotEmpty && !_mapping.hasDuplicates;
 
   // --------------------------------------------------------------------------
+  //  مراجعة الجنس المسبقة (التذكير/التأنيث)
+  // --------------------------------------------------------------------------
+
+  Map<int, Gender> _genderOverrides = <int, Gender>{};
+  Map<int, String> _nameOverrides = <int, String>{};
+
+  /// تصحيحات المستخدم اليدوية للجنس: مفتاح الصف ← الجنس المؤكَّد.
+  Map<int, Gender> get genderOverrides => Map<int, Gender>.unmodifiable(
+        _genderOverrides,
+      );
+
+  int get genderOverrideCount => _genderOverrides.length;
+
+  /// تصحيحات المستخدم اليدوية للأسماء: مفتاح الصف ← الاسم الصحيح.
+  ///
+  /// الاسم المُصحَّح يحلّ محل قيمة الملف في كشف الجنس وفي الطباعة معاً، فلا
+  /// تُشتقّ الصيغة الشرطية من اسم مغلوط ثم يُطبع الاسم الصحيح.
+  Map<int, String> get nameOverrides => Map<int, String>.unmodifiable(
+        _nameOverrides,
+      );
+
+  int get nameOverrideCount => _nameOverrides.length;
+
+  /// هل صحّح المستخدم اسماً أو جنساً في جدول المراجعة؟
+  bool get hasReviewOverrides =>
+      _genderOverrides.isNotEmpty || _nameOverrides.isNotEmpty;
+
+  /// هل يحتوي القالب النشط صيغة شرطية `{{الجنس: ذكر | أنثى}}`؟
+  bool get templateHasGenderConditions {
+    final TemplateDocument? document = _document;
+    if (document == null) return false;
+    for (final TemplateElement element in document.elements) {
+      if (element is TextElement &&
+          GenderGrammar.containsCondition(element.text)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// هل تجدر مراجعة الجنس قبل التوليد؟
+  ///
+  /// نعم إن كان القالب يستخدم صيغاً شرطية، أو كان في الربط حقل اسم — فحينها
+  /// يُستنتج الجنس تلقائياً ويستحقّ أن يراه المستخدم قبل الطباعة.
+  bool get hasGenderReview =>
+      _sheet.isNotEmpty &&
+      _mapping.isNotEmpty &&
+      (templateHasGenderConditions ||
+          _mapping.fields.any(FieldAliases.isNameToken));
+
+  /// جدول المراجعة المسبقة: كل صف باسمه وجنسه (المكتشَف والمطبَّق).
+  ///
+  /// يُحسب بنفس ترتيب `GenderResolver` الذي يستخدمه التوليد الفعلي، فما يظهر
+  /// هنا هو ما سيُطبع حرفياً.
+  List<GenderReviewRow> get genderReviewRows {
+    if (_sheet.isEmpty || _mapping.isEmpty) return const <GenderReviewRow>[];
+    final Map<String, String>? samples = _document?.sampleData;
+    final List<GenderReviewRow> rows = <GenderReviewRow>[];
+    for (final SheetRow row in _sheet.sheetRows) {
+      final int rowNumber = row.displayNumber;
+      // الاسم المُصحَّح يدوياً يحلّ محل قيمة الملف قبل كشف الجنس، فتُعاد
+      // المطابقة تلقائياً على ما كتبه المستخدم دون أن يفقد تصحيح جنسه الصريح.
+      final Map<String, String> data = GenderResolver.withName(
+        _mapping.apply(row),
+        _nameOverrides[rowNumber],
+      );
+      final Gender? override = _genderOverrides[rowNumber];
+      rows.add(
+        GenderReviewRow(
+          rowNumber: rowNumber,
+          name: GenderResolver.nameIn(data),
+          detected: GenderResolver.resolve(data, fallback: samples),
+          effective: GenderResolver.resolve(
+            data,
+            override: override,
+            fallback: samples,
+          ),
+          nameOverridden: _nameOverrides.containsKey(rowNumber),
+          genderOverridden: override != null,
+        ),
+      );
+    }
+    return rows;
+  }
+
+  /// تصحيح جنس صف يدوياً (`null` = العودة للكشف التلقائي).
+  void setRowGender(int rowNumber, Gender? gender) {
+    if (gender == null) {
+      if (_genderOverrides.remove(rowNumber) == null) return;
+    } else {
+      if (_genderOverrides[rowNumber] == gender) return;
+      _genderOverrides[rowNumber] = gender;
+    }
+    notifyListeners();
+  }
+
+  /// تصحيح اسم صف يدوياً (`null`/الفراغ = العودة لاسم الملف).
+  ///
+  /// تغيير الاسم يُعيد كشف الجنس افتراضياً، ما لم يكن للصف تصحيح جنس صريح
+  /// فيبقى هو الحاكم (‏[setRowGender]).
+  void setRowName(int rowNumber, String? name) {
+    final String trimmed = (name ?? '').trim();
+    if (trimmed.isEmpty) {
+      if (_nameOverrides.remove(rowNumber) == null) return;
+    } else {
+      if (_nameOverrides[rowNumber] == trimmed) return;
+      _nameOverrides[rowNumber] = trimmed;
+    }
+    notifyListeners();
+  }
+
+  /// إلغاء كل تصحيحات الجنس اليدوية.
+  void clearGenderOverrides() {
+    if (_genderOverrides.isEmpty) return;
+    _genderOverrides = <int, Gender>{};
+    notifyListeners();
+  }
+
+  /// إلغاء كل تصحيحات المراجعة المسبقة (الأسماء والجنس معاً).
+  void clearReviewOverrides() {
+    if (_genderOverrides.isEmpty && _nameOverrides.isEmpty) return;
+    _genderOverrides = <int, Gender>{};
+    _nameOverrides = <int, String>{};
+    notifyListeners();
+  }
+
+  // --------------------------------------------------------------------------
   //  القالب
   // --------------------------------------------------------------------------
 
@@ -544,6 +673,9 @@ class BatchProcessorController extends ChangeNotifier {
     _sheet = result.sheet;
     _fileName = fileName;
     _sheetNames = result.sheetNames;
+    // ورقة/صف عناوين جديد ← صفوف جديدة، فتصحيحات الجنس والأسماء بلا معنى.
+    _genderOverrides = <int, Gender>{};
+    _nameOverrides = <int, String>{};
     _autoMap();
   }
 
@@ -557,6 +689,8 @@ class BatchProcessorController extends ChangeNotifier {
     _sheetNames = const <String>[];
     _bytes = null;
     _mapping = ColumnMapping.empty;
+    _genderOverrides = <int, Gender>{};
+    _nameOverrides = <int, String>{};
     _setError(code, message, detail: detail);
   }
 
@@ -568,6 +702,8 @@ class BatchProcessorController extends ChangeNotifier {
     _headerRowIndex = null;
     _loadingFile = false;
     _mapping = ColumnMapping.empty;
+    _genderOverrides = <int, Gender>{};
+    _nameOverrides = <int, String>{};
     _report = null;
     _clearError();
     notifyListeners();
@@ -650,7 +786,19 @@ class BatchProcessorController extends ChangeNotifier {
   //  التوليد
   // --------------------------------------------------------------------------
 
-  Future<void> generate() async {
+  /// [outputFileName] اسم ملف التصدير الذي كتبه المستخدم — يُمرَّر للمحرّك
+  /// ليُنقّى ويُحفظ في التقرير ([BulkGenerationReport.fileName])، وفي الوضع
+  /// المنفصل يصبح اسم المجلد الفرعي الذي تُحفظ داخله الملفات.
+  ///
+  /// [outputDirectory] و[output] و[mode] الحفظ على القرص: تُمرَّر للمحرّك
+  /// كي ينفّذ البنية المنسّقة نفسها (ملف مجمع مباشرة، أو مجلد فرعي بملف لكل
+  /// شخص) — بلا مجلد (الويب) يبقى التقرير في الذاكرة فقط.
+  Future<void> generate({
+    String? outputFileName,
+    String? outputDirectory,
+    BulkOutputMode mode = BulkOutputMode.combined,
+    BatchOutputService? output,
+  }) async {
     final TemplateDocument? document = _document;
     if (document == null) {
       _setError(
@@ -680,6 +828,12 @@ class BatchProcessorController extends ChangeNotifier {
         mapping: _mapping,
         policy: _policy,
         samples: document.sampleData,
+        genderOverrides: _genderOverrides,
+        nameOverrides: _nameOverrides,
+        fileName: outputFileName,
+        mode: mode,
+        outputDirectory: outputDirectory,
+        output: output,
         metadata: PdfDocumentMetadata(
           title: '${_kind.labelAr} جماعية — JoodCraft',
           subject: _fileName ?? '',
@@ -705,8 +859,11 @@ class BatchProcessorController extends ChangeNotifier {
     }
   }
 
-  /// إعادة كل شيء إلى البداية (ملف جديد).
+  /// إعادة كل شيء إلى البداية تماماً للبدء في مشروع توليد جديد.
   void reset() {
+    _kind = BatchTemplateKind.certificate;
+    _document = null;
+    _templateTitle = null;
     _sheet = SheetData.empty;
     _fileName = null;
     _sheetNames = const <String>[];
@@ -714,12 +871,49 @@ class BatchProcessorController extends ChangeNotifier {
     _headerRowIndex = null;
     _loadingFile = false;
     _mapping = ColumnMapping.empty;
+    _policy = MissingCellPolicy.skipRow;
+    _genderOverrides = <int, Gender>{};
+    _nameOverrides = <int, String>{};
     _report = null;
-    _clearError();
+    _busy = false;
     _done = 0;
     _total = 0;
+    _clearError();
     notifyListeners();
   }
+}
+
+/// صف واحد في جدول المراجعة المسبقة للتذكير/التأنيث.
+class GenderReviewRow {
+  const GenderReviewRow({
+    required this.rowNumber,
+    required this.name,
+    required this.detected,
+    required this.effective,
+    required this.nameOverridden,
+    required this.genderOverridden,
+  });
+
+  /// رقم الصف كما يراه المستخدم في Excel.
+  final int rowNumber;
+
+  /// اسم المستفيد — من الأعمدة المرتبطة أو من تصحيح المستخدم (أو `null`).
+  final String? name;
+
+  /// الجنس المكتشَف تلقائياً (من عمود صريح أو من الاسم المُصحَّح).
+  final Gender detected;
+
+  /// الجنس المطبَّق فعلاً (التصحيح اليدوي إن وُجد، وإلا المكتشَف).
+  final Gender effective;
+
+  /// هل صحّح المستخدم اسم هذا الصف يدوياً؟
+  final bool nameOverridden;
+
+  /// هل صحّح المستخدم جنس هذا الصف يدوياً؟
+  final bool genderOverridden;
+
+  /// هل صحّح المستخدم الاسم أو الجنس يدوياً؟ (يُرسم حينها مؤشّر القلم.)
+  bool get overridden => nameOverridden || genderOverridden;
 }
 
 /// نصّ ثابت في القالب يبدو اسمَ شخص ويمكن تحويله إلى حقل ديناميكي بضغطة.

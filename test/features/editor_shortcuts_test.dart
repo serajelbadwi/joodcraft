@@ -231,6 +231,12 @@ void main() {
     await tester.pump();
 
     // تحديد عنصر نصي يُظهر حقل المحتوى؛ نركّز عليه ثم نحاول الحذف.
+    // البطاقات الجماعية أطول من الشريط السابق، فحقل المحتوى يقع أسفل
+    // الطيّة — نُمرّر إليه أولاً كما يفعل المستخدم بعجلة الفأرة.
+    await tester.ensureVisible(
+      find.widgetWithText(TextField, 'محتوى النص'),
+    );
+    await tester.pump();
     await tester.tap(find.widgetWithText(TextField, 'محتوى النص'));
     await tester.pump();
 
@@ -248,6 +254,12 @@ void main() {
     controller.select('text-1');
     await tester.pump();
 
+    // البطاقات الجماعية أطول من الشريط السابق، فحقل المحتوى يقع أسفل
+    // الطيّة — نُمرّر إليه أولاً كما يفعل المستخدم بعجلة الفأرة.
+    await tester.ensureVisible(
+      find.widgetWithText(TextField, 'محتوى النص'),
+    );
+    await tester.pump();
     await tester.tap(find.widgetWithText(TextField, 'محتوى النص'));
     await tester.pump();
 
@@ -293,6 +305,12 @@ void main() {
       await tester.pump();
 
       // سرق التركيز: حقل المحتوى في شريط الخصائص.
+      // البطاقات الجماعية أطول من الشريط السابق، فحقل المحتوى يقع أسفل
+      // الطيّة — نُمرّر إليه أولاً كما يفعل المستخدم بعجلة الفأرة.
+      await tester.ensureVisible(
+        find.widgetWithText(TextField, 'محتوى النص'),
+      );
+      await tester.pump();
       await tester.tap(find.widgetWithText(TextField, 'محتوى النص'));
       await tester.pump();
       expect(
@@ -327,6 +345,12 @@ void main() {
       controller.select('text-1');
       await tester.pump();
 
+      // البطاقات الجماعية أطول من الشريط السابق، فحقل المحتوى يقع أسفل
+      // الطيّة — نُمرّر إليه أولاً كما يفعل المستخدم بعجلة الفأرة.
+      await tester.ensureVisible(
+        find.widgetWithText(TextField, 'محتوى النص'),
+      );
+      await tester.pump();
       await tester.tap(find.widgetWithText(TextField, 'محتوى النص'));
       await tester.pump();
       expect(

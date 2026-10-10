@@ -7,6 +7,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart' as picker;
 
 import '../../l10n/app_l10n.dart';
 import '../../theme/app_colors.dart';
+import 'accordion.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/hex_color.dart';
 
@@ -24,46 +25,169 @@ const List<Color> kEditorPalette = <Color>[
   Colors.white,
 ];
 
-/// عنوان قسم داخل شريط الخصائص.
-class ControlSection extends StatelessWidget {
+/// قسم داخل شريط الخصائص — **بطاقة مستقلة قابلة للطيّ** بنقرة على عنوانها.
+///
+/// التصميم بطاقات مُجمَّعة (Grouped Cards) كما في مفتشات Photoshop:
+///
+/// * كل قسم **بطاقة** بحدّ خفيف `outlineVariant` وزوايا `radiusMd`، فتنفصل
+///   الأدوات بصرياً ولا تتحوّل إلى «سيحان أدوات» متّصل.
+/// * ترويسة واضحة (أيقونة + عنوان + سطر توضيحي اختياري `subtitle`) ثم **فاصل**
+///   (`Divider`) يفصل الترويسة عن الأدوات داخلها.
+/// * حواشٍ مريحة (`space12`) حول المحتوى فلا تلتصق الأدوات بالحدود.
+/// * الطيّ يجعل الشريط مضغوطاً (نمط Photoshop/Figma): يبقى العنوان ظاهراً
+///   ويُخفى المحتوى حتى الحاجة إليه.
+///
+/// وداخل [AccordionScope] يصبح السلوك **حصرياً** (أكورديون): فتح قسم يُغلق ما
+/// سواه تلقائياً. وقبل تفاعل المستخدم تتبع الأقسام قيمة [initiallyExpanded] كما
+/// هي، فلا تتغيّر الواجهة بلا سبب. ويُحدَّد القسم بـ [sectionId] أو بعنوانه
+/// (يجب أن يكون العنوان فريداً داخل النطاق).
+class ControlSection extends StatefulWidget {
   const ControlSection({
     super.key,
     required this.icon,
     required this.label,
     required this.children,
+    this.subtitle,
+    this.initiallyExpanded = true,
+    this.sectionId,
   });
 
   final IconData icon;
   final String label;
   final List<Widget> children;
 
+  /// سطر توضيحي صغير تحت العنوان يبيّن ما تجمعه البطاقة.
+  ///
+  /// يُغفل حين يكون `null` أو فارغاً، فتبقى البطاقات التي لا تحتاج شرحاً
+  /// مضغوطة بترويسة سطر واحد.
+  final String? subtitle;
+
+  final bool initiallyExpanded;
+
+  /// معرّف ثابت للقسم داخل [AccordionScope]؛ إن غاب يُستخدم العنوان.
+  final String? sectionId;
+
+  @override
+  State<ControlSection> createState() => _ControlSectionState();
+}
+
+class _ControlSectionState extends State<ControlSection> {
+  late bool _expanded = widget.initiallyExpanded;
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(icon, size: 14, color: Theme.of(context).colorScheme.goldDeep),
-            const SizedBox(width: 5),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 11.5,
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    // الخضوع للأكورديون فقط حين يوجد نطاق (الشريط الجانبي في المحرّر)؛ وخارجه
+    // يبقى السلوك المحلي كما هو (يُستخدم الشريط منفرداً في الاختبارات أيضاً).
+    final AccordionController? accordion = AccordionScope.maybeOf(context);
+    final String sectionKey = widget.sectionId ?? widget.label;
+    final bool managed = accordion != null;
+    final bool expanded = !managed || !accordion.hasExplicitSelection
+        ? _expanded
+        : accordion.isExpanded(sectionKey);
+
+    void toggle() {
+      if (managed) {
+        accordion.toggle(sectionKey);
+      } else {
+        setState(() => _expanded = !_expanded);
+      }
+    }
+
+    final String? subtitle = widget.subtitle;
+    final bool hasSubtitle = subtitle != null && subtitle.trim().isNotEmpty;
+
+    return Container(
+      // بطاقة مستقلة: حدّ خفيف + زوايا ناعمة + سطح مختلف قليلاً عن اللوحة.
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // الترويسة: العنوان كامل العرض قابل للنقر فيطوي/يفتح البطاقة.
+          InkWell(
+            onTap: toggle,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppTheme.space12,
+                AppTheme.space10,
+                AppTheme.space10,
+                AppTheme.space10,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Icon(widget.icon, size: 14, color: scheme.goldDeep),
+                  const SizedBox(width: 6),
+                  // العناوين العربية تطول (مثل «المظهر والمؤثرات») فيأخذ العنوان
+                  // المتاح ويُقتطع بأناقة بدل أن يفيض على أيقونة الطيّ.
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          widget.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(
+                                color: scheme.primary,
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        if (hasSubtitle) ...<Widget>[
+                          const SizedBox(height: 1),
+                          Text(
+                            subtitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    expanded
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                    size: 15,
+                    color: scheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // فاصل بصري بين الترويسة والأدوات، ثم الأدوات بحواشٍ مريحة.
+          if (expanded) ...<Widget>[
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: scheme.outlineVariant,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.space12),
+              child: Wrap(
+                spacing: AppTheme.space12,
+                runSpacing: AppTheme.space10,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: widget.children,
+              ),
             ),
           ],
-        ),
-        const SizedBox(height: AppTheme.space8),
-        Wrap(
-          spacing: AppTheme.space12,
-          runSpacing: AppTheme.space8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: children,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -270,11 +394,20 @@ class SliderField extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Text(
-                label,
-                style: TextStyle(fontSize: 11.5, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              // العناوين العربية قد تطول، فيأخذ العنوان المتاح كله ويُقتطع بأناقة
+              // بدل أن يُفيض السطر على الجوار (كان يحدث مع «شفافية التعبئة»).
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 6),
               Text(
                 shown,
                 textDirection: TextDirection.ltr,
@@ -409,18 +542,19 @@ class SegmentedField<T> extends StatelessWidget {
         else
           Tooltip(message: hint!, child: labelWidget),
         const SizedBox(height: 5),
-        Row(
-          mainAxisSize: MainAxisSize.min,
+        // `Wrap` لا `Row`: بعض المجموعات تطول (ثلاثة خيارات نصّية في اللوحة
+        // الجانبية) فتفيض على الجوار؛ الالتفاف يحفظها كاملةً بلا اقتطاع ولا
+        // تراكب مهما ضاقت اللوحة.
+        Wrap(
+          spacing: AppTheme.space4,
+          runSpacing: AppTheme.space4,
           children: <Widget>[
             for (final T option in options)
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: _SegmentButton(
-                  label: labelOf(option),
-                  icon: iconOf?.call(option),
-                  selected: option == value,
-                  onTap: () => onChanged(option),
-                ),
+              _SegmentButton(
+                label: labelOf(option),
+                icon: iconOf?.call(option),
+                selected: option == value,
+                onTap: () => onChanged(option),
               ),
           ],
         ),
@@ -677,6 +811,119 @@ class IconAction extends StatelessWidget {
           child: Icon(icon, size: size * 0.52, color: foreground),
         ),
       ),
+    );
+  }
+}
+
+/// زرّ يفتح **قائمة منسدلة** بمحتوى حرّ (حقول وأزرار) أسفل الشريط مباشرةً.
+///
+/// يُستعمل لخصائص المستند الكلّية (الاتجاه/المقاس/الخلفية/الإطار): نثرها على
+/// الشريط كان يستهلك عرضاً كبيراً ويدفع سواها للفيض، فصار لها منيوّ واحد أنيق
+/// يُبقي الشريط **صفّاً واحداً نظيفاً** ويضع كل ما يخصّ الورقة في مكان واحد.
+///
+/// نستعمل [MenuAnchor] بدل `PopupMenuButton` لأن المحتوى **تفاعلي** (منتقيات
+/// وأزرار) ولا يصحّ أن تُغلق القائمة عند أول لمسة، و[MenuAnchor] لا تُخضع
+/// الأبناء لقياس العرض التلقائي ما دمنا نُلزمها بعرض ثابت عبر `SizedBox`.
+class RibbonMenu extends StatelessWidget {
+  const RibbonMenu({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.children,
+    this.tooltip,
+    this.menuWidth = 340,
+  });
+
+  final IconData icon;
+  final String label;
+  final List<Widget> children;
+
+  /// تلميح الزر (الافتراضي: [label]).
+  final String? tooltip;
+
+  /// عرض محتوى القائمة المنسدلة.
+  final double menuWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return MenuAnchor(
+      alignmentOffset: const Offset(0, 4),
+      style: MenuStyle(
+        // حشوة داخلية ثابتة حول المحتوى — تمنحه مساحة تنفّس ولا تلامس حوافّ
+        // اللوحة المرفوعة.
+        padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(
+          EdgeInsets.all(AppTheme.space16),
+        ),
+      ),
+      // العرض مثبّت داخل `SizedBox` (لا يعتمد على قياس تلقائي) فيبقى المحتوى
+      // مرتّباً كما صُمّم مهما كانت النصوص المحيطة.
+      menuChildren: <Widget>[
+        SizedBox(
+          width: menuWidth,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
+      ],
+      builder: (
+        BuildContext context,
+        MenuController controller,
+        Widget? _,
+      ) {
+        final bool open = controller.isOpen;
+        return Tooltip(
+          message: tooltip ?? label,
+          child: InkWell(
+            onTap: () => open ? controller.close() : controller.open(),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: open ? scheme.primary : scheme.surface,
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                border: Border.all(
+                  color: open ? scheme.primary : scheme.outline,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(
+                    icon,
+                    size: 15,
+                    color: open
+                        ? (scheme.brightness == Brightness.dark
+                            ? scheme.onPrimary
+                            : AppColors.gold)
+                        : scheme.primary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          open ? scheme.onPrimary : scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Icon(
+                    open
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                    size: 15,
+                    color: open ? scheme.onPrimary : scheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -24,7 +24,7 @@ class ConfigurationScreen extends StatelessWidget {
     final TextTheme text = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: Theme.of(context).colorScheme.brandSurface,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppTheme.space24),
@@ -79,7 +79,7 @@ class ConfigurationScreen extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(AppTheme.space16),
                       decoration: BoxDecoration(
-                        color: AppColors.navyDeep,
+                        color: Theme.of(context).colorScheme.brandSurfaceDeep,
                         borderRadius:
                             BorderRadius.circular(AppTheme.radiusMd),
                       ),

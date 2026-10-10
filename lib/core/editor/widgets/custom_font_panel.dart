@@ -35,6 +35,7 @@ class FontSelectorSection extends StatelessWidget {
     required this.customFamily,
     required this.onBundledSelected,
     required this.onCustomSelected,
+    this.onPreviewFamily,
   });
 
   /// عائلة الخط المضمّن المختارة (تُستخدم حين لا يوجد خط مخصص).
@@ -48,6 +49,10 @@ class FontSelectorSection extends StatelessWidget {
 
   /// اختير خط مرفوع/نظامي (أو `null` عند الرجوع للمضمّن).
   final ValueChanged<String?> onCustomSelected;
+
+  /// معاينة حيّة للخط عند المرور فوق خيار في القائمة (اسم عائلة فلاتر أو
+  /// `null` عند الخروج) — تُعرض على اللوحة فوراً بلا تثبيت.
+  final ValueChanged<String?>? onPreviewFamily;
 
   /// بادئة معرّف الخيارات المضمّنة داخل المنتقي.
   static const String _builtinIdPrefix = 'builtin:';
@@ -63,7 +68,9 @@ class FontSelectorSection extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                _field(context, fonts),
+                // مرن: يحتفظ بعرضه المريح (210) حين يتّسع، ويتقلّص بلا فيض
+                // داخل بطاقات الضبط التي تقلّ فيها المساحة قليلاً.
+                Flexible(child: _field(context, fonts)),
                 const SizedBox(width: AppTheme.space8),
                 Tooltip(
                   message: context.l10n?.cfpUploadTooltip ??
@@ -200,7 +207,10 @@ class FontSelectorSection extends StatelessWidget {
       searchHint: l10n?.cfpSearchHint ?? 'ابحث في الخطوط…',
       noMatchText: l10n?.cfpNoMatch ?? 'لا توجد خطوط مطابقة.',
       selectedId: _selectedId(),
+      onPreviewFamily: onPreviewFamily,
     );
+    // إغلاق القائمة (بالاختيار أو الإلغاء) يُزيل أي معاينة معلّقة.
+    onPreviewFamily?.call(null);
     if (chosen == null) return;
     await _apply(fonts, chosen);
   }
@@ -302,7 +312,7 @@ Future<int> uploadCustomFonts(BuildContext context) async {
     messenger.showSnackBar(
       SnackBar(
         content: Text(warnings.join('\n')),
-        backgroundColor: AppColors.navy,
+        backgroundColor: Theme.of(context).colorScheme.brandSurface,
         duration: const Duration(seconds: 8),
       ),
     );

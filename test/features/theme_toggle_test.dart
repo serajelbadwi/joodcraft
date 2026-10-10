@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/app/app.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/core/theme/theme_controller.dart';
-import 'package:joodcraft/core/widgets/configuration_screen.dart';
 import 'package:joodcraft/core/widgets/theme_toggle_button.dart';
+import 'package:joodcraft/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,14 +28,14 @@ void main() {
     await tester.pumpWidget(
       JoodCraftApp(authRepository: null, themeController: controller),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     MaterialApp app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.themeMode, ThemeMode.dark);
     expect(app.darkTheme, isNotNull);
     // السطوع الفعلي داخل الشجرة داكن رغم سطوع المنصة في الاختبارات.
     final BuildContext screen =
-        tester.element(find.byType(ConfigurationScreen));
+        tester.element(find.byType(DashboardScreen));
     expect(Theme.of(screen).brightness, Brightness.dark);
 
     // تبديل بنقرة واحدة ← إعادة بناء التطبيق بالوضع الجديد.
@@ -46,7 +46,7 @@ void main() {
     app = tester.widget<MaterialApp>(find.byType(MaterialApp));
     expect(app.themeMode, ThemeMode.light);
     expect(
-      Theme.of(tester.element(find.byType(ConfigurationScreen))).brightness,
+      Theme.of(tester.element(find.byType(DashboardScreen))).brightness,
       Brightness.light,
     );
   });

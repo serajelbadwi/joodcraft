@@ -59,7 +59,7 @@ extension UiFeedback on BuildContext {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          backgroundColor: AppColors.navy,
+          backgroundColor: Theme.of(this).colorScheme.brandSurface,
           duration: duration,
           action: action,
           content: Row(

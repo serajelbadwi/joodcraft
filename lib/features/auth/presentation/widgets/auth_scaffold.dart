@@ -31,7 +31,7 @@ class AuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: Theme.of(context).colorScheme.brandSurface,
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           final bool wide = constraints.maxWidth >= 1000;
@@ -85,11 +85,15 @@ class _BrandPanel extends StatelessWidget {
     ];
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        // كحلي هُوية نهاراً، وتدرّج سليت موحّد ليلاً (‎#3E3E3E‎).
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: <Color>[AppColors.navy, AppColors.navyDeep],
+          colors: <Color>[
+            Theme.of(context).colorScheme.brandSurface,
+            Theme.of(context).colorScheme.brandSurfaceDeep,
+          ],
         ),
       ),
       child: Stack(
@@ -211,11 +215,15 @@ class _BrandHeaderCompact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        // كحلي هُوية نهاراً، وتدرّج سليت موحّد ليلاً (‎#3E3E3E‎).
         gradient: LinearGradient(
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          colors: <Color>[AppColors.navy, AppColors.navyDeep],
+          colors: <Color>[
+            Theme.of(context).colorScheme.brandSurface,
+            Theme.of(context).colorScheme.brandSurfaceDeep,
+          ],
         ),
       ),
       child: SafeArea(

@@ -1,16 +1,20 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/dynamic_fields.dart';
+import '../../../../core/editor/widgets/editor_controls.dart';
+import '../../../../core/gender/arabic_gender.dart';
 import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/models/template_element.dart';
+import '../../../../core/services/batch_output_backend.dart';
+import '../../../../core/services/batch_output_service.dart';
 import '../../../../core/templates/local_template_store.dart';
 import '../../../../core/templates/template_library_controller.dart';
 import '../../../../core/templates/template_library_entry.dart';
@@ -20,6 +24,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../domain/bulk_generation.dart';
+import '../../domain/output_file_name.dart';
 import '../../domain/sheet_data.dart';
 import '../../domain/sheet_reader.dart';
 import '../providers/batch_processor_controller.dart';
@@ -36,6 +41,7 @@ class BatchProcessorScreen extends StatefulWidget {
     this.repository,
     this.localStore,
     this.libraryController,
+    this.output,
   });
 
   /// محرّك الشاشة — يُمرَّر في الاختبارات أو عند استئناف جلسة سابقة.
@@ -52,6 +58,10 @@ class BatchProcessorScreen extends StatefulWidget {
 
   /// متحكّم مكتبة القوالب جاهز — يُحقن في الاختبارات (يتقدّم على الافتراضي).
   final TemplateLibraryController? libraryController;
+
+  /// خدمة مخرجات التوليد (اختيار المجلد/الكتابة/الفتح) — تُحقن وهمية في
+  /// الاختبارات، وتُترك فارغة لاختيار تنفيذ المنصة تلقائياً.
+  final BatchOutputService? output;
 
   /// امتدادات ملفات البيانات المقبولة في منتقي الملفات.
   ///
@@ -79,6 +89,27 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   /// القالب الخاصّ المختار حالياً (للتمييز في القائمة والتسمية).
   String? _selectedTemplateId;
   String? _selectedTemplateTitle;
+
+  /// خدمة مخرجات التوليد — الوهمية في الاختبارات، والمنصّية افتراضياً.
+  late final BatchOutputService _output =
+      widget.output ?? createBatchOutputService();
+
+  /// مجلد الحفظ الذي اختاره المستخدم — يبقى خلال الجلسة لإعادة الفتح لاحقاً.
+  String? _outputDirectory;
+
+  /// آخر اسم ملف تصدير كتبه المستخدم — يُعاد عرضه عند فتح النافذة ثانية.
+  /// `null` = لم يُعدّل المستخدم الافتراضي المشتقّ من عنوان القالب.
+  String? _outputFileNameInput;
+
+  /// المسار الكامل لآخر ملف PDF حُفظ فعلاً عليه (للعرض وفتح المجلد).
+  String? _savedFilePath;
+
+  /// المسار الكامل للمجلد الفرعي الذي حُفظت فيه ملفات الوضع المنفصل — يُفتح
+  /// مكانه زر «فتح المجلد» مباشرةً بدل المجلد الأصل.
+  String? _savedFolderPath;
+
+  /// آخر نمط حفظ اختاره المستخدم — يُعاد عرضه عند فتح النافذة ثانية.
+  BulkOutputMode _outputMode = BulkOutputMode.combined;
 
   /// هل يوجد مصدر حقيقي لقوالب المستخدم (سحابة/محلي/متحكّم محقون)؟
   ///
@@ -402,8 +433,73 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     }
   }
 
+  /// اسم ملف الإخراج الافتراضي — مشتقّ من عنوان القالب النشط، وإلا فالاسم
+  /// الاحتياطي العام.
+  String _defaultOutputFileName() =>
+      OutputFileName.defaultBaseName(templateTitle: _controller.templateTitle);
+
+  /// يفتح نافذة وجهة الحفظ (المجلد + اسم الملف) ويعيد الخيارات المؤكَّدة.
+  ///
+  /// `null` = ألغى المستخدم الحوار. المجلد قد يكون `null` على الويب (بلا نظام
+  /// ملفات) فيُتابع التوليد بلا حفظ على القرص.
+  Future<_OutputOptions?> _chooseOutputOptions() async {
+    final String? initialDirectory =
+        _outputDirectory ?? await _output.defaultDirectory();
+    if (!mounted) return null;
+    return showDialog<_OutputOptions>(
+      context: context,
+      builder: (BuildContext dialogContext) => _OutputOptionsDialog(
+        initialDirectory: initialDirectory,
+        initialFileName: _outputFileNameInput ?? _defaultOutputFileName(),
+        initialMode: _outputMode,
+        onPickDirectory: _pickOutputDirectory,
+      ),
+    );
+  }
+
+  /// يفتح منتقي المجلدات الأصلي ويعيد المسار المختار (أو `null` إن أُلغي).
+  Future<String?> _pickOutputDirectory() => _output.pickDirectory(
+        dialogTitle: context.l10n?.bpOutputTitle ?? 'وجهة حفظ الشهادات',
+      );
+
+  /// يفتح مجلد المخرجات في مستكشف ملفات النظام — مجلد الملفات المنفصلة
+  /// نفسه إن حُفظت في الوضع المنفصل، وإلا المجلد المختار.
+  Future<void> _openOutputFolder() async {
+    final String? directory = _savedFolderPath ?? _outputDirectory;
+    if (directory == null) return;
+    final bool opened = await _output.openDirectory(directory);
+    if (!mounted || opened) return;
+    context.showError(context.l10n?.bpOpenFolderFailed ?? 'تعذّر فتح المجلد.');
+  }
+
+  /// يطلب وجهة الحفظ واسم الملف **أولاً** ثم يولّد ويحفظ الملف باسمه المختار.
+  ///
+  /// طلب الوجهة قبل التوليد مقصود: يعرف المستخدم أين سيُكتب الملف وبأي اسم قبل
+  /// الانتظار، ويبقى المجلد محفوظاً في الجلسة لإعادة فتحه من الشريط الثابت.
   Future<void> _generate() async {
-    await _controller.generate();
+    final _OutputOptions? options = await _chooseOutputOptions();
+    if (options == null) return; // ألغى المستخدم نافذة الوجهة.
+    final String? directory = options.directory;
+    final String typedName = options.fileName.trim();
+    if (!mounted) return;
+    setState(() {
+      _outputDirectory = directory;
+      _outputFileNameInput = typedName.isEmpty ? null : typedName;
+      _outputMode = options.mode;
+      _savedFilePath = null;
+      _savedFolderPath = null;
+    });
+
+    // الحفظ يجري **داخل المحرّك** بالبنية المنسّقة: المجمّع مباشرة في المجلد
+    // المختار، والمنفصل داخل مجلد فرعي باسم التصدير لا يزحم المجلد الأصل.
+    // فشل الحفظ أو غياب نظام الملفات (الويب) يمرّ بهدوء وتبقى الطباعة/التصدير
+    // متاحة.
+    await _controller.generate(
+      outputFileName: typedName.isEmpty ? null : typedName,
+      outputDirectory: directory,
+      mode: options.mode,
+      output: _output,
+    );
     if (!mounted) return;
     final String? error = _errorText();
     if (error != null) {
@@ -412,6 +508,15 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     }
     final BulkGenerationReport? report = _controller.report;
     if (report == null) return;
+
+    if (report.hasSavedOutput) {
+      setState(() {
+        _savedFilePath = report.savedFilePath;
+        _savedFolderPath = report.savedDirectory;
+      });
+    }
+
+    if (!mounted) return;
     final String generated =
         context.l10n?.bpGeneratedReport(report.generatedCount) ??
             'تم توليد ${report.generatedCount} سجل';
@@ -423,11 +528,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   }
 
   Future<void> _print() async {
-    final Uint8List? bytes = _controller.report?.combinedPdf;
+    final BulkGenerationReport? report = _controller.report;
+    final Uint8List? bytes = report?.combinedPdf;
     if (bytes == null) return;
     try {
       await Printing.layoutPdf(
-        name: 'joodcraft-batch.pdf',
+        name: report?.fileName ?? 'joodcraft-batch.pdf',
         onLayout: (PdfPageFormat format) async => bytes,
       );
     } on Object {
@@ -437,10 +543,14 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   }
 
   Future<void> _export() async {
-    final Uint8List? bytes = _controller.report?.combinedPdf;
+    final BulkGenerationReport? report = _controller.report;
+    final Uint8List? bytes = report?.combinedPdf;
     if (bytes == null) return;
     try {
-      await Printing.sharePdf(bytes: bytes, filename: 'joodcraft-batch.pdf');
+      await Printing.sharePdf(
+        bytes: bytes,
+        filename: report?.fileName ?? 'joodcraft-batch.pdf',
+      );
       if (!mounted) return;
       context.showSuccess(context.l10n?.bpReadyToSave ?? 'تم تجهيز الملف للحفظ.');
     } on Object {
@@ -460,6 +570,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               _hero(),
+              // شريط ثابت يعرض مجلد المخرجات وزرّ فتحه — يبقى ظاهراً بعد التوليد
+              // حتى لا يفقد المستخدم مكان الملفات إن نسي أو تنقّل بعيداً.
+              if (_outputDirectory != null) _outputBanner(),
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -479,6 +592,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                             const SizedBox(height: AppTheme.space12),
                             _optionsStep(),
                             const SizedBox(height: AppTheme.space12),
+                            // مراجعة الجنس المسبقة: تظهر فقط إن كان القالب يستخدم
+                            // صيغاً شرطية أو رُبط حقل اسم، فلا تزحم المسار السليم.
+                            if (_controller.hasGenderReview) ...<Widget>[
+                              _genderReviewStep(),
+                              const SizedBox(height: AppTheme.space12),
+                            ],
                             _generateStep(),
                           ],
                         ),
@@ -536,6 +655,25 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
               ],
             ),
           ),
+          if (_controller.fileName != null || _controller.document != null)
+            TextButton.icon(
+              onPressed: () {
+                _controller.reset();
+                setState(() {
+                  _outputDirectory = null;
+                  _outputFileNameInput = null;
+                  _savedFilePath = null;
+                  _savedFolderPath = null;
+                  _selectedTemplateId = null;
+                  _selectedTemplateTitle = null;
+                });
+              },
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: const Text('إغلاق وبدء مشروع جديد'),
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
+              ),
+            ),
         ],
       ),
     );
@@ -1183,6 +1321,304 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     );
   }
 
+  /// تسمية الجنس المعروضة في قائمة الاختيار اليدوي.
+  String _genderLabel(Gender gender) => gender.isFemale
+      ? (context.l10n?.genderFemale ?? 'أنثى')
+      : (context.l10n?.genderMale ?? 'ذكر');
+
+  /// يفتح مربّع حوار لتعديل اسم صف في جدول المراجعة المسبقة.
+  ///
+  /// الاسم المُصحَّح يُحفظ كتصحيح للصف ([BatchProcessorController.setRowName])،
+  /// فيُعاد كشف الجنس منه ويُطبع في المخرجات بدل قيمة الملف الأصلية. الفراغ
+  /// يلغي التصحيح ويعود لاسم الملف.
+  Future<void> _editRowName(int rowNumber, String? current) async {
+    final String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext dialogContext) => _NameEditDialog(
+        rowNumber: rowNumber,
+        initialName: current ?? '',
+      ),
+    );
+    if (result == null) return;
+    _controller.setRowName(rowNumber, result);
+  }
+
+  /// جدول المراجعة المسبقة للتذكير/التأنيث.
+  ///
+  /// يعرض صفوف الملف بأسمائها وبالجنس المكتشَف تلقائياً، مع قائمة اختيار يدوية
+  /// لكل صف للحالات الحدّية (أسماء غامضة أو أجنبية) — قبل الطباعة لا بعدها.
+  /// والنقر على الاسم يفتح تعديلاً مباشراً يعيد كشف الجنس من الاسم الجديد.
+  Widget _genderReviewStep() {
+    final List<GenderReviewRow> rows = _controller.genderReviewRows;
+    final TextTheme text = Theme.of(context).textTheme;
+    final String unknown = context.l10n?.bpGenderUnknownName ?? '—';
+
+    return _Card(
+      icon: Icons.people_alt_outlined,
+      title: context.l10n?.bpGenderReviewTitle ?? 'مراجعة الجنس (تذكير/تأنيث)',
+      subtitle: context.l10n?.bpGenderReviewSubtitle ??
+          'الجنس مُكتشف من الاسم أو من عمود «الجنس» — صحّح أي حالة حدّية قبل الطباعة.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              SizedBox(
+                width: 44,
+                child: Text(
+                  context.l10n?.bpGenderRow ?? 'الصف',
+                  style: text.labelSmall,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  context.l10n?.bpGenderNameColumn ?? 'الاسم',
+                  style: text.labelSmall,
+                ),
+              ),
+              SizedBox(
+                width: 110,
+                child: Text(
+                  context.l10n?.bpGenderEffective ?? 'المطبَّق',
+                  style: text.labelSmall,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (_controller.hasReviewOverrides)
+                Tooltip(
+                  message:
+                      context.l10n?.bpGenderClearOverrides ?? 'إلغاء التصحيحات',
+                  child: IconButton(
+                    key: const ValueKey<String>('bp-gender-clear'),
+                    iconSize: 18,
+                    visualDensity: VisualDensity.compact,
+                    onPressed: _controller.clearReviewOverrides,
+                    icon: const Icon(Icons.restart_alt_rounded),
+                  ),
+                )
+              else
+                const SizedBox(width: 40),
+            ],
+          ),
+          const SizedBox(height: AppTheme.space4),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 260),
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                for (final GenderReviewRow row in rows)
+                  Padding(
+                    key: ValueKey<String>('bp-gender-row-${row.rowNumber}'),
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 44,
+                          child: Text('${row.rowNumber}', style: text.bodySmall),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: <Widget>[
+                              Flexible(
+                                child: Tooltip(
+                                  message: context.l10n?.bpGenderEditName ??
+                                      'تعديل الاسم',
+                                  child: InkWell(
+                                    key: ValueKey<String>(
+                                      'bp-gender-name-${row.rowNumber}',
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                    onTap: () =>
+                                        _editRowName(row.rowNumber, row.name),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                        horizontal: 2,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Flexible(
+                                            child: Text(
+                                              row.name?.trim().isNotEmpty ==
+                                                      true
+                                                  ? row.name!
+                                                  : unknown,
+                                              style: text.bodySmall,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              textDirection: TextDirection.rtl,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            Icons.edit_outlined,
+                                            size: 13,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outline,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (row.overridden) ...<Widget>[
+                                const SizedBox(width: 2),
+                                Tooltip(
+                                  message: context.l10n?.bpGenderOverridden ??
+                                      'مُصحَّح يدوياً',
+                                  child: Icon(
+                                    Icons.edit_rounded,
+                                    size: 13,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 110,
+                          child: DropdownButton<Gender>(
+                            key: ValueKey<String>(
+                              'bp-gender-select-${row.rowNumber}',
+                            ),
+                            value: row.effective,
+                            isExpanded: true,
+                            isDense: true,
+                            underline: const SizedBox.shrink(),
+                            style: text.bodySmall,
+                            items: <DropdownMenuItem<Gender>>[
+                              for (final Gender gender in Gender.values)
+                                DropdownMenuItem<Gender>(
+                                  value: gender,
+                                  child: Text(_genderLabel(gender)),
+                                ),
+                            ],
+                            onChanged: (Gender? gender) =>
+                                _controller.setRowGender(row.rowNumber, gender),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// شريط ثابت أسفل الترويسة يعرض مجلد المخرجات وزرّ فتحه.
+  Widget _outputBanner() {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme text = Theme.of(context).textTheme;
+    final String directory = _outputDirectory!;
+    return Container(
+      key: const ValueKey<String>('bp-output-banner'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.space20,
+        vertical: AppTheme.space8,
+      ),
+      color: scheme.success.withValues(alpha: 0.12),
+      child: Row(
+        children: <Widget>[
+          Icon(Icons.folder_outlined, size: 16, color: scheme.success),
+          const SizedBox(width: 8),
+          Text(
+            context.l10n?.bpOutputPathLabel ?? 'المجلد المختار',
+            style: text.labelSmall,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              directory,
+              textDirection: TextDirection.ltr,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: text.bodySmall,
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton.icon(
+            key: const ValueKey<String>('bp-open-folder-banner'),
+            onPressed: _openOutputFolder,
+            icon: const Icon(Icons.folder_open_rounded, size: 16),
+            label: Text(context.l10n?.bpOpenFolder ?? 'فتح المجلد'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// بطاقة «أين حُفظ الملف» مع زرّ فتح المجلد — تظهر بعد التوليد وتبقى ما دام
+  /// المجلد معروفاً.
+  Widget _outputCard({required bool saved}) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final TextTheme text = Theme.of(context).textTheme;
+    // في الوضع المنفصل يُعرض مجلد الملفات الفرعي هو «المحفوظ» — وهو ما يفتحه
+    // زر فتح المجلد أيضاً.
+    final String path =
+        _savedFilePath ?? _savedFolderPath ?? _outputDirectory ?? '';
+    return Container(
+      key: const ValueKey<String>('bp-output-saved-card'),
+      padding: const EdgeInsets.all(AppTheme.space12),
+      decoration: BoxDecoration(
+        color: scheme.success.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: scheme.success),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(
+                saved
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.folder_outlined,
+                size: 18,
+                color: scheme.success,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  saved
+                      ? (_savedFolderPath != null
+                            ? (context.l10n?.bpOutputSavedFolderTitle ??
+                                'حُفظت الملفات في مجلد مخصص')
+                            : (context.l10n?.bpOutputSavedTitle ??
+                                'تم حفظ ملف الـ PDF'))
+                      : (context.l10n?.bpOutputPathLabel ?? 'المجلد المختار'),
+                  style: text.titleSmall?.copyWith(color: scheme.success),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppTheme.space4),
+          SelectableText(
+            path,
+            key: const ValueKey<String>('bp-output-saved-path'),
+            textDirection: TextDirection.ltr,
+            style: text.bodySmall,
+          ),
+          const SizedBox(height: AppTheme.space8),
+          FilledButton.icon(
+            key: const ValueKey<String>('bp-open-folder'),
+            onPressed: _openOutputFolder,
+            icon: const Icon(Icons.folder_open_rounded, size: 18),
+            label: Text(context.l10n?.bpOpenFolder ?? 'فتح المجلد'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _generateStep() {
     final BulkGenerationReport? report = _controller.report;
     final ColorScheme scheme = Theme.of(context).colorScheme;
@@ -1283,6 +1719,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
                       '${report.totalRows} صفاً.',
               style: text.bodySmall,
             ),
+            if (_outputDirectory != null) ...<Widget>[
+              const SizedBox(height: AppTheme.space12),
+              _outputCard(
+                saved: _savedFilePath != null || _savedFolderPath != null,
+              ),
+            ],
             const SizedBox(height: AppTheme.space8),
             Row(
               children: <Widget>[
@@ -1509,6 +1951,263 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
 // ============================================================================
 //  عناصر واجهة صغيرة
 // ============================================================================
+
+/// خيارات التصدير المؤكَّدة من [_OutputOptionsDialog]: المجلد واسم الملف.
+class _OutputOptions {
+  const _OutputOptions({
+    required this.directory,
+    required this.fileName,
+    required this.mode,
+  });
+
+  /// المجلد المختار (قد يكون `null` على الويب حيث لا نظام ملفات).
+  final String? directory;
+
+  /// اسم الملف الذي كتبه المستخدم — منقّى من المحارف الممنوعة (بلا امتداد).
+  final String fileName;
+
+  /// نمط الحفظ: ملف مجمع مباشرة، أو مجلد فرعي بملف لكل شخص.
+  final BulkOutputMode mode;
+}
+
+/// حوار وجهة حفظ الشهادات قبل التوليد: المجلد **واسم الملف**.
+///
+/// يعرض المجلد الحالي (الافتراضي أو المختار سابقاً) واسم الملف المقترح، ويسمح
+/// بتغييرهما. إغلاق منتقي المجلدات بلا اختيار يُبقي المجلد الحالي — وهو البديل
+/// المطلوب (التنزيلات/المستندات).
+class _OutputOptionsDialog extends StatefulWidget {
+  const _OutputOptionsDialog({
+    required this.initialDirectory,
+    required this.initialFileName,
+    required this.initialMode,
+    required this.onPickDirectory,
+  });
+
+  /// المجلد المعروض ابتداءً (قد يكون `null` على منصة بلا نظام ملفات).
+  final String? initialDirectory;
+
+  /// اسم الملف المعروض ابتداءً (الافتراضي المشتقّ من القالب أو آخر إدخال).
+  final String initialFileName;
+
+  /// النمط المعروض ابتداءً (آخر اختيار للمستخدم أو «ملف مجمع»).
+  final BulkOutputMode initialMode;
+
+  /// يفتح منتقي المجلدات الأصلي ويعيد المسار المختار (أو `null`).
+  final Future<String?> Function() onPickDirectory;
+
+  @override
+  State<_OutputOptionsDialog> createState() => _OutputOptionsDialogState();
+}
+
+class _OutputOptionsDialogState extends State<_OutputOptionsDialog> {
+  String? _directory;
+  bool _picking = false;
+  late BulkOutputMode _mode = widget.initialMode;
+  late final TextEditingController _name =
+      TextEditingController(text: widget.initialFileName);
+
+  @override
+  void initState() {
+    super.initState();
+    _directory = widget.initialDirectory;
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pick() async {
+    setState(() => _picking = true);
+    final String? picked = await widget.onPickDirectory();
+    if (!mounted) return;
+    setState(() {
+      _picking = false;
+      if (picked != null && picked.trim().isNotEmpty) {
+        _directory = picked.trim();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme text = Theme.of(context).textTheme;
+    final String? directory = _directory;
+    return AlertDialog(
+      key: const ValueKey<String>('bp-output-dialog'),
+      title: Text(context.l10n?.bpOutputTitle ?? 'وجهة حفظ الشهادات'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            context.l10n?.bpOutputHint ??
+                'اختر المجلد الذي يُحفظ فيه ملف الـ PDF، أو ابدأ بالموقع الافتراضي.',
+            style: text.bodySmall,
+          ),
+          const SizedBox(height: AppTheme.space12),
+          Text(
+            context.l10n?.bpOutputNameLabel ?? 'اسم ملف التصدير',
+            style: text.labelSmall,
+          ),
+          const SizedBox(height: AppTheme.space4),
+          TextField(
+            key: const ValueKey<String>('bp-output-name'),
+            controller: _name,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.right,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.deny(OutputFileName.invalidCharacters),
+            ],
+            decoration: InputDecoration(
+              hintText: context.l10n?.bpOutputNameHint ??
+                  'اكتب اسماً للملف بلا امتداد',
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: AppTheme.space4),
+          Text(
+            '${context.l10n?.bpOutputNamePreviewLabel ?? 'سيُحفظ باسم'}: '
+            '${OutputFileName.resolve(_name.text)}',
+            key: const ValueKey<String>('bp-output-name-preview'),
+            style: text.bodySmall,
+            textDirection: TextDirection.rtl,
+          ),
+          // النمط لا معنى له بلا مجلد (الويب بلا نظام ملفات) — يظهر فقط إن
+          // حُدد وجهة للحفظ.
+          if (directory != null) ...<Widget>[
+            const SizedBox(height: AppTheme.space12),
+            SegmentedField<BulkOutputMode>(
+              label: context.l10n?.bpOutputModeLabel ?? 'نمط الحفظ',
+              value: _mode,
+              options: BulkOutputMode.values,
+              labelOf: (BulkOutputMode mode) => switch (mode) {
+                BulkOutputMode.combined =>
+                  context.l10n?.bpOutputModeCombined ?? mode.labelAr,
+                BulkOutputMode.individual =>
+                  context.l10n?.bpOutputModeIndividual ?? mode.labelAr,
+              },
+              // بلا أيقونة كي يظهر النص كاملاً في الخانة الضيّقة للحوار.
+              onChanged: (BulkOutputMode mode) => setState(() => _mode = mode),
+            ),
+          ],
+          const SizedBox(height: AppTheme.space12),
+          Text(
+            context.l10n?.bpOutputPathLabel ?? 'المجلد المختار',
+            style: text.labelSmall,
+          ),
+          const SizedBox(height: AppTheme.space4),
+          Container(
+            key: const ValueKey<String>('bp-output-path'),
+            padding: const EdgeInsets.all(AppTheme.space8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              directory ??
+                  (context.l10n?.bpOutputNoFolder ??
+                      'لم يُختَر مجلد — الطباعة والتصدير فقط.'),
+              textDirection: directory == null
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              style: text.bodySmall,
+            ),
+          ),
+          const SizedBox(height: AppTheme.space12),
+          OutlinedButton.icon(
+            key: const ValueKey<String>('bp-output-pick'),
+            onPressed: _picking ? null : _pick,
+            icon: const Icon(Icons.folder_open_rounded, size: 18),
+            label: Text(context.l10n?.bpOutputPickFolder ?? 'اختيار مجلد…'),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          key: const ValueKey<String>('bp-output-cancel'),
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
+        ),
+        FilledButton(
+          key: const ValueKey<String>('bp-output-confirm'),
+          // المجلد قد يكون `null` (الويب) فيُتابع التوليد بلا حفظ على القرص،
+          // وإغلاق الحوار نفسه يعيد `null` = إلغاء.
+          onPressed: () => Navigator.of(context).pop(
+            _OutputOptions(
+              directory: _directory,
+              fileName: OutputFileName.sanitize(_name.text),
+              mode: _mode,
+            ),
+          ),
+          child: Text(context.l10n?.bpOutputStart ?? 'بدء التوليد'),
+        ),
+      ],
+    );
+  }
+}
+
+/// حوار تعديل اسم صف واحد في جدول المراجعة المسبقة.
+///
+/// يملك `TextEditingController` الخاص به ويحرّره في [State.dispose]، فلا يُحرَّر
+/// والودجة ما زالت مركّبة أثناء حركة إغلاق الحوار.
+class _NameEditDialog extends StatefulWidget {
+  const _NameEditDialog({required this.rowNumber, required this.initialName});
+
+  final int rowNumber;
+  final String initialName;
+
+  @override
+  State<_NameEditDialog> createState() => _NameEditDialogState();
+}
+
+class _NameEditDialogState extends State<_NameEditDialog> {
+  late final TextEditingController _text = TextEditingController(
+    text: widget.initialName,
+  );
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      key: const ValueKey<String>('bp-gender-name-dialog'),
+      title: Text(
+        '${context.l10n?.bpGenderEditName ?? 'تعديل الاسم'} '
+        '(${context.l10n?.bpGenderRow ?? 'الصف'} ${widget.rowNumber})',
+      ),
+      content: TextField(
+        key: ValueKey<String>('bp-gender-name-field-${widget.rowNumber}'),
+        controller: _text,
+        autofocus: true,
+        textDirection: TextDirection.rtl,
+        textAlign: TextAlign.right,
+        textInputAction: TextInputAction.done,
+        decoration: InputDecoration(
+          hintText: context.l10n?.bpGenderNameHint ?? 'اكتب الاسم الصحيح',
+        ),
+        onSubmitted: (String value) => Navigator.of(context).pop(value),
+      ),
+      actions: <Widget>[
+        TextButton(
+          key: ValueKey<String>('bp-gender-name-cancel-${widget.rowNumber}'),
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.l10n?.editorCancel ?? 'إلغاء'),
+        ),
+        FilledButton(
+          key: ValueKey<String>('bp-gender-name-save-${widget.rowNumber}'),
+          onPressed: () => Navigator.of(context).pop(_text.text),
+          child: Text(context.l10n?.commonSave ?? 'حفظ'),
+        ),
+      ],
+    );
+  }
+}
 
 class _Card extends StatelessWidget {
   const _Card({

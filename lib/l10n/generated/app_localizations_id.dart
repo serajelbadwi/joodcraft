@@ -9,6 +9,9 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get editorDone => 'Selesai';
+
+  @override
   String get appTagline => 'Buat sertifikat dan kontrak resmi secara offline';
 
   @override
@@ -31,6 +34,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get actionSignOut => 'Keluar';
+
+  @override
+  String get actionOpenMenu => 'Menu';
+
+  @override
+  String get editorFitToScreen => 'Sesuaikan ke layar';
+
+  @override
+  String get editorNewTemplate => 'Templat baru';
+
+  @override
+  String get editorNewConfirm =>
+      'Templat baru akan dimulai dari desain default; perubahan yang belum disimpan tetap ada di riwayat. Lanjutkan?';
 
   @override
   String get actionBackToDashboard => 'Kembali ke dasbor';
@@ -367,6 +383,236 @@ class AppLocalizationsId extends AppLocalizations {
       'Seret grup dengan mouse, gunakan panah untuk menggeser halus (Shift = 10px), dan Ctrl + klik untuk menyesuaikan pilihan.';
 
   @override
+  String get destBrand => 'Identitas & profil';
+
+  @override
+  String get destBrandDesc =>
+      'Logo, stempel, tanda tangan, dan warna merek Anda.';
+
+  @override
+  String get brandTitle => 'Pengaturan identitas dan profil';
+
+  @override
+  String get brandTabVisuals => 'Identitas visual';
+
+  @override
+  String get brandTabText => 'Data teks';
+
+  @override
+  String get brandTabColors => 'Warna & font';
+
+  @override
+  String get brandTabPreview => 'Pratinjau identitas';
+
+  @override
+  String get brandPrimaryLogo => 'Logo utama';
+
+  @override
+  String get brandWatermarkLogo => 'Logo tanda air';
+
+  @override
+  String get brandSeals => 'Stempel resmi';
+
+  @override
+  String get brandAddSeal => 'Tambah stempel';
+
+  @override
+  String get brandSealName => 'Nama stempel';
+
+  @override
+  String get brandSignatures => 'Tanda tangan resmi';
+
+  @override
+  String get brandAddSignature => 'Tambah tanda tangan';
+
+  @override
+  String get brandSignatureName => 'Nama penanda tangan';
+
+  @override
+  String get brandSignatureTitle => 'Jabatan';
+
+  @override
+  String get brandRemove => 'Hapus';
+
+  @override
+  String get brandNoSeals => 'Belum ada stempel.';
+
+  @override
+  String get brandNoSignatures => 'Belum ada tanda tangan.';
+
+  @override
+  String get brandOrgNameAr => 'Nama organisasi (Arab)';
+
+  @override
+  String get brandOrgNameEn => 'Nama organisasi (Inggris)';
+
+  @override
+  String get brandHeaderText => 'Teks kepala';
+
+  @override
+  String get brandFooterText => 'Teks kaki';
+
+  @override
+  String get brandRegNumber => 'Nomor pajak / registrasi';
+
+  @override
+  String get brandPrimaryColor => 'Warna utama';
+
+  @override
+  String get brandSecondaryColor => 'Warna sekunder';
+
+  @override
+  String get brandAccentColor => 'Warna aksen';
+
+  @override
+  String get brandHeaderFont => 'Font judul';
+
+  @override
+  String get brandBodyFont => 'Font isi';
+
+  @override
+  String get brandClear => 'Hapus identitas';
+
+  @override
+  String get brandClearConfirm =>
+      'Semua konten identitas yang tersimpan akan dihapus. Lanjutkan?';
+
+  @override
+  String get brandSaved => 'Identitas disimpan.';
+
+  @override
+  String get brandPresets => 'Elemen identitas';
+
+  @override
+  String get brandInsertHeader => 'Sisipkan kepala standar';
+
+  @override
+  String get brandInsertFooter => 'Sisipkan kaki standar';
+
+  @override
+  String get brandApplyColors => 'Terapkan warna';
+
+  @override
+  String get brandQuickSeals => 'Stempel';
+
+  @override
+  String get brandQuickSignatures => 'Tanda tangan';
+
+  @override
+  String get brandNoBrand => 'Identitas Anda belum diatur.';
+
+  @override
+  String get brandOpenSettings => 'Buka pengaturan identitas';
+
+  @override
+  String get brandHeaderInserted => 'Kepala standar disisipkan.';
+
+  @override
+  String get brandFooterInserted => 'Kaki standar disisipkan.';
+
+  @override
+  String get brandColorsApplied => 'Warna diterapkan.';
+
+  @override
+  String get brandSealInserted => 'Stempel disisipkan.';
+
+  @override
+  String get brandSignatureInserted => 'Tanda tangan disisipkan.';
+
+  @override
+  String get brandFontDefault => 'Bawaan';
+
+  @override
+  String get paletteShapes => 'Bentuk';
+
+  @override
+  String get paletteRoundedRect => 'Persegi membulat';
+
+  @override
+  String get paletteEllipse => 'Lingkaran / elips';
+
+  @override
+  String get editorFillOpacity => 'Opasitas isian';
+
+  @override
+  String get editorCollapsePanel => 'Ringkas panel samping';
+
+  @override
+  String get editorExpandPanel => 'Tampilkan panel samping';
+
+  @override
+  String get editorCustomSize => 'Ukuran khusus';
+
+  @override
+  String get editorStandardSize => 'Ukuran standar';
+
+  @override
+  String get editorBackgroundTitle => 'Latar halaman';
+
+  @override
+  String get editorGradientFrom => 'Dari';
+
+  @override
+  String get editorGradientTo => 'Ke';
+
+  @override
+  String get editorGradientDirection => 'Arah';
+
+  @override
+  String get editorGradientNone => 'Tanpa gradien';
+
+  @override
+  String get editorGradientVertical => 'Vertikal';
+
+  @override
+  String get editorGradientHorizontal => 'Horizontal';
+
+  @override
+  String get editorGradientDiagonal => 'Diagonal';
+
+  @override
+  String get editorLayersTitle => 'Lapisan';
+
+  @override
+  String get editorLayerShow => 'Tampilkan elemen';
+
+  @override
+  String get editorLayerHide => 'Sembunyikan elemen';
+
+  @override
+  String get editorLayerLock => 'Kunci elemen';
+
+  @override
+  String get editorLayerUnlock => 'Buka kunci elemen';
+
+  @override
+  String get editorLayersEmpty => 'Belum ada elemen di halaman ini.';
+
+  @override
+  String get editorGroupSelected => 'Kelompokkan pilihan';
+
+  @override
+  String get editorUngroupSelected => 'Pisahkan grup';
+
+  @override
+  String get editorAlignLeft => 'Rata kiri';
+
+  @override
+  String get editorAlignCenterH => 'Rata tengah horizontal';
+
+  @override
+  String get editorAlignRight => 'Rata kanan';
+
+  @override
+  String get editorAlignTop => 'Rata atas';
+
+  @override
+  String get editorAlignCenterV => 'Rata tengah vertikal';
+
+  @override
+  String get editorAlignBottom => 'Rata bawah';
+
+  @override
   String get editorBringForward => 'Maju selangkah';
 
   @override
@@ -507,6 +753,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get editorSource => 'Sumber';
+
+  @override
+  String get editorImageTint => 'Warna gambar';
 
   @override
   String get editorImageFit => 'Kesesuaian gambar';
@@ -1832,4 +2081,898 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get cbContractDataTitle => 'Data kontrak (contoh)';
+
+  @override
+  String get editorSendBackward => 'Kirim ke belakang';
+
+  @override
+  String get editorRotateLeft => 'Putar 90° kiri';
+
+  @override
+  String get editorRotateRight => 'Putar 90° kanan';
+
+  @override
+  String get editorFlipH => 'Balik horizontal';
+
+  @override
+  String get editorFlipV => 'Balik vertikal';
+
+  @override
+  String get editorTransform => 'Transformasi';
+
+  @override
+  String get editorToolSelect => 'Pilih';
+
+  @override
+  String get editorToolShapes => 'Bentuk';
+
+  @override
+  String get editorFillType => 'Jenis isian';
+
+  @override
+  String get editorFillSolid => 'Padat';
+
+  @override
+  String get editorGradientLinear => 'Gradien linear';
+
+  @override
+  String get editorGradientRadial => 'Gradien radial';
+
+  @override
+  String get editorGradientAngle => 'Sudut gradien';
+
+  @override
+  String get editorShadowEnable => 'Tambah bayangan';
+
+  @override
+  String get editorShadowColor => 'Warna bayangan';
+
+  @override
+  String get editorShadowBlur => 'Buram bayangan';
+
+  @override
+  String get editorShadowOffsetX => 'Geser X';
+
+  @override
+  String get editorShadowOffsetY => 'Geser Y';
+
+  @override
+  String get editorShadowSpread => 'Sebar';
+
+  @override
+  String get editorShadowRemove => 'Hapus bayangan';
+
+  @override
+  String get editorPoints => 'Titik';
+
+  @override
+  String get editorInnerRadius => 'Jari-jari dalam';
+
+  @override
+  String get editorCornerTopLeft => 'Kiri atas';
+
+  @override
+  String get editorCornerTopRight => 'Kanan atas';
+
+  @override
+  String get editorCornerBottomRight => 'Kanan bawah';
+
+  @override
+  String get editorCornerBottomLeft => 'Kiri bawah';
+
+  @override
+  String get editorDashPattern => 'Pola garis putus';
+
+  @override
+  String get editorBooleanOps => 'Operasi boolean';
+
+  @override
+  String get editorBooleanUnion => 'Gabung';
+
+  @override
+  String get editorBooleanSubtract => 'Kurangi';
+
+  @override
+  String get editorBooleanIntersect => 'Irisan';
+
+  @override
+  String get editorBooleanUngroup => 'Pisahkan';
+
+  @override
+  String get paletteStar => 'Bintang';
+
+  @override
+  String get palettePolygon => 'Poligon';
+
+  @override
+  String get editorBooleanExclude => 'Kecualikan';
+
+  @override
+  String get editorBooleanHint =>
+      'Jalur gabungan adalah satu hasil boolean (tanpa tepi dalam) dan dapat dipisahkan kapan saja.';
+
+  @override
+  String get editorDockTools => 'Panel alat';
+
+  @override
+  String get editorDockAnchor => 'Posisi dok';
+
+  @override
+  String get editorDockTopBar => 'Bilah atas';
+
+  @override
+  String get editorDockInspector => 'Panel samping';
+
+  @override
+  String get editorDockLeftRail => 'Rel samping';
+
+  @override
+  String get editorDockFloating => 'Mengambang';
+
+  @override
+  String get editorDockCollapse => 'Ciutkan alat';
+
+  @override
+  String get editorDockExpand => 'Perluas alat';
+
+  @override
+  String get editorDockResize => 'Seret untuk mengubah ukuran';
+
+  @override
+  String get editorDockDropHint => 'Lepaskan untuk menempel ke';
+
+  @override
+  String get editorMoreTools => 'Alat lainnya';
+
+  @override
+  String get editorDocumentProperties => 'Properti dokumen';
+
+  @override
+  String get editorDockReset => 'Pulihkan dok bawaan';
+
+  @override
+  String get editorTextShadow => 'Bayangan teks';
+
+  @override
+  String get editorTextShadowAdd => 'Tambahkan bayangan teks';
+
+  @override
+  String get editorShadowOpacity => 'Opasitas bayangan';
+
+  @override
+  String get genderMale => 'Laki-laki';
+
+  @override
+  String get genderFemale => 'Perempuan';
+
+  @override
+  String get genderPreviewAutoHint =>
+      'Klik untuk membatalkan pemaksaan (otomatis)';
+
+  @override
+  String get genderPresetCompleted => '\"completed\" (l./p.)';
+
+  @override
+  String get genderPresetPassed => '\"passed\" (l./p.)';
+
+  @override
+  String get genderPresetForStudent => '\"untuk siswa\" (l./p.)';
+
+  @override
+  String get genderPresetStudent => '\"siswa\" (l./p.)';
+
+  @override
+  String get genderPresetToHim => '\"untuk dia (l./p.)\"';
+
+  @override
+  String get genderPresetHonoring => '\"peserta terbaik\" (l./p.)';
+
+  @override
+  String get editorGenderSnippet => 'Sisipkan frasa bersyarat';
+
+  @override
+  String get editorGenderSnippetHint =>
+      'Menyisipkan frasa yang berubah otomatis sesuai jenis kelamin penerima.';
+
+  @override
+  String get bpGenderReviewTitle => 'Tinjauan jenis kelamin (pria/wanita)';
+
+  @override
+  String get bpGenderReviewSubtitle =>
+      'Jenis kelamin dideteksi dari nama atau kolom \"Gender\" — perbaiki kasus khusus sebelum mencetak.';
+
+  @override
+  String get bpGenderRow => 'Baris';
+
+  @override
+  String get bpGenderDetected => 'Terdeteksi';
+
+  @override
+  String get bpGenderEffective => 'Diterapkan';
+
+  @override
+  String get bpGenderNameColumn => 'Nama';
+
+  @override
+  String get bpGenderEditName => 'Ubah nama';
+
+  @override
+  String get bpGenderNameHint => 'Tulis nama yang benar';
+
+  @override
+  String get bpGenderClearOverrides => 'Hapus koreksi';
+
+  @override
+  String get bpGenderOverridden => 'Dikoreksi manual';
+
+  @override
+  String get bpGenderUnknownName => '—';
+
+  @override
+  String get bpOutputTitle => 'Tujuan penyimpanan sertifikat';
+
+  @override
+  String get bpOutputHint =>
+      'Pilih folder untuk menyimpan PDF yang dihasilkan, atau mulai dengan lokasi bawaan.';
+
+  @override
+  String get bpOutputPickFolder => 'Pilih folder…';
+
+  @override
+  String get bpOutputStart => 'Mulai pembuatan';
+
+  @override
+  String get bpOutputPathLabel => 'Folder terpilih';
+
+  @override
+  String get bpOutputNoFolder =>
+      'Tidak ada folder dipilih — hanya cetak dan ekspor.';
+
+  @override
+  String get bpOpenFolder => 'Buka folder';
+
+  @override
+  String get bpOutputSavedTitle => 'File PDF disimpan';
+
+  @override
+  String get bpOpenFolderFailed => 'Tidak dapat membuka folder.';
+
+  @override
+  String get bpOutputNameLabel => 'Nama file ekspor';
+
+  @override
+  String get bpOutputNameHint => 'Tulis nama tanpa ekstensi';
+
+  @override
+  String get bpOutputNamePreviewLabel => 'Akan disimpan sebagai';
+
+  @override
+  String get bpOutputModeLabel => 'Mode penyimpanan';
+
+  @override
+  String get bpOutputModeCombined => 'Satu file gabungan';
+
+  @override
+  String get bpOutputModeIndividual => 'File terpisah per orang';
+
+  @override
+  String get hubTitle => 'Proyek baru';
+
+  @override
+  String get hubSubtitle =>
+      'Pilih ukuran siap pakai atau tentukan sendiri — kanvas terbuka dengan ukuran dan rasio yang tepat.';
+
+  @override
+  String get hubKindSingle => 'Cetakan dan dokumen satu lembar';
+
+  @override
+  String get hubKindMulti => 'Buku dan publikasi banyak halaman';
+
+  @override
+  String get hubKindSingleHint =>
+      'Satu lembar: sertifikat, kontrak, kartu, nomor kursi, kartu ucapan.';
+
+  @override
+  String get hubKindMultiHint =>
+      'Banyak halaman: buku, majalah, buklet, laporan, katalog.';
+
+  @override
+  String get hubGroupCertificates => 'Sertifikat dan kontrak';
+
+  @override
+  String get hubGroupCards => 'Kartu dan tanda pengenal';
+
+  @override
+  String get hubGroupSeat => 'Nomor kursi dan label';
+
+  @override
+  String get hubGroupGreeting => 'Kartu ucapan';
+
+  @override
+  String get hubGroupPublications => 'Buku dan publikasi';
+
+  @override
+  String get hubGroupCustom => 'Ukuran khusus';
+
+  @override
+  String get hubDigitalBadge => 'Digital';
+
+  @override
+  String get hubCreate => 'Buat';
+
+  @override
+  String get hubCustomCardBody =>
+      'Masukkan dimensi Anda dalam satuan apa pun dan mulai dengan kanvas sesuai ukuran Anda.';
+
+  @override
+  String get hubCustomName => 'Nama proyek';
+
+  @override
+  String get hubCustomNameHint => 'mis. Kartu undangan';
+
+  @override
+  String get hubCustomPreview => 'Ukuran akhir';
+
+  @override
+  String get hubCustomCreate => 'Buat kanvas';
+
+  @override
+  String get hubCustomType => 'Jenis proyek';
+
+  @override
+  String get hubSearchHint => 'Cari ukuran…';
+
+  @override
+  String get hubNoResults =>
+      'Tidak ada ukuran yang cocok — coba kata kunci lain.';
+
+  @override
+  String get hubAspectRatio => 'Rasio';
+
+  @override
+  String get destNewProject => 'Proyek baru';
+
+  @override
+  String get destNewProjectDesc =>
+      'Pilih ukuran siap pakai atau khusus dan mulai mendesain segera.';
+
+  @override
+  String get ptpImpositionToggle => 'Penataan cetak';
+
+  @override
+  String get ptpImpositionNoFit =>
+      'Lembar terlalu kecil untuk item ini — kurangi margin atau pilih lembar yang lebih besar.';
+
+  @override
+  String get editorEffectsTitle => 'Efek & penyesuaian warna';
+
+  @override
+  String get editorShadowGroup => 'Bayangan';
+
+  @override
+  String get editorOuterGlow => 'Cahaya luar';
+
+  @override
+  String get editorInnerGlow => 'Cahaya dalam';
+
+  @override
+  String get editorGlowAdd => 'Tambah cahaya';
+
+  @override
+  String get editorGlowRemove => 'Hapus cahaya';
+
+  @override
+  String get editorGlowColor => 'Warna cahaya';
+
+  @override
+  String get editorGlowRadius => 'Radius cahaya';
+
+  @override
+  String get editorGlowSpread => 'Sebaran cahaya';
+
+  @override
+  String get editorGlowOpacity => 'Opasitas cahaya';
+
+  @override
+  String get editorAdjustGroup => 'Penyesuaian warna';
+
+  @override
+  String get editorAdjustBrightness => 'Kecerahan';
+
+  @override
+  String get editorAdjustContrast => 'Kontras';
+
+  @override
+  String get editorAdjustSaturation => 'Saturasi';
+
+  @override
+  String get editorAdjustHue => 'Hue';
+
+  @override
+  String get editorAdjustReset => 'Atur ulang';
+
+  @override
+  String get bpOutputSavedFolderTitle => 'File disimpan di folder khusus';
+
+  @override
+  String get hubDetailsTitle => 'Detail ukuran';
+
+  @override
+  String get hubDetailsHint =>
+      'Spesifikasi bawaan yang terisi — pilih ukuran di kisi atau ubah dimensinya.';
+
+  @override
+  String get hubFilterAll => 'Semua';
+
+  @override
+  String get hubFilterRecent => 'Ukuran terbaru';
+
+  @override
+  String get hubFilterSeat => 'Nomor kursi';
+
+  @override
+  String get hubFilterGreeting => 'Ucapan dan layar';
+
+  @override
+  String get hubRecentEmpty =>
+      'Belum ada ukuran terbaru — proyek yang Anda buat akan muncul di sini.';
+
+  @override
+  String get hubDocTitle => 'Nama proyek';
+
+  @override
+  String get hubDocTitleHint => 'Proyek baru - 1';
+
+  @override
+  String get hubWidth => 'Lebar';
+
+  @override
+  String get hubHeight => 'Tinggi';
+
+  @override
+  String get hubUnitLabel => 'Satuan';
+
+  @override
+  String get hubOrientationLabel => 'Orientasi';
+
+  @override
+  String get hubPortrait => 'Potret';
+
+  @override
+  String get hubLandscape => 'Lanskap';
+
+  @override
+  String get hubVariantLabel => 'Jenis';
+
+  @override
+  String get hubResolutionLabel => 'Resolusi';
+
+  @override
+  String get hubResolutionUnitLabel => 'Satuan resolusi';
+
+  @override
+  String get hubColorModeLabel => 'Mode warna';
+
+  @override
+  String get hubBackgroundLabel => 'Warna latar';
+
+  @override
+  String get hubBackgroundWhite => 'Putih';
+
+  @override
+  String get hubBackgroundTransparent => 'Transparan';
+
+  @override
+  String get hubBackgroundBlack => 'Hitam';
+
+  @override
+  String get hubBackgroundCustom => 'Warna khusus';
+
+  @override
+  String get hubCreateProject => 'Buat proyek';
+
+  @override
+  String get hubCustomFamilyTitle => 'Ukuran khusus';
+
+  @override
+  String get newDocTitle => 'Dokumen baru';
+
+  @override
+  String get newDocScopeSocial => 'Layar dan ucapan';
+
+  @override
+  String get newDocFilterCertificates => 'Sertifikat';
+
+  @override
+  String get newDocFilterCards => 'Kartu';
+
+  @override
+  String get newDocFilterGreeting => 'Ucapan';
+
+  @override
+  String get newDocFilterPublications => 'Publikasi';
+
+  @override
+  String get menuFile => 'Berkas';
+
+  @override
+  String get menuEdit => 'Sunting';
+
+  @override
+  String get menuView => 'Tampilan';
+
+  @override
+  String get menuTools => 'Alat';
+
+  @override
+  String get menuHelp => 'Bantuan';
+
+  @override
+  String get menuNewDocument => 'Dokumen baru…';
+
+  @override
+  String get menuPurgeRecent => 'Bersihkan ukuran terbaru';
+
+  @override
+  String get menuPurgeImageCache => 'Bersihkan cache gambar';
+
+  @override
+  String get menuPreviewCertificate => 'Pratinjau contoh sertifikat';
+
+  @override
+  String get menuPreviewContract => 'Pratinjau contoh kontrak';
+
+  @override
+  String get menuAbout => 'Tentang JoodCraft';
+
+  @override
+  String get actionNewShort => '+ Baru';
+
+  @override
+  String get dashLocalMode => 'Lokal';
+
+  @override
+  String get dashLocalStorage =>
+      'Disimpan secara lokal di perangkat ini — tidak ada proyek yang diunggah ke server.';
+
+  @override
+  String get dashRecentProjects => 'Proyek terbaru';
+
+  @override
+  String get dashRecentEmpty =>
+      'Belum ada proyek tersimpan di perangkat ini — buat dokumen baru dan langsung muncul di sini.';
+
+  @override
+  String get dashRecentOpen => 'Buka proyek';
+
+  @override
+  String get dashRoadmapLocal =>
+      'Basis data proyek lokal (tabel projects) dengan penyimpanan 100% offline';
+
+  @override
+  String get dashRoadmapOffline =>
+      'Sepenuhnya offline: tanpa unggahan proyek dan tanpa jaringan';
+
+  @override
+  String get editorTransformPosition => 'Transformasi & Posisi';
+
+  @override
+  String get editorTransformPositionHint => 'Posisi, ukuran dan sudut rotasi';
+
+  @override
+  String get editorAppearanceEffects => 'Tampilan & Efek';
+
+  @override
+  String get editorAppearanceEffectsHint =>
+      'Isian, garis tepi, cahaya dan bayangan';
+
+  @override
+  String get editorTypographyHint => 'Font, ukuran, perataan dan spasi';
+
+  @override
+  String get editorPageSettingsHint => 'Ukuran dan satuan ukur';
+
+  @override
+  String get editorBackgroundHint => 'Warna atau gradien halaman';
+
+  @override
+  String get editorPrecisionHint => 'Geser halus dan skala';
+
+  @override
+  String get joodExportProject => 'Ekspor proyek (.jood)';
+
+  @override
+  String get joodImportProject => 'Buka proyek (.jood)';
+
+  @override
+  String get joodExportReady => 'File proyek siap disimpan.';
+
+  @override
+  String get joodExportFailed => 'Tidak dapat mengekspor file proyek.';
+
+  @override
+  String get joodImportOpened => 'Proyek yang diimpor dibuka.';
+
+  @override
+  String get joodImportFailed => 'Tidak dapat membuka file proyek.';
+
+  @override
+  String get joodRecoveryTitle => 'Draf belum disimpan';
+
+  @override
+  String get joodRecoveryMessage =>
+      'Ada draf yang belum disimpan dari sesi sebelumnya. Apakah Anda ingin memulihkannya?';
+
+  @override
+  String get joodRecoveryRestore => 'Pulihkan';
+
+  @override
+  String get joodRecoveryDiscard => 'Abaikan';
+
+  @override
+  String get joodRecoveryRestored => 'Draf dipulihkan.';
+
+  @override
+  String get joodAutosaveSaved => 'Disimpan otomatis';
+
+  @override
+  String get joodAutosaveSaving => 'Menyimpan…';
+
+  @override
+  String get editorConfirm => 'Konfirmasi';
+
+  @override
+  String get admTitle => 'Manajemen admin lokal';
+
+  @override
+  String get admRefresh => 'Segarkan';
+
+  @override
+  String get admTabAdmins => 'Admin';
+
+  @override
+  String get admTabTransfer => 'Transfer antar perangkat';
+
+  @override
+  String get admTabAudit => 'Log ekspor';
+
+  @override
+  String get admListTitle => 'Akun admin di perangkat ini';
+
+  @override
+  String get admAdd => 'Tambah admin';
+
+  @override
+  String get admNoAdmins => 'Belum ada akun admin.';
+
+  @override
+  String get admLoading => 'Memuat akun admin di perangkat ini…';
+
+  @override
+  String get admRoleOwner => 'Admin utama';
+
+  @override
+  String get admCurrent => 'Anda';
+
+  @override
+  String get admCurrentCardTitle => 'Akun saat ini di perangkat ini';
+
+  @override
+  String get admRoleAdmin => 'Administrator';
+
+  @override
+  String get admSwitchTitle => 'Berganti akun cepat';
+
+  @override
+  String get admSwitchPrompt =>
+      'Pilih nama pengguna lokal admin bawahan di perangkat ini dan masukkan kata sandi lokalnya untuk langsung masuk ke sesinya — draf proyek yang terbuka disimpan lebih dulu, dan lisensi utama tidak terpengaruh.';
+
+  @override
+  String get admSwitchNoOthers =>
+      'Tidak ada admin bawahan lain di perangkat ini. Tambahkan admin baru dari layar admin terlebih dahulu.';
+
+  @override
+  String get admSwitchPick => 'Nama pengguna lokal';
+
+  @override
+  String get admSwitchPassword => 'Kata sandi lokal akun terpilih';
+
+  @override
+  String get admSwitchPickPassword =>
+      'Pilih nama pengguna dan masukkan kata sandi.';
+
+  @override
+  String get admSwitchWrongPassword => 'Kata sandi salah.';
+
+  @override
+  String get admSwitchFailed => 'Gagal berganti akun. Coba lagi.';
+
+  @override
+  String get admSwitchSuccess => 'Akun berhasil diganti.';
+
+  @override
+  String get admSwitchAccount => 'Ganti akun';
+
+  @override
+  String get admSwitchAction => 'Beralih sekarang';
+
+  @override
+  String get admColAdmin => 'Admin';
+
+  @override
+  String get admColUsername => 'Nama pengguna lokal';
+
+  @override
+  String get admColRole => 'Peran';
+
+  @override
+  String get admColCreated => 'Ditambahkan pada';
+
+  @override
+  String get admColActions => 'Tindakan';
+
+  @override
+  String get destJoodWriter => 'Jood Writer';
+
+  @override
+  String get destJoodWriterDesc =>
+      'Dokumen dan laporan teks dengan halaman mengalir otomatis.';
+
+  @override
+  String get admCreatedAt => 'Dibuat';
+
+  @override
+  String get admEdit => 'Ubah detail';
+
+  @override
+  String get admChangePassword => 'Ubah kata sandi';
+
+  @override
+  String get admPromote => 'Jadikan admin utama';
+
+  @override
+  String get admDemote => 'Turunkan menjadi admin';
+
+  @override
+  String get admDelete => 'Hapus akun';
+
+  @override
+  String admDeleteConfirm(Object name) {
+    return '“$name” akan dihapus secara permanen dari perangkat ini. Tindakan ini tidak dapat dibatalkan.';
+  }
+
+  @override
+  String get admPromoted => 'Dijadikan admin utama.';
+
+  @override
+  String get admDemoted => 'Diturunkan menjadi admin.';
+
+  @override
+  String get admDeleted => 'Akun dihapus.';
+
+  @override
+  String get admCreated => 'Admin baru ditambahkan.';
+
+  @override
+  String get admUpdated => 'Detail admin diperbarui.';
+
+  @override
+  String get admPasswordChanged => 'Kata sandi diubah.';
+
+  @override
+  String get admTransferInfoTitle => 'Bagaimana transfer bekerja?';
+
+  @override
+  String get admTransferInfo1 =>
+      'Tabel akun (dengan hash kata sandi, bukan kata sandinya) diekspor di dalam file yang dienkripsi dengan frasa sandi pilihan Anda.';
+
+  @override
+  String get admTransferInfo2 =>
+      'Pindahkan file atau kode ke perangkat lain dan impor di sana dengan frasa sandi yang sama, maka akun berfungsi dengan izin yang sama.';
+
+  @override
+  String get admTransferInfo3 =>
+      'Tidak ada yang dikirim ke server mana pun: transfer sepenuhnya manual antar perangkat lokal.';
+
+  @override
+  String get admExport => 'Ekspor akun';
+
+  @override
+  String get admExportPassphrase => 'Frasa sandi ekspor';
+
+  @override
+  String get admPassphraseConfirm => 'Konfirmasi frasa sandi';
+
+  @override
+  String get admExportRisk =>
+      'Saya memahami bahwa siapa pun yang memegang kode ini dan frasa sandinya dapat masuk dengan akun ini, jadi saya akan membagikannya dengan hati-hati.';
+
+  @override
+  String get admExportGenerate => 'Buat kode terenkripsi';
+
+  @override
+  String get admExportFile => 'Simpan ke file khusus';
+
+  @override
+  String get admExportDone =>
+      'Kode terenkripsi dibuat. Salin atau simpan ke file.';
+
+  @override
+  String get admExportFileSaved => 'File akun terenkripsi disimpan.';
+
+  @override
+  String get admPassphraseTooShort =>
+      'Gunakan minimal 6 karakter untuk frasa sandi.';
+
+  @override
+  String get admPassphraseMismatch => 'Frasa sandi tidak cocok.';
+
+  @override
+  String get admAcceptRiskRequired =>
+      'Konfirmasi dulu bahwa Anda memahami risiko berbagi kode.';
+
+  @override
+  String admFileError(Object error) {
+    return 'Tidak dapat menangani file: $error';
+  }
+
+  @override
+  String get admImport => 'Impor akun';
+
+  @override
+  String get admImportCode => 'Kode akun';
+
+  @override
+  String get admImportPassphrase => 'Frasa sandi file';
+
+  @override
+  String get admImportReplace => 'Ganti kata sandi akun yang sudah ada';
+
+  @override
+  String get admImportPick => 'Pilih file';
+
+  @override
+  String get admImportRun => 'Impor sekarang';
+
+  @override
+  String get admImportCodeRequired =>
+      'Tempel kode atau pilih file terlebih dahulu.';
+
+  @override
+  String get admImportPassphraseRequired => 'Masukkan frasa sandi file.';
+
+  @override
+  String admImportDone(int added, int updated, int skipped) {
+    return 'Diimpor: $added baru, $updated diperbarui, $skipped dilewati.';
+  }
+
+  @override
+  String get admAuditTitle => 'Log sertifikat dan dokumen yang diterbitkan';
+
+  @override
+  String get admAuditClear => 'Bersihkan log';
+
+  @override
+  String get admAuditEmpty =>
+      'Belum ada ekspor. Setiap sertifikat atau kontrak yang Anda ekspor akan dicatat di sini beserta tanggal dan admin yang menerbitkannya.';
+
+  @override
+  String get admAuditBy => 'Oleh';
+
+  @override
+  String get admAuditPages => 'halaman';
+
+  @override
+  String get admAuditClearConfirm =>
+      'Seluruh log ekspor akan dihapus dari perangkat ini. Tindakan ini tidak dapat dibatalkan.';
+
+  @override
+  String get admAuditCleared => 'Log dibersihkan.';
+
+  @override
+  String get admUnavailableTitle => 'Manajemen tidak tersedia saat ini';
+
+  @override
+  String get admUnavailableBody =>
+      'Manajemen admin berfungsi saat aplikasi berjalan dengan akun lokal (LocalAuthRepository), sehingga akun dibaca dari perangkat ini.';
 }

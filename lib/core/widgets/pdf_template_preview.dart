@@ -1,13 +1,17 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
+import '../audit/export_audit_log.dart';
 import '../errors/app_exception.dart';
 import '../l10n/app_l10n.dart';
 import '../models/template_document.dart';
+import '../print/crop_marks.dart';
+import '../print/widgets/imposition_preview.dart';
 import '../services/pdf_generator_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
@@ -58,6 +62,24 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
   TemplateDocument? _document;
   PdfGenerationReport? _report;
   Uint8List? _bytes;
+
+  /// وضع «تجميع للطباعة» — يعرض ورقة التجميع ويخرِج ملف PDF بعلامات القصّ.
+  ///
+  /// لا يتاح إلا للمقاسات الصغيرة (بطاقات، أرقام جلوس، معايدات) حيث يكون
+  /// التجميع على ورقة أكبر مفيداً فعلاً.
+  bool _imposition = false;
+
+  /// هل يتاح التجميع لمقاس المستند الحالي؟
+  bool get _impositionAvailable =>
+      _document != null && ImpositionSpec.isEligible(_document!);
+
+  /// مواصفة الحصر الوحيدة المصدر — تُستخدم في المعاينة وفي التصدير معاً.
+  ImpositionSpec? _specFor(TemplateDocument? document) => document == null
+      ? null
+      : ImpositionSpec.fromDocument(
+          document,
+          sheet: ImpositionSpec.suggestSheetFor(document),
+        );
 
   final Map<String, TextEditingController> _controllers =
       <String, TextEditingController>{};
@@ -173,10 +195,20 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     });
 
     try {
-      final PdfGenerationReport report = await service.generate(
-        document: document,
-        data: <String, String>{...document.sampleData, ..._data},
-      );
+      final PdfGenerationReport report;
+      if (_imposition) {
+        final ImpositionSpec? spec = _specFor(document);
+        report = await service.generateImposition(
+          document: document,
+          spec: spec!,
+          data: <String, String>{...document.sampleData, ..._data},
+        );
+      } else {
+        report = await service.generate(
+          document: document,
+          data: <String, String>{...document.sampleData, ..._data},
+        );
+      }
       if (!mounted) return;
       setState(() {
         _report = report;
@@ -201,6 +233,65 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     });
   }
 
+  /// تبديل وضع التجميع — يُعيد التوليد لحظياً في الوضع الجديد.
+  void _setImposition(bool value) {
+    if (value == _imposition) return;
+    setState(() {
+      _imposition = value;
+      _error = null;
+    });
+    unawaited(_regenerate());
+  }
+
+  /// صفّ التبديل: أيقونة + تسمية + مفتاح، يظهر للمقاسات الصغيرة فقط.
+  Widget _impositionToggle() {
+    final TextTheme text = Theme.of(context).textTheme;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          Icons.grid_on_rounded,
+          size: 16,
+          color: _imposition
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          context.l10n?.ptpImpositionToggle ?? 'تجميع للطباعة',
+          style: text.labelMedium?.copyWith(
+            fontWeight: _imposition ? FontWeight.w700 : FontWeight.w500,
+            color: _imposition
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Switch(
+          key: const ValueKey<String>('ptp-imposition-toggle'),
+          value: _imposition,
+          onChanged: _setImposition,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ],
+    );
+  }
+
+  /// منطقة التجميع: طبقات المعاينة (ورقة + علامات قصّ + خط أمان النزف).
+  ///
+  /// لا تعتمد على بايتات الـ PDF: تُرسم من المواصفة نفسها مباشرةً، فترى
+  /// الشبكة فوراً بينما تُولَّد نسخة الطباعة في الخلفية.
+  Widget _impositionArea(TemplateDocument document) {
+    final ImpositionSpec? spec = _specFor(document);
+    if (spec == null) return const SizedBox.shrink();
+    return ImpositionPreview(
+      key: const ValueKey<String>('imposition-preview'),
+      spec: spec,
+      document: document,
+      itemCount: spec.layout().count,
+    );
+  }
+
   Future<void> _print() async {
     final Uint8List? bytes = _bytes;
     if (bytes == null) return;
@@ -221,11 +312,26 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
     final Uint8List? bytes = _bytes;
     if (bytes == null) return;
     try {
-      await Printing.sharePdf(bytes: bytes, filename: widget.exportFileName);
-      if (!mounted) return;
+      final Uri? selectedPath = await FilePicker.saveFile(
+        dialogTitle: 'حفظ شهادة PDF',
+        fileName: widget.exportFileName,
+        bytes: bytes,
+        type: FileType.custom,
+        allowedExtensions: <String>['pdf'],
+      );
+      if (!mounted || selectedPath == null) return;
+      // أرشفة محلية لمعاينات الطباعة/التصدير أيضاً (قد تُطبع النسخة النموذجية
+      // وتُعتمد قبل تصميم قالب فعلي).
+      unawaited(
+        ExportAuditLog.instance.record(
+          documentTitle: widget.exportFileName,
+          kind: ExportKind.preview,
+          fileName: widget.exportFileName,
+        ),
+      );
       context.showSuccess(
         context.l10n?.commonExportReady(widget.exportFileName) ??
-            'تم تجهيز الملف للحفظ باسم ${widget.exportFileName}.',
+            'تم حفظ الملف بنجاح باسم ${widget.exportFileName}.',
       );
     } on Object {
       if (!mounted) return;
@@ -310,6 +416,7 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
                 ),
               ],
             ),
+          if (document != null && _impositionAvailable) _impositionToggle(),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -385,6 +492,7 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
                   child: TextField(
                     controller: entry.value,
                     textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.right,
                     style: text.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -439,6 +547,9 @@ class _PdfTemplatePreviewState extends State<PdfTemplatePreview> {
   //  منطقة المعاينة
   // -------------------------------------------------------------------------
   Widget _previewArea(TemplateDocument? document) {
+    // وضع التجميع يرسم من المواصفة نفسها: لا ينتظر بايتات الـ PDF، فيبقى
+    // التخطيط مرئياً حتى لو تعذّر توليد ملف الطباعة في الخلفية.
+    if (_imposition && document != null) return _impositionArea(document);
     final String? error = _error;
     if (error != null) {
       return _centeredMessage(

@@ -1,4 +1,5 @@
 import '../constants/app_constants.dart';
+import 'certificate_gallery.dart';
 import 'preset_template.dart';
 
 /// فهرس القوالب الجاهزة المحزومة داخل التطبيق (Preset Templates).
@@ -25,7 +26,21 @@ abstract final class PresetCatalog {
     _scienceProgressCertificate,
     _fixedTermContract,
     _consultingContract,
+    // ---- معرض الشهادات الموسّع: 12 تصميماً ليصل مجموع الشهادات إلى 20 ----
+    ...CertificateGallery.presets,
   ];
+
+  /// كل قوالب **الشهادات** فقط (بلا العقود) — لعدّها وتصفيتها في واجهة المكتبة.
+  static List<PresetTemplate> get certificates => all
+      .where((PresetTemplate preset) =>
+          preset.category == TemplateCategory.certificate)
+      .toList(growable: false);
+
+  /// كل قوالب **العقود** فقط.
+  static List<PresetTemplate> get contracts => all
+      .where((PresetTemplate preset) =>
+          preset.category == TemplateCategory.contract)
+      .toList(growable: false);
 
   /// بحث قالب جاهز بمعرّفه (بلا بادئة السجل).
   static PresetTemplate? byId(String id) {

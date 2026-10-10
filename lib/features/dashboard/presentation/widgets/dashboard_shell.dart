@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../app/router/app_routes.dart';
 import '../../../../core/l10n/app_l10n.dart';
-import '../../../../core/templates/unsaved_changes_guard.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../../../core/widgets/joodcraft_logo.dart';
-import '../../../../core/widgets/language_menu_button.dart';
-import '../../../../core/widgets/theme_toggle_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../dashboard_destinations.dart';
+import 'app_menu_bar.dart';
+import 'top_nav_bar.dart';
 
-/// الهيكل العام للتطبيق بعد تسجيل الدخول: لوحة جانبية كحلية + منطقة محتوى.
+/// الهيكل العام للتطبيق بعد تسجيل الدخول.
 ///
-/// مقاسات متجاوبة:
-/// * `>= 1080`: لوحة كاملة بالنص.
-/// * `760 – 1080`: شريط أيقونات مصغّر.
-/// * `< 760`: لوحة منسدلة (Drawer).
+/// بُني على **شريط تنقّل أفقي مضغوط** ([TopNavBar]) بدل اللوحة الجانبية
+/// العمودية، فتمتد منطقة المحتوى (المحرّر/اللوحة) على كامل عرض الشاشة.
+///
+/// المقاسات المتجاوبة:
+/// * `>= 1180`: تبويبات كاملة بالتسميات.
+/// * `760 – 1180`: تبويبات بأيقوناتٍ فقط (تلميح عند المرور) لتوفير العرض.
+/// * `< 760`: زر قائمة يفتح لوحة منسدلة (Drawer) عمودية.
 class DashboardShell extends StatefulWidget {
-  const DashboardShell({super.key, required this.child});
+  const DashboardShell({super.key, required this.navigationShell});
 
-  final Widget child;
+  /// هيكل الفروع الحيّ (‏`StatefulShellRoute.indexedStack`): يمنح التنقّل بين
+  /// الأقسام دون إتلاف حالة أي فرع، ويقود التبويب النشط عبر [currentIndex].
+  final StatefulNavigationShell navigationShell;
 
   @override
   State<DashboardShell> createState() => _DashboardShellState();
@@ -31,23 +37,35 @@ class DashboardShell extends StatefulWidget {
 class _DashboardShellState extends State<DashboardShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  /// تنقّل آمن: يسأل [UnsavedChangesGuard] أولاً، فلا تُغادَر شاشةٌ بها عمل غير
-  /// محفوظ (مثل محرّر القوالب) إلا بعد تأكيد المستخدم.
-  Future<void> _navigate(
-    BuildContext context,
-    String next, {
-    bool popDrawer = false,
-  }) async {
+  /// التنقّل بين الأقسام — **بلا أي سؤال عن عمل غير محفوظ**.
+  ///
+  /// كل فرع يبقى حيّاً في `IndexedStack`، فالتنقّل لا يُتلف شيئاً (محرّر
+  /// مفتوح، جلسة توليد جماعي، أسماء مُصحَّحة…). التأكيد مطلوب فقط عند إجراء
+  /// إتلافي **صريح** داخل الشاشة نفسها (قالب جديد/مسح البيانات).
+  void _navigate(String next, {bool popDrawer = false}) {
     if (popDrawer) Navigator.of(context).pop();
-    final bool allowed = await UnsavedChangesGuard.instance.canLeave();
-    if (!allowed || !context.mounted) return;
-    context.go(next);
+    navigateToDestination(context, next);
   }
+
+  /// أمر «مستند جديد…» — نفس أمر قائمة `ملف`، تنفيذه هو فتح النافذة العائمة
+  /// بلا مغادرة مساحة العمل الحالية.
+  void _newDocument() => _navigate(AppRoutes.newProject);
 
   @override
   Widget build(BuildContext context) {
-    final String path = GoRouterState.of(context).matchedLocation;
-    final bool showDrawer = MediaQuery.sizeOf(context).width < 760;
+    // المسار النشط من فهرس الفرع الحيّ — أدقّ من مطابقة العنوان عند وجود
+    // مسارات متداخلة، ويُبقي التبويب مُبرَزاً صحيحاً.
+    final List<DashboardDestination> destinations = dashboardDestinations(context);
+    final int rawIndex = widget.navigationShell.currentIndex;
+    final int branchIndex =
+        (rawIndex >= 0 && rawIndex < destinations.length) ? rawIndex : 0;
+    final String path = destinations[branchIndex].path;
+    final double width = MediaQuery.sizeOf(context).width;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final bool showDrawer = width < 760;
+    final bool showLabels = width >= 1180;
+    final bool showBrandTitle = width >= 900;
+    final bool showAccountDetails = width >= 1080;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -55,129 +73,151 @@ class _DashboardShellState extends State<DashboardShell> {
       drawer: showDrawer
           ? Drawer(
               width: 286,
-              backgroundColor: AppColors.navy,
-              child: _Sidebar(
+              // كحلي نهاراً، سليت `#3E3E3E` ليلاً — اتساق مع اللوحة الداكنة.
+              backgroundColor: scheme.brandSurface,
+              child: _NavDrawer(
                 currentPath: path,
-                compact: false,
-                onNavigate: (String next) => _navigate(context, next, popDrawer: true),
+                onNavigate: (String next) => _navigate(next, popDrawer: true),
               ),
             )
           : null,
-      body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final double width = constraints.maxWidth;
-          final bool compact = width < 1080;
-          final bool showSidebar = width >= 760;
-
-          return Row(
-            children: <Widget>[
-              if (showSidebar)
-                SizedBox(
-                  width: compact ? 86 : 268,
-                  child: _Sidebar(
-                    currentPath: path,
-                    compact: compact,
-                    onNavigate: (String next) => _navigate(context, next),
-                  ),
-                ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    _TopBar(                       destination: destinationForPath(context, path),
-                      onMenuTap: showDrawer
-                          ? () => _scaffoldKey.currentState?.openDrawer()
-                          : null,
-                    ),
-                    Expanded(child: widget.child),
-                  ],
-                ),
-              ),
-            ],
-          );
+      // اختصارات سطح المكتب على مستوى الهيكل كله: `Ctrl+N` (و`⌘N` على macOS)
+      // يفتحان «مستند جديد…» فعلياً — والاختصار في قائمة `ملف` ليس تلميحاً
+      // مكتوباً بل مفتاحاً عاملاً من أي شاشة.
+      body: CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.keyN, control: true):
+              _newDocument,
+          const SingleActivator(LogicalKeyboardKey.keyN, meta: true):
+              _newDocument,
         },
+        // عقدة تركيز في الهيكل من أول لحظة: تعمل الاختصارات بلا نقرة تمهيدية،
+        // وحقول النص تأخذ التركيز عند النقر عليها فتستهلك مفاتيحها وحدها.
+        child: Focus(
+          autofocus: true,
+          child: Column(
+            children: <Widget>[
+              // شريط القوائم أولاً (كما في تطبيقات سطح المكتب)، ثم الشريط
+              // العلوي: فيرتفع «مستند جديد» عن التبويبات إلى مكانه الطبيعي في
+              // قائمة «ملف».
+              AppMenuBar(onNavigate: _navigate),
+              TopNavBar(
+                currentPath: path,
+                showLabels: showLabels,
+                showBrandTitle: showBrandTitle,
+                showAccountDetails: showAccountDetails,
+                onMenuTap: showDrawer
+                    ? () => _scaffoldKey.currentState?.openDrawer()
+                    : null,
+                onNavigate: _navigate,
+              ),
+              Expanded(child: widget.navigationShell),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
 // ===========================================================================
-//  اللوحة الجانبية
+//  اللوحة المنسدلة (الشاشات الصغيرة)
 // ===========================================================================
-class _Sidebar extends StatelessWidget {
-  const _Sidebar({
-    required this.currentPath,
-    required this.compact,
-    required this.onNavigate,
-  });
+class _NavDrawer extends StatelessWidget {
+  const _NavDrawer({required this.currentPath, required this.onNavigate});
 
   final String currentPath;
-  final bool compact;
   final ValueChanged<String> onNavigate;
 
   @override
   Widget build(BuildContext context) {
     final AuthProvider auth = context.watch<AuthProvider>();
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    // اللوحة المنسدلة تنقّل أيضاً: بلا «مستند جديد» الذي يبقى في مكانه
+    // الجديد (زر «‎+ جديد» وقائمة «ملف»).
+    final List<DashboardDestination> items = dashboardDestinations(context)
+        .where((DashboardDestination item) => item.inNavigation)
+        .toList(growable: false);
 
     return ColoredBox(
-      color: AppColors.navy,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: compact ? AppTheme.space12 : AppTheme.space20,
-              vertical: AppTheme.space24,
-            ),
-            child: compact
-                ? const Center(child: JoodCraftLogo(size: 40, onDark: true))
-                : const JoodCraftWordmark(markSize: 44, onDark: true),
-          ),
-          const Divider(color: AppColors.navySoft, height: 1),
-          const SizedBox(height: AppTheme.space12),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.space8,
-                vertical: AppTheme.space8,
+      color: scheme.brandSurface,
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppTheme.space20,
+                vertical: AppTheme.space20,
               ),
-              itemCount: dashboardDestinations(context).length,
-              itemBuilder: (BuildContext context, int index) {
-                final DashboardDestination item =
-                    dashboardDestinations(context)[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppTheme.space4),
-                  child: _SidebarItem(
-                    destination: item,
-                    selected: item.path == currentPath,
-                    compact: compact,
-                    onTap: () => onNavigate(item.path),
-                  ),
-                );
-              },
+              child: JoodCraftWordmark(markSize: 40, onDark: true),
             ),
-          ),
-          const Divider(color: AppColors.navySoft, height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppTheme.space12),
-            child: compact
-                ? IconButton(
+            Divider(color: scheme.brandSurfaceSoft, height: 1),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.space8,
+                  vertical: AppTheme.space8,
+                ),
+                itemCount: items.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final DashboardDestination item = items[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: AppTheme.space4),
+                    child: _DrawerItem(
+                      destination: item,
+                      selected: item.path == currentPath,
+                      onTap: () => onNavigate(item.path),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Divider(color: scheme.brandSurfaceSoft, height: 1),
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.space12),
+              child: Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: AppColors.gold,
+                    child: Text(
+                      auth.user?.initials ?? 'JC',
+                      style: const TextStyle(
+                        color: AppColors.navy,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.space8),
+                  Expanded(
+                    child: Text(
+                      auth.user?.displayName ??
+                          context.l10n?.dashUser ??
+                          'مستخدم',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.onNavy,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  IconButton(
                     tooltip: context.l10n?.actionSignOut ?? 'تسجيل الخروج',
                     onPressed: () => _signOut(context),
+                    iconSize: 18,
                     icon: const Icon(
                       Icons.logout_rounded,
                       color: AppColors.onNavy,
                     ),
-                  )
-                : _AccountTile(
-                    onSignOut: () => _signOut(context),
-                    name: auth.user?.displayName ??
-                        context.l10n?.dashUser ??
-                        'مستخدم',
-                    email: auth.user?.email ?? '',
-                    initials: auth.user?.initials ?? 'JC',
                   ),
-          ),
-        ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -187,25 +227,27 @@ class _Sidebar extends StatelessWidget {
     try {
       await auth.signOut();
       if (!context.mounted) return;
-      context.showSuccess(context.l10n?.dashLogoutSuccess ?? 'تم تسجيل الخروج بنجاح.');
+      context.showSuccess(
+        context.l10n?.dashLogoutSuccess ?? 'تم تسجيل الخروج بنجاح.',
+      );
     } on Object {
       if (!context.mounted) return;
-      context.showError(context.l10n?.dashLogoutError ?? 'تعذّر تسجيل الخروج. حاول مرة أخرى.');
+      context.showError(
+        context.l10n?.dashLogoutError ?? 'تعذّر تسجيل الخروج. حاول مرة أخرى.',
+      );
     }
   }
 }
 
-class _SidebarItem extends StatelessWidget {
-  const _SidebarItem({
+class _DrawerItem extends StatelessWidget {
+  const _DrawerItem({
     required this.destination,
     required this.selected,
-    required this.compact,
     required this.onTap,
   });
 
   final DashboardDestination destination;
   final bool selected;
-  final bool compact;
   final VoidCallback onTap;
 
   @override
@@ -213,23 +255,23 @@ class _SidebarItem extends StatelessWidget {
     final Color foreground =
         selected ? AppColors.gold : AppColors.onNavy.withValues(alpha: 0.72);
 
-    final Widget content = Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: compact ? AppTheme.space12 : AppTheme.space16,
-        vertical: AppTheme.space12,
-      ),
-      decoration: BoxDecoration(
-        color: selected
-            ? AppColors.gold.withValues(alpha: 0.14)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-      ),
-      child: Row(
-        mainAxisAlignment:
-            compact ? MainAxisAlignment.center : MainAxisAlignment.start,
-        children: <Widget>[
-          Icon(destination.icon, size: 20, color: foreground),
-          if (!compact) ...<Widget>[
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.space16,
+          vertical: AppTheme.space12,
+        ),
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.gold.withValues(alpha: 0.14)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(destination.icon, size: 20, color: foreground),
             const SizedBox(width: AppTheme.space12),
             Expanded(
               child: Text(
@@ -244,171 +286,7 @@ class _SidebarItem extends StatelessWidget {
               ),
             ),
           ],
-        ],
-      ),
-    );
-
-    return Tooltip(
-      message: compact ? destination.label : '',
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        child: content,
-      ),
-    );
-  }
-}
-
-class _AccountTile extends StatelessWidget {
-  const _AccountTile({
-    required this.name,
-    required this.email,
-    required this.initials,
-    required this.onSignOut,
-  });
-
-  final String name;
-  final String email;
-  final String initials;
-  final VoidCallback onSignOut;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.space12),
-      decoration: BoxDecoration(
-        color: AppColors.navySoft.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-      ),
-      child: Row(
-        children: <Widget>[
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: AppColors.gold,
-            child: Text(
-              initials,
-              style: const TextStyle(
-                color: AppColors.navy,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          const SizedBox(width: AppTheme.space8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: AppColors.onNavy,
-                        fontSize: 13,
-                      ),
-                ),
-                Text(
-                  email,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textDirection: TextDirection.ltr,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.onNavy.withValues(alpha: 0.6),
-                        fontSize: 11,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            tooltip: context.l10n?.actionSignOut ?? 'تسجيل الخروج',
-            onPressed: onSignOut,
-            iconSize: 18,
-            icon: const Icon(Icons.logout_rounded, color: AppColors.onNavy),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ===========================================================================
-//  الشريط العلوي
-// ===========================================================================
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.destination, this.onMenuTap});
-
-  final DashboardDestination destination;
-  final VoidCallback? onMenuTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    final TextTheme text = Theme.of(context).textTheme;
-
-    return Container(
-      height: 78,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.space24),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        border: Border(bottom: BorderSide(color: scheme.outline)),
-      ),
-      child: Row(
-        children: <Widget>[
-          if (onMenuTap != null)
-            IconButton(
-              onPressed: onMenuTap,
-              icon: const Icon(Icons.menu_rounded),
-            ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(destination.label, style: text.titleMedium),
-                const SizedBox(height: 2),
-                Text(
-                  destination.description,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: text.bodySmall,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppTheme.space16),
-          // منتقي اللغة (🌐) — يبدّل الواجهة والاتجاه فوراً وبلا إعادة تشغيل.
-          const LanguageMenuButton(),
-          // تبديل المظهر بنقرة واحدة (☀️/🌙) — يقرأ حالة المحرّك ويحدّث فوراً.
-          const ThemeToggleButton(),
-          const SizedBox(width: AppTheme.space4),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.space12,
-              vertical: 6,
-            ),
-            decoration: BoxDecoration(
-              color: scheme.primaryContainer,
-              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-            ),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.wifi_off_rounded,
-                  size: 15,
-                  color: scheme.primary,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  context.l10n?.offlineProcessingLabel ?? 'معالجة محلية',
-                  style: text.labelSmall?.copyWith(fontSize: 11.5),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

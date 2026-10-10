@@ -110,6 +110,10 @@ Future<FontSelectorItem?> showFontSelectorDialog(
   required String noMatchText,
   String? title,
   String? selectedId,
+
+  /// معاينة حيّة: تُستدعى باسم العائلة عند المرور فوق خيار، وبـ `null` عند
+  /// خروج المؤشر أو إغلاق القائمة — فتُرى صيغة النص على اللوحة فوراً.
+  ValueChanged<String?>? onPreviewFamily,
 }) {
   return showDialog<FontSelectorItem>(
     context: context,
@@ -119,6 +123,7 @@ Future<FontSelectorItem?> showFontSelectorDialog(
       noMatchText: noMatchText,
       title: title,
       selectedId: selectedId,
+      onPreviewFamily: onPreviewFamily,
     ),
   );
 }
@@ -130,6 +135,7 @@ class _FontSelectorDialog extends StatefulWidget {
     required this.noMatchText,
     this.title,
     this.selectedId,
+    this.onPreviewFamily,
   });
 
   final List<FontSelectorGroup> groups;
@@ -137,6 +143,7 @@ class _FontSelectorDialog extends StatefulWidget {
   final String noMatchText;
   final String? title;
   final String? selectedId;
+  final ValueChanged<String?>? onPreviewFamily;
 
   @override
   State<_FontSelectorDialog> createState() => _FontSelectorDialogState();
@@ -147,6 +154,8 @@ class _FontSelectorDialogState extends State<_FontSelectorDialog> {
 
   @override
   void dispose() {
+    // خروج نظيف: أي معاينة معلّقة تزول مع إغلاق القائمة.
+    widget.onPreviewFamily?.call(null);
     _query.dispose();
     super.dispose();
   }
@@ -251,6 +260,7 @@ class _FontSelectorDialogState extends State<_FontSelectorDialog> {
                               _FontItemTile(
                                 item: item,
                                 selected: item.id == widget.selectedId,
+                                onPreview: widget.onPreviewFamily,
                                 onTap: () =>
                                     Navigator.of(context).pop(item),
                               ),
@@ -296,16 +306,23 @@ class _FontItemTile extends StatelessWidget {
     required this.item,
     required this.selected,
     required this.onTap,
+    this.onPreview,
   });
 
   final FontSelectorItem item;
   final bool selected;
   final VoidCallback onTap;
 
+  /// معاينة حيّة عند المرور (وَقْف المؤشر) فوق السطر.
+  final ValueChanged<String?>? onPreview;
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    return ListTile(
+    return MouseRegion(
+      onEnter: (_) => onPreview?.call(item.previewFamily),
+      onExit: (_) => onPreview?.call(null),
+      child: ListTile(
       key: ValueKey<String>('font-option-${item.id}'),
       dense: true,
       selected: selected,
@@ -321,7 +338,8 @@ class _FontItemTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(fontSize: 14, fontFamily: item.previewFamily),
       ),
-      onTap: onTap,
+        onTap: onTap,
+      ),
     );
   }
 }

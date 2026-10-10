@@ -9,6 +9,9 @@ class AppLocalizationsTr extends AppLocalizations {
   AppLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
+  String get editorDone => 'Tamam';
+
+  @override
   String get appTagline =>
       'Resmî sertifika ve sözleşmeleri çevrimdışı oluşturun';
 
@@ -32,6 +35,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get actionSignOut => 'Çıkış yap';
+
+  @override
+  String get actionOpenMenu => 'Menü';
+
+  @override
+  String get editorFitToScreen => 'Ekrana sığdır';
+
+  @override
+  String get editorNewTemplate => 'Yeni şablon';
+
+  @override
+  String get editorNewConfirm =>
+      'Yeni şablon varsayılan tasarımla başlar; kaydedilmemiş değişiklikler geri alma geçmişinde kalır. Devam?';
 
   @override
   String get actionBackToDashboard => 'Kontrol paneline dön';
@@ -366,6 +382,236 @@ class AppLocalizationsTr extends AppLocalizations {
       'Grubu fareyle sürükleyin, ince kaydırma için okları kullanın (Shift = 10px) ve seçimi ayarlamak için Ctrl + tıklayın.';
 
   @override
+  String get destBrand => 'Kimlik ve profil';
+
+  @override
+  String get destBrandDesc =>
+      'Logonuz, kaşeleriniz, imzalarınız ve marka renkleriniz.';
+
+  @override
+  String get brandTitle => 'Kimlik ve profil ayarları';
+
+  @override
+  String get brandTabVisuals => 'Görsel kimlik';
+
+  @override
+  String get brandTabText => 'Metin verileri';
+
+  @override
+  String get brandTabColors => 'Renkler ve yazı tipleri';
+
+  @override
+  String get brandTabPreview => 'Kimlik önizlemesi';
+
+  @override
+  String get brandPrimaryLogo => 'Ana logo';
+
+  @override
+  String get brandWatermarkLogo => 'Filigran logo';
+
+  @override
+  String get brandSeals => 'Resmî kaşeler';
+
+  @override
+  String get brandAddSeal => 'Kaşe ekle';
+
+  @override
+  String get brandSealName => 'Kaşe adı';
+
+  @override
+  String get brandSignatures => 'Yetkili imzalar';
+
+  @override
+  String get brandAddSignature => 'İmza ekle';
+
+  @override
+  String get brandSignatureName => 'İmzalayan adı';
+
+  @override
+  String get brandSignatureTitle => 'Görev';
+
+  @override
+  String get brandRemove => 'Kaldır';
+
+  @override
+  String get brandNoSeals => 'Henüz kaşe eklenmedi.';
+
+  @override
+  String get brandNoSignatures => 'Henüz imza eklenmedi.';
+
+  @override
+  String get brandOrgNameAr => 'Kurum adı (Arapça)';
+
+  @override
+  String get brandOrgNameEn => 'Kurum adı (İngilizce)';
+
+  @override
+  String get brandHeaderText => 'Başlık metni';
+
+  @override
+  String get brandFooterText => 'Altbilgi metni';
+
+  @override
+  String get brandRegNumber => 'Vergi / sicil numarası';
+
+  @override
+  String get brandPrimaryColor => 'Ana renk';
+
+  @override
+  String get brandSecondaryColor => 'İkincil renk';
+
+  @override
+  String get brandAccentColor => 'Vurgu rengi';
+
+  @override
+  String get brandHeaderFont => 'Başlık yazı tipi';
+
+  @override
+  String get brandBodyFont => 'Gövde yazı tipi';
+
+  @override
+  String get brandClear => 'Kimliği temizle';
+
+  @override
+  String get brandClearConfirm =>
+      'Kayıtlı tüm kimlik içeriği silinecek. Devam edilsin mi?';
+
+  @override
+  String get brandSaved => 'Kimlik kaydedildi.';
+
+  @override
+  String get brandPresets => 'Kimlik öğeleri';
+
+  @override
+  String get brandInsertHeader => 'Standart başlığı ekle';
+
+  @override
+  String get brandInsertFooter => 'Standart altbilgiyi ekle';
+
+  @override
+  String get brandApplyColors => 'Renkleri uygula';
+
+  @override
+  String get brandQuickSeals => 'Kaşeler';
+
+  @override
+  String get brandQuickSignatures => 'İmzalar';
+
+  @override
+  String get brandNoBrand => 'Kimliğiniz henüz ayarlanmadı.';
+
+  @override
+  String get brandOpenSettings => 'Kimlik ayarlarını aç';
+
+  @override
+  String get brandHeaderInserted => 'Standart başlık eklendi.';
+
+  @override
+  String get brandFooterInserted => 'Standart altbilgi eklendi.';
+
+  @override
+  String get brandColorsApplied => 'Renkler uygulandı.';
+
+  @override
+  String get brandSealInserted => 'Kaşe eklendi.';
+
+  @override
+  String get brandSignatureInserted => 'İmza eklendi.';
+
+  @override
+  String get brandFontDefault => 'Varsayılan';
+
+  @override
+  String get paletteShapes => 'Şekiller';
+
+  @override
+  String get paletteRoundedRect => 'Yuvarlatılmış dikdörtgen';
+
+  @override
+  String get paletteEllipse => 'Daire / elips';
+
+  @override
+  String get editorFillOpacity => 'Dolgu saydamlığı';
+
+  @override
+  String get editorCollapsePanel => 'Yan paneli daralt';
+
+  @override
+  String get editorExpandPanel => 'Yan paneli göster';
+
+  @override
+  String get editorCustomSize => 'Özel boyut';
+
+  @override
+  String get editorStandardSize => 'Standart boyut';
+
+  @override
+  String get editorBackgroundTitle => 'Sayfa arka planı';
+
+  @override
+  String get editorGradientFrom => 'Başlangıç';
+
+  @override
+  String get editorGradientTo => 'Bitiş';
+
+  @override
+  String get editorGradientDirection => 'Yön';
+
+  @override
+  String get editorGradientNone => 'Degrade yok';
+
+  @override
+  String get editorGradientVertical => 'Dikey';
+
+  @override
+  String get editorGradientHorizontal => 'Yatay';
+
+  @override
+  String get editorGradientDiagonal => 'Çapraz';
+
+  @override
+  String get editorLayersTitle => 'Katmanlar';
+
+  @override
+  String get editorLayerShow => 'Öğeyi göster';
+
+  @override
+  String get editorLayerHide => 'Öğeyi gizle';
+
+  @override
+  String get editorLayerLock => 'Öğeyi kilitle';
+
+  @override
+  String get editorLayerUnlock => 'Öğenin kilidini aç';
+
+  @override
+  String get editorLayersEmpty => 'Bu sayfada henüz öğe yok.';
+
+  @override
+  String get editorGroupSelected => 'Seçimi grupla';
+
+  @override
+  String get editorUngroupSelected => 'Grubu çöz';
+
+  @override
+  String get editorAlignLeft => 'Sola hizala';
+
+  @override
+  String get editorAlignCenterH => 'Yatay ortala';
+
+  @override
+  String get editorAlignRight => 'Sağa hizala';
+
+  @override
+  String get editorAlignTop => 'Üste hizala';
+
+  @override
+  String get editorAlignCenterV => 'Dikey ortala';
+
+  @override
+  String get editorAlignBottom => 'Alta hizala';
+
+  @override
   String get editorBringForward => 'Öne al';
 
   @override
@@ -506,6 +752,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get editorSource => 'Kaynak';
+
+  @override
+  String get editorImageTint => 'Görsel rengi';
 
   @override
   String get editorImageFit => 'Görsel sığdırma';
@@ -1829,4 +2078,897 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get cbContractDataTitle => 'Sözleşme verileri (örnek)';
+
+  @override
+  String get editorSendBackward => 'Geri gönder';
+
+  @override
+  String get editorRotateLeft => '90° sola döndür';
+
+  @override
+  String get editorRotateRight => '90° sağa döndür';
+
+  @override
+  String get editorFlipH => 'Yatay çevir';
+
+  @override
+  String get editorFlipV => 'Dikey çevir';
+
+  @override
+  String get editorTransform => 'Dönüşümler';
+
+  @override
+  String get editorToolSelect => 'Seçim';
+
+  @override
+  String get editorToolShapes => 'Şekiller';
+
+  @override
+  String get editorFillType => 'Dolgu türü';
+
+  @override
+  String get editorFillSolid => 'Düz';
+
+  @override
+  String get editorGradientLinear => 'Doğrusal gradyan';
+
+  @override
+  String get editorGradientRadial => 'Radyal gradyan';
+
+  @override
+  String get editorGradientAngle => 'Gradyan açısı';
+
+  @override
+  String get editorShadowEnable => 'Gölge ekle';
+
+  @override
+  String get editorShadowColor => 'Gölge rengi';
+
+  @override
+  String get editorShadowBlur => 'Gölge bulanıklığı';
+
+  @override
+  String get editorShadowOffsetX => 'X kaydırma';
+
+  @override
+  String get editorShadowOffsetY => 'Y kaydırma';
+
+  @override
+  String get editorShadowSpread => 'Yayılma';
+
+  @override
+  String get editorShadowRemove => 'Gölgeyi kaldır';
+
+  @override
+  String get editorPoints => 'Köşe sayısı';
+
+  @override
+  String get editorInnerRadius => 'İç yarıçap';
+
+  @override
+  String get editorCornerTopLeft => 'Sol üst';
+
+  @override
+  String get editorCornerTopRight => 'Sağ üst';
+
+  @override
+  String get editorCornerBottomRight => 'Sağ alt';
+
+  @override
+  String get editorCornerBottomLeft => 'Sol alt';
+
+  @override
+  String get editorDashPattern => 'Çizgi deseni';
+
+  @override
+  String get editorBooleanOps => 'Boole işlemleri';
+
+  @override
+  String get editorBooleanUnion => 'Birleştir';
+
+  @override
+  String get editorBooleanSubtract => 'Çıkar';
+
+  @override
+  String get editorBooleanIntersect => 'Kesişim';
+
+  @override
+  String get editorBooleanUngroup => 'Ayır';
+
+  @override
+  String get paletteStar => 'Yıldız';
+
+  @override
+  String get palettePolygon => 'Çokgen';
+
+  @override
+  String get editorBooleanExclude => 'Hariç tut';
+
+  @override
+  String get editorBooleanHint =>
+      'Birleşik yol tek bir mantıksal sonuçtur (iç kenar yoktur) ve istenildiğinde ayrılabilir.';
+
+  @override
+  String get editorDockTools => 'Araç paneli';
+
+  @override
+  String get editorDockAnchor => 'Yerleştirme konumu';
+
+  @override
+  String get editorDockTopBar => 'Üst çubuk';
+
+  @override
+  String get editorDockInspector => 'Yan panel';
+
+  @override
+  String get editorDockLeftRail => 'Yan şerit';
+
+  @override
+  String get editorDockFloating => 'Yüzen';
+
+  @override
+  String get editorDockCollapse => 'Araçları daralt';
+
+  @override
+  String get editorDockExpand => 'Araçları genişlet';
+
+  @override
+  String get editorDockResize => 'Boyutlandırmak için sürükleyin';
+
+  @override
+  String get editorDockDropHint => 'Yerleştirmek için bırakın';
+
+  @override
+  String get editorMoreTools => 'Diğer araçlar';
+
+  @override
+  String get editorDocumentProperties => 'Belge özellikleri';
+
+  @override
+  String get editorDockReset => 'Varsayılan yerleşimi geri yükle';
+
+  @override
+  String get editorTextShadow => 'Metin gölgesi';
+
+  @override
+  String get editorTextShadowAdd => 'Metne gölge ekle';
+
+  @override
+  String get editorShadowOpacity => 'Gölge saydamlığı';
+
+  @override
+  String get genderMale => 'Erkek';
+
+  @override
+  String get genderFemale => 'Kadın';
+
+  @override
+  String get genderPreviewAutoHint =>
+      'Zorlamayı kaldırmak için tıklayın (otomatik)';
+
+  @override
+  String get genderPresetCompleted => '\"completed\" (e./k.)';
+
+  @override
+  String get genderPresetPassed => '\"passed\" (e./k.)';
+
+  @override
+  String get genderPresetForStudent => '\"öğrenci için\" (e./k.)';
+
+  @override
+  String get genderPresetStudent => '\"öğrenci\" (e./k.)';
+
+  @override
+  String get genderPresetToHim => '\"ona (e.) / ona (k.)\"';
+
+  @override
+  String get genderPresetHonoring => '\"seçkin kursiyer\" (e./k.)';
+
+  @override
+  String get editorGenderSnippet => 'Koşullu parça ekle';
+
+  @override
+  String get editorGenderSnippetHint =>
+      'Alıcının cinsiyetine göre otomatik değişen bir ifade ekler.';
+
+  @override
+  String get bpGenderReviewTitle => 'Cinsiyet incelemesi (eril/dişil)';
+
+  @override
+  String get bpGenderReviewSubtitle =>
+      'Cinsiyet addan veya \"Cinsiyet\" sütunundan algılanır — yazdırmadan önce sınır durumları düzeltin.';
+
+  @override
+  String get bpGenderRow => 'Satır';
+
+  @override
+  String get bpGenderDetected => 'Algılanan';
+
+  @override
+  String get bpGenderEffective => 'Uygulanan';
+
+  @override
+  String get bpGenderNameColumn => 'Ad';
+
+  @override
+  String get bpGenderEditName => 'Adı düzenle';
+
+  @override
+  String get bpGenderNameHint => 'Doğru adı yazın';
+
+  @override
+  String get bpGenderClearOverrides => 'Düzeltmeleri temizle';
+
+  @override
+  String get bpGenderOverridden => 'Elle düzeltildi';
+
+  @override
+  String get bpGenderUnknownName => '—';
+
+  @override
+  String get bpOutputTitle => 'Sertifika kayıt konumu';
+
+  @override
+  String get bpOutputHint =>
+      'Oluşturulan PDF\'in kaydedileceği klasörü seçin veya varsayılan konumla başlayın.';
+
+  @override
+  String get bpOutputPickFolder => 'Klasör seç…';
+
+  @override
+  String get bpOutputStart => 'Oluşturmayı başlat';
+
+  @override
+  String get bpOutputPathLabel => 'Seçilen klasör';
+
+  @override
+  String get bpOutputNoFolder =>
+      'Klasör seçilmedi — yalnızca yazdırma ve dışa aktarma.';
+
+  @override
+  String get bpOpenFolder => 'Klasörü aç';
+
+  @override
+  String get bpOutputSavedTitle => 'PDF dosyası kaydedildi';
+
+  @override
+  String get bpOpenFolderFailed => 'Klasör açılamadı.';
+
+  @override
+  String get bpOutputNameLabel => 'Dışa aktarma dosya adı';
+
+  @override
+  String get bpOutputNameHint => 'Uzantı olmadan bir ad yazın';
+
+  @override
+  String get bpOutputNamePreviewLabel => 'Şu adla kaydedilecek';
+
+  @override
+  String get bpOutputModeLabel => 'Kaydetme modu';
+
+  @override
+  String get bpOutputModeCombined => 'Tek bir birleşik dosya';
+
+  @override
+  String get bpOutputModeIndividual => 'Her kişi için ayrı dosya';
+
+  @override
+  String get hubTitle => 'Yeni proje';
+
+  @override
+  String get hubSubtitle =>
+      'Hazır bir boyut seçin veya kendinizinkini belirleyin — tuval tam boyut ve oranla açılır.';
+
+  @override
+  String get hubKindSingle => 'Tek sayfa baskılar ve belgeler';
+
+  @override
+  String get hubKindMulti => 'Çok sayfalı kitaplar ve yayınlar';
+
+  @override
+  String get hubKindSingleHint =>
+      'Tek sayfa: sertifikalar, sözleşmeler, kartlar, koltuk numaraları, tebrik kartları.';
+
+  @override
+  String get hubKindMultiHint =>
+      'Çok sayfalı: kitap, dergi, broşür, rapor, katalog.';
+
+  @override
+  String get hubGroupCertificates => 'Sertifikalar ve sözleşmeler';
+
+  @override
+  String get hubGroupCards => 'Kartlar ve kimlik kartları';
+
+  @override
+  String get hubGroupSeat => 'Koltuk numaraları ve etiketler';
+
+  @override
+  String get hubGroupGreeting => 'Tebrik kartları';
+
+  @override
+  String get hubGroupPublications => 'Kitaplar ve yayınlar';
+
+  @override
+  String get hubGroupCustom => 'Özel boyut';
+
+  @override
+  String get hubDigitalBadge => 'Dijital';
+
+  @override
+  String get hubCreate => 'Oluştur';
+
+  @override
+  String get hubCustomCardBody =>
+      'Ölçülerinizi istediğiniz birimde girin ve kendi boyutunuzda bir tuvalle başlayın.';
+
+  @override
+  String get hubCustomName => 'Proje adı';
+
+  @override
+  String get hubCustomNameHint => 'örn. Davetiye kartı';
+
+  @override
+  String get hubCustomPreview => 'Son boyut';
+
+  @override
+  String get hubCustomCreate => 'Tuval oluştur';
+
+  @override
+  String get hubCustomType => 'Proje türü';
+
+  @override
+  String get hubSearchHint => 'Boyut ara…';
+
+  @override
+  String get hubNoResults => 'Eşleşen boyut yok — başka bir kelime deneyin.';
+
+  @override
+  String get hubAspectRatio => 'Oran';
+
+  @override
+  String get destNewProject => 'Yeni proje';
+
+  @override
+  String get destNewProjectDesc =>
+      'Hazır veya özel bir boyut seçin ve hemen tasarlamaya başlayın.';
+
+  @override
+  String get ptpImpositionToggle => 'Baskı yerleşimi';
+
+  @override
+  String get ptpImpositionNoFit =>
+      'Sayfa bu öğeye sığmıyor — kenar boşluklarını küçültün veya daha büyük bir sayfa seçin.';
+
+  @override
+  String get editorEffectsTitle => 'Efektler ve renk ayarları';
+
+  @override
+  String get editorShadowGroup => 'Gölge';
+
+  @override
+  String get editorOuterGlow => 'Dış ışıma';
+
+  @override
+  String get editorInnerGlow => 'İç ışıma';
+
+  @override
+  String get editorGlowAdd => 'Işıma ekle';
+
+  @override
+  String get editorGlowRemove => 'Işımayı kaldır';
+
+  @override
+  String get editorGlowColor => 'Işıma rengi';
+
+  @override
+  String get editorGlowRadius => 'Işıma yarıçapı';
+
+  @override
+  String get editorGlowSpread => 'Işıma yayılımı';
+
+  @override
+  String get editorGlowOpacity => 'Işıma saydamlığı';
+
+  @override
+  String get editorAdjustGroup => 'Renk ayarları';
+
+  @override
+  String get editorAdjustBrightness => 'Parlaklık';
+
+  @override
+  String get editorAdjustContrast => 'Kontrast';
+
+  @override
+  String get editorAdjustSaturation => 'Doygunluk';
+
+  @override
+  String get editorAdjustHue => 'Ton';
+
+  @override
+  String get editorAdjustReset => 'Sıfırla';
+
+  @override
+  String get bpOutputSavedFolderTitle => 'Dosyalar ayrı bir klasöre kaydedildi';
+
+  @override
+  String get hubDetailsTitle => 'Ölçü ayrıntıları';
+
+  @override
+  String get hubDetailsHint =>
+      'Önceden doldurulmuş varsayılan değerler — ızgaradan bir ölçü seçin ya da ölçüleri düzenleyin.';
+
+  @override
+  String get hubFilterAll => 'Tümü';
+
+  @override
+  String get hubFilterRecent => 'Son ölçüler';
+
+  @override
+  String get hubFilterSeat => 'Koltuk numaraları';
+
+  @override
+  String get hubFilterGreeting => 'Kutlama kartları ve ekranlar';
+
+  @override
+  String get hubRecentEmpty =>
+      'Henüz son ölçü yok — oluşturduğunuz her proje burada görünür.';
+
+  @override
+  String get hubDocTitle => 'Proje adı';
+
+  @override
+  String get hubDocTitleHint => 'Yeni proje - 1';
+
+  @override
+  String get hubWidth => 'Genişlik';
+
+  @override
+  String get hubHeight => 'Yükseklik';
+
+  @override
+  String get hubUnitLabel => 'Birim';
+
+  @override
+  String get hubOrientationLabel => 'Yön';
+
+  @override
+  String get hubPortrait => 'Dikey';
+
+  @override
+  String get hubLandscape => 'Yatay';
+
+  @override
+  String get hubVariantLabel => 'Tür';
+
+  @override
+  String get hubResolutionLabel => 'Çözünürlük';
+
+  @override
+  String get hubResolutionUnitLabel => 'Çözünürlük birimi';
+
+  @override
+  String get hubColorModeLabel => 'Renk modu';
+
+  @override
+  String get hubBackgroundLabel => 'Arka plan rengi';
+
+  @override
+  String get hubBackgroundWhite => 'Beyaz';
+
+  @override
+  String get hubBackgroundTransparent => 'Saydam';
+
+  @override
+  String get hubBackgroundBlack => 'Siyah';
+
+  @override
+  String get hubBackgroundCustom => 'Özel renk';
+
+  @override
+  String get hubCreateProject => 'Projeyi oluştur';
+
+  @override
+  String get hubCustomFamilyTitle => 'Özel ölçü';
+
+  @override
+  String get newDocTitle => 'Yeni belge';
+
+  @override
+  String get newDocScopeSocial => 'Ekranlar ve kutlamalar';
+
+  @override
+  String get newDocFilterCertificates => 'Sertifikalar';
+
+  @override
+  String get newDocFilterCards => 'Kartlar';
+
+  @override
+  String get newDocFilterGreeting => 'Kutlamalar';
+
+  @override
+  String get newDocFilterPublications => 'Yayınlar';
+
+  @override
+  String get menuFile => 'Dosya';
+
+  @override
+  String get menuEdit => 'Düzen';
+
+  @override
+  String get menuView => 'Görünüm';
+
+  @override
+  String get menuTools => 'Araçlar';
+
+  @override
+  String get menuHelp => 'Yardım';
+
+  @override
+  String get menuNewDocument => 'Yeni belge…';
+
+  @override
+  String get menuPurgeRecent => 'Son boyutları temizle';
+
+  @override
+  String get menuPurgeImageCache => 'Görsel önbelleğini temizle';
+
+  @override
+  String get menuPreviewCertificate => 'Örnek sertifikayı önizle';
+
+  @override
+  String get menuPreviewContract => 'Örnek sözleşmeyi önizle';
+
+  @override
+  String get menuAbout => 'JoodCraft hakkında';
+
+  @override
+  String get actionNewShort => '+ Yeni';
+
+  @override
+  String get dashLocalMode => 'Yerel';
+
+  @override
+  String get dashLocalStorage =>
+      'Bu cihazda yerel olarak kaydedilir — hiçbir proje sunucuya yüklenmez.';
+
+  @override
+  String get dashRecentProjects => 'Son projeler';
+
+  @override
+  String get dashRecentEmpty =>
+      'Bu cihazda henüz kayıtlı proje yok — yeni bir belge oluşturun, anında burada görünür.';
+
+  @override
+  String get dashRecentOpen => 'Projeyi aç';
+
+  @override
+  String get dashRoadmapLocal =>
+      'Yerel proje veritabanı (projects tablosu) ile %100 çevrimdışı kayıt';
+
+  @override
+  String get dashRoadmapOffline =>
+      'Tamamen çevrimdışı çalışma: proje yüklemesi ve ağ gerekmez';
+
+  @override
+  String get editorTransformPosition => 'Dönüşüm ve Konum';
+
+  @override
+  String get editorTransformPositionHint => 'Konum, boyut ve döndürme açısı';
+
+  @override
+  String get editorAppearanceEffects => 'Görünüm ve Efektler';
+
+  @override
+  String get editorAppearanceEffectsHint =>
+      'Dolgu, kontur, parlama ve gölgeler';
+
+  @override
+  String get editorTypographyHint => 'Yazı tipi, boyut, hizalama ve aralık';
+
+  @override
+  String get editorPageSettingsHint => 'Boyut ve ölçü birimi';
+
+  @override
+  String get editorBackgroundHint => 'Sayfa rengi veya degrade';
+
+  @override
+  String get editorPrecisionHint => 'İnce taşıma ve ölçekleme';
+
+  @override
+  String get joodExportProject => 'Projeyi dışa aktar (.jood)';
+
+  @override
+  String get joodImportProject => 'Projeyi aç (.jood)';
+
+  @override
+  String get joodExportReady => 'Proje dosyası kaydedilmeye hazır.';
+
+  @override
+  String get joodExportFailed => 'Proje dosyası dışa aktarılamadı.';
+
+  @override
+  String get joodImportOpened => 'İçe aktarılan proje açıldı.';
+
+  @override
+  String get joodImportFailed => 'Proje dosyası açılamadı.';
+
+  @override
+  String get joodRecoveryTitle => 'Kaydedilmemiş taslak';
+
+  @override
+  String get joodRecoveryMessage =>
+      'Önceki bir oturumdan kaydedilmemiş bir taslak var. Geri yüklemek ister misiniz?';
+
+  @override
+  String get joodRecoveryRestore => 'Geri yükle';
+
+  @override
+  String get joodRecoveryDiscard => 'Yoksay';
+
+  @override
+  String get joodRecoveryRestored => 'Taslak geri yüklendi.';
+
+  @override
+  String get joodAutosaveSaved => 'Otomatik kaydedildi';
+
+  @override
+  String get joodAutosaveSaving => 'Kaydediliyor…';
+
+  @override
+  String get editorConfirm => 'Onayla';
+
+  @override
+  String get admTitle => 'Yerel yönetici yönetimi';
+
+  @override
+  String get admRefresh => 'Yenile';
+
+  @override
+  String get admTabAdmins => 'Yöneticiler';
+
+  @override
+  String get admTabTransfer => 'Cihazlar arası aktarım';
+
+  @override
+  String get admTabAudit => 'Dışa aktarma günlüğü';
+
+  @override
+  String get admListTitle => 'Bu cihazdaki yönetici hesapları';
+
+  @override
+  String get admAdd => 'Yönetici ekle';
+
+  @override
+  String get admNoAdmins => 'Henüz yönetici hesabı yok.';
+
+  @override
+  String get admLoading => 'Bu cihazdaki yönetici hesapları yükleniyor…';
+
+  @override
+  String get admRoleOwner => 'Birincil yönetici';
+
+  @override
+  String get admCurrent => 'Sen';
+
+  @override
+  String get admCurrentCardTitle => 'Bu cihazdaki mevcut hesap';
+
+  @override
+  String get admRoleAdmin => 'Yönetici';
+
+  @override
+  String get admSwitchTitle => 'Hızlı hesap değiştirme';
+
+  @override
+  String get admSwitchPrompt =>
+      'Bu cihazdaki bir alt yöneticinin yerel kullanıcı adını seçin ve yerel parolasını girin; açık proje taslakları önce kaydedilir ve ana lisans etkilenmez.';
+
+  @override
+  String get admSwitchNoOthers =>
+      'Bu cihazda başka alt yönetici yok. Önce yöneticiler ekranından yeni bir yönetici ekleyin.';
+
+  @override
+  String get admSwitchPick => 'Yerel kullanıcı adı';
+
+  @override
+  String get admSwitchPassword => 'Seçilen hesabın yerel parolası';
+
+  @override
+  String get admSwitchPickPassword =>
+      'Bir kullanıcı adı seçin ve parolayı girin.';
+
+  @override
+  String get admSwitchWrongPassword => 'Parola hatalı.';
+
+  @override
+  String get admSwitchFailed => 'Hesap değiştirilemedi. Tekrar deneyin.';
+
+  @override
+  String get admSwitchSuccess => 'Hesap başarıyla değiştirildi.';
+
+  @override
+  String get admSwitchAccount => 'Hesap değiştir';
+
+  @override
+  String get admSwitchAction => 'Şimdi değiştir';
+
+  @override
+  String get admColAdmin => 'Yönetici';
+
+  @override
+  String get admColUsername => 'Yerel kullanıcı adı';
+
+  @override
+  String get admColRole => 'Rol';
+
+  @override
+  String get admColCreated => 'Eklenme';
+
+  @override
+  String get admColActions => 'İşlemler';
+
+  @override
+  String get destJoodWriter => 'Jood Writer';
+
+  @override
+  String get destJoodWriterDesc =>
+      'Otomatik sayfa akışlı metin belgeleri ve raporlar.';
+
+  @override
+  String get admCreatedAt => 'Oluşturulma';
+
+  @override
+  String get admEdit => 'Bilgileri düzenle';
+
+  @override
+  String get admChangePassword => 'Parolayı değiştir';
+
+  @override
+  String get admPromote => 'Birincil yöneticiye yükselt';
+
+  @override
+  String get admDemote => 'Yöneticiye düşür';
+
+  @override
+  String get admDelete => 'Hesabı sil';
+
+  @override
+  String admDeleteConfirm(Object name) {
+    return '“$name” bu cihazdan kalıcı olarak silinecek. Bu işlem geri alınamaz.';
+  }
+
+  @override
+  String get admPromoted => 'Birincil yöneticiye yükseltildi.';
+
+  @override
+  String get admDemoted => 'Yöneticiye düşürüldü.';
+
+  @override
+  String get admDeleted => 'Hesap silindi.';
+
+  @override
+  String get admCreated => 'Yeni yönetici eklendi.';
+
+  @override
+  String get admUpdated => 'Yönetici bilgileri güncellendi.';
+
+  @override
+  String get admPasswordChanged => 'Parola değiştirildi.';
+
+  @override
+  String get admTransferInfoTitle => 'Aktarım nasıl çalışır?';
+
+  @override
+  String get admTransferInfo1 =>
+      'Hesap tablosu (parola özetleriyle, asla parolalarla değil) seçtiğiniz bir parola ifadesiyle şifrelenmiş bir dosyanın içinde dışa aktarılır.';
+
+  @override
+  String get admTransferInfo2 =>
+      'Dosyayı veya kodu diğer cihaza taşıyın ve aynı parola ifadesiyle orada içe aktarın; hesaplar aynı izinlerle çalışır.';
+
+  @override
+  String get admTransferInfo3 =>
+      'Hiçbir sunucuya bir şey gönderilmez: aktarım tamamen yerel cihazlar arasında elle yapılır.';
+
+  @override
+  String get admExport => 'Hesapları dışa aktar';
+
+  @override
+  String get admExportPassphrase => 'Dışa aktarma parola ifadesi';
+
+  @override
+  String get admPassphraseConfirm => 'Parola ifadesini doğrula';
+
+  @override
+  String get admExportRisk =>
+      'Bu kodu ve parola ifadesini elinde bulunduran herkesin bu hesaplarla oturum açabileceğini anlıyorum, bu yüzden dikkatli paylaşacağım.';
+
+  @override
+  String get admExportGenerate => 'Şifreli kod oluştur';
+
+  @override
+  String get admExportFile => 'Özel bir dosyaya kaydet';
+
+  @override
+  String get admExportDone =>
+      'Şifreli kod oluşturuldu. Kopyalayın veya bir dosyaya kaydedin.';
+
+  @override
+  String get admExportFileSaved => 'Şifreli hesaplar dosyası kaydedildi.';
+
+  @override
+  String get admPassphraseTooShort =>
+      'Parola ifadesi için en az 6 karakter kullanın.';
+
+  @override
+  String get admPassphraseMismatch => 'Parola ifadeleri eşleşmiyor.';
+
+  @override
+  String get admAcceptRiskRequired =>
+      'Önce kodu paylaşmanın riskini anladığınızı doğrulayın.';
+
+  @override
+  String admFileError(Object error) {
+    return 'Dosya işlenemedi: $error';
+  }
+
+  @override
+  String get admImport => 'Hesapları içe aktar';
+
+  @override
+  String get admImportCode => 'Hesap kodu';
+
+  @override
+  String get admImportPassphrase => 'Dosya parola ifadesi';
+
+  @override
+  String get admImportReplace => 'Mevcut hesapların parolalarını değiştir';
+
+  @override
+  String get admImportPick => 'Bir dosya seç';
+
+  @override
+  String get admImportRun => 'Şimdi içe aktar';
+
+  @override
+  String get admImportCodeRequired =>
+      'Önce kodu yapıştırın veya bir dosya seçin.';
+
+  @override
+  String get admImportPassphraseRequired => 'Dosya parola ifadesini girin.';
+
+  @override
+  String admImportDone(int added, int updated, int skipped) {
+    return 'İçe aktarıldı: $added yeni, $updated güncellendi, $skipped atlandı.';
+  }
+
+  @override
+  String get admAuditTitle => 'Verilen sertifika ve belge günlüğü';
+
+  @override
+  String get admAuditClear => 'Günlüğü temizle';
+
+  @override
+  String get admAuditEmpty =>
+      'Henüz dışa aktarma yok. Dışa aktardığınız her sertifika veya sözleşme, tarihi ve onu veren yöneticiyle birlikte burada günlüğe kaydedilir.';
+
+  @override
+  String get admAuditBy => 'Tarafından';
+
+  @override
+  String get admAuditPages => 'sayfa';
+
+  @override
+  String get admAuditClearConfirm =>
+      'Dışa aktarma günlüğünün tamamı bu cihazdan silinecek. Bu işlem geri alınamaz.';
+
+  @override
+  String get admAuditCleared => 'Günlük temizlendi.';
+
+  @override
+  String get admUnavailableTitle => 'Yönetim şu anda kullanılamıyor';
+
+  @override
+  String get admUnavailableBody =>
+      'Yönetici yönetimi, uygulama yerel bir hesapla (LocalAuthRepository) çalıştığında çalışır; böylece hesaplar bu cihazdan okunur.';
 }

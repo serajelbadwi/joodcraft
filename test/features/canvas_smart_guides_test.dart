@@ -140,7 +140,9 @@ void main() {
         tester.widget<TemplateCanvas>(find.byType(TemplateCanvas));
     expect(canvas().snapToGuides, isTrue);
 
-    await tester.tap(find.byKey(const ValueKey<String>('toggle-snap-guides')));
+    final Finder guides = find.byKey(const ValueKey<String>('toggle-snap-guides'));
+    await tester.ensureVisible(guides);
+    await tester.tap(guides);
     await tester.pump();
     expect(canvas().snapToGuides, isFalse);
   });

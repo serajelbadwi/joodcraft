@@ -85,7 +85,7 @@ void main() {
     testWidgets('لا يظهر أي شريط قبل تحديد عنصر', (WidgetTester tester) async {
       await pumpToolbar(tester);
 
-      expect(find.text('الموضع والحجم'), findsNothing);
+      expect(find.text('التحويل والموضع'), findsNothing);
       expect(find.text('تنسيق النص'), findsNothing);
     });
 
@@ -95,7 +95,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('نص'), findsOneWidget);
-      expect(find.text('الموضع والحجم'), findsOneWidget);
+      expect(find.text('التحويل والموضع'), findsOneWidget);
       expect(find.text('تنسيق النص'), findsOneWidget);
       expect(find.text('محتوى النص'), findsOneWidget);
       expect(find.text('الختم'), findsNothing);
@@ -135,11 +135,11 @@ void main() {
       await pumpToolbar(tester);
       controller.select('text-1');
       await tester.pump();
-      expect(find.text('الموضع والحجم'), findsOneWidget);
+      expect(find.text('التحويل والموضع'), findsOneWidget);
 
       controller.clearSelection();
       await tester.pump();
-      expect(find.text('الموضع والحجم'), findsNothing);
+      expect(find.text('التحويل والموضع'), findsNothing);
     });
   });
 
@@ -297,8 +297,8 @@ void main() {
       controller.select('text-1');
       await tester.pump();
 
-      await tester.tap(find.text('اسم_المتدرب'));
-      await tester.pump();
+      // البطاقات أطول من الشريط السابق، فنُمرّر إلى حقل الصيغة أولاً.
+      await tapVisible(tester, find.text('اسم_المتدرب'));
 
       expect(
         (controller.selected! as TextElement).text,
@@ -311,10 +311,8 @@ void main() {
       controller.select('text-1');
       await tester.pump();
 
-      await tester.tap(find.text('اسم_الدورة'));
-      await tester.pump();
-      await tester.tap(find.text('التاريخ'));
-      await tester.pump();
+      await tapVisible(tester, find.text('اسم_الدورة'));
+      await tapVisible(tester, find.text('التاريخ'));
 
       final String text = (controller.selected! as TextElement).text;
       expect(text, '{{اسم_الدورة}} {{التاريخ}}');
@@ -401,7 +399,7 @@ void main() {
       await tester.pump();
 
       expect(controller.document.elements.length, 3);
-      expect(find.text('الموضع والحجم'), findsNothing);
+      expect(find.text('التحويل والموضع'), findsNothing);
     });
 
     testWidgets('أزرار ترتيب الرسم تعمل', (WidgetTester tester) async {

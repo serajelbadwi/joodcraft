@@ -7,6 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../models/template_document.dart';
 import 'custom_pdf_fonts.dart';
 import 'pdf_font_catalog.dart';
+import 'pdf_quality_image.dart';
 import 'pdf_render_engine.dart';
 
 /// وسوم رسائل isolate الواردة.
@@ -118,13 +119,20 @@ Future<void> _renderRequest(Object? message) async {
     for (final PdfCustomFontBytes custom in request.customFonts) {
       CustomPdfFonts.register(custom.family, custom.bytes, weight: custom.weight);
     }
+    // `PdfQualityImage` لا `pw.MemoryImage`: تحجيم متوسط-المساحة عند تحديد
+    // الدقّة (لا «أقرب جار» الذي يولّد المواريه) وتضمين بلا فقدان.
     final Map<String, pw.ImageProvider?> images = <String, pw.ImageProvider?>{
       for (final MapEntry<String, Uint8List> entry in request.imageBytes.entries)
-        entry.key: pw.MemoryImage(entry.value),
+        entry.key: PdfQualityImage(entry.value),
     };
 
-    final PdfRenderer renderer =
-        PdfRenderer(fonts: fonts, compress: request.compress);
+    final PdfRenderer renderer = PdfRenderer(
+      fonts: fonts,
+      compress: request.compress,
+      // دقّة المستند نفسها في المسار الخلفي، فلا تختلف النتيجة باختلاف
+      // حجم الدفعة (خيط رئيسي / isolate).
+      dpi: request.document.dpi.toDouble(),
+    );
     final Uint8List bytes = await renderer.build(
       document: request.document,
       rows: request.rows,

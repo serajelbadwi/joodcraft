@@ -758,4 +758,73 @@ void main() {
       expect(far.x, 40);
     });
   });
+
+  // -------------------------------------------------------------------------
+  //  تلوين الصورة المحددة
+  // -------------------------------------------------------------------------
+  group('تلوين الصورة المحددة', () {
+    TemplateEditorController withImage({String? tintHex}) {
+      final TemplateEditorController tintedController =
+          TemplateEditorController(
+        document: TemplateDocument(
+          orientation: PageOrientation.landscape,
+          elements: <TemplateElement>[
+            ImageElement(
+              id: 'img-1',
+              box: const ElementBox(x: 100, y: 100, width: 200, height: 100),
+              sourceKind: ImageSourceKind.dataUri,
+              path: 'AAAA',
+              tintHex: tintHex,
+            ),
+          ],
+        ),
+        category: TemplateCategory.certificate,
+      );
+      addTearDown(tintedController.dispose);
+      tintedController.select('img-1');
+      return tintedController;
+    }
+
+    test('ضبط اللون يُحدّث العنصر ويُحفظ في JSON', () {
+      final TemplateEditorController subject = withImage();
+
+      subject.setSelectedImageTint('#C7A26B');
+
+      final ImageElement updated = subject.selected! as ImageElement;
+      expect(updated.tintHex, '#C7A26B');
+      expect(updated.tintedImageKey, 'data:AAAA#c7a26b');
+      expect(subject.document.elements.single.toJson()['tint'], '#C7A26B');
+    });
+
+    test('إزالة اللون تُعيد البكسلات الأصلية', () {
+      final TemplateEditorController subject = withImage(tintHex: '#FF0000');
+
+      subject.clearSelectedImageTint();
+
+      expect((subject.selected! as ImageElement).tintHex, isNull);
+      expect(
+        subject.document.elements.single.toJson().containsKey('tint'),
+        isFalse,
+      );
+    });
+
+    test('لون فارغ أو مسافات يُعامَل كإزالة للتلوين', () {
+      final TemplateEditorController subject = withImage(tintHex: '#FF0000');
+
+      subject.setSelectedImageTint('   ');
+
+      expect((subject.selected! as ImageElement).tintHex, isNull);
+    });
+
+    test('لا يُسجَّل تعديل حين لا تتغيّر القيمة فعلاً', () {
+      final TemplateEditorController same = withImage(tintHex: '#FF0000');
+      final TemplateEditorController clear = withImage();
+
+      same.setSelectedImageTint('#FF0000'); // نفس اللون
+      clear.clearSelectedImageTint(); // لا لون أصلاً
+
+      expect(same.hasUnsavedChanges, isFalse, reason: 'لا خطوة تراجع زائفة.');
+      expect(clear.hasUnsavedChanges, isFalse, reason: 'لا خطوة تراجع زائفة.');
+    });
+  });
 }

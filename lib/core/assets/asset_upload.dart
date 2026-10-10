@@ -80,7 +80,7 @@ Future<int> uploadUserAssets(
     messenger.showSnackBar(
       SnackBar(
         content: Text(warnings.join('\n')),
-        backgroundColor: AppColors.navy,
+        backgroundColor: Theme.of(context).colorScheme.brandSurface,
         duration: const Duration(seconds: 8),
       ),
     );

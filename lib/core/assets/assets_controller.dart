@@ -143,6 +143,44 @@ class AssetsController extends ChangeNotifier {
     return asset;
   }
 
+  /// إدماج أصول مستوردة (من ملف ‎.jood‎) **بمعرّفاتها الأصلية**.
+  ///
+  /// بخلاف [addAsset] الذي يولّد معرّفاً جديداً ويحسب الأبعاد من البايتات، هنا
+  /// نحفظ نفس المعرّف الوارد حتى تبقى مراجع المستند (`ImageElement.path`
+  /// وخانات التوقيع) صالحة بلا إعادة تعيين. السجل الموجود بنفس المعرّف يُستبدل.
+  /// ما يتجاوز الحدّ يُتجاهل (لا يرمي) فلا يُفسد ملفٌ كبيرٌ المكتبة كلها.
+  Future<int> importAll(Iterable<UserAsset> incoming) async {
+    int imported = 0;
+    for (final UserAsset asset in incoming) {
+      if (asset.id.trim().isEmpty) continue;
+      if (asset.byteSize > maxBytes) {
+        debugPrint('[الأصول] تجاهل أصلاً مستورداً يتجاوز الحد: ${asset.name}');
+        continue;
+      }
+      final Uint8List bytes;
+      try {
+        bytes = asset.bytes;
+      } catch (error) {
+        debugPrint('[الأصول] تجاهل أصلاً مستورداً ببيانات تالفة '
+            '${asset.name}: $error');
+        continue;
+      }
+      final int index =
+          _assets.indexWhere((UserAsset a) => a.id == asset.id);
+      if (index >= 0) {
+        _assets[index] = asset;
+      } else {
+        _assets.add(asset);
+      }
+      AssetImageCache.instance.putAndPersist(asset, bytes);
+      imported++;
+    }
+    if (imported == 0) return 0;
+    await _persist();
+    notifyListeners();
+    return imported;
+  }
+
   /// إعادة تسمية أصل. لا يرمي.
   Future<void> renameAsset(String id, String name) async {
     final String clean = name.trim();

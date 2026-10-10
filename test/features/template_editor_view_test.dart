@@ -36,6 +36,10 @@ void main() {
     WidgetTester tester, {
     bool withRepository = true,
   }) async {
+    // شاشة واسعة تُظهر الشريط العلوي كاملاً (بلا قائمة فيض) — فالاختبارات هنا
+    // تختبر بناء المحرّر وحفظه، لا سلوك الفيض (له ملفّه الخاص).
+    await tester.binding.setSurfaceSize(const Size(3600, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light,
@@ -77,8 +81,13 @@ void main() {
         (WidgetTester tester) async {
       await pumpEditor(tester);
 
-      // الأزرار المدمجة بأيقونات تُعنون بالتلميح (Tooltip).
-      await tester.tap(find.byTooltip('رأسي'));
+      // اتجاه الورقة انتقل إلى قائمة «خصائص المستند» أعلى الشريط، فنفتحها
+      // أولاً ثم ننقر «رأسي».
+      await tester.tap(find.byKey(const ValueKey<String>('editor-document-menu')));
+      await tester.pumpAndSettle();
+      final Finder portrait = find.byTooltip('رأسي');
+      await tester.ensureVisible(portrait);
+      await tester.tap(portrait);
       await tester.pump();
 
       final TemplateCanvas canvas =
@@ -118,7 +127,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('الموضع والحجم'), findsOneWidget);
+      expect(find.text('التحويل والموضع'), findsOneWidget);
       expect(find.text('تنسيق النص'), findsOneWidget);
     });
 
@@ -146,12 +155,12 @@ void main() {
     testWidgets('النقر على عنصر داخل اللوحة يُظهر شريط خصائصه',
         (WidgetTester tester) async {
       await pumpEditor(tester);
-      expect(find.text('الموضع والحجم'), findsNothing);
+      expect(find.text('التحويل والموضع'), findsNothing);
 
       await tester.tap(find.byType(ElementView));
       await tester.pump(const Duration(milliseconds: 400));
 
-      expect(find.text('الموضع والحجم'), findsOneWidget);
+      expect(find.text('التحويل والموضع'), findsOneWidget);
       expect(find.text('تنسيق النص'), findsOneWidget);
     });
   });
@@ -161,11 +170,12 @@ void main() {
         (WidgetTester tester) async {
       await pumpEditor(tester, withRepository: false);
 
+      await tester.ensureVisible(find.text('الحفظ غير متاح'));
       await tester.tap(find.text('الحفظ غير متاح'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
-      expect(find.textContaining('يتطلب الاتصال بمشروع Supabase'), findsOneWidget);
+      expect(find.textContaining('الحفظ المحلي غير متاح'), findsOneWidget);
       expect(repository.createCalls, 0);
 
       await tester.pump(const Duration(seconds: 5));
@@ -175,6 +185,7 @@ void main() {
         (WidgetTester tester) async {
       await pumpEditor(tester);
 
+      await tester.ensureVisible(find.text('حفظ القالب'));
       await tester.tap(find.text('حفظ القالب'));
       await tester.pumpAndSettle();
 
@@ -201,6 +212,7 @@ void main() {
         (WidgetTester tester) async {
       await pumpEditor(tester);
 
+      await tester.ensureVisible(find.text('حفظ القالب'));
       await tester.tap(find.text('حفظ القالب'));
       await tester.pumpAndSettle();
       await tester.enterText(
@@ -211,6 +223,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 5));
 
+      await tester.ensureVisible(find.text('حفظ القالب'));
       await tester.tap(find.text('حفظ القالب'));
       await tester.pumpAndSettle();
 
@@ -226,6 +239,7 @@ void main() {
       repository.failWith = AppErrorCode.permissionDenied;
       await pumpEditor(tester);
 
+      await tester.ensureVisible(find.text('حفظ القالب'));
       await tester.tap(find.text('حفظ القالب'));
       await tester.pumpAndSettle();
       await tester.enterText(
@@ -331,6 +345,7 @@ void main() {
       );
       await pumpEditor(tester);
 
+      await tester.ensureVisible(find.text('قوالبي'));
       await tester.tap(find.text('قوالبي'));
       await tester.pumpAndSettle();
 
@@ -348,12 +363,13 @@ void main() {
     testWidgets('مكتبة بلا مستودع تُظهر تحذيراً', (WidgetTester tester) async {
       await pumpEditor(tester, withRepository: false);
 
+      await tester.ensureVisible(find.text('قوالبي'));
       await tester.tap(find.text('قوالبي'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
       expect(
-        find.textContaining('مكتبة القوالب تتطلب الاتصال'),
+        find.textContaining('مكتبة المشاريع المحلية غير متاحة'),
         findsOneWidget,
       );
       await tester.pump(const Duration(seconds: 5));
@@ -366,12 +382,14 @@ void main() {
       await pumpEditor(tester);
       expect(find.byType(TemplateCanvas), findsOneWidget);
 
+      await tester.ensureVisible(find.byTooltip('معاينة PDF'));
       await tester.tap(find.byTooltip('معاينة PDF'));
       await tester.pump();
 
       expect(find.byType(TemplateCanvas), findsNothing);
       expect(find.text('إضافة عنصر'), findsNothing);
 
+      await tester.ensureVisible(find.byTooltip('المحرر'));
       await tester.tap(find.byTooltip('المحرر'));
       await tester.pump();
       expect(find.byType(TemplateCanvas), findsOneWidget);

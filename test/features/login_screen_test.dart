@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:joodcraft/core/constants/app_assets.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/core/widgets/joodcraft_logo.dart';
 import 'package:joodcraft/features/auth/presentation/providers/auth_provider.dart';
@@ -60,13 +61,14 @@ void main() {
     await tester.pumpWidget(wrap(provider));
     await tester.pumpAndSettle();
 
-    // لوحة الهوية تظهر في التخطيط العريض (شعار الأصل بدل الرسم البرمجي).
+    // لوحة الهوية تظهر في التخطيط العريض بأيقونة البرنامج المحزومة.
+    expect(find.byType(JoodCraftLogo), findsWidgets);
     expect(
       find.byWidgetPredicate(
-        (Widget w) =>
-            w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName == kJoodCraftLogoAsset,
+        (Widget widget) =>
+            widget is Image &&
+            widget.image is AssetImage &&
+            (widget.image as AssetImage).assetName == AppAssets.appIconImage,
       ),
       findsWidgets,
     );

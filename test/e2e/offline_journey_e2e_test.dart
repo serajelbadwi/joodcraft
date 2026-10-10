@@ -99,19 +99,26 @@ void main() {
     // (2) الانتقال إلى مكتبة القوالب وفتح قالب جاهز.
     router.go('/templates');
     await tester.pumpAndSettle();
-    await tester.tap(
-      find.descendant(
-        of: find.byKey(
-          const ValueKey<String>('library-entry-preset:appreciation_certificate'),
-        ),
-        matching: find.text('فتح كقالب'),
+    // أقسام المكتبة مطويّة افتراضياً — نفتحها كلها للوصول إلى القالب.
+    await tester.tap(find.byTooltip('توسيع الكل'));
+    await tester.pumpAndSettle();
+    final Finder openPreset = find.descendant(
+      of: find.byKey(
+        const ValueKey<String>('library-entry-preset:appreciation_certificate'),
       ),
+      matching: find.text('فتح كقالب'),
     );
+    await tester.ensureVisible(openPreset);
+    await tester.pumpAndSettle();
+    await tester.tap(openPreset);
     await tester.pumpAndSettle();
 
-    // (3) المحرّر الحقيقي فتح القالب الجاهز (عنوانه وعناصره ظاهرة).
+    // (3) المحرّر الحقيقي فتح القالب الجاهز (عنوانه ولوحته ظاهرة).
     expect(find.text('شهادة شكر وتقدير'), findsWidgets);
-    expect(find.textContaining('عنصراً'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey<String>('editor-canvas-viewport')),
+      findsOneWidget,
+    );
   });
 
   test('رحلة التوليد: أصول + قالب جاهز + بيانات Excel ← ملف PDF سليم', () async {

@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 
 import '../../../../core/errors/app_error_code.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/projects/jood/jood_autosave_service.dart';
 import '../../domain/app_user.dart';
 import '../../domain/auth_repository.dart';
+import '../../domain/local_admin_authenticator.dart';
 
 /// حالة المصادقة داخل التطبيق.
 ///
@@ -101,6 +103,50 @@ class AuthProvider extends ChangeNotifier {
   /// إرسال رابط استعادة كلمة المرور.
   Future<void> sendPasswordReset(String email) {
     return _run(() => _requireRepository().sendPasswordReset(email));
+  }
+
+  /// هل التبديل السريع بين **المديرين الفرعيين المحليين** متاح في هذا الوضع؟
+  ///
+  /// يتحقّق فقط عندما يكون المخزن الحالي مُنفّذاً لـ[LocalAdminAuthenticator]
+  /// (المخزن المحلي على الجهاز) وهو جاهز — فيُعرض الزر في هذه الحالة وحده.
+  bool get isLocalSwitchAvailable {
+    // يُقرأ كـ`Object?` حتى يَنجح ترقية النوع (promotion) إلى الواجهة غير
+    // المرتبطة بـ[AuthRepository]، فلا نحتاج تحويلاً صريحاً.
+    final Object? repository = _repository;
+    return repository is LocalAdminAuthenticator &&
+        repository.isLocalSwitchAvailable;
+  }
+
+  /// **تبديل حساب سريع (Fast Switch Admin)** — نسخة «المديرين الفرعيين
+  /// المحليين»: يقرأ **اسم المستخدم المحلي** للحساب الفرعي على هذا الجهاز
+  /// ويتحقّق من كلمة مروره المحلية (بصمة PBKDF2 في المخزن المحلي) ثم يستبدل
+  /// الجلسة فوراً، مع حفظ مسودّات كل المشاريع المفتوحة أولاً.
+  ///
+  /// لا يمسّ ترخيص الاشتراك الأساسي (Master License) — الجلسة المحلية تتغيّر
+  /// فقط، ومالك الجهاز يبقى صاحب الترخيص.
+  ///
+  /// يرمي [AppException] عند الفشل (اسم مستخدم غير موجود/كلمة مرور خاطئة).
+  Future<void> switchAccount({
+    required String username,
+    required String password,
+  }) {
+    return _run(() async {
+      // `Object?` لتمكين ترقية النوع إلى [LocalAdminAuthenticator].
+      final Object? repository = _repository;
+      if (repository is! LocalAdminAuthenticator) {
+        throw const AppException(
+          AppErrorCode.notConfigured,
+          message: 'التبديل السريع متاح مع الحسابات المحلية على هذا الجهاز فقط.',
+        );
+      }
+      // حفظ حالة المشاريع المفتوحة قبل تبديل الجلسة (حاجز بلا استثناء).
+      await JoodAutosaveService.flushAll();
+      _user = await repository.signInWithLocalUsername(
+        username: username,
+        password: password,
+      );
+      unawaited(_refreshProfile());
+    });
   }
 
   /// إنهاء الجلسة.

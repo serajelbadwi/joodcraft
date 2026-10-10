@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get editorDone => 'Done';
+
+  @override
   String get appTagline =>
       'Generate official certificates and contracts offline';
 
@@ -32,6 +35,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actionSignOut => 'Sign out';
+
+  @override
+  String get actionOpenMenu => 'Menu';
+
+  @override
+  String get editorFitToScreen => 'Fit to screen';
+
+  @override
+  String get editorNewTemplate => 'New template';
+
+  @override
+  String get editorNewConfirm =>
+      'A new template will start from the default design; unsaved changes remain in the undo history. Continue?';
 
   @override
   String get actionBackToDashboard => 'Back to dashboard';
@@ -368,6 +384,235 @@ class AppLocalizationsEn extends AppLocalizations {
       'Drag the group with the mouse, use the arrows for fine nudging (Shift = 10px), and Ctrl + click to adjust the selection.';
 
   @override
+  String get destBrand => 'Brand & Profile';
+
+  @override
+  String get destBrandDesc => 'Your logo, seals, signatures and brand colors.';
+
+  @override
+  String get brandTitle => 'Brand & Profile Settings';
+
+  @override
+  String get brandTabVisuals => 'Visual identity';
+
+  @override
+  String get brandTabText => 'Text data';
+
+  @override
+  String get brandTabColors => 'Colors & fonts';
+
+  @override
+  String get brandTabPreview => 'Identity preview';
+
+  @override
+  String get brandPrimaryLogo => 'Primary logo';
+
+  @override
+  String get brandWatermarkLogo => 'Watermark logo';
+
+  @override
+  String get brandSeals => 'Official seals';
+
+  @override
+  String get brandAddSeal => 'Add seal';
+
+  @override
+  String get brandSealName => 'Seal name';
+
+  @override
+  String get brandSignatures => 'Authorized signatures';
+
+  @override
+  String get brandAddSignature => 'Add signature';
+
+  @override
+  String get brandSignatureName => 'Signer name';
+
+  @override
+  String get brandSignatureTitle => 'Job title';
+
+  @override
+  String get brandRemove => 'Remove';
+
+  @override
+  String get brandNoSeals => 'No seals added yet.';
+
+  @override
+  String get brandNoSignatures => 'No signatures added yet.';
+
+  @override
+  String get brandOrgNameAr => 'Organization name (Arabic)';
+
+  @override
+  String get brandOrgNameEn => 'Organization name (English)';
+
+  @override
+  String get brandHeaderText => 'Header text';
+
+  @override
+  String get brandFooterText => 'Footer text';
+
+  @override
+  String get brandRegNumber => 'Tax / registration number';
+
+  @override
+  String get brandPrimaryColor => 'Primary color';
+
+  @override
+  String get brandSecondaryColor => 'Secondary color';
+
+  @override
+  String get brandAccentColor => 'Accent color';
+
+  @override
+  String get brandHeaderFont => 'Heading font';
+
+  @override
+  String get brandBodyFont => 'Body font';
+
+  @override
+  String get brandClear => 'Clear brand';
+
+  @override
+  String get brandClearConfirm =>
+      'All saved brand content will be deleted. Continue?';
+
+  @override
+  String get brandSaved => 'Brand saved.';
+
+  @override
+  String get brandPresets => 'Brand presets';
+
+  @override
+  String get brandInsertHeader => 'Insert standard header';
+
+  @override
+  String get brandInsertFooter => 'Insert standard footer';
+
+  @override
+  String get brandApplyColors => 'Apply brand colors';
+
+  @override
+  String get brandQuickSeals => 'Seals';
+
+  @override
+  String get brandQuickSignatures => 'Signatures';
+
+  @override
+  String get brandNoBrand => 'Your brand isn\'t set up yet.';
+
+  @override
+  String get brandOpenSettings => 'Open brand settings';
+
+  @override
+  String get brandHeaderInserted => 'Standard header inserted.';
+
+  @override
+  String get brandFooterInserted => 'Standard footer inserted.';
+
+  @override
+  String get brandColorsApplied => 'Brand colors applied.';
+
+  @override
+  String get brandSealInserted => 'Seal inserted.';
+
+  @override
+  String get brandSignatureInserted => 'Signature inserted.';
+
+  @override
+  String get brandFontDefault => 'Default';
+
+  @override
+  String get paletteShapes => 'Shapes';
+
+  @override
+  String get paletteRoundedRect => 'Rounded rectangle';
+
+  @override
+  String get paletteEllipse => 'Circle / ellipse';
+
+  @override
+  String get editorFillOpacity => 'Fill opacity';
+
+  @override
+  String get editorCollapsePanel => 'Collapse side panel';
+
+  @override
+  String get editorExpandPanel => 'Show side panel';
+
+  @override
+  String get editorCustomSize => 'Custom size';
+
+  @override
+  String get editorStandardSize => 'Standard size';
+
+  @override
+  String get editorBackgroundTitle => 'Sheet background';
+
+  @override
+  String get editorGradientFrom => 'From';
+
+  @override
+  String get editorGradientTo => 'To';
+
+  @override
+  String get editorGradientDirection => 'Direction';
+
+  @override
+  String get editorGradientNone => 'No gradient';
+
+  @override
+  String get editorGradientVertical => 'Vertical';
+
+  @override
+  String get editorGradientHorizontal => 'Horizontal';
+
+  @override
+  String get editorGradientDiagonal => 'Diagonal';
+
+  @override
+  String get editorLayersTitle => 'Layers';
+
+  @override
+  String get editorLayerShow => 'Show element';
+
+  @override
+  String get editorLayerHide => 'Hide element';
+
+  @override
+  String get editorLayerLock => 'Lock element';
+
+  @override
+  String get editorLayerUnlock => 'Unlock element';
+
+  @override
+  String get editorLayersEmpty => 'No elements on this page yet.';
+
+  @override
+  String get editorGroupSelected => 'Group selection';
+
+  @override
+  String get editorUngroupSelected => 'Ungroup';
+
+  @override
+  String get editorAlignLeft => 'Align left';
+
+  @override
+  String get editorAlignCenterH => 'Center horizontally';
+
+  @override
+  String get editorAlignRight => 'Align right';
+
+  @override
+  String get editorAlignTop => 'Align top';
+
+  @override
+  String get editorAlignCenterV => 'Center vertically';
+
+  @override
+  String get editorAlignBottom => 'Align bottom';
+
+  @override
   String get editorBringForward => 'Bring forward';
 
   @override
@@ -508,6 +753,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editorSource => 'Source';
+
+  @override
+  String get editorImageTint => 'Image tint';
 
   @override
   String get editorImageFit => 'Image fit';
@@ -1269,7 +1517,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tevSaveNeedsSupabase =>
-      'Saving requires a connection to a Supabase project. Run the app with your project keys (env.json) to save templates.';
+      'Local saving is unavailable in this session — the projects store could not be opened on this device.';
 
   @override
   String tevMissingAssets(Object list) {
@@ -1278,7 +1526,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tevTemplateLibraryNeedsSupabase =>
-      'The template library requires a connection to a Supabase project.';
+      'The local projects library is unavailable in this session.';
 
   @override
   String tevOpenedTemplate(Object title) {
@@ -1832,4 +2080,893 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cbContractDataTitle => 'Contract data (sample)';
+
+  @override
+  String get editorSendBackward => 'Send backward';
+
+  @override
+  String get editorRotateLeft => 'Rotate 90° left';
+
+  @override
+  String get editorRotateRight => 'Rotate 90° right';
+
+  @override
+  String get editorFlipH => 'Flip horizontal';
+
+  @override
+  String get editorFlipV => 'Flip vertical';
+
+  @override
+  String get editorTransform => 'Transform';
+
+  @override
+  String get editorToolSelect => 'Select';
+
+  @override
+  String get editorToolShapes => 'Shapes';
+
+  @override
+  String get editorFillType => 'Fill type';
+
+  @override
+  String get editorFillSolid => 'Solid';
+
+  @override
+  String get editorGradientLinear => 'Linear gradient';
+
+  @override
+  String get editorGradientRadial => 'Radial gradient';
+
+  @override
+  String get editorGradientAngle => 'Gradient angle';
+
+  @override
+  String get editorShadowEnable => 'Add shadow';
+
+  @override
+  String get editorShadowColor => 'Shadow color';
+
+  @override
+  String get editorShadowBlur => 'Shadow blur';
+
+  @override
+  String get editorShadowOffsetX => 'Offset X';
+
+  @override
+  String get editorShadowOffsetY => 'Offset Y';
+
+  @override
+  String get editorShadowSpread => 'Spread';
+
+  @override
+  String get editorShadowRemove => 'Remove shadow';
+
+  @override
+  String get editorPoints => 'Points';
+
+  @override
+  String get editorInnerRadius => 'Inner radius';
+
+  @override
+  String get editorCornerTopLeft => 'Top-left';
+
+  @override
+  String get editorCornerTopRight => 'Top-right';
+
+  @override
+  String get editorCornerBottomRight => 'Bottom-right';
+
+  @override
+  String get editorCornerBottomLeft => 'Bottom-left';
+
+  @override
+  String get editorDashPattern => 'Dash pattern';
+
+  @override
+  String get editorBooleanOps => 'Boolean operations';
+
+  @override
+  String get editorBooleanUnion => 'Union';
+
+  @override
+  String get editorBooleanSubtract => 'Subtract';
+
+  @override
+  String get editorBooleanIntersect => 'Intersect';
+
+  @override
+  String get editorBooleanUngroup => 'Separate compound';
+
+  @override
+  String get paletteStar => 'Star';
+
+  @override
+  String get palettePolygon => 'Polygon';
+
+  @override
+  String get editorBooleanExclude => 'Exclude';
+
+  @override
+  String get editorBooleanHint =>
+      'The merged path is a single Boolean result (no inner borders) and can be separated at any time.';
+
+  @override
+  String get editorDockTools => 'Tool panel';
+
+  @override
+  String get editorDockAnchor => 'Dock position';
+
+  @override
+  String get editorDockTopBar => 'Top bar';
+
+  @override
+  String get editorDockInspector => 'Side panel';
+
+  @override
+  String get editorDockLeftRail => 'Side rail';
+
+  @override
+  String get editorDockFloating => 'Floating';
+
+  @override
+  String get editorDockCollapse => 'Collapse tools';
+
+  @override
+  String get editorDockExpand => 'Expand tools';
+
+  @override
+  String get editorDockResize => 'Drag to resize';
+
+  @override
+  String get editorDockDropHint => 'Release to snap to';
+
+  @override
+  String get editorMoreTools => 'More tools';
+
+  @override
+  String get editorDocumentProperties => 'Document properties';
+
+  @override
+  String get editorDockReset => 'Restore default docking';
+
+  @override
+  String get editorTextShadow => 'Text shadow';
+
+  @override
+  String get editorTextShadowAdd => 'Add text shadow';
+
+  @override
+  String get editorShadowOpacity => 'Shadow opacity';
+
+  @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderPreviewAutoHint => 'Click to clear the override (automatic)';
+
+  @override
+  String get genderPresetCompleted => 'completed (m./f.)';
+
+  @override
+  String get genderPresetPassed => 'passed (m./f.)';
+
+  @override
+  String get genderPresetForStudent => 'for the student (m./f.)';
+
+  @override
+  String get genderPresetStudent => 'the student (m./f.)';
+
+  @override
+  String get genderPresetToHim => 'to him / to her';
+
+  @override
+  String get genderPresetHonoring => 'the outstanding trainee (m./f.)';
+
+  @override
+  String get editorGenderSnippet => 'Insert conditional snippet';
+
+  @override
+  String get editorGenderSnippetHint =>
+      'Inserts a phrase that switches automatically with the recipient\'s gender.';
+
+  @override
+  String get bpGenderReviewTitle => 'Gender review (masculine/feminine)';
+
+  @override
+  String get bpGenderReviewSubtitle =>
+      'Gender is detected from the name or a \"Gender\" column — fix edge cases before printing.';
+
+  @override
+  String get bpGenderRow => 'Row';
+
+  @override
+  String get bpGenderDetected => 'Detected';
+
+  @override
+  String get bpGenderEffective => 'Applied';
+
+  @override
+  String get bpGenderNameColumn => 'Name';
+
+  @override
+  String get bpGenderEditName => 'Edit name';
+
+  @override
+  String get bpGenderNameHint => 'Type the correct name';
+
+  @override
+  String get bpGenderClearOverrides => 'Clear overrides';
+
+  @override
+  String get bpGenderOverridden => 'Manually overridden';
+
+  @override
+  String get bpGenderUnknownName => '—';
+
+  @override
+  String get bpOutputTitle => 'Certificate save destination';
+
+  @override
+  String get bpOutputHint =>
+      'Choose the folder to save the generated PDF in, or start with the default location.';
+
+  @override
+  String get bpOutputPickFolder => 'Choose folder…';
+
+  @override
+  String get bpOutputStart => 'Start generation';
+
+  @override
+  String get bpOutputPathLabel => 'Selected folder';
+
+  @override
+  String get bpOutputNoFolder =>
+      'No folder selected — printing and export only.';
+
+  @override
+  String get bpOpenFolder => 'Open folder';
+
+  @override
+  String get bpOutputSavedTitle => 'PDF file saved';
+
+  @override
+  String get bpOpenFolderFailed => 'Could not open the folder.';
+
+  @override
+  String get bpOutputNameLabel => 'Export filename';
+
+  @override
+  String get bpOutputNameHint => 'Type a name without the extension';
+
+  @override
+  String get bpOutputNamePreviewLabel => 'Will be saved as';
+
+  @override
+  String get bpOutputModeLabel => 'Save mode';
+
+  @override
+  String get bpOutputModeCombined => 'Single combined file';
+
+  @override
+  String get bpOutputModeIndividual => 'Separate file per person';
+
+  @override
+  String get hubTitle => 'New project';
+
+  @override
+  String get hubSubtitle =>
+      'Pick a ready-made size or set your own — the canvas opens at the exact size and ratio.';
+
+  @override
+  String get hubKindSingle => 'Single-sheet prints and documents';
+
+  @override
+  String get hubKindMulti => 'Multi-page books and publications';
+
+  @override
+  String get hubKindSingleHint =>
+      'One sheet: certificates, contracts, cards, seat numbers, greeting cards.';
+
+  @override
+  String get hubKindMultiHint =>
+      'Multi-page: book, magazine, booklet, report, catalog.';
+
+  @override
+  String get hubGroupCertificates => 'Certificates and contracts';
+
+  @override
+  String get hubGroupCards => 'Cards and ID badges';
+
+  @override
+  String get hubGroupSeat => 'Seat numbers and tags';
+
+  @override
+  String get hubGroupGreeting => 'Greeting cards';
+
+  @override
+  String get hubGroupPublications => 'Books and publications';
+
+  @override
+  String get hubGroupCustom => 'Custom size';
+
+  @override
+  String get hubDigitalBadge => 'Digital';
+
+  @override
+  String get hubCreate => 'Create';
+
+  @override
+  String get hubCustomCardBody =>
+      'Enter your dimensions in any unit and start with a canvas at your own size.';
+
+  @override
+  String get hubCustomName => 'Project name';
+
+  @override
+  String get hubCustomNameHint => 'e.g. Invitation card';
+
+  @override
+  String get hubCustomPreview => 'Final size';
+
+  @override
+  String get hubCustomCreate => 'Create canvas';
+
+  @override
+  String get hubCustomType => 'Project type';
+
+  @override
+  String get hubSearchHint => 'Search sizes…';
+
+  @override
+  String get hubNoResults => 'No matching size — try another keyword.';
+
+  @override
+  String get hubAspectRatio => 'Ratio';
+
+  @override
+  String get destNewProject => 'New project';
+
+  @override
+  String get destNewProjectDesc =>
+      'Pick a ready-made or custom size and start designing right away.';
+
+  @override
+  String get ptpImpositionToggle => 'Print imposition';
+
+  @override
+  String get ptpImpositionNoFit =>
+      'The sheet is too small for this item — reduce margins or pick a larger sheet.';
+
+  @override
+  String get editorEffectsTitle => 'Effects & color adjustments';
+
+  @override
+  String get editorShadowGroup => 'Shadow';
+
+  @override
+  String get editorOuterGlow => 'Outer glow';
+
+  @override
+  String get editorInnerGlow => 'Inner glow';
+
+  @override
+  String get editorGlowAdd => 'Add glow';
+
+  @override
+  String get editorGlowRemove => 'Remove glow';
+
+  @override
+  String get editorGlowColor => 'Glow color';
+
+  @override
+  String get editorGlowRadius => 'Glow radius';
+
+  @override
+  String get editorGlowSpread => 'Glow spread';
+
+  @override
+  String get editorGlowOpacity => 'Glow opacity';
+
+  @override
+  String get editorAdjustGroup => 'Color adjustments';
+
+  @override
+  String get editorAdjustBrightness => 'Brightness';
+
+  @override
+  String get editorAdjustContrast => 'Contrast';
+
+  @override
+  String get editorAdjustSaturation => 'Saturation';
+
+  @override
+  String get editorAdjustHue => 'Hue';
+
+  @override
+  String get editorAdjustReset => 'Reset';
+
+  @override
+  String get bpOutputSavedFolderTitle => 'Files saved to a dedicated folder';
+
+  @override
+  String get hubDetailsTitle => 'Preset details';
+
+  @override
+  String get hubDetailsHint =>
+      'Pre-filled default spec — pick a size from the grid or edit the dimensions to start.';
+
+  @override
+  String get hubFilterAll => 'All';
+
+  @override
+  String get hubFilterRecent => 'Recent';
+
+  @override
+  String get hubFilterSeat => 'Seat numbers';
+
+  @override
+  String get hubFilterGreeting => 'Greetings & screens';
+
+  @override
+  String get hubRecentEmpty =>
+      'No recent sizes yet — any project you create shows up here.';
+
+  @override
+  String get hubDocTitle => 'Project name';
+
+  @override
+  String get hubDocTitleHint => 'New project - 1';
+
+  @override
+  String get hubWidth => 'Width';
+
+  @override
+  String get hubHeight => 'Height';
+
+  @override
+  String get hubUnitLabel => 'Unit';
+
+  @override
+  String get hubOrientationLabel => 'Orientation';
+
+  @override
+  String get hubPortrait => 'Portrait';
+
+  @override
+  String get hubLandscape => 'Landscape';
+
+  @override
+  String get hubVariantLabel => 'Type';
+
+  @override
+  String get hubResolutionLabel => 'Resolution';
+
+  @override
+  String get hubResolutionUnitLabel => 'Resolution unit';
+
+  @override
+  String get hubColorModeLabel => 'Color mode';
+
+  @override
+  String get hubBackgroundLabel => 'Background color';
+
+  @override
+  String get hubBackgroundWhite => 'White';
+
+  @override
+  String get hubBackgroundTransparent => 'Transparent';
+
+  @override
+  String get hubBackgroundBlack => 'Black';
+
+  @override
+  String get hubBackgroundCustom => 'Custom color';
+
+  @override
+  String get hubCreateProject => 'Create project';
+
+  @override
+  String get hubCustomFamilyTitle => 'Custom size';
+
+  @override
+  String get newDocTitle => 'New document';
+
+  @override
+  String get newDocScopeSocial => 'Social & Mobile';
+
+  @override
+  String get newDocFilterCertificates => 'Certificates';
+
+  @override
+  String get newDocFilterCards => 'Cards';
+
+  @override
+  String get newDocFilterGreeting => 'Greetings';
+
+  @override
+  String get newDocFilterPublications => 'Publications';
+
+  @override
+  String get menuFile => 'File';
+
+  @override
+  String get menuEdit => 'Edit';
+
+  @override
+  String get menuView => 'View';
+
+  @override
+  String get menuTools => 'Tools';
+
+  @override
+  String get menuHelp => 'Help';
+
+  @override
+  String get menuNewDocument => 'New document…';
+
+  @override
+  String get menuPurgeRecent => 'Clear recent sizes';
+
+  @override
+  String get menuPurgeImageCache => 'Clear image cache';
+
+  @override
+  String get menuPreviewCertificate => 'Preview sample certificate';
+
+  @override
+  String get menuPreviewContract => 'Preview sample contract';
+
+  @override
+  String get menuAbout => 'About JoodCraft';
+
+  @override
+  String get actionNewShort => '+ New';
+
+  @override
+  String get dashLocalMode => 'Local';
+
+  @override
+  String get dashLocalStorage =>
+      'Saved locally on this device — no project is uploaded to a server.';
+
+  @override
+  String get dashRecentProjects => 'Recent projects';
+
+  @override
+  String get dashRecentEmpty =>
+      'No saved projects on this device yet — create a new document and it appears here instantly.';
+
+  @override
+  String get dashRecentOpen => 'Open project';
+
+  @override
+  String get dashRoadmapLocal =>
+      'Local projects database (projects table) with 100% offline saving';
+
+  @override
+  String get dashRoadmapOffline =>
+      'Fully offline operation: no project uploads and no network required';
+
+  @override
+  String get editorTransformPosition => 'Transform & Position';
+
+  @override
+  String get editorTransformPositionHint => 'Position, size and rotation angle';
+
+  @override
+  String get editorAppearanceEffects => 'Appearance & Effects';
+
+  @override
+  String get editorAppearanceEffectsHint => 'Fill, stroke, glow and shadows';
+
+  @override
+  String get editorTypographyHint => 'Font, size, alignment and spacing';
+
+  @override
+  String get editorPageSettingsHint => 'Size and measurement unit';
+
+  @override
+  String get editorBackgroundHint => 'Page colour or gradient';
+
+  @override
+  String get editorPrecisionHint => 'Fine nudge and scale';
+
+  @override
+  String get joodExportProject => 'Export project (.jood)';
+
+  @override
+  String get joodImportProject => 'Open project (.jood)';
+
+  @override
+  String get joodExportReady => 'Project file is ready to save.';
+
+  @override
+  String get joodExportFailed => 'Could not export the project file.';
+
+  @override
+  String get joodImportOpened => 'Imported project opened.';
+
+  @override
+  String get joodImportFailed => 'Could not open the project file.';
+
+  @override
+  String get joodRecoveryTitle => 'Unsaved draft';
+
+  @override
+  String get joodRecoveryMessage =>
+      'There is an unsaved draft from a previous session. Do you want to restore it?';
+
+  @override
+  String get joodRecoveryRestore => 'Restore';
+
+  @override
+  String get joodRecoveryDiscard => 'Discard';
+
+  @override
+  String get joodRecoveryRestored => 'Draft restored.';
+
+  @override
+  String get joodAutosaveSaved => 'Saved automatically';
+
+  @override
+  String get joodAutosaveSaving => 'Saving…';
+
+  @override
+  String get editorConfirm => 'Confirm';
+
+  @override
+  String get admTitle => 'Local admin management';
+
+  @override
+  String get admRefresh => 'Refresh';
+
+  @override
+  String get admTabAdmins => 'Admins';
+
+  @override
+  String get admTabTransfer => 'Device transfer';
+
+  @override
+  String get admTabAudit => 'Export log';
+
+  @override
+  String get admListTitle => 'Admin accounts on this device';
+
+  @override
+  String get admAdd => 'Add admin';
+
+  @override
+  String get admNoAdmins => 'No admin accounts yet.';
+
+  @override
+  String get admLoading => 'Loading admin accounts on this device…';
+
+  @override
+  String get admRoleOwner => 'Primary admin';
+
+  @override
+  String get admCurrent => 'You';
+
+  @override
+  String get admCurrentCardTitle => 'Current account on this device';
+
+  @override
+  String get admRoleAdmin => 'Admin';
+
+  @override
+  String get admSwitchTitle => 'Fast account switch';
+
+  @override
+  String get admSwitchPrompt =>
+      'Pick the local username of a sub-admin on this device and enter their local password to jump straight into their session — open project drafts are saved first, and the master subscription licence is unaffected.';
+
+  @override
+  String get admSwitchNoOthers =>
+      'No other sub-admins on this device. Add a new admin from the admins screen first.';
+
+  @override
+  String get admSwitchPick => 'Local username';
+
+  @override
+  String get admSwitchPassword => 'Local password of the selected account';
+
+  @override
+  String get admSwitchPickPassword => 'Pick a username and enter the password.';
+
+  @override
+  String get admSwitchWrongPassword => 'Incorrect password.';
+
+  @override
+  String get admSwitchFailed => 'Could not switch accounts. Try again.';
+
+  @override
+  String get admSwitchSuccess => 'Account switched successfully.';
+
+  @override
+  String get admSwitchAccount => 'Switch account';
+
+  @override
+  String get admSwitchAction => 'Switch now';
+
+  @override
+  String get admColAdmin => 'Admin';
+
+  @override
+  String get admColUsername => 'Local username';
+
+  @override
+  String get admColRole => 'Role';
+
+  @override
+  String get admColCreated => 'Added on';
+
+  @override
+  String get admColActions => 'Actions';
+
+  @override
+  String get destJoodWriter => 'Jood Writer';
+
+  @override
+  String get destJoodWriterDesc =>
+      'Text documents and reports with flowing, self-paginating pages.';
+
+  @override
+  String get admCreatedAt => 'Created';
+
+  @override
+  String get admEdit => 'Edit details';
+
+  @override
+  String get admChangePassword => 'Change password';
+
+  @override
+  String get admPromote => 'Promote to primary admin';
+
+  @override
+  String get admDemote => 'Demote to admin';
+
+  @override
+  String get admDelete => 'Delete account';
+
+  @override
+  String admDeleteConfirm(Object name) {
+    return '“$name” will be permanently deleted from this device. This cannot be undone.';
+  }
+
+  @override
+  String get admPromoted => 'Promoted to primary admin.';
+
+  @override
+  String get admDemoted => 'Demoted to admin.';
+
+  @override
+  String get admDeleted => 'Account deleted.';
+
+  @override
+  String get admCreated => 'New admin added.';
+
+  @override
+  String get admUpdated => 'Admin details updated.';
+
+  @override
+  String get admPasswordChanged => 'Password changed.';
+
+  @override
+  String get admTransferInfoTitle => 'How does transfer work?';
+
+  @override
+  String get admTransferInfo1 =>
+      'The account table (with password hashes, never the passwords) is exported inside a file encrypted with a passphrase you choose.';
+
+  @override
+  String get admTransferInfo2 =>
+      'Move the file or code to the other device and import it there with the same passphrase, and the accounts work with the same permissions.';
+
+  @override
+  String get admTransferInfo3 =>
+      'Nothing is sent to any server: the transfer is fully manual between local devices.';
+
+  @override
+  String get admExport => 'Export accounts';
+
+  @override
+  String get admExportPassphrase => 'Export passphrase';
+
+  @override
+  String get admPassphraseConfirm => 'Confirm passphrase';
+
+  @override
+  String get admExportRisk =>
+      'I understand that anyone holding this code and its passphrase can sign in with these accounts, so I will share it carefully.';
+
+  @override
+  String get admExportGenerate => 'Generate encrypted code';
+
+  @override
+  String get admExportFile => 'Save to a dedicated file';
+
+  @override
+  String get admExportDone =>
+      'Encrypted code generated. Copy it or save it to a file.';
+
+  @override
+  String get admExportFileSaved => 'Encrypted accounts file saved.';
+
+  @override
+  String get admPassphraseTooShort =>
+      'Use at least 6 characters for the passphrase.';
+
+  @override
+  String get admPassphraseMismatch => 'The passphrases do not match.';
+
+  @override
+  String get admAcceptRiskRequired =>
+      'First confirm that you understand the risk of sharing the code.';
+
+  @override
+  String admFileError(Object error) {
+    return 'Could not handle the file: $error';
+  }
+
+  @override
+  String get admImport => 'Import accounts';
+
+  @override
+  String get admImportCode => 'Accounts code';
+
+  @override
+  String get admImportPassphrase => 'File passphrase';
+
+  @override
+  String get admImportReplace => 'Replace passwords of existing accounts';
+
+  @override
+  String get admImportPick => 'Choose a file';
+
+  @override
+  String get admImportRun => 'Import now';
+
+  @override
+  String get admImportCodeRequired => 'Paste the code or choose a file first.';
+
+  @override
+  String get admImportPassphraseRequired => 'Enter the file passphrase.';
+
+  @override
+  String admImportDone(int added, int updated, int skipped) {
+    return 'Imported: $added new, $updated updated, $skipped skipped.';
+  }
+
+  @override
+  String get admAuditTitle => 'Issued certificates and documents log';
+
+  @override
+  String get admAuditClear => 'Clear log';
+
+  @override
+  String get admAuditEmpty =>
+      'No exports yet. Every certificate or contract you export will be logged here with its date and the admin who issued it.';
+
+  @override
+  String get admAuditBy => 'By';
+
+  @override
+  String get admAuditPages => 'pages';
+
+  @override
+  String get admAuditClearConfirm =>
+      'The whole export log will be deleted from this device. This cannot be undone.';
+
+  @override
+  String get admAuditCleared => 'Log cleared.';
+
+  @override
+  String get admUnavailableTitle => 'Management is unavailable right now';
+
+  @override
+  String get admUnavailableBody =>
+      'Admin management works when the app runs with a local account (LocalAuthRepository), so accounts are read from this device.';
 }

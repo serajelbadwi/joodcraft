@@ -312,6 +312,52 @@ class CustomFontController extends ChangeNotifier {
     );
   }
 
+  /// إدماج خطوط مستوردة (من ملف ‎.jood‎) **بنفس مفاتيح التسجيل والأوزان**.
+  ///
+  /// بخلاف [addFont] الذي يفحص ويكتشف العائلة، هنا نحفظ العائلة/الوزن كما هو
+  /// وارد حتى تظل عناصر النص المشيرة إلى `JoodCustom:…` صالحة. الملف غير
+  /// القابل للرسم في الـ PDF (CFF/تالف) يُتجاهل بلا رمي، ويُعاد عدد المُدمَج.
+  Future<int> importAll(Iterable<CustomFontFace> incoming) async {
+    int imported = 0;
+    for (final CustomFontFace face in incoming) {
+      if (face.family.trim().isEmpty) continue;
+      final Uint8List bytes;
+      try {
+        bytes = face.bytes;
+      } catch (error) {
+        debugPrint('[الخطوط المخصصة] تجاهل خطاً مستورداً ببيانات تالفة '
+            '${face.displayName}: $error');
+        continue;
+      }
+      final FontInspection inspection = await FontInspector.inspectAsync(bytes);
+      if (!inspection.isValid || !inspection.hasTrueTypeOutlines) {
+        debugPrint('[الخطوط المخصصة] تجاهل خطاً مستورداً غير قابل للرسم '
+            '${face.displayName}');
+        continue;
+      }
+      try {
+        CustomPdfFonts.register(face.family, bytes, weight: face.weight);
+      } catch (error) {
+        debugPrint('[الخطوط المخصصة] تجاهل خطاً مستورداً غير قابل للطباعة '
+            '${face.displayName}: $error');
+        continue;
+      }
+      await _registerWithUi(face);
+      final int index = _faces.indexWhere((CustomFontFace f) =>
+          f.family == face.family && f.weight == face.weight);
+      if (index >= 0) {
+        _faces[index] = face;
+      } else {
+        _faces.add(face);
+      }
+      imported++;
+    }
+    if (imported == 0) return 0;
+    await _persist();
+    notifyListeners();
+    return imported;
+  }
+
   /// حذف عائلة كاملة (كل أوزانها) من المكتبة المحلية.
   ///
   /// ملاحظة معمارية: لا يمكن إلغاء تسجيل خط من `FontLoader` في فلاتر، لذلك

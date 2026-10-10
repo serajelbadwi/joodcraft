@@ -9,6 +9,9 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get editorDone => 'تم';
+
+  @override
   String get appTagline => 'منصة توليد الشهادات والعقود الرسمية';
 
   @override
@@ -31,6 +34,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actionSignOut => 'تسجيل الخروج';
+
+  @override
+  String get actionOpenMenu => 'القائمة';
+
+  @override
+  String get editorFitToScreen => 'ملاءمة الشاشة';
+
+  @override
+  String get editorNewTemplate => 'قالب جديد';
+
+  @override
+  String get editorNewConfirm =>
+      'سيبدأ قالب جديد من التصميم الافتراضي؛ أي تعديلات غير محفوظة ستبقى في سجل التراجع. متابعة؟';
 
   @override
   String get actionBackToDashboard => 'العودة إلى لوحة التحكم';
@@ -365,6 +381,235 @@ class AppLocalizationsAr extends AppLocalizations {
       'اسحب المجموعة بالماوس، والأسهم للتحريك الدقيق (Shift = 10px)، و Ctrl + نقر لتعديل التحديد.';
 
   @override
+  String get destBrand => 'الهوية والبروفايل';
+
+  @override
+  String get destBrandDesc => 'شعارك وأختامك وتوقيعاتك وألوان هويتك.';
+
+  @override
+  String get brandTitle => 'إعدادات الهوية والبروفايل';
+
+  @override
+  String get brandTabVisuals => 'الهوية والبصريات';
+
+  @override
+  String get brandTabText => 'البيانات النصية';
+
+  @override
+  String get brandTabColors => 'الألوان والخطوط';
+
+  @override
+  String get brandTabPreview => 'معاينة الهوية';
+
+  @override
+  String get brandPrimaryLogo => 'الشعار الرئيسي';
+
+  @override
+  String get brandWatermarkLogo => 'شعار العلامة المائية';
+
+  @override
+  String get brandSeals => 'الأختام الرسمية';
+
+  @override
+  String get brandAddSeal => 'إضافة ختم';
+
+  @override
+  String get brandSealName => 'اسم الختم';
+
+  @override
+  String get brandSignatures => 'التوقيعات المعتمدة';
+
+  @override
+  String get brandAddSignature => 'إضافة توقيع';
+
+  @override
+  String get brandSignatureName => 'اسم صاحب التوقيع';
+
+  @override
+  String get brandSignatureTitle => 'المسمّى الوظيفي';
+
+  @override
+  String get brandRemove => 'إزالة';
+
+  @override
+  String get brandNoSeals => 'لم تُضف أختاماً بعد.';
+
+  @override
+  String get brandNoSignatures => 'لم تُضف توقيعات بعد.';
+
+  @override
+  String get brandOrgNameAr => 'اسم المؤسسة (عربي)';
+
+  @override
+  String get brandOrgNameEn => 'اسم المؤسسة (إنجليزي)';
+
+  @override
+  String get brandHeaderText => 'نص الترويسة';
+
+  @override
+  String get brandFooterText => 'نص التذييل';
+
+  @override
+  String get brandRegNumber => 'الرقم الضريبي/السجل التجاري';
+
+  @override
+  String get brandPrimaryColor => 'اللون الأساسي';
+
+  @override
+  String get brandSecondaryColor => 'اللون الثانوي';
+
+  @override
+  String get brandAccentColor => 'لون التمييز';
+
+  @override
+  String get brandHeaderFont => 'خط العناوين';
+
+  @override
+  String get brandBodyFont => 'خط المتن';
+
+  @override
+  String get brandClear => 'مسح الهوية';
+
+  @override
+  String get brandClearConfirm =>
+      'سيُحذف كل محتوى الهوية المحفوظ. هل تريد المتابعة؟';
+
+  @override
+  String get brandSaved => 'حُفظت الهوية.';
+
+  @override
+  String get brandPresets => 'عناصر الهوية الجاهزة';
+
+  @override
+  String get brandInsertHeader => 'إدراج الترويسة القياسية';
+
+  @override
+  String get brandInsertFooter => 'إدراج التذييل القياسي';
+
+  @override
+  String get brandApplyColors => 'تطبيق ألوان الهوية';
+
+  @override
+  String get brandQuickSeals => 'أختام';
+
+  @override
+  String get brandQuickSignatures => 'توقيعات';
+
+  @override
+  String get brandNoBrand => 'لم تُعدّ هويتك بعد.';
+
+  @override
+  String get brandOpenSettings => 'فتح إعدادات الهوية';
+
+  @override
+  String get brandHeaderInserted => 'أُدرجت الترويسة القياسية.';
+
+  @override
+  String get brandFooterInserted => 'أُدرج التذييل القياسي.';
+
+  @override
+  String get brandColorsApplied => 'طُبّقت ألوان الهوية.';
+
+  @override
+  String get brandSealInserted => 'أُدرج الختم.';
+
+  @override
+  String get brandSignatureInserted => 'أُدرج التوقيع.';
+
+  @override
+  String get brandFontDefault => 'الافتراضي';
+
+  @override
+  String get paletteShapes => 'أشكال هندسية';
+
+  @override
+  String get paletteRoundedRect => 'مستطيل بحواف منحنية';
+
+  @override
+  String get paletteEllipse => 'دائرة/بيضاوي';
+
+  @override
+  String get editorFillOpacity => 'شفافية التعبئة';
+
+  @override
+  String get editorCollapsePanel => 'طيّ اللوحة الجانبية';
+
+  @override
+  String get editorExpandPanel => 'إظهار اللوحة الجانبية';
+
+  @override
+  String get editorCustomSize => 'مقاس مخصّص';
+
+  @override
+  String get editorStandardSize => 'مقاس قياسي';
+
+  @override
+  String get editorBackgroundTitle => 'خلفية الورقة';
+
+  @override
+  String get editorGradientFrom => 'من';
+
+  @override
+  String get editorGradientTo => 'إلى';
+
+  @override
+  String get editorGradientDirection => 'اتجاه';
+
+  @override
+  String get editorGradientNone => 'بلا تدرّج';
+
+  @override
+  String get editorGradientVertical => 'رأسي';
+
+  @override
+  String get editorGradientHorizontal => 'أفقي';
+
+  @override
+  String get editorGradientDiagonal => 'قطري';
+
+  @override
+  String get editorLayersTitle => 'الطبقات';
+
+  @override
+  String get editorLayerShow => 'إظهار العنصر';
+
+  @override
+  String get editorLayerHide => 'إخفاء العنصر';
+
+  @override
+  String get editorLayerLock => 'قفل العنصر';
+
+  @override
+  String get editorLayerUnlock => 'فك قفل العنصر';
+
+  @override
+  String get editorLayersEmpty => 'لا توجد عناصر على هذه الصفحة بعد.';
+
+  @override
+  String get editorGroupSelected => 'تجميع المحدد';
+
+  @override
+  String get editorUngroupSelected => 'فك التجميع';
+
+  @override
+  String get editorAlignLeft => 'محاذاة لليسار';
+
+  @override
+  String get editorAlignCenterH => 'توسيط أفقياً';
+
+  @override
+  String get editorAlignRight => 'محاذاة لليمين';
+
+  @override
+  String get editorAlignTop => 'محاذاة للأعلى';
+
+  @override
+  String get editorAlignCenterV => 'توسيط رأسياً';
+
+  @override
+  String get editorAlignBottom => 'محاذاة للأسفل';
+
+  @override
   String get editorBringForward => 'إلى الأمام';
 
   @override
@@ -505,6 +750,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editorSource => 'المصدر';
+
+  @override
+  String get editorImageTint => 'تلوين الصورة';
 
   @override
   String get editorImageFit => 'ملاءمة الصورة';
@@ -1259,7 +1507,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tevSaveNeedsSupabase =>
-      'الحفظ يتطلب الاتصال بمشروع Supabase. شغّل التطبيق بمفاتيح مشروعك (env.json) لتتمكن من حفظ القوالب.';
+      'الحفظ المحلي غير متاح في هذه الجلسة — تعذّر فتح مخزن المشاريع على هذا الجهاز.';
 
   @override
   String tevMissingAssets(Object list) {
@@ -1268,7 +1516,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tevTemplateLibraryNeedsSupabase =>
-      'مكتبة القوالب تتطلب الاتصال بمشروع Supabase.';
+      'مكتبة المشاريع المحلية غير متاحة في هذه الجلسة.';
 
   @override
   String tevOpenedTemplate(Object title) {
@@ -1817,4 +2065,891 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cbContractDataTitle => 'بيانات العقد (تجريبية)';
+
+  @override
+  String get editorSendBackward => 'إلى الخلف خطوة';
+
+  @override
+  String get editorRotateLeft => 'تدوير ٩٠° يساراً';
+
+  @override
+  String get editorRotateRight => 'تدوير ٩٠° يميناً';
+
+  @override
+  String get editorFlipH => 'قلب أفقي';
+
+  @override
+  String get editorFlipV => 'قلب رأسي';
+
+  @override
+  String get editorTransform => 'التحويلات';
+
+  @override
+  String get editorToolSelect => 'تحديد';
+
+  @override
+  String get editorToolShapes => 'أشكال';
+
+  @override
+  String get editorFillType => 'نوع التعبئة';
+
+  @override
+  String get editorFillSolid => 'لون موحّد';
+
+  @override
+  String get editorGradientLinear => 'تدرّج خطي';
+
+  @override
+  String get editorGradientRadial => 'تدرّج شعاعي';
+
+  @override
+  String get editorGradientAngle => 'زاوية التدرّج';
+
+  @override
+  String get editorShadowEnable => 'إضافة ظل';
+
+  @override
+  String get editorShadowColor => 'لون الظل';
+
+  @override
+  String get editorShadowBlur => 'تمويه الظل';
+
+  @override
+  String get editorShadowOffsetX => 'إزاحة أفقية';
+
+  @override
+  String get editorShadowOffsetY => 'إزاحة رأسية';
+
+  @override
+  String get editorShadowSpread => 'انتشار الظل';
+
+  @override
+  String get editorShadowRemove => 'إزالة الظل';
+
+  @override
+  String get editorPoints => 'عدد الرؤوس';
+
+  @override
+  String get editorInnerRadius => 'نصف القطر الداخلي';
+
+  @override
+  String get editorCornerTopLeft => 'أعلى-يسار';
+
+  @override
+  String get editorCornerTopRight => 'أعلى-يمين';
+
+  @override
+  String get editorCornerBottomRight => 'أسفل-يمين';
+
+  @override
+  String get editorCornerBottomLeft => 'أسفل-يسار';
+
+  @override
+  String get editorDashPattern => 'نمط الشرطات';
+
+  @override
+  String get editorBooleanOps => 'عمليات الدمج';
+
+  @override
+  String get editorBooleanUnion => 'دمج';
+
+  @override
+  String get editorBooleanSubtract => 'طرح';
+
+  @override
+  String get editorBooleanIntersect => 'تقاطع';
+
+  @override
+  String get editorBooleanUngroup => 'فصل الشكل المركّب';
+
+  @override
+  String get paletteStar => 'نجمة';
+
+  @override
+  String get palettePolygon => 'مضلّع';
+
+  @override
+  String get editorBooleanExclude => 'استثناء';
+
+  @override
+  String get editorBooleanHint =>
+      'يُبنى المسار المدمج كناتج عملية منطقية واحدة (بلا حدود متداخلة) ويمكن فكه في أي وقت.';
+
+  @override
+  String get editorDockTools => 'لوحة الأدوات';
+
+  @override
+  String get editorDockAnchor => 'موضع الإرساء';
+
+  @override
+  String get editorDockTopBar => 'الشريط العلوي';
+
+  @override
+  String get editorDockInspector => 'اللوحة الجانبية';
+
+  @override
+  String get editorDockLeftRail => 'الشريط الجانبي';
+
+  @override
+  String get editorDockFloating => 'عائمة';
+
+  @override
+  String get editorDockCollapse => 'طيّ الأدوات';
+
+  @override
+  String get editorDockExpand => 'توسيع الأدوات';
+
+  @override
+  String get editorDockResize => 'سحب لتغيير الحجم';
+
+  @override
+  String get editorDockDropHint => 'إفلات للالتقاط في';
+
+  @override
+  String get editorMoreTools => 'أدوات أخرى';
+
+  @override
+  String get editorDocumentProperties => 'خصائص المستند';
+
+  @override
+  String get editorDockReset => 'إعادة الإرساء الافتراضي';
+
+  @override
+  String get editorTextShadow => 'ظل النص';
+
+  @override
+  String get editorTextShadowAdd => 'إضافة ظل للنص';
+
+  @override
+  String get editorShadowOpacity => 'شفافية الظل';
+
+  @override
+  String get genderMale => 'ذكر';
+
+  @override
+  String get genderFemale => 'أنثى';
+
+  @override
+  String get genderPreviewAutoHint => 'نقر لإلغاء الفرض (تلقائي)';
+
+  @override
+  String get genderPresetCompleted => 'أتمّ / أتمّت';
+
+  @override
+  String get genderPresetPassed => 'اجتاز / اجتازت';
+
+  @override
+  String get genderPresetForStudent => 'للطالب / للطالبة';
+
+  @override
+  String get genderPresetStudent => 'الطالب / الطالبة';
+
+  @override
+  String get genderPresetToHim => 'له / لها';
+
+  @override
+  String get genderPresetHonoring => 'المتدرّب / المتدرّبة';
+
+  @override
+  String get editorGenderSnippet => 'إدراج صيغة شرطية';
+
+  @override
+  String get editorGenderSnippetHint =>
+      'تُدرج صيغة تتبدّل تلقائياً حسب جنس المستفيد.';
+
+  @override
+  String get bpGenderReviewTitle => 'مراجعة الجنس (تذكير/تأنيث)';
+
+  @override
+  String get bpGenderReviewSubtitle =>
+      'الجنس مُكتشف من الاسم أو من عمود «الجنس» — صحّح أي حالة حدّية قبل الطباعة.';
+
+  @override
+  String get bpGenderRow => 'الصف';
+
+  @override
+  String get bpGenderDetected => 'المكتشف';
+
+  @override
+  String get bpGenderEffective => 'المطبَّق';
+
+  @override
+  String get bpGenderNameColumn => 'الاسم';
+
+  @override
+  String get bpGenderEditName => 'تعديل الاسم';
+
+  @override
+  String get bpGenderNameHint => 'اكتب الاسم الصحيح';
+
+  @override
+  String get bpGenderClearOverrides => 'إلغاء التصحيحات';
+
+  @override
+  String get bpGenderOverridden => 'مُصحَّح يدوياً';
+
+  @override
+  String get bpGenderUnknownName => '—';
+
+  @override
+  String get bpOutputTitle => 'وجهة حفظ الشهادات';
+
+  @override
+  String get bpOutputHint =>
+      'اختر المجلد الذي يُحفظ فيه ملف الـ PDF، أو ابدأ بالموقع الافتراضي.';
+
+  @override
+  String get bpOutputPickFolder => 'اختيار مجلد…';
+
+  @override
+  String get bpOutputStart => 'بدء التوليد';
+
+  @override
+  String get bpOutputPathLabel => 'المجلد المختار';
+
+  @override
+  String get bpOutputNoFolder => 'لم يُختَر مجلد — الطباعة والتصدير فقط.';
+
+  @override
+  String get bpOpenFolder => 'فتح المجلد';
+
+  @override
+  String get bpOutputSavedTitle => 'تم حفظ ملف الـ PDF';
+
+  @override
+  String get bpOpenFolderFailed => 'تعذّر فتح المجلد.';
+
+  @override
+  String get bpOutputNameLabel => 'اسم ملف التصدير';
+
+  @override
+  String get bpOutputNameHint => 'اكتب اسماً للملف بلا امتداد';
+
+  @override
+  String get bpOutputNamePreviewLabel => 'سيُحفظ باسم';
+
+  @override
+  String get bpOutputModeLabel => 'نمط الحفظ';
+
+  @override
+  String get bpOutputModeCombined => 'ملف واحد مجمع';
+
+  @override
+  String get bpOutputModeIndividual => 'ملفات منفصلة لكل شخص';
+
+  @override
+  String get hubTitle => 'إنشاء مشروع جديد';
+
+  @override
+  String get hubSubtitle =>
+      'اختر مقاساً جاهزاً أو حدّد أبعادك — تُفتح اللوحة بالمقاس والنسبة بالضبط.';
+
+  @override
+  String get hubKindSingle => 'المطبوعات والوثائق المفردة';
+
+  @override
+  String get hubKindMulti => 'الكتب والمنشورات متعددة الصفحات';
+
+  @override
+  String get hubKindSingleHint =>
+      'ورقة واحدة: شهادات وعقود، بطاقات، أرقام جلوس، كروت معايدة.';
+
+  @override
+  String get hubKindMultiHint =>
+      'متعدد الصفحات: كتاب، مجلة، كتيّب، تقرير، كتالوج.';
+
+  @override
+  String get hubGroupCertificates => 'الشهادات والعقود';
+
+  @override
+  String get hubGroupCards => 'الكروت وبطاقات الهوية';
+
+  @override
+  String get hubGroupSeat => 'أرقام الجلوس والبطاقات';
+
+  @override
+  String get hubGroupGreeting => 'كروت المعايدات';
+
+  @override
+  String get hubGroupPublications => 'الكتب والمنشورات';
+
+  @override
+  String get hubGroupCustom => 'مقاس مخصّص';
+
+  @override
+  String get hubDigitalBadge => 'رقمي';
+
+  @override
+  String get hubCreate => 'إنشاء';
+
+  @override
+  String get hubCustomCardBody =>
+      'أدخل أبعادك بالوحدة التي تريدها لتبدأ بلوحة على مقاسك.';
+
+  @override
+  String get hubCustomName => 'اسم المشروع';
+
+  @override
+  String get hubCustomNameHint => 'مثال: بطاقة دعوة';
+
+  @override
+  String get hubCustomPreview => 'المقاس النهائي';
+
+  @override
+  String get hubCustomCreate => 'إنشاء اللوحة';
+
+  @override
+  String get hubCustomType => 'نوع المشروع';
+
+  @override
+  String get hubSearchHint => 'بحث في المقاسات…';
+
+  @override
+  String get hubNoResults => 'لا يوجد مقاس مطابق — جرّب كلمة بحث أخرى.';
+
+  @override
+  String get hubAspectRatio => 'النسبة';
+
+  @override
+  String get destNewProject => 'مشروع جديد';
+
+  @override
+  String get destNewProjectDesc =>
+      'اختر مقاساً جاهزاً أو مخصّصاً وابدأ التصميم مباشرةً.';
+
+  @override
+  String get ptpImpositionToggle => 'تجميع للطباعة';
+
+  @override
+  String get ptpImpositionNoFit =>
+      'لا تتسع الورقة لهذه القطعة — صغّر الهوامش أو اختر ورقة أكبر.';
+
+  @override
+  String get editorEffectsTitle => 'التأثيرات والضبط اللوني';
+
+  @override
+  String get editorShadowGroup => 'الظل';
+
+  @override
+  String get editorOuterGlow => 'توهّج خارجي';
+
+  @override
+  String get editorInnerGlow => 'توهّج داخلي';
+
+  @override
+  String get editorGlowAdd => 'إضافة توهّج';
+
+  @override
+  String get editorGlowRemove => 'إزالة التوهّج';
+
+  @override
+  String get editorGlowColor => 'لون التوهّج';
+
+  @override
+  String get editorGlowRadius => 'نطاق التوهّج';
+
+  @override
+  String get editorGlowSpread => 'توسّع التوهّج';
+
+  @override
+  String get editorGlowOpacity => 'شفافية التوهّج';
+
+  @override
+  String get editorAdjustGroup => 'الضبط اللوني';
+
+  @override
+  String get editorAdjustBrightness => 'السطوع';
+
+  @override
+  String get editorAdjustContrast => 'التباين';
+
+  @override
+  String get editorAdjustSaturation => 'التشبّع';
+
+  @override
+  String get editorAdjustHue => 'تدوير اللون';
+
+  @override
+  String get editorAdjustReset => 'إعادة الضبط';
+
+  @override
+  String get bpOutputSavedFolderTitle => 'حُفظت الملفات في مجلد مخصص';
+
+  @override
+  String get hubDetailsTitle => 'تفاصيل المقاس';
+
+  @override
+  String get hubDetailsHint =>
+      'مواصفة افتراضية معبّأة مسبقاً — اختر مقاساً من الشبكة أو عدّل الأبعاد لتبدأ.';
+
+  @override
+  String get hubFilterAll => 'الكل';
+
+  @override
+  String get hubFilterRecent => 'الأبعاد الأخيرة';
+
+  @override
+  String get hubFilterSeat => 'أرقام الجلوس';
+
+  @override
+  String get hubFilterGreeting => 'المعايدات والشاشات';
+
+  @override
+  String get hubRecentEmpty => 'لا مقاسات أخيرة بعد — أي مشروع تنشئه يظهر هنا.';
+
+  @override
+  String get hubDocTitle => 'اسم المشروع';
+
+  @override
+  String get hubDocTitleHint => 'مشروع جديد - 1';
+
+  @override
+  String get hubWidth => 'العرض';
+
+  @override
+  String get hubHeight => 'الارتفاع';
+
+  @override
+  String get hubUnitLabel => 'الوحدة';
+
+  @override
+  String get hubOrientationLabel => 'الاتجاه';
+
+  @override
+  String get hubPortrait => 'رأسي';
+
+  @override
+  String get hubLandscape => 'أفقي';
+
+  @override
+  String get hubVariantLabel => 'النوع';
+
+  @override
+  String get hubResolutionLabel => 'الدقّة';
+
+  @override
+  String get hubResolutionUnitLabel => 'وحدة الدقّة';
+
+  @override
+  String get hubColorModeLabel => 'نمط اللون';
+
+  @override
+  String get hubBackgroundLabel => 'لون الخلفية';
+
+  @override
+  String get hubBackgroundWhite => 'أبيض';
+
+  @override
+  String get hubBackgroundTransparent => 'شفاف';
+
+  @override
+  String get hubBackgroundBlack => 'أسود';
+
+  @override
+  String get hubBackgroundCustom => 'لون مخصّص';
+
+  @override
+  String get hubCreateProject => 'إنشاء المشروع';
+
+  @override
+  String get hubCustomFamilyTitle => 'مقاس مخصّص';
+
+  @override
+  String get newDocTitle => 'مستند جديد';
+
+  @override
+  String get newDocScopeSocial => 'الشاشات والمعايدات';
+
+  @override
+  String get newDocFilterCertificates => 'الشهادات';
+
+  @override
+  String get newDocFilterCards => 'الكروت';
+
+  @override
+  String get newDocFilterGreeting => 'المعايدات';
+
+  @override
+  String get newDocFilterPublications => 'المنشورات';
+
+  @override
+  String get menuFile => 'ملف';
+
+  @override
+  String get menuEdit => 'تعديل';
+
+  @override
+  String get menuView => 'عرض';
+
+  @override
+  String get menuTools => 'أدوات';
+
+  @override
+  String get menuHelp => 'مساعدة';
+
+  @override
+  String get menuNewDocument => 'مستند جديد…';
+
+  @override
+  String get menuPurgeRecent => 'تفريغ قائمة الأبعاد الأخيرة';
+
+  @override
+  String get menuPurgeImageCache => 'تفريغ ذاكرة الصور المؤقتة';
+
+  @override
+  String get menuPreviewCertificate => 'معاينة الشهادة النموذجية';
+
+  @override
+  String get menuPreviewContract => 'معاينة العقد النموذجي';
+
+  @override
+  String get menuAbout => 'حول JoodCraft';
+
+  @override
+  String get actionNewShort => '+ جديد';
+
+  @override
+  String get dashLocalMode => 'محلي';
+
+  @override
+  String get dashLocalStorage =>
+      'الحفظ محلي على هذا الجهاز — لا يُرفع أي مشروع إلى سيرفر.';
+
+  @override
+  String get dashRecentProjects => 'المشاريع الأخيرة';
+
+  @override
+  String get dashRecentEmpty =>
+      'لا توجد مشاريع محفوظة على هذا الجهاز بعد — أنشئ مستنداً جديداً وستجده هنا فوراً.';
+
+  @override
+  String get dashRecentOpen => 'فتح المشروع';
+
+  @override
+  String get dashRoadmapLocal =>
+      'قاعدة مشاريع محلية (جدول projects) وحفظ محلي 100% بلا أي خادم';
+
+  @override
+  String get dashRoadmapOffline =>
+      'العمل أوفلاين بالكامل: لا رفع للمشاريع ولا حاجة إلى شبكة';
+
+  @override
+  String get editorTransformPosition => 'التحويل والموضع';
+
+  @override
+  String get editorTransformPositionHint =>
+      'الإحداثيات والأبعاد وزاوية الدوران';
+
+  @override
+  String get editorAppearanceEffects => 'المظهر والمؤثرات';
+
+  @override
+  String get editorAppearanceEffectsHint => 'التعبئة والحدود والتوهّج والظلال';
+
+  @override
+  String get editorTypographyHint => 'الخط والحجم والمحاذاة والتباعد';
+
+  @override
+  String get editorPageSettingsHint => 'المقاس ووحدة القياس';
+
+  @override
+  String get editorBackgroundHint => 'لون الورقة أو تدرّجها';
+
+  @override
+  String get editorPrecisionHint => 'النقل الدقيق والتحجيم';
+
+  @override
+  String get joodExportProject => 'تصدير مشروع (.jood)';
+
+  @override
+  String get joodImportProject => 'فتح مشروع (.jood)';
+
+  @override
+  String get joodExportReady => 'تم تجهيز ملف المشروع للحفظ.';
+
+  @override
+  String get joodExportFailed => 'تعذّر تصدير ملف المشروع.';
+
+  @override
+  String get joodImportOpened => 'تم فتح المشروع المستورد.';
+
+  @override
+  String get joodImportFailed => 'تعذّر فتح ملف المشروع.';
+
+  @override
+  String get joodRecoveryTitle => 'مسودة غير محفوظة';
+
+  @override
+  String get joodRecoveryMessage =>
+      'توجد مسودة غير محفوظة من جلسة سابقة. هل ترغب في استعادتها؟';
+
+  @override
+  String get joodRecoveryRestore => 'استعادة';
+
+  @override
+  String get joodRecoveryDiscard => 'إهمال';
+
+  @override
+  String get joodRecoveryRestored => 'تم استعادة المسودة.';
+
+  @override
+  String get joodAutosaveSaved => 'تم الحفظ تلقائياً';
+
+  @override
+  String get joodAutosaveSaving => 'جاري الحفظ…';
+
+  @override
+  String get editorConfirm => 'تأكيد';
+
+  @override
+  String get admTitle => 'إدارة المديرين المحليين';
+
+  @override
+  String get admRefresh => 'تحديث';
+
+  @override
+  String get admTabAdmins => 'المديرون';
+
+  @override
+  String get admTabTransfer => 'النقل بين الأجهزة';
+
+  @override
+  String get admTabAudit => 'سجل التصدير';
+
+  @override
+  String get admListTitle => 'حسابات المديرين على هذا الجهاز';
+
+  @override
+  String get admAdd => 'إضافة مدير';
+
+  @override
+  String get admNoAdmins => 'لا حسابات مديرين بعد.';
+
+  @override
+  String get admLoading => 'جارٍ تحميل حسابات المديرين على هذا الجهاز…';
+
+  @override
+  String get admRoleOwner => 'المدير الرئيسي';
+
+  @override
+  String get admCurrent => 'أنت';
+
+  @override
+  String get admCurrentCardTitle => 'الحساب الحالي على الجهاز';
+
+  @override
+  String get admRoleAdmin => 'مدير';
+
+  @override
+  String get admSwitchTitle => 'تبديل الحساب السريع';
+
+  @override
+  String get admSwitchPrompt =>
+      'اختر اسم المستخدم المحلي لحساب فرعي على هذا الجهاز وأدخل كلمة مروره المحلية للانتقال إلى جلساته فوراً — تُحفظ مسودّات المشاريع المفتوحة أولاً، ولا يتأثر ترخيص الاشتراك الأساسي.';
+
+  @override
+  String get admSwitchNoOthers =>
+      'لا حسابات فرعية أخرى على هذا الجهاز. أضِف مديراً جديداً من شاشة إدارة المديرين أولاً.';
+
+  @override
+  String get admSwitchPick => 'اسم المستخدم المحلي';
+
+  @override
+  String get admSwitchPassword => 'كلمة المرور المحلية للحساب المختار';
+
+  @override
+  String get admSwitchPickPassword => 'اختر اسم المستخدم وأدخل كلمة المرور.';
+
+  @override
+  String get admSwitchWrongPassword => 'كلمة المرور غير صحيحة.';
+
+  @override
+  String get admSwitchFailed => 'تعذّر تبديل الحساب. حاول مرة أخرى.';
+
+  @override
+  String get admSwitchSuccess => 'تم تبديل الحساب بنجاح.';
+
+  @override
+  String get admSwitchAccount => 'تبديل الحساب';
+
+  @override
+  String get admSwitchAction => 'تبديل الآن';
+
+  @override
+  String get admColAdmin => 'المدير';
+
+  @override
+  String get admColUsername => 'اسم المستخدم المحلي';
+
+  @override
+  String get admColRole => 'الصلاحية';
+
+  @override
+  String get admColCreated => 'تاريخ الإضافة';
+
+  @override
+  String get admColActions => 'إجراءات';
+
+  @override
+  String get destJoodWriter => 'جود كاتب';
+
+  @override
+  String get destJoodWriterDesc =>
+      'مستندات وتقارير نصّية بصفحات متتالية وتدفّق تلقائي للنص.';
+
+  @override
+  String get admCreatedAt => 'أُنشئ';
+
+  @override
+  String get admEdit => 'تعديل البيانات';
+
+  @override
+  String get admChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get admPromote => 'ترقية إلى «مدير رئيسي»';
+
+  @override
+  String get admDemote => 'تخفيض إلى «مدير»';
+
+  @override
+  String get admDelete => 'حذف الحساب';
+
+  @override
+  String admDeleteConfirm(Object name) {
+    return 'سيُحذف «$name» من هذا الجهاز نهائياً. لا يمكن التراجع.';
+  }
+
+  @override
+  String get admPromoted => 'تمت الترقية إلى «مدير رئيسي».';
+
+  @override
+  String get admDemoted => 'تم التخفيض إلى «مدير».';
+
+  @override
+  String get admDeleted => 'حُذف الحساب.';
+
+  @override
+  String get admCreated => 'أُضيف المدير الجديد.';
+
+  @override
+  String get admUpdated => 'حُدّثت بيانات المدير.';
+
+  @override
+  String get admPasswordChanged => 'تغيّرت كلمة المرور.';
+
+  @override
+  String get admTransferInfoTitle => 'كيف يعمل النقل؟';
+
+  @override
+  String get admTransferInfo1 =>
+      'يُصدَّر جدول الحسابات (ببصمات كلمات المرور لا كلماتها) داخل ملف مشفّر بعبارة مرور تختارها أنت.';
+
+  @override
+  String get admTransferInfo2 =>
+      'انقل الملف أو الشفرة إلى الجهاز الآخر ثم استوردها هناك بالعبارة نفسها، فتعمل الحسابات بنفس الصلاحيات.';
+
+  @override
+  String get admTransferInfo3 =>
+      'لا يُرسل شيء إلى أي سيرفر: النقل يدوي بالكامل بين أجهزة محلية.';
+
+  @override
+  String get admExport => 'تصدير الحسابات';
+
+  @override
+  String get admExportPassphrase => 'عبارة مرور التصدير';
+
+  @override
+  String get admPassphraseConfirm => 'تأكيد العبارة';
+
+  @override
+  String get admExportRisk =>
+      'أفهم أن من يملك هذه الشفرة وعبارتها يستطيع الدخول بالحسابات، فسأشاركها بضبط.';
+
+  @override
+  String get admExportGenerate => 'توليد الشفرة المشفّرة';
+
+  @override
+  String get admExportFile => 'حفظ في ملف خاص';
+
+  @override
+  String get admExportDone =>
+      'توليدت الشفرة المشفّرة. انسخها أو احفظها في ملف.';
+
+  @override
+  String get admExportFileSaved => 'حُفظ ملف الحسابات المشفّر.';
+
+  @override
+  String get admPassphraseTooShort => 'اجعل عبارة المرور 6 أحرف على الأقل.';
+
+  @override
+  String get admPassphraseMismatch => 'العبارتان غير متطابقتين.';
+
+  @override
+  String get admAcceptRiskRequired =>
+      'أكّد أولاً أنك تفهم مخاطر مشاركة الشفرة.';
+
+  @override
+  String admFileError(Object error) {
+    return 'تعذّر التعامل مع الملف: $error';
+  }
+
+  @override
+  String get admImport => 'استيراد الحسابات';
+
+  @override
+  String get admImportCode => 'شفرة الحسابات';
+
+  @override
+  String get admImportPassphrase => 'عبارة مرور الملف';
+
+  @override
+  String get admImportReplace => 'استبدال كلمات مرور الحسابات الموجودة';
+
+  @override
+  String get admImportPick => 'اختيار ملف';
+
+  @override
+  String get admImportRun => 'استيراد الآن';
+
+  @override
+  String get admImportCodeRequired => 'ألصق الشفرة أو اختر ملفاً أولاً.';
+
+  @override
+  String get admImportPassphraseRequired => 'أدخل عبارة مرور الملف.';
+
+  @override
+  String admImportDone(int added, int updated, int skipped) {
+    return 'تمّ الاستيراد: $added جديد، $updated مُحدَّث، $skipped مُتخطّى.';
+  }
+
+  @override
+  String get admAuditTitle => 'سجل الشهادات والمستندات الصادرة';
+
+  @override
+  String get admAuditClear => 'تفريغ السجل';
+
+  @override
+  String get admAuditEmpty =>
+      'لا سجلات تصدير بعد. كل شهادة أو عقد تصدّره سيُسجَّل هنا بالتاريخ والمدير الذي أصدره.';
+
+  @override
+  String get admAuditBy => 'بواسطة';
+
+  @override
+  String get admAuditPages => 'صفحة';
+
+  @override
+  String get admAuditClearConfirm =>
+      'سيُحذف كل سجل التصدير من هذا الجهاز. لا يمكن التراجع.';
+
+  @override
+  String get admAuditCleared => 'تم تفريغ السجل.';
+
+  @override
+  String get admUnavailableTitle => 'الإدارة غير متاحة الآن';
+
+  @override
+  String get admUnavailableBody =>
+      'إدارة المديرين تعمل عندما يُشغَّل التطبيق بحساب محلي (LocalAuthRepository)، فتُقرأ الحسابات من هذا الجهاز.';
 }
