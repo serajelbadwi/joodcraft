@@ -3086,4 +3086,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invPackOptions => 'خيارات الإخراج';
+
+  @override
+  String get tplCertClassicTitle => 'شهادة كلاسيكية كحلية';
+
+  @override
+  String get tplCertClassicDesc =>
+      'قالب كحلي كلاسيكي بإطار ذهبي مزدوج وزوايا مزخرفة بالنجوم.';
+
+  @override
+  String get tplCertMinimalTitle => 'شهادة مينيمال كحلية';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'تصميم مينيمال كحلي نظيف بخط ذهبي واحد ومساحات واسعة.';
+
+  @override
+  String get tplCertIslamicTitle => 'شهادة زخرفية إسلامية';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'قالب كحلي بحواف ذهبية وزخارف هندسية إسلامية وخط أميري.';
+
+  @override
+  String get tplCertBandTitle => 'شهادة الشرائط الذهبية';
+
+  @override
+  String get tplCertBandDesc =>
+      'قالب كحلي بشرائط ذهبية أفقية أعلى وأسفل وتذييل منسّق.';
+
+  @override
+  String get tplCertDiagonalTitle => 'شهادة ديناميكية مائلة';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'قالب كحلي بأشكال هندسية ذهبية مائلة وإحساس بالحركة.';
+
+  @override
+  String get tplCertSquareTitle => 'شهادة مربعة أنيقة';
+
+  @override
+  String get tplCertSquareDesc =>
+      'قالب كحلي بإطار ذهبي مربّع متناظر وختم دائري علوي.';
 }

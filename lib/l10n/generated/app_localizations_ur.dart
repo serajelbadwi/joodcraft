@@ -3098,4 +3098,45 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get invPackOptions => 'آؤٹ پٹ اختیارات';
+
+  @override
+  String get tplCertClassicTitle => 'کلاسیکی نیلی سرۃ';
+
+  @override
+  String get tplCertClassicDesc =>
+      'دوہرے سنہری فریم اور مزین کارنر ستاروں کے ساتھ کلاسیکی نیلی سرۃ۔';
+
+  @override
+  String get tplCertMinimalTitle => 'کم از کم نیلی سرۃ';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'ایک سنہری لائن اور وسیع خالی جگہ کے ساتھ صاف ستھرای کم از کم نیلی ڈیزائن۔';
+
+  @override
+  String get tplCertIslamicTitle => 'اسلامی زینت سرۃ';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'سنہری کناروں، اسلامی ہندسی زینت اور امیری خط کے ساتھ نیلی سرۃ۔';
+
+  @override
+  String get tplCertBandTitle => 'سنہری پٹیوں والی سرۃ';
+
+  @override
+  String get tplCertBandDesc => 'اوپر اور نیچے افقی سنہری پٹیوں والی نیلی سرۃ۔';
+
+  @override
+  String get tplCertDiagonalTitle => 'متحرک قطری سرۃ';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'ترچھی سنہری ہندسی شکلوں کے ساتھ حرکت کا احساس دینے والی نیلی سرۃ۔';
+
+  @override
+  String get tplCertSquareTitle => 'خوشنما مربع سرۃ';
+
+  @override
+  String get tplCertSquareDesc =>
+      'ہم آہنگ مربع سنہری فریم اور اوپر دائرہ مہر کے ساتھ نیلی سرۃ۔';
 }

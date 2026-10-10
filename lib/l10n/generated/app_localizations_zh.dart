@@ -3017,4 +3017,40 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get invPackOptions => '输出选项';
+
+  @override
+  String get tplCertClassicTitle => '经典深蓝证书';
+
+  @override
+  String get tplCertClassicDesc => '经典深蓝证书，配双金边框与四角装饰星。';
+
+  @override
+  String get tplCertMinimalTitle => '简约深蓝证书';
+
+  @override
+  String get tplCertMinimalDesc => '简洁的深蓝极简设计，仅用一条金线与大量留白。';
+
+  @override
+  String get tplCertIslamicTitle => '伊斯兰装饰证书';
+
+  @override
+  String get tplCertIslamicDesc => '深蓝证书，金边、伊斯兰几何纹饰与 Amiri 字体。';
+
+  @override
+  String get tplCertBandTitle => '金色饰带证书';
+
+  @override
+  String get tplCertBandDesc => '上下配有横向金色饰带的深蓝证书。';
+
+  @override
+  String get tplCertDiagonalTitle => '动感斜纹证书';
+
+  @override
+  String get tplCertDiagonalDesc => '以倾斜金色几何图形营造动感的深蓝证书。';
+
+  @override
+  String get tplCertSquareTitle => '雅致方形证书';
+
+  @override
+  String get tplCertSquareDesc => '深蓝证书，对称方形金框，顶部圆形印章。';
 }

@@ -3113,4 +3113,46 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Параметры вывода';
+
+  @override
+  String get tplCertClassicTitle => 'Классический тёмно-синий сертификат';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Классический тёмно-синий сертификат с двойной золотой рамкой и декоративными звёздами.';
+
+  @override
+  String get tplCertMinimalTitle => 'Минимальный тёмно-синий сертификат';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Чистый минимальный тёмно-синий дизайн с одной золотой линией и широкими полями.';
+
+  @override
+  String get tplCertIslamicTitle => 'Сертификат с исламским орнаментом';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Тёмно-синий сертификат с золотой кромкой, исламскими геометрическими узорами и шрифтом Amiri.';
+
+  @override
+  String get tplCertBandTitle => 'Сертификат с золотыми полосами';
+
+  @override
+  String get tplCertBandDesc =>
+      'Тёмно-синий сертификат с горизонтальными золотыми полосами сверху и снизу.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Динамичный диагональный сертификат';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Тёмно-синий сертификат с наклонными золотыми геометрическими формами, передающими движение.';
+
+  @override
+  String get tplCertSquareTitle => 'Элегантный квадратный сертификат';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Тёмно-синий сертификат с симметричной квадратной золотой рамкой и круглой печатью сверху.';
 }

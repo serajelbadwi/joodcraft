@@ -3108,4 +3108,46 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Opsi keluaran';
+
+  @override
+  String get tplCertClassicTitle => 'Sertifikat Klasik Biru Laut';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Sertifikat biru laut klasik dengan bingkai emas ganda dan bintang sudut hias.';
+
+  @override
+  String get tplCertMinimalTitle => 'Sertifikat Minimal Biru Laut';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Desain minimal biru laut yang bersih dengan satu garis emas dan ruang lega.';
+
+  @override
+  String get tplCertIslamicTitle => 'Sertifikat Ornamen Islami';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Sertifikat biru laut dengan tepi emas, ornamen geometris Islami dan huruf Amiri.';
+
+  @override
+  String get tplCertBandTitle => 'Sertifikat Pita Emas';
+
+  @override
+  String get tplCertBandDesc =>
+      'Sertifikat biru laut dengan pita emas horizontal di atas dan bawah.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Sertifikat Diagonal Dinamis';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Sertifikat biru laut dengan bentuk geometris emas miring yang memberi kesan gerak.';
+
+  @override
+  String get tplCertSquareTitle => 'Sertifikat Persegi Elegan';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Sertifikat biru laut dengan bingkai emas persegi simetris dan segel lingkaran di atas.';
 }

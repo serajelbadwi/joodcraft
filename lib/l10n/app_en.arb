@@ -814,9 +814,7 @@
   "joodRecoveryRestored": "Draft restored.",
   "joodAutosaveSaved": "Saved automatically",
   "joodAutosaveSaving": "Saving…",
-
   "editorConfirm": "Confirm",
-
   "admTitle": "Local admin management",
   "admRefresh": "Refresh",
   "admTabAdmins": "Admins",
@@ -962,5 +960,17 @@
   "bpWorkTypeLabel": "Template type",
   "bpExportFormatLabel": "Export type",
   "bpKindInvitation": "Invitation",
-  "invPackOptions": "Output options"
+  "invPackOptions": "Output options",
+  "tplCertClassicTitle": "Classic Navy Certificate",
+  "tplCertClassicDesc": "Classic navy certificate with a double gold frame and ornamental corner stars.",
+  "tplCertMinimalTitle": "Minimal Navy Certificate",
+  "tplCertMinimalDesc": "Clean minimal navy design with a single gold rule and generous whitespace.",
+  "tplCertIslamicTitle": "Islamic Ornament Certificate",
+  "tplCertIslamicDesc": "Navy certificate with gold edging, Islamic geometric ornaments and Amiri type.",
+  "tplCertBandTitle": "Gold Band Certificate",
+  "tplCertBandDesc": "Navy certificate with horizontal gold bands above and below and a tidy footer.",
+  "tplCertDiagonalTitle": "Dynamic Diagonal Certificate",
+  "tplCertDiagonalDesc": "Navy certificate with slanted gold geometric shapes conveying motion.",
+  "tplCertSquareTitle": "Elegant Square Certificate",
+  "tplCertSquareDesc": "Navy certificate with a symmetric square gold frame and a top circular seal."
 }

@@ -3105,4 +3105,46 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Çıktı seçenekleri';
+
+  @override
+  String get tplCertClassicTitle => 'Klasik Lacivert Belgesi';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Cift altin cerceve ve susleyici kose yildizlarina sahip klasik lacivert belge.';
+
+  @override
+  String get tplCertMinimalTitle => 'Minimal Lacivert Belgesi';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Tek altin cizgi ve genis bosluklara sahip temiz minimal lacivert tasarim.';
+
+  @override
+  String get tplCertIslamicTitle => 'Islami Susleme Belgesi';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Altin kenarlar, Islami geometrik susler ve Amiri yazi tipine sahip lacivert belge.';
+
+  @override
+  String get tplCertBandTitle => 'Altin Seritli Belge';
+
+  @override
+  String get tplCertBandDesc =>
+      'Ustte ve altta yatay altin seritler bulunan lacivert belge.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Dinamik Capraz Belge';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Egik altin geometrik sekillerle hareket izlenimi veren lacivert belge.';
+
+  @override
+  String get tplCertSquareTitle => 'Zarif Kare Belgesi';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Simetrik kare altin cerceve ve ustte dairesel muhur iceren lacivert belge.';
 }

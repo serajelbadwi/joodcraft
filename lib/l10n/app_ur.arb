@@ -960,5 +960,17 @@
   "bpWorkTypeLabel": "ٹیمپلیٹ کی قسم",
   "bpExportFormatLabel": "ایکسپورٹ کی قسم",
   "bpKindInvitation": "دعوت",
-  "invPackOptions": "آؤٹ پٹ اختیارات"
+  "invPackOptions": "آؤٹ پٹ اختیارات",
+  "tplCertClassicTitle": "کلاسیکی نیلی سرۃ",
+  "tplCertClassicDesc": "دوہرے سنہری فریم اور مزین کارنر ستاروں کے ساتھ کلاسیکی نیلی سرۃ۔",
+  "tplCertMinimalTitle": "کم از کم نیلی سرۃ",
+  "tplCertMinimalDesc": "ایک سنہری لائن اور وسیع خالی جگہ کے ساتھ صاف ستھرای کم از کم نیلی ڈیزائن۔",
+  "tplCertIslamicTitle": "اسلامی زینت سرۃ",
+  "tplCertIslamicDesc": "سنہری کناروں، اسلامی ہندسی زینت اور امیری خط کے ساتھ نیلی سرۃ۔",
+  "tplCertBandTitle": "سنہری پٹیوں والی سرۃ",
+  "tplCertBandDesc": "اوپر اور نیچے افقی سنہری پٹیوں والی نیلی سرۃ۔",
+  "tplCertDiagonalTitle": "متحرک قطری سرۃ",
+  "tplCertDiagonalDesc": "ترچھی سنہری ہندسی شکلوں کے ساتھ حرکت کا احساس دینے والی نیلی سرۃ۔",
+  "tplCertSquareTitle": "خوشنما مربع سرۃ",
+  "tplCertSquareDesc": "ہم آہنگ مربع سنہری فریم اور اوپر دائرہ مہر کے ساتھ نیلی سرۃ۔"
 }

@@ -814,9 +814,7 @@
   "joodRecoveryRestored": "Brouillon restauré.",
   "joodAutosaveSaved": "Enregistré automatiquement",
   "joodAutosaveSaving": "Enregistrement…",
-
   "editorConfirm": "Confirmer",
-
   "admTitle": "Gestion locale des administrateurs",
   "admRefresh": "Actualiser",
   "admTabAdmins": "Administrateurs",
@@ -962,5 +960,17 @@
   "bpWorkTypeLabel": "Type de modèle",
   "bpExportFormatLabel": "Type d’export",
   "bpKindInvitation": "Invitation",
-  "invPackOptions": "Options de sortie"
+  "invPackOptions": "Options de sortie",
+  "tplCertClassicTitle": "Certificat classique bleu marine",
+  "tplCertClassicDesc": "Certificat bleu marine classique a double cadre dore et etoiles ornementales.",
+  "tplCertMinimalTitle": "Certificat minimal bleu marine",
+  "tplCertMinimalDesc": "Design minimal epure bleu marine avec un seul filet dore et de larges espaces.",
+  "tplCertIslamicTitle": "Certificat ornement islamique",
+  "tplCertIslamicDesc": "Certificat bleu marine a bordures dorees, ornements geometriques islamiques et typographie Amiri.",
+  "tplCertBandTitle": "Certificat a bandes dorees",
+  "tplCertBandDesc": "Certificat bleu marine a bandes horizontales dorees en haut et en bas.",
+  "tplCertDiagonalTitle": "Certificat diagonal dynamique",
+  "tplCertDiagonalDesc": "Certificat bleu marine aux formes geometriques dorees inclinees evoquant le mouvement.",
+  "tplCertSquareTitle": "Certificat carre elegant",
+  "tplCertSquareDesc": "Certificat bleu marine a cadre carre dore symetrique et sceau circulaire superieur."
 }

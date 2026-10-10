@@ -814,9 +814,7 @@
   "joodRecoveryRestored": "Entwurf wiederhergestellt.",
   "joodAutosaveSaved": "Automatisch gespeichert",
   "joodAutosaveSaving": "Speichern…",
-
   "editorConfirm": "Bestätigen",
-
   "admTitle": "Lokale Administratorenverwaltung",
   "admRefresh": "Aktualisieren",
   "admTabAdmins": "Administratoren",
@@ -962,5 +960,17 @@
   "bpWorkTypeLabel": "Vorlagentyp",
   "bpExportFormatLabel": "Exporttyp",
   "bpKindInvitation": "Einladung",
-  "invPackOptions": "Ausgabeoptionen"
+  "invPackOptions": "Ausgabeoptionen",
+  "tplCertClassicTitle": "Klassisches Marineblaues Zertifikat",
+  "tplCertClassicDesc": "Klassisches marineblaues Zertifikat mit doppeltem Goldrahmen und Ziersternen in den Ecken.",
+  "tplCertMinimalTitle": "Minimales Marineblaues Zertifikat",
+  "tplCertMinimalDesc": "Klares minimales Marineblaues Design mit einer einzigen goldenen Linie und viel Freiraum.",
+  "tplCertIslamicTitle": "Zertifikat mit islamischem Ornament",
+  "tplCertIslamicDesc": "Marineblaues Zertifikat mit goldenen Kanten, islamischen geometrischen Ornamenten und Amiri-Schrift.",
+  "tplCertBandTitle": "Zertifikat mit Goldstreifen",
+  "tplCertBandDesc": "Marineblaues Zertifikat mit waagerechten Goldstreifen oben und unten.",
+  "tplCertDiagonalTitle": "Dynamisches diagonales Zertifikat",
+  "tplCertDiagonalDesc": "Marineblaues Zertifikat mit schrag liegenden goldenen geometrischen Formen voller Bewegung.",
+  "tplCertSquareTitle": "Elegantes quadratisches Zertifikat",
+  "tplCertSquareDesc": "Marineblaues Zertifikat mit symmetrischem quadratischem Goldrahmen und rundem Siegel oben."
 }

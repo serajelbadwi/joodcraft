@@ -960,5 +960,17 @@
   "bpWorkTypeLabel": "Şablon türü",
   "bpExportFormatLabel": "Dışa aktarma türü",
   "bpKindInvitation": "Davetiye",
-  "invPackOptions": "Çıktı seçenekleri"
+  "invPackOptions": "Çıktı seçenekleri",
+  "tplCertClassicTitle": "Klasik Lacivert Belgesi",
+  "tplCertClassicDesc": "Cift altin cerceve ve susleyici kose yildizlarina sahip klasik lacivert belge.",
+  "tplCertMinimalTitle": "Minimal Lacivert Belgesi",
+  "tplCertMinimalDesc": "Tek altin cizgi ve genis bosluklara sahip temiz minimal lacivert tasarim.",
+  "tplCertIslamicTitle": "Islami Susleme Belgesi",
+  "tplCertIslamicDesc": "Altin kenarlar, Islami geometrik susler ve Amiri yazi tipine sahip lacivert belge.",
+  "tplCertBandTitle": "Altin Seritli Belge",
+  "tplCertBandDesc": "Ustte ve altta yatay altin seritler bulunan lacivert belge.",
+  "tplCertDiagonalTitle": "Dinamik Capraz Belge",
+  "tplCertDiagonalDesc": "Egik altin geometrik sekillerle hareket izlenimi veren lacivert belge.",
+  "tplCertSquareTitle": "Zarif Kare Belgesi",
+  "tplCertSquareDesc": "Simetrik kare altin cerceve ve ustte dairesel muhur iceren lacivert belge."
 }

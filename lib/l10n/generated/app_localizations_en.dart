@@ -3102,4 +3102,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Output options';
+
+  @override
+  String get tplCertClassicTitle => 'Classic Navy Certificate';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Classic navy certificate with a double gold frame and ornamental corner stars.';
+
+  @override
+  String get tplCertMinimalTitle => 'Minimal Navy Certificate';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Clean minimal navy design with a single gold rule and generous whitespace.';
+
+  @override
+  String get tplCertIslamicTitle => 'Islamic Ornament Certificate';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Navy certificate with gold edging, Islamic geometric ornaments and Amiri type.';
+
+  @override
+  String get tplCertBandTitle => 'Gold Band Certificate';
+
+  @override
+  String get tplCertBandDesc =>
+      'Navy certificate with horizontal gold bands above and below and a tidy footer.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Dynamic Diagonal Certificate';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Navy certificate with slanted gold geometric shapes conveying motion.';
+
+  @override
+  String get tplCertSquareTitle => 'Elegant Square Certificate';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Navy certificate with a symmetric square gold frame and a top circular seal.';
 }

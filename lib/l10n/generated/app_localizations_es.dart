@@ -3128,4 +3128,46 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Opciones de salida';
+
+  @override
+  String get tplCertClassicTitle => 'Certificado clasico azul marino';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Certificado azul marino clasico con doble marco dorado y estrellas ornamentales.';
+
+  @override
+  String get tplCertMinimalTitle => 'Certificado minimal azul marino';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Diseno minimalista azul marino limpio con una sola linea dorada y amplios espacios.';
+
+  @override
+  String get tplCertIslamicTitle => 'Certificado ornamento islamico';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Certificado azul marino con bordes dorados, ornamentos geometricos islamicos y tipografia Amiri.';
+
+  @override
+  String get tplCertBandTitle => 'Certificado de bandas doradas';
+
+  @override
+  String get tplCertBandDesc =>
+      'Certificado azul marino con bandas horizontales doradas arriba y abajo.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Certificado diagonal dinamico';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Certificado azul marino con formas geometricas doradas inclinadas que sugieren movimiento.';
+
+  @override
+  String get tplCertSquareTitle => 'Certificado cuadrado elegante';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Certificado azul marino con marco cuadrado dorado simetrico y sello circular superior.';
 }

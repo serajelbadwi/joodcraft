@@ -3134,4 +3134,46 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Ausgabeoptionen';
+
+  @override
+  String get tplCertClassicTitle => 'Klassisches Marineblaues Zertifikat';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Klassisches marineblaues Zertifikat mit doppeltem Goldrahmen und Ziersternen in den Ecken.';
+
+  @override
+  String get tplCertMinimalTitle => 'Minimales Marineblaues Zertifikat';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Klares minimales Marineblaues Design mit einer einzigen goldenen Linie und viel Freiraum.';
+
+  @override
+  String get tplCertIslamicTitle => 'Zertifikat mit islamischem Ornament';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Marineblaues Zertifikat mit goldenen Kanten, islamischen geometrischen Ornamenten und Amiri-Schrift.';
+
+  @override
+  String get tplCertBandTitle => 'Zertifikat mit Goldstreifen';
+
+  @override
+  String get tplCertBandDesc =>
+      'Marineblaues Zertifikat mit waagerechten Goldstreifen oben und unten.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Dynamisches diagonales Zertifikat';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Marineblaues Zertifikat mit schrag liegenden goldenen geometrischen Formen voller Bewegung.';
+
+  @override
+  String get tplCertSquareTitle => 'Elegantes quadratisches Zertifikat';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Marineblaues Zertifikat mit symmetrischem quadratischem Goldrahmen und rundem Siegel oben.';
 }

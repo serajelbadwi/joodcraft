@@ -5783,6 +5783,78 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خيارات الإخراج'**
   String get invPackOptions;
+
+  /// No description provided for @tplCertClassicTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة كلاسيكية كحلية'**
+  String get tplCertClassicTitle;
+
+  /// No description provided for @tplCertClassicDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب كحلي كلاسيكي بإطار ذهبي مزدوج وزوايا مزخرفة بالنجوم.'**
+  String get tplCertClassicDesc;
+
+  /// No description provided for @tplCertMinimalTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة مينيمال كحلية'**
+  String get tplCertMinimalTitle;
+
+  /// No description provided for @tplCertMinimalDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم مينيمال كحلي نظيف بخط ذهبي واحد ومساحات واسعة.'**
+  String get tplCertMinimalDesc;
+
+  /// No description provided for @tplCertIslamicTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة زخرفية إسلامية'**
+  String get tplCertIslamicTitle;
+
+  /// No description provided for @tplCertIslamicDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب كحلي بحواف ذهبية وزخارف هندسية إسلامية وخط أميري.'**
+  String get tplCertIslamicDesc;
+
+  /// No description provided for @tplCertBandTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة الشرائط الذهبية'**
+  String get tplCertBandTitle;
+
+  /// No description provided for @tplCertBandDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب كحلي بشرائط ذهبية أفقية أعلى وأسفل وتذييل منسّق.'**
+  String get tplCertBandDesc;
+
+  /// No description provided for @tplCertDiagonalTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة ديناميكية مائلة'**
+  String get tplCertDiagonalTitle;
+
+  /// No description provided for @tplCertDiagonalDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب كحلي بأشكال هندسية ذهبية مائلة وإحساس بالحركة.'**
+  String get tplCertDiagonalDesc;
+
+  /// No description provided for @tplCertSquareTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهادة مربعة أنيقة'**
+  String get tplCertSquareTitle;
+
+  /// No description provided for @tplCertSquareDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'قالب كحلي بإطار ذهبي مربّع متناظر وختم دائري علوي.'**
+  String get tplCertSquareDesc;
 }
 
 class _AppLocalizationsDelegate

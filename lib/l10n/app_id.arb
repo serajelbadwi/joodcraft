@@ -960,5 +960,17 @@
   "bpWorkTypeLabel": "Jenis template",
   "bpExportFormatLabel": "Jenis ekspor",
   "bpKindInvitation": "Undangan",
-  "invPackOptions": "Opsi keluaran"
+  "invPackOptions": "Opsi keluaran",
+  "tplCertClassicTitle": "Sertifikat Klasik Biru Laut",
+  "tplCertClassicDesc": "Sertifikat biru laut klasik dengan bingkai emas ganda dan bintang sudut hias.",
+  "tplCertMinimalTitle": "Sertifikat Minimal Biru Laut",
+  "tplCertMinimalDesc": "Desain minimal biru laut yang bersih dengan satu garis emas dan ruang lega.",
+  "tplCertIslamicTitle": "Sertifikat Ornamen Islami",
+  "tplCertIslamicDesc": "Sertifikat biru laut dengan tepi emas, ornamen geometris Islami dan huruf Amiri.",
+  "tplCertBandTitle": "Sertifikat Pita Emas",
+  "tplCertBandDesc": "Sertifikat biru laut dengan pita emas horizontal di atas dan bawah.",
+  "tplCertDiagonalTitle": "Sertifikat Diagonal Dinamis",
+  "tplCertDiagonalDesc": "Sertifikat biru laut dengan bentuk geometris emas miring yang memberi kesan gerak.",
+  "tplCertSquareTitle": "Sertifikat Persegi Elegan",
+  "tplCertSquareDesc": "Sertifikat biru laut dengan bingkai emas persegi simetris dan segel lingkaran di atas."
 }

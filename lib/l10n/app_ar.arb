@@ -1203,9 +1203,7 @@
   "joodRecoveryRestored": "تم استعادة المسودة.",
   "joodAutosaveSaved": "تم الحفظ تلقائياً",
   "joodAutosaveSaving": "جاري الحفظ…",
-
   "editorConfirm": "تأكيد",
-
   "admTitle": "إدارة المديرين المحليين",
   "admRefresh": "تحديث",
   "admTabAdmins": "المديرون",
@@ -1374,5 +1372,17 @@
   "bpWorkTypeLabel": "نوع القالب",
   "bpExportFormatLabel": "نوع التصدير",
   "bpKindInvitation": "دعوة",
-  "invPackOptions": "خيارات الإخراج"
+  "invPackOptions": "خيارات الإخراج",
+  "tplCertClassicTitle": "شهادة كلاسيكية كحلية",
+  "tplCertClassicDesc": "قالب كحلي كلاسيكي بإطار ذهبي مزدوج وزوايا مزخرفة بالنجوم.",
+  "tplCertMinimalTitle": "شهادة مينيمال كحلية",
+  "tplCertMinimalDesc": "تصميم مينيمال كحلي نظيف بخط ذهبي واحد ومساحات واسعة.",
+  "tplCertIslamicTitle": "شهادة زخرفية إسلامية",
+  "tplCertIslamicDesc": "قالب كحلي بحواف ذهبية وزخارف هندسية إسلامية وخط أميري.",
+  "tplCertBandTitle": "شهادة الشرائط الذهبية",
+  "tplCertBandDesc": "قالب كحلي بشرائط ذهبية أفقية أعلى وأسفل وتذييل منسّق.",
+  "tplCertDiagonalTitle": "شهادة ديناميكية مائلة",
+  "tplCertDiagonalDesc": "قالب كحلي بأشكال هندسية ذهبية مائلة وإحساس بالحركة.",
+  "tplCertSquareTitle": "شهادة مربعة أنيقة",
+  "tplCertSquareDesc": "قالب كحلي بإطار ذهبي مربّع متناظر وختم دائري علوي."
 }

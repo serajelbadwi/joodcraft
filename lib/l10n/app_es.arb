@@ -960,5 +960,17 @@
   "bpWorkTypeLabel": "Tipo de plantilla",
   "bpExportFormatLabel": "Tipo de exportación",
   "bpKindInvitation": "Invitación",
-  "invPackOptions": "Opciones de salida"
+  "invPackOptions": "Opciones de salida",
+  "tplCertClassicTitle": "Certificado clasico azul marino",
+  "tplCertClassicDesc": "Certificado azul marino clasico con doble marco dorado y estrellas ornamentales.",
+  "tplCertMinimalTitle": "Certificado minimal azul marino",
+  "tplCertMinimalDesc": "Diseno minimalista azul marino limpio con una sola linea dorada y amplios espacios.",
+  "tplCertIslamicTitle": "Certificado ornamento islamico",
+  "tplCertIslamicDesc": "Certificado azul marino con bordes dorados, ornamentos geometricos islamicos y tipografia Amiri.",
+  "tplCertBandTitle": "Certificado de bandas doradas",
+  "tplCertBandDesc": "Certificado azul marino con bandas horizontales doradas arriba y abajo.",
+  "tplCertDiagonalTitle": "Certificado diagonal dinamico",
+  "tplCertDiagonalDesc": "Certificado azul marino con formas geometricas doradas inclinadas que sugieren movimiento.",
+  "tplCertSquareTitle": "Certificado cuadrado elegante",
+  "tplCertSquareDesc": "Certificado azul marino con marco cuadrado dorado simetrico y sello circular superior."
 }

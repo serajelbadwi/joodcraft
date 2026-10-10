@@ -3132,4 +3132,46 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get invPackOptions => 'Options de sortie';
+
+  @override
+  String get tplCertClassicTitle => 'Certificat classique bleu marine';
+
+  @override
+  String get tplCertClassicDesc =>
+      'Certificat bleu marine classique a double cadre dore et etoiles ornementales.';
+
+  @override
+  String get tplCertMinimalTitle => 'Certificat minimal bleu marine';
+
+  @override
+  String get tplCertMinimalDesc =>
+      'Design minimal epure bleu marine avec un seul filet dore et de larges espaces.';
+
+  @override
+  String get tplCertIslamicTitle => 'Certificat ornement islamique';
+
+  @override
+  String get tplCertIslamicDesc =>
+      'Certificat bleu marine a bordures dorees, ornements geometriques islamiques et typographie Amiri.';
+
+  @override
+  String get tplCertBandTitle => 'Certificat a bandes dorees';
+
+  @override
+  String get tplCertBandDesc =>
+      'Certificat bleu marine a bandes horizontales dorees en haut et en bas.';
+
+  @override
+  String get tplCertDiagonalTitle => 'Certificat diagonal dynamique';
+
+  @override
+  String get tplCertDiagonalDesc =>
+      'Certificat bleu marine aux formes geometriques dorees inclinees evoquant le mouvement.';
+
+  @override
+  String get tplCertSquareTitle => 'Certificat carre elegant';
+
+  @override
+  String get tplCertSquareDesc =>
+      'Certificat bleu marine a cadre carre dore symetrique et sceau circulaire superieur.';
 }
