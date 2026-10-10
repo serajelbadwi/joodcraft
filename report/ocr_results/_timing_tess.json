@@ -1,0 +1,65 @@
+{
+  "sample_easy.jpg": {
+    "engine": "tesseract",
+    "version": "5.4.0.20240606",
+    "lang": "ara",
+    "psm": 6,
+    "width": 1241,
+    "height": 1754,
+    "megapixels": 2.18,
+    "load_time_s": 0.03,
+    "runs_s": [
+      1.08,
+      1.1,
+      1.14
+    ],
+    "median_s": 1.1,
+    "best_s": 1.08,
+    "rss_after_load_mb": 78,
+    "rss_peak_mb": 80,
+    "lines": 20,
+    "chars": 1436
+  },
+  "sample_medium.PNG": {
+    "engine": "tesseract",
+    "version": "5.4.0.20240606",
+    "lang": "ara",
+    "psm": 6,
+    "width": 597,
+    "height": 909,
+    "megapixels": 0.54,
+    "load_time_s": 0.03,
+    "runs_s": [
+      0.78,
+      0.79,
+      0.89
+    ],
+    "median_s": 0.79,
+    "best_s": 0.78,
+    "rss_after_load_mb": 78,
+    "rss_peak_mb": 80,
+    "lines": 24,
+    "chars": 1451
+  },
+  "sample_hard.PNG": {
+    "engine": "tesseract",
+    "version": "5.4.0.20240606",
+    "lang": "ara",
+    "psm": 6,
+    "width": 495,
+    "height": 849,
+    "megapixels": 0.42,
+    "load_time_s": 0.03,
+    "runs_s": [
+      0.77,
+      0.78,
+      0.85
+    ],
+    "median_s": 0.78,
+    "best_s": 0.77,
+    "rss_after_load_mb": 78,
+    "rss_peak_mb": 80,
+    "lines": 27,
+    "chars": 1327
+  }
+}
