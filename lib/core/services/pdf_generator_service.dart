@@ -15,6 +15,7 @@ import '../fonts/custom_font_face.dart';
 import '../models/template_document.dart';
 import '../models/template_element.dart';
 import '../pdf/custom_pdf_fonts.dart';
+import '../pdf/pdf_export_type.dart';
 import '../pdf/pdf_font_catalog.dart';
 import '../pdf/pdf_generation_isolate.dart';
 import '../pdf/pdf_image_adjust.dart';
@@ -292,15 +293,20 @@ class PdfGeneratorService {
   // ==========================================================================
 
   /// توليد صفحة واحدة (شهادة أو عقد).
+  ///
+  /// [type] محرّك الرسم: [PdfExportType.images] (النقطي، افتراضي) أو
+  /// [PdfExportType.vector] (المتجه — نصّه قابل للنسخ).
   Future<PdfGenerationReport> generate({
     required TemplateDocument document,
     Map<String, String>? data,
     PdfDocumentMetadata? metadata,
+    PdfExportType type = PdfExportType.images,
   }) {
     return generateBatch(
       document: document,
       rows: <Map<String, String>>[data ?? const <String, String>{}],
       metadata: metadata,
+      type: type,
     );
   }
 
@@ -308,11 +314,15 @@ class PdfGeneratorService {
   ///
   /// يُستدعى التقدّم (`onProgress`) بعد كل صفحة مكتملة. عند تجاوز الحدّ يُبثّ
   /// التقدّم لحظياً من الـ isolate الخلفي.
+  ///
+  /// [type] يختار المحرّك: النقطي (افتراضي، مطابق للمحرّر) أو المتجه —
+  /// كلاهما يُخرج نفس المستند نفسه والفريق الوحيد هو طريقة الرسم.
   Future<PdfGenerationReport> generateBatch({
     required TemplateDocument document,
     required List<Map<String, String>> rows,
     PdfDocumentMetadata? metadata,
     void Function(int done, int total)? onProgress,
+    PdfExportType type = PdfExportType.images,
   }) async {
     final Stopwatch stopwatch = Stopwatch()..start();
     final List<String> warnings = <String>[...document.warnings];
@@ -332,16 +342,32 @@ class PdfGeneratorService {
     }
 
     try {
-      debugPrint('📄 [PdfGeneratorService] Starting batch generation ($rows rows) using Rasterized Engine...');
-      
-      // المسار النقطي عالي الدقة (Rasterized) لضمان المطابقة 100% مع المحرر (300 DPI).
-      final Uint8List bytes = await RasterizedPdfBuilder.build(
-        document: document,
-        rows: rows,
-        metadata: metadata,
-        compress: compress,
-        onProgress: onProgress,
+      debugPrint(
+        '📄 [PdfGeneratorService] Starting batch generation '
+        '(${rows.length} rows) using '
+        '${type == PdfExportType.vector ? 'Vector' : 'Rasterized'} Engine...',
       );
+
+      final Uint8List bytes = switch (type) {
+        // المسار النقطي عالي الدقة (Rasterized): صورة كاملة لكل صفحة، فتطابق
+        // المحرر بصرياً 100% — وهو المسار الافتراضي منذ كانت الصيغة الوحيدة.
+        PdfExportType.images => await RasterizedPdfBuilder.build(
+          document: document,
+          rows: rows,
+          metadata: metadata,
+          compress: compress,
+          onProgress: onProgress,
+        ),
+        // المسار المتجه: نصّ حقيقي مضمّن كمحارف وأشكال أوامر مسار، فيتسرّب
+        // النص ويُبحث ويُصدَّر بحجم أصغر.
+        PdfExportType.vector => await _buildVector(
+          document: document,
+          rows: rows,
+          warnings: warnings,
+          metadata: metadata,
+          onProgress: onProgress,
+        ),
+      };
 
       stopwatch.stop();
       debugPrint('📄 [PdfGeneratorService] Batch generation complete in ${stopwatch.elapsedMilliseconds} ms.');
@@ -357,6 +383,79 @@ class PdfGeneratorService {
       debugPrint('📍 StackTrace: $stackTrace');
       rethrow;
     }
+  }
+
+  /// توليد PDF **متجهي** (Vector) — نصّه حروف مضمّنة لا بكسلات.
+  ///
+  /// بديل [generate] لمن أراد ملفاً أصغر ونصّاً قابلاً للنسخ والبحث: نفس
+  /// المستند ونفس الصفوف، لكن الرسم أوامر مسار ونصوص بدل صورة كاملة للصفحة.
+  ///
+  /// لا يُستعمل مع وضع التجميع (Imposition): ورقة التجميع تكرّر قطعاً مرسومة
+  /// صورةً على ورقة أكبر، فلا معنى لمسار متجهي فيها.
+  Future<PdfGenerationReport> exportVector({
+    required TemplateDocument document,
+    Map<String, String>? data,
+    PdfDocumentMetadata? metadata,
+    void Function(int done, int total)? onProgress,
+  }) {
+    return generateBatch(
+      document: document,
+      rows: <Map<String, String>>[data ?? const <String, String>{}],
+      metadata: metadata,
+      onProgress: onProgress,
+      type: PdfExportType.vector,
+    );
+  }
+
+  // ==========================================================================
+  //                        المسار المتجهي (Vector)
+  // ==========================================================================
+
+  /// بناء ملف PDF متجهي للصفوف — مساران **متطابقا النتيجة**:
+  ///
+  /// * **مجزّأ** (`useIsolate` مع تجاوز [isolateThreshold]): بايتات الصور
+  ///   والخطوط تُنقل إلى isolate يُبنى فيه الملف، فلا يتجمّد الخيط الرئيسي
+  ///   أثناء ترميز مئات المحارف — ويبثّ التقدّم من هناك لحظياً.
+  /// * **على الخيط الرئيسي** (المسار الشائع في المعاينة: صفحة واحدة): أسرع
+  ///   من نقل ميجابايتات الخطوط إلى isolate آخر ثم إعادة بناء المجموعة منها.
+  ///
+  /// لا يختلف المخرَج بين المسارين: المستند والصفوف والدقّة والضغط نفسها في
+  /// الطرفين، والخطوط تُبنى من بايتاتها في المسار الأول ومن [PdfFontSet]
+  /// نفسه في الثاني.
+  Future<Uint8List> _buildVector({
+    required TemplateDocument document,
+    required List<Map<String, String>> rows,
+    required List<String> warnings,
+    PdfDocumentMetadata? metadata,
+    void Function(int done, int total)? onProgress,
+  }) async {
+    if (useIsolate && rows.length >= isolateThreshold) {
+      return renderPdfInBackground(
+        PdfRenderRequest(
+          document: document,
+          rows: rows,
+          imageBytes: await _resolveImageBytes(document, warnings),
+          embeddedFontBytes: _fonts.bytesByKey,
+          customFonts: await _customFontBytes(document),
+          compress: compress,
+          metadata: metadata,
+        ),
+        onProgress: onProgress,
+      );
+    }
+
+    return PdfRenderer(
+      fonts: _fonts,
+      compress: compress,
+      // دقّة المستند نفسها كما في المسار المجزّأ أعلاه.
+      dpi: document.dpi.toDouble(),
+    ).build(
+      document: document,
+      rows: rows,
+      images: await _resolveImages(document, warnings),
+      metadata: metadata,
+      onProgress: onProgress,
+    );
   }
 
   // ==========================================================================
@@ -452,11 +551,6 @@ class PdfGeneratorService {
   /// بلا إعادة تحميل الخطوط.
   @visibleForTesting
   PdfFontSet get debugFonts => _fonts;
-
-
-
-  // المسارات المتجهية (Vector) السابقة تم استبدالها بـ RasterizedPdfBuilder 
-  // وتمت إزالة _generateInline و _generateInBackground للحفاظ على نظافة الكود
 
   /// يضمّن الخطوط المخصّصة **وخطوط النظام** التي يشير إليها المستند.
   ///

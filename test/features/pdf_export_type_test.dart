@@ -12,11 +12,12 @@ import 'package:joodcraft/l10n/generated/app_localizations.dart';
 /// اختيار **نوع التصدير** في شاشة تصدير PDF (`PdfTemplatePreview`):
 ///
 /// 1. الضغط على «تصدير PDF» يفتح حوار «نوع التصدير» بخياري «صور» و«فيكتور».
-/// 2. «صور» مختار افتراضياً (علامة صحّة ممتلئة) وهو الخيار المفعّل.
-/// 3. «فيكتور» معطّل: دائرة فارغة + شارة «قريباً»، وضغطه يعرض رسالة «قريباً»
-///    بلا تغيير الاختيار وبلا إغلاق الحوار.
-/// 4. التأكيد يغلق الحوار ويسلك مسار «صور» (دالة التصدير الحالية)، والإلغاء
-///    يغلق بلا تصدير.
+/// 2. «صور» مختار افتراضياً (علامة صحّة ممتلئة) — وهو ما تُنتجه المعاينة.
+/// 3. «فيكتور» خيار حيّ تماماً: قابل للنقر بلا شارة «قريباً» وبلا تعتيم
+///    تعطيل — والضغط عليه ينقل علامة الاختيار إليه فوراً.
+/// 4. التأكيد يغلق الحوار ويسلك خياره: «صور» دالة التصدير الحالية، و«فيكتور»
+///    توليد متجهي بنفس بيانات المعاينة **بلا استبدال ما تراه المعاينة** (يبقى
+///    ملف الطباعة هو النقطي المطابق)؛ والإلغاء يغلق بلا تصدير.
 void main() {
   // الخطوط تُخزَّن مؤقتاً كـ Future مرتبط بالنطاق الزمني (zone): يجب تصفيرها
   // قبل كل اختبار حتى لا يتسرّب كاش من اختبار ودجة سابق.
@@ -77,6 +78,13 @@ void main() {
   /// `FilledButton.icon` يبني صنفاً فرعياً خاصاً (`_FilledButtonWithIcon`).
   Finder exportButton(WidgetTester tester) => find.ancestor(
     of: exportLabel(tester),
+    matching: find.byWidgetPredicate((Widget w) => w is ButtonStyleButton),
+  );
+
+  /// زر «طباعة» في الترويسة — يُصدَّل ما دامت المعاينة بلا ملف. وجوده
+  /// متاحاً يعني أن `_bytes` (ما تُنتجه المعاينة) ما زال سليماً.
+  Finder printButton(WidgetTester tester) => find.ancestor(
+    of: find.text(l10nOf(tester).commonPrint),
     matching: find.byWidgetPredicate((Widget w) => w is ButtonStyleButton),
   );
 
@@ -158,8 +166,10 @@ void main() {
     );
   });
 
-  testWidgets('«فيكتور» معطّل مع شارة «قريباً»', (WidgetTester tester) async {
-    final AppLocalizations l10n = await openExportTypeDialog(tester);
+  testWidgets('«فيكتور» خيار حيّ: قابل للنقر بلا شارة «قريباً»', (
+    WidgetTester tester,
+  ) async {
+    await openExportTypeDialog(tester);
 
     expect(
       find.descendant(
@@ -169,44 +179,66 @@ void main() {
       findsOneWidget,
       reason: 'بطاقة الفيكتور تحمل أيقونة الوصف المميّز',
     );
+    // لا شارة «قريباً» بعد الآن: الخيار مفعّل فعلاً.
+    expect(
+      find.byKey(const ValueKey<String>('pdf-export-coming-soon-badge')),
+      findsNothing,
+    );
+    // ولا تعتيم تعطيل: البطاقة بلا غلاف `Opacity`.
+    expect(
+      find.descendant(of: option('vector'), matching: find.byType(Opacity)),
+      findsNothing,
+    );
+    // النقر نفسه موصول (لم يبقَ `onTap` فارغاً).
+    final InkWell inkWell = tester.widget<InkWell>(
+      find.descendant(of: option('vector'), matching: find.byType(InkWell)),
+    );
+    expect(inkWell.onTap, isNotNull);
+  });
+
+  testWidgets('الضغط على «فيكتور» ينقل علامة الاختيار إليه', (
+    WidgetTester tester,
+  ) async {
+    await openExportTypeDialog(tester);
+
+    await tester.tap(option('vector'));
+    await tester.pump();
+
+    // الحوار يبقى مفتوحاً للتغيير، وعلامة الصحّة انتقلت إلى «فيكتور».
+    expect(dialog(), findsOneWidget);
     expect(
       find.descendant(
         of: option('vector'),
-        matching: find.byKey(
-          const ValueKey<String>('pdf-export-coming-soon-badge'),
-        ),
+        matching: find.byIcon(Icons.check_circle_rounded),
       ),
       findsOneWidget,
     );
-    expect(find.text(l10n.pdfExportTypeComingSoon), findsOneWidget);
-    // التعطيل مرئي: البطاقة معتمة جزئياً (‎Opacity 0.6‎) بلا إطار اختيار.
-    final Opacity faded = tester.widget<Opacity>(
-      find.descendant(of: option('vector'), matching: find.byType(Opacity)),
+    expect(
+      find.descendant(
+        of: option('images'),
+        matching: find.byIcon(Icons.radio_button_unchecked),
+      ),
+      findsOneWidget,
     );
-    expect(faded.opacity, 0.6);
+
+    // والرجوع إلى «صور» يعيد العلامتين كما كانتا — الاختيار متبادل تماماً.
+    await tester.tap(option('images'));
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: option('images'),
+        matching: find.byIcon(Icons.check_circle_rounded),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: option('vector'),
+        matching: find.byIcon(Icons.radio_button_unchecked),
+      ),
+      findsOneWidget,
+    );
   });
-
-  testWidgets(
-    'الضغط على «فيكتور» يُظهر «قريباً» ولا يُصدّر ولا يُغيّر الاختيار',
-    (WidgetTester tester) async {
-      final AppLocalizations l10n = await openExportTypeDialog(tester);
-
-      await tester.tap(option('vector'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      expect(find.text(l10n.pdfExportTypeComingSoonMessage), findsOneWidget);
-      // الحوار ما زال مفتوحاً والاختيار لم ينتقل عن «صور».
-      expect(dialog(), findsOneWidget);
-      expect(
-        find.descendant(
-          of: option('images'),
-          matching: find.byIcon(Icons.check_circle_rounded),
-        ),
-        findsOneWidget,
-      );
-    },
-  );
 
   testWidgets('تأكيد «صور» يغلق الحوار ويسلك مسار التصدير الحالي', (
     WidgetTester tester,
@@ -221,6 +253,34 @@ void main() {
     // التأكيد أسقط مسار «صور» الحالي (منتقي الحفظ) — في بيئة الاختبار بلا
     // إضافة ملفات قد يظهر شريط فشل، وهو دليل على أن المسار استُدعي أصلاً.
     expect(exportLabel(tester), findsOneWidget);
+  });
+
+  testWidgets('تأكيد «فيكتور» يسلك التوليد المتجهي دون إفساد المعاينة', (
+    WidgetTester tester,
+  ) async {
+    await openExportTypeDialog(tester);
+
+    await tester.tap(option('vector'));
+    await tester.pump();
+    await tester.tap(confirmButton());
+    await tester.pump();
+
+    expect(dialog(), findsNothing, reason: 'الحوار يُقفل بعد التأكيد');
+
+    // مسار الفيكتور يبني ملفاً جديداً ثم يسلّمه لمنتقي الحفظ — ولا يستبدل
+    // ما تُنتجه المعاينة: يبقى ملف الطباعة هو النقطي المطابق، فيبقى زر
+    // «طباعة» متاحاً ولا يعتم.
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 400)),
+    );
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(exportLabel(tester), findsOneWidget);
+    expect(
+      tester.widget<ButtonStyleButton>(printButton(tester)).enabled,
+      isTrue,
+      reason: 'المعاينة ما زالت تحمل الملف النقطي نفسه',
+    );
   });
 
   testWidgets('الإلغاء يغلق الحوار بلا تصدير', (WidgetTester tester) async {
