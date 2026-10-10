@@ -804,17 +804,11 @@ class _BlockEditor extends StatelessWidget {
                     focusedErrorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
-                    // إزاحة السطر الأول: يحرّكها `prefix` يمين النص (بداية السطر
-                    // في RTL). المحرّر يقيس المساحة نفسها التي يقيسها محرّك
-                    // التدفّق، فلا يزيد ارتفاعه على المحسوب أبداً.
-                    prefix: block.firstLineIndentCm > 0
-                        ? SizedBox(
-                            width:
-                                block.firstLineIndentCm *
-                                10 *
-                                WriterCanvas.pxPerMm,
-                          )
-                        : null,
+                    // ⚠️ لا `prefix` هنا: كان يُرسم مرة واحدة قبل منطقة النص
+                    // بأكملها فيُضيّق نطاق الالتفاف، فتبدو كل الأسطر مُزاحة لا
+                    // أولها. الإزاحة تُضاف إلى تدفّق النص نفسه (WidgetSpan واحد
+                    // في أوله — راجع [WriterTextEditingController.buildTextSpan])
+                    // فيأخذها السطر الأول وحده.
                     hintText: block.kind == JoodWriterBlockKind.paragraph
                         ? 'اكتب...'
                         : block.kind.labelAr,

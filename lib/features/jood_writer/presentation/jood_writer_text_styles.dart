@@ -75,9 +75,14 @@ abstract final class JoodWriterTextStyles {
   static double indentPx(JoodWriterBlock block, {double scale = 1}) =>
       block.indentCm * 10 * pxPerMm * scale;
 
-  /// عرض المسافة البادئة للسطر الأول بالبكسل. يُخصم من عرض السطر **كلّه**
-  /// في القياس، ويُطبَّق في المحرّر عبر `prefix` وبصفحة العرض على السطر
-  /// الأول فقط — قياسٌ محافظ لا يسمح أبداً بتجاوز ارتفاع الصفحة.
+  /// عرض المسافة البادئة للسطر الأول بالبكسل.
+  ///
+  /// **في القياس** يُخصم من عرض السطر كله: قياسٌ محافظ لا يسمح أبداً بتجاوز
+  /// ارتفاع الكتلة المحسوب ولا بفيض إطار الصفحة.
+  ///
+  /// **في الرسم** يُطبَّق على السطر الأول وحده: في المحرّر عبر `WidgetSpan` واحد
+  /// في أوله، وفي صفحات العرض على أول سطر من الشريحة. الأسطر التالية تبدأ من
+  /// حافة الهامش (بعد إزاحة الفقرة العامّة [indentPx] إن وُجدت).
   static double firstLineIndentPx(JoodWriterBlock block, {double scale = 1}) =>
       block.firstLineIndentCm * 10 * pxPerMm * scale;
 

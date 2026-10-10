@@ -283,17 +283,46 @@ void main() {
       );
     });
 
-    testWidgets('المحرّر يعرض الإزاحة من اليمين (بداية السطر في RTL)', (
+    testWidgets('إزاحة السطر الأول تأخذها السطر الأول وحده', (
       WidgetTester tester,
     ) async {
       await pumpScreen(tester);
 
       final TextField field = tester.widget<TextField>(find.byKey(field0));
-      // إزاحة السطر الأول مُفعّلة افتراضياً ⇒ الـ prefix موجود بعرضها بالبكسل.
+      // لم يبقَ أي `prefix`: كان يُضيّق نطاق الالتفاف فتزحح كل الأسطر لا أولها.
+      expect(field.decoration?.prefix, isNull);
+
+      // الإزاحة صارت جزءاً من تدفّق النص: `WidgetSpan` واحد في أوله.
       final double expected =
           JoodWriterBlock.defaultFirstLineIndentCm * 10 * WriterCanvas.pxPerMm;
-      expect(field.decoration?.prefix, isA<SizedBox>());
-      expect((field.decoration!.prefix! as SizedBox).width, expected);
+      final TextEditingController controller = field.controller!;
+      final TextSpan span = controller.buildTextSpan(
+        context: tester.element(find.byKey(field0)),
+        style: const TextStyle(),
+        withComposing: false,
+      );
+
+      final List<InlineSpan> children = span.children ?? const <InlineSpan>[];
+      expect(children.length, 2, reason: 'فراغ الإزاحة + نصّ الحقل');
+      expect(children.first, isA<WidgetSpan>());
+      expect((children.first as WidgetSpan).child, isA<SizedBox>());
+      expect(((children.first as WidgetSpan).child as SizedBox).width, expected);
+      expect(children.last, isA<TextSpan>());
+    });
+
+    testWidgets('الكتابة فوق الإزاحة تبقى نصّاً خالصاً بلا فراغ زائد', (
+      WidgetTester tester,
+    ) async {
+      final WriterDocumentController controller = makeController();
+      addTearDown(controller.dispose);
+      await pumpCanvas(tester, controller);
+
+      await tester.enterText(find.byKey(field0), 'فقرة تجربة');
+      await tester.pump();
+
+      // فراغ الإزاحة ليس حرفاً في النصّ: ما يُكتب يُخزَّن كما هو.
+      expect(controller.document.blocks.first.text, 'فقرة تجربة');
+      expect(controller.controllers.first.text, 'فقرة تجربة');
     });
 
     test('القياس يخصم إزاحة السطر الأول فتختصر أسطر الفقرة', () {

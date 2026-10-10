@@ -7,6 +7,7 @@ import '../domain/jood_writer_block.dart';
 import '../domain/jood_writer_document.dart';
 import '../domain/writer_image.dart';
 import '../domain/writer_shape.dart';
+import 'jood_writer_text_styles.dart';
 
 /// حقل كتابة يزامن تغييره مع كتلته عبر مالكه مباشرةً (هويته هي فهرسه)، فتبقى
 /// الحقول موازية للكتل مهما نُشِطت أو أُزيلت وسط القائمة.
@@ -18,6 +19,47 @@ class WriterTextEditingController extends TextEditingController {
   final WriterDocumentController owner;
 
   void _handleChanged() => owner._onTextChanged(this);
+
+  /// موضع هذه الكتلة داخل المستند (هوية الحقل من خلال مالكه).
+  int get _blockIndex => owner.indexOfController(this);
+
+  /// يبني نصّ الحقل مضيفاً **إزاحة السطر الأول** إلى تدفّقه.
+  ///
+  /// لماذا هنا لا في `InputDecoration.prefix`؟ لأن `prefix` يُرسم **مرة واحدة
+  /// قبل منطقة النص كلها**، فيُضيّق نطاق الالتفاف أبداً: كل الأسطر تبدأ من
+  /// الحافة نفسها، فتبدو كلها مُزاحة لا أولها. أمّا `WidgetSpan` فهو جزء من
+  /// تدفّق النص، فيشغل السطر الأول وحده وتطول الأسطر التالية على كامل العرض.
+  ///
+  /// نُبقي على ما تُعيده `super` بلا مساس (بما فيه تقسيم منطقة التركيب) فلا
+  /// تتأثّر مواضع المؤشّر ولا التحديد.
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    final TextSpan base = super.buildTextSpan(
+      context: context,
+      style: style,
+      withComposing: withComposing,
+    );
+
+    final int index = _blockIndex;
+    if (index < 0 || index >= owner.document.blocks.length) return base;
+
+    final double indent = JoodWriterTextStyles.firstLineIndentPx(
+      owner.document.blocks[index],
+    );
+    if (indent <= 0) return base;
+
+    return TextSpan(
+      style: style,
+      children: <InlineSpan>[
+        WidgetSpan(child: SizedBox(width: indent)),
+        base,
+      ],
+    );
+  }
 }
 
 /// المتحكّم الرئيسي بـ «جود كاتب»، يحمل المستند وقائمة حقول الكتابة، ويدير
