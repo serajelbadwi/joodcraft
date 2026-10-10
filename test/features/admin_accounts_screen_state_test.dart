@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/audit/export_audit_log.dart';
+import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/features/auth/data/local_auth_repository.dart';
 import 'package:joodcraft/features/auth/domain/admin_account.dart';
 import 'package:joodcraft/features/auth/domain/admin_repository.dart';
@@ -44,7 +45,9 @@ void main() {
   }
 
   /// يبني الشاشة **كما في التطبيق الحقيقي**: بلا مُحقَن مباشر، فتقرأ من
-  /// مزوّد الإدارة عبر الشجرة.
+  /// مزوّد الإدارة عبر الشجرة، وتحت الثيم الحقيقي (`AppTheme.light`) الذي
+  /// يضبط أزراره بعرض أدنى لا نهائي داخل الأعمدة — فلا يفوتنا عيب تخطيطي
+  /// يظهر فقط تحت الثيم (مثل زر داخل صف).
   ///
   /// ضخّ إطارات محدّد بدل `pumpAndSettle`: مؤشّر التحميل دوّار لا يتوقّف،
   /// فكان `pumpAndSettle` يانتهي حتى لو كانت الشاشة سليمة.
@@ -62,7 +65,10 @@ void main() {
             value: ExportAuditLog.instance,
           ),
         ],
-        child: const MaterialApp(home: AdminAccountsScreen()),
+        child: MaterialApp(
+          theme: AppTheme.light,
+          home: const AdminAccountsScreen(),
+        ),
       ),
     );
     // إطاران: الأول يبني الشاشة ويطلق الجلب المؤجَّل، والثاني يعرض ناتجه.
@@ -167,6 +173,7 @@ void main() {
           ChangeNotifierProvider<AdminAccountsController>.value(value: admins),
         ],
         child: MaterialApp(
+          theme: AppTheme.light,
           home: Builder(
             builder: (BuildContext context) => Scaffold(
               body: Center(

@@ -166,9 +166,16 @@ class _AdminAccountsScreenState extends State<AdminAccountsScreen> {
           key: const ValueKey<String>('adm-list-card'),
           title: context.l10n?.admListTitle ?? 'حسابات المديرين على هذا الجهاز',
           icon: Icons.admin_panel_settings_rounded,
+          // الأزرار داخل صف تحتاج `minimumSize` منتهياً: الثيم العام يضبط
+          // العرض الأدنى على ما لا نهاية (Size.fromHeight) — صحيح داخل عمود
+          // ممتدّ لكنه غير صالح داخل صف، فيهبط تخطيط البطاقة كلها ولا يظهر
+          // الجدول.
           trailing: FilledButton.icon(
             key: const ValueKey<String>('adm-add'),
             onPressed: _admins.isBusy ? null : _openCreateDialog,
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(0, AppTheme.controlHeight),
+            ),
             icon: const Icon(Icons.person_add_alt_1_rounded, size: 16),
             label: Text(context.l10n?.admAdd ?? 'إضافة مدير'),
           ),
