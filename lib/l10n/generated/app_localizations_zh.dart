@@ -3053,4 +3053,141 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tplCertSquareDesc => '深蓝证书，对称方形金框，顶部圆形印章。';
+
+  @override
+  String get navInvitationsEngine => '请柬引擎';
+
+  @override
+  String get aboutTitle => '关于 JoodCraft';
+
+  @override
+  String get aboutTagline => '生成正式的阿拉伯文证书与合同';
+
+  @override
+  String aboutVersion(Object version) {
+    return '版本 $version';
+  }
+
+  @override
+  String get aboutSummaryTitle => '简介';
+
+  @override
+  String get aboutSummaryBody =>
+      'JoodCraft 是一款完全在您设备上运行的桌面与网页应用：读取 Excel 文件，并用应用内置的阿拉伯字体生成 PDF 证书和合同。所有项目、模板和素材都保存在本地数据库中——不上传任何文件到服务器。';
+
+  @override
+  String get aboutFeaturesTitle => '主要功能';
+
+  @override
+  String get aboutFeatureOffline => '完全离线：无需网络，不上传任何数据';
+
+  @override
+  String get aboutFeatureArabicFonts => '内置阿拉伯字体，字形精确，RTL 方向正确';
+
+  @override
+  String get aboutFeatureExcel => '读取 Excel 与 CSV，自动将列映射到模板字段';
+
+  @override
+  String get aboutFeatureBatch => '一次生成数百份证书——合并为一个文件或每人一个文件';
+
+  @override
+  String get aboutFeatureVisualEditor => '可视化拖放编辑器，支持多选、撤销与重做';
+
+  @override
+  String get aboutFeatureInvitations => '斋月、开斋节与婚礼邀请函成品，含印刷与社交尺寸';
+
+  @override
+  String get aboutFeatureExports => '导出 PDF、PNG 以及可分享的 Jood 项目';
+
+  @override
+  String get aboutDeveloperTitle => '开发者';
+
+  @override
+  String get aboutDeveloperName => 'Seraj Abdullah Al-Badawi';
+
+  @override
+  String get aboutDeveloperEmail => 'serajelroh@gmail.com';
+
+  @override
+  String get aboutDeveloperStatus => '个人项目 — 开发中';
+
+  @override
+  String get aboutLicenses => '查看许可';
+
+  @override
+  String get aboutFeedback => '发送意见';
+
+  @override
+  String get aboutFeedbackCopied => '电子邮件已复制——欢迎随时反馈';
+
+  @override
+  String get aboutCreditsTitle => '致谢';
+
+  @override
+  String get aboutCreditsBody =>
+      '本应用使用 Flutter 与开源库构建——感谢 Flutter 社区以及所有这些库的贡献者。';
+
+  @override
+  String get jwPagesSettings => '页面设置';
+
+  @override
+  String get jwPagesMultiple => '多页';
+
+  @override
+  String get jwPagesMultipleHint => '将纸张对半拆分，以便在一张纸上打印两页';
+
+  @override
+  String get jwPagesSingle => '普通（单页）';
+
+  @override
+  String get jwPagesA4ToA5Portrait => 'A4 → 2 × A5 纵向（小册子）';
+
+  @override
+  String get jwPagesA4ToA5Landscape => 'A4 → 2 × A5 横向';
+
+  @override
+  String get jwPagesPreview => '预览';
+
+  @override
+  String get aboutLinksTitle => '链接';
+
+  @override
+  String get aboutDescription =>
+      'JoodCraft 是一站式阿拉伯语文档平台，可专业生成证书、合同与邀请函。以可视化方式设计一个模板，再关联 Excel 文件，即可批量产出数百份排版精确、方向正确的阿拉伯语文档 —— 无需联网，也无需服务器。';
+
+  @override
+  String get aboutFeatures => '功能特性';
+
+  @override
+  String get aboutFeature10Languages => '支持 10 种语言';
+
+  @override
+  String get aboutFeatureArabicText => '精准阿拉伯文连写';
+
+  @override
+  String get aboutFeatureBulkGeneration => '从 Excel 批量生成';
+
+  @override
+  String get aboutFeaturePdfExport => '高质量 PDF 导出';
+
+  @override
+  String get aboutDeveloper => '开发者';
+
+  @override
+  String get aboutDeveloperNote => '个人项目 — 开发中';
+
+  @override
+  String get aboutLinks => '链接';
+
+  @override
+  String get aboutViewLicenses => '查看许可协议';
+
+  @override
+  String get aboutSendFeedback => '发送反馈';
+
+  @override
+  String get aboutCredits => '致谢';
+
+  @override
+  String get aboutCreditsText => 'JoodCraft 使用 Flutter、Dart 及多个开源库构建。感谢每一位贡献者。';
 }

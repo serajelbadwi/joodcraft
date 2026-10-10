@@ -3150,4 +3150,151 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get tplCertSquareDesc =>
       'Sertifikat biru laut dengan bingkai emas persegi simetris dan segel lingkaran di atas.';
+
+  @override
+  String get navInvitationsEngine => 'Mesin undangan';
+
+  @override
+  String get aboutTitle => 'Tentang JoodCraft';
+
+  @override
+  String get aboutTagline => 'Buat sertifikat dan kontrak resmi berbahasa Arab';
+
+  @override
+  String aboutVersion(Object version) {
+    return 'Versi $version';
+  }
+
+  @override
+  String get aboutSummaryTitle => 'Gambaran umum';
+
+  @override
+  String get aboutSummaryBody =>
+      'JoodCraft adalah aplikasi desktop dan web yang berjalan sepenuhnya di perangkat Anda: membaca berkas Excel dan membuat sertifikat serta kontrak PDF dengan font Arab yang dibundel. Semua proyek, template, dan aset tersimpan di basis data lokal — tidak ada yang diunggah ke server.';
+
+  @override
+  String get aboutFeaturesTitle => 'Fitur utama';
+
+  @override
+  String get aboutFeatureOffline =>
+      'Sepenuhnya offline: tanpa internet, tanpa mengunggah data';
+
+  @override
+  String get aboutFeatureArabicFonts =>
+      'Font Arab bawaan dengan pembentukan huruf dan arah RTL yang tepat';
+
+  @override
+  String get aboutFeatureExcel =>
+      'Membaca Excel dan CSV, memetakan kolom ke field template secara otomatis';
+
+  @override
+  String get aboutFeatureBatch =>
+      'Buat ratusan sertifikat sekaligus — satu berkas gabungan atau satu per orang';
+
+  @override
+  String get aboutFeatureVisualEditor =>
+      'Editor visual seret-dan-lepas dengan pilih banyak, batal, dan ulangi';
+
+  @override
+  String get aboutFeatureInvitations =>
+      'Undangan siap pakai untuk Ramadan, Idulfitri, dan pernikahan dalam ukuran cetak dan media sosial';
+
+  @override
+  String get aboutFeatureExports =>
+      'Ekspor PDF, PNG, dan proyek Jood yang dapat dibagikan';
+
+  @override
+  String get aboutDeveloperTitle => 'Pengembang';
+
+  @override
+  String get aboutDeveloperName => 'Seraj Abdullah Al-Badawi';
+
+  @override
+  String get aboutDeveloperEmail => 'serajelroh@gmail.com';
+
+  @override
+  String get aboutDeveloperStatus => 'Proyek pribadi — dalam pengembangan';
+
+  @override
+  String get aboutLicenses => 'Lihat lisensi';
+
+  @override
+  String get aboutFeedback => 'Kirim masukan';
+
+  @override
+  String get aboutFeedbackCopied =>
+      'Email disalin — masukan Anda selalu diterima';
+
+  @override
+  String get aboutCreditsTitle => 'Ucapan terima kasih';
+
+  @override
+  String get aboutCreditsBody =>
+      'Dibangun dengan Flutter dan pustaka sumber terbuka — terima kasih kepada komunitas Flutter dan semua kontributor pustaka tersebut.';
+
+  @override
+  String get jwPagesSettings => 'Pengaturan halaman';
+
+  @override
+  String get jwPagesMultiple => 'Beberapa halaman';
+
+  @override
+  String get jwPagesMultipleHint =>
+      'Bagi lembar menjadi dua untuk mencetak dua halaman pada satu lembar';
+
+  @override
+  String get jwPagesSingle => 'Normal (satu halaman)';
+
+  @override
+  String get jwPagesA4ToA5Portrait => 'A4 → 2 × A5 potret (buklet)';
+
+  @override
+  String get jwPagesA4ToA5Landscape => 'A4 → 2 × A5 lanskap';
+
+  @override
+  String get jwPagesPreview => 'Pratinjau';
+
+  @override
+  String get aboutLinksTitle => 'Tautan';
+
+  @override
+  String get aboutDescription =>
+      'JoodCraft adalah platform Arab yang lengkap untuk membuat sertifikat, kontrak, dan undangan berkualitas profesional. Rancang satu template secara visual, lalu tautkan ke berkas Excel untuk menghasilkan ratusan dokumen dengan tipografi Arab yang presisi dan arah tulisan yang benar — tanpa internet dan tanpa server.';
+
+  @override
+  String get aboutFeatures => 'Fitur';
+
+  @override
+  String get aboutFeature10Languages => '10 bahasa yang didukung';
+
+  @override
+  String get aboutFeatureArabicText => 'Penghubungan huruf Arab yang presisi';
+
+  @override
+  String get aboutFeatureBulkGeneration => 'Pembuatan massal dari Excel';
+
+  @override
+  String get aboutFeaturePdfExport => 'Ekspor PDF berkualitas tinggi';
+
+  @override
+  String get aboutDeveloper => 'Pengembang';
+
+  @override
+  String get aboutDeveloperNote => 'Proyek pribadi — dalam pengembangan';
+
+  @override
+  String get aboutLinks => 'Tautan';
+
+  @override
+  String get aboutViewLicenses => 'Lihat lisensi';
+
+  @override
+  String get aboutSendFeedback => 'Kirim masukan';
+
+  @override
+  String get aboutCredits => 'Ucapan terima kasih';
+
+  @override
+  String get aboutCreditsText =>
+      'JoodCraft dibangun dengan Flutter dan Dart serta pustaka sumber terbuka. Terima kasih kepada semua yang berkontribusi.';
 }

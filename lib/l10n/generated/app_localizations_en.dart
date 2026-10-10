@@ -3144,4 +3144,153 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tplCertSquareDesc =>
       'Navy certificate with a symmetric square gold frame and a top circular seal.';
+
+  @override
+  String get navInvitationsEngine => 'Invitations Engine';
+
+  @override
+  String get aboutTitle => 'About JoodCraft';
+
+  @override
+  String get aboutTagline =>
+      'Generate official Arabic certificates and contracts';
+
+  @override
+  String aboutVersion(Object version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get aboutSummaryTitle => 'Overview';
+
+  @override
+  String get aboutSummaryBody =>
+      'JoodCraft is a desktop and web app that runs entirely on your device: it reads Excel files and generates certificates and contracts as PDF with Arabic fonts bundled inside the app. All projects, templates and assets stay in a local database on your machine — nothing is ever uploaded, so your data remains yours alone.';
+
+  @override
+  String get aboutFeaturesTitle => 'Key features';
+
+  @override
+  String get aboutFeatureOffline =>
+      'Fully offline: no internet needed, nothing uploaded';
+
+  @override
+  String get aboutFeatureArabicFonts =>
+      'Bundled Arabic fonts with precise shaping and RTL';
+
+  @override
+  String get aboutFeatureExcel =>
+      'Reads Excel and CSV, mapping columns to template fields automatically';
+
+  @override
+  String get aboutFeatureBatch =>
+      'Generate hundreds of certificates at once — one combined file or one per person';
+
+  @override
+  String get aboutFeatureVisualEditor =>
+      'Visual drag-and-drop editor with multi-select, undo and redo';
+
+  @override
+  String get aboutFeatureInvitations =>
+      'Ready-made Ramadan, Eid and wedding invitations in print and social media sizes';
+
+  @override
+  String get aboutFeatureExports =>
+      'Exports PDF, PNG and shareable Jood project files';
+
+  @override
+  String get aboutDeveloperTitle => 'Developer';
+
+  @override
+  String get aboutDeveloperName => 'Seraj Abdullah Al-Badawi';
+
+  @override
+  String get aboutDeveloperEmail => 'serajelroh@gmail.com';
+
+  @override
+  String get aboutDeveloperStatus =>
+      'Personal project — under active development';
+
+  @override
+  String get aboutLicenses => 'View licenses';
+
+  @override
+  String get aboutFeedback => 'Send feedback';
+
+  @override
+  String get aboutFeedbackCopied =>
+      'Email copied — your feedback is always welcome';
+
+  @override
+  String get aboutCreditsTitle => 'Credits';
+
+  @override
+  String get aboutCreditsBody =>
+      'Built with Flutter and open-source libraries — thanks to the Flutter community and to everyone who contributes to those libraries.';
+
+  @override
+  String get jwPagesSettings => 'Page settings';
+
+  @override
+  String get jwPagesMultiple => 'Multiple pages';
+
+  @override
+  String get jwPagesMultipleHint =>
+      'Split the sheet in half to print two pages on one sheet';
+
+  @override
+  String get jwPagesSingle => 'Normal (single page)';
+
+  @override
+  String get jwPagesA4ToA5Portrait => 'A4 → 2 × A5 portrait (booklet)';
+
+  @override
+  String get jwPagesA4ToA5Landscape => 'A4 → 2 × A5 landscape';
+
+  @override
+  String get jwPagesPreview => 'Preview';
+
+  @override
+  String get aboutLinksTitle => 'Links';
+
+  @override
+  String get aboutDescription =>
+      'JoodCraft is a complete Arabic platform for generating certificates, contracts and invitations with professional quality. Design a single template visually, then link it to an Excel file to produce hundreds of documents with precise Arabic typography and correct direction — offline and with no server.';
+
+  @override
+  String get aboutFeatures => 'Features';
+
+  @override
+  String get aboutFeature10Languages => '10 supported languages';
+
+  @override
+  String get aboutFeatureArabicText => 'Precise Arabic shaping';
+
+  @override
+  String get aboutFeatureBulkGeneration => 'Bulk generation from Excel';
+
+  @override
+  String get aboutFeaturePdfExport => 'High-quality PDF export';
+
+  @override
+  String get aboutDeveloper => 'Developer';
+
+  @override
+  String get aboutDeveloperNote => 'Personal project — under development';
+
+  @override
+  String get aboutLinks => 'Links';
+
+  @override
+  String get aboutViewLicenses => 'View licenses';
+
+  @override
+  String get aboutSendFeedback => 'Send feedback';
+
+  @override
+  String get aboutCredits => 'Credits';
+
+  @override
+  String get aboutCreditsText =>
+      'JoodCraft is built with Flutter and Dart, and open-source libraries. Thanks to everyone who contributed.';
 }

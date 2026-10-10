@@ -3128,4 +3128,150 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get tplCertSquareDesc =>
       'قالب كحلي بإطار ذهبي مربّع متناظر وختم دائري علوي.';
+
+  @override
+  String get navInvitationsEngine => 'محرك الدعوات';
+
+  @override
+  String get aboutTitle => 'حول JoodCraft';
+
+  @override
+  String get aboutTagline => 'منصة توليد الشهادات والعقود الرسمية بالعربية';
+
+  @override
+  String aboutVersion(Object version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get aboutSummaryTitle => 'نبذة';
+
+  @override
+  String get aboutSummaryBody =>
+      'جودكرافت منصة مكتبية وويب تعمل بالكامل على جهازك: تقرأ ملفات Excel، وتولّد شهادات وعقوداً بصيغة PDF بخطوط عربية محزومة داخل التطبيق. كل المشاريع والقوالب والأصول تُحفظ في قاعدة محلية على الجهاز، ولا يُرفع أي ملف إلى أي خادم — فبياناتك تبقى ملكك وحده.';
+
+  @override
+  String get aboutFeaturesTitle => 'المميزات الرئيسية';
+
+  @override
+  String get aboutFeatureOffline =>
+      'أوفلاين بالكامل: بلا إنترنت وبلا رفع أي بيانات';
+
+  @override
+  String get aboutFeatureArabicFonts =>
+      'خطوط عربية محزومة مع تشكيل واتجاه RTL دقيق';
+
+  @override
+  String get aboutFeatureExcel =>
+      'قراءة Excel وCSV وربط الأعمدة بحقول القالب تلقائياً';
+
+  @override
+  String get aboutFeatureBatch =>
+      'توليد مئات الشهادات دفعة واحدة — ملف مجمع أو ملف لكل شخص';
+
+  @override
+  String get aboutFeatureVisualEditor =>
+      'محرّر بصري بالسحب والإفلات مع تحديد متعدد وتراجع وإعادة';
+
+  @override
+  String get aboutFeatureInvitations =>
+      'دعوات جاهزة لرمضان والعيد والزفاف بمقاسات السوشيال والطباعة';
+
+  @override
+  String get aboutFeatureExports => 'تصدير PDF وPNG ومشاريع جود قابلة للمشاركة';
+
+  @override
+  String get aboutDeveloperTitle => 'المطوّر';
+
+  @override
+  String get aboutDeveloperName => 'سراج عبدالله البدوي';
+
+  @override
+  String get aboutDeveloperEmail => 'serajelroh@gmail.com';
+
+  @override
+  String get aboutDeveloperStatus => 'مشروع شخصي — تحت التطوير';
+
+  @override
+  String get aboutLicenses => 'عرض التراخيص';
+
+  @override
+  String get aboutFeedback => 'إرسال ملاحظات';
+
+  @override
+  String get aboutFeedbackCopied =>
+      'تم نسخ البريد الإلكتروني — أرسل ملاحظاتك في أي وقت';
+
+  @override
+  String get aboutCreditsTitle => 'شكر وتقدير';
+
+  @override
+  String get aboutCreditsBody =>
+      'بُني هذا التطبيق باستخدام Flutter ومكتبات مفتوحة المصدر — شكرٌّ لمجتمع Flutter ولكل من ساهم في تلك المكتبات.';
+
+  @override
+  String get jwPagesSettings => 'إعدادات الصفحة';
+
+  @override
+  String get jwPagesMultiple => 'الصفحات المتعددة';
+
+  @override
+  String get jwPagesMultipleHint =>
+      'تقسيم الورقة إلى نصفين لطباعة صفحتين على ورقة واحدة';
+
+  @override
+  String get jwPagesSingle => 'عادي (صفحة واحدة)';
+
+  @override
+  String get jwPagesA4ToA5Portrait => 'A4 → 2 × A5 طولي (كتيّب)';
+
+  @override
+  String get jwPagesA4ToA5Landscape => 'A4 → 2 × A5 عرضي';
+
+  @override
+  String get jwPagesPreview => 'معاينة';
+
+  @override
+  String get aboutLinksTitle => 'روابط';
+
+  @override
+  String get aboutDescription =>
+      'JoodCraft منصة عربية متكاملة لتوليد الشهادات والعقود والدعوات بجودة احترافية. صمّم قالباً واحداً بصرياً، ثم اربطه بملف Excel لتخرج مئات الوثائق بخط عربي مضبوط واتجاه سليم — بلا إنترنت وبلا أي خادم.';
+
+  @override
+  String get aboutFeatures => 'المميزات';
+
+  @override
+  String get aboutFeature10Languages => '10 لغات مدعومة';
+
+  @override
+  String get aboutFeatureArabicText => 'تشكيل عربي دقيق';
+
+  @override
+  String get aboutFeatureBulkGeneration => 'توليد جماعي من Excel';
+
+  @override
+  String get aboutFeaturePdfExport => 'تصدير PDF بجودة عالية';
+
+  @override
+  String get aboutDeveloper => 'المطوّر';
+
+  @override
+  String get aboutDeveloperNote => 'مشروع شخصي — تحت التطوير';
+
+  @override
+  String get aboutLinks => 'روابط';
+
+  @override
+  String get aboutViewLicenses => 'عرض التراخيص';
+
+  @override
+  String get aboutSendFeedback => 'إرسال ملاحظات';
+
+  @override
+  String get aboutCredits => 'شكر وتقدير';
+
+  @override
+  String get aboutCreditsText =>
+      'تم بناء JoodCraft باستخدام Flutter و Dart، ومكتبات مفتوحة المصدر. شكراً لكل من ساهم.';
 }

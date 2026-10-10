@@ -3139,4 +3139,151 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get tplCertSquareDesc =>
       'ہم آہنگ مربع سنہری فریم اور اوپر دائرہ مہر کے ساتھ نیلی سرۃ۔';
+
+  @override
+  String get navInvitationsEngine => 'دعوت نامہ انجن';
+
+  @override
+  String get aboutTitle => 'JoodCraft کے بارے میں';
+
+  @override
+  String get aboutTagline => 'رسمی سرٹیفیکیٹ اور معاہدے عربی میں تیار کریں';
+
+  @override
+  String aboutVersion(Object version) {
+    return 'ورژن $version';
+  }
+
+  @override
+  String get aboutSummaryTitle => 'تعارف';
+
+  @override
+  String get aboutSummaryBody =>
+      'جودکرافٹ ایک ڈیسک ٹاپ اور ویب ایپ ہے جو مکملاً آپ کے ڈیوائس پر چلتی ہے: ایکسل فائلیں پڑھتی ہے اور اندر شامل عربی فونٹس کے ساتھ سرٹیفیکیٹ اور معاہدے PDF بناتی ہے۔ تمام پروجیکٹس، ٹیمپلیٹس اور اثاثہ مقامی ڈیٹا بیس میں رہتے ہیں — کچھ بھی سرور پر اپ لوڈ نہیں ہوتا۔';
+
+  @override
+  String get aboutFeaturesTitle => 'اہم خصوصیات';
+
+  @override
+  String get aboutFeatureOffline =>
+      'مکمل آف لائن: انٹرنیٹ کی ضرورت نہیں، کوئی ڈیٹا اپ لوڈ نہیں';
+
+  @override
+  String get aboutFeatureArabicFonts =>
+      'عربی فونٹس شامل ہیں، محاذ آراء اور RTL درست';
+
+  @override
+  String get aboutFeatureExcel =>
+      'ایکسل اور CSV پڑھتی ہے اور کالموں کو فیلڈز سے خودکار جوڑتی ہے';
+
+  @override
+  String get aboutFeatureBatch =>
+      'ایک ساتھ سینکڑوں سرٹیفیکیٹ — ایک مشترک فائل یا ہر شخص کے لیے الگ';
+
+  @override
+  String get aboutFeatureVisualEditor =>
+      'ڈریگ اینڈ ڈراپ مرئی ایڈیٹر، ملٹی سلیکشن، انڈو اور ری ڈو کے ساتھ';
+
+  @override
+  String get aboutFeatureInvitations =>
+      'رمضان، عید اور شادی کے لیے تیار دعوتیں — پرنٹ اور سوشل میڈیا سائز میں';
+
+  @override
+  String get aboutFeatureExports =>
+      'PDF، PNG اور شیئر کی جانے والی جود پروجیکٹس ایکسپورٹ';
+
+  @override
+  String get aboutDeveloperTitle => 'ڈیولپر';
+
+  @override
+  String get aboutDeveloperName => 'سراج عبداللہ البدوی';
+
+  @override
+  String get aboutDeveloperEmail => 'serajelroh@gmail.com';
+
+  @override
+  String get aboutDeveloperStatus => 'ذاتی پروجیکٹ — زیرِ تعمیر';
+
+  @override
+  String get aboutLicenses => 'لائسنس دیکھیں';
+
+  @override
+  String get aboutFeedback => 'رائے بھیجیں';
+
+  @override
+  String get aboutFeedbackCopied =>
+      'ای میل کاپی ہو گئی — آپ کی رائے کا خیرمقدم ہے';
+
+  @override
+  String get aboutCreditsTitle => 'شکریہ';
+
+  @override
+  String get aboutCreditsBody =>
+      'یہ ایپ Flutter اور اوپن سورس لائبریریز سے بنائی گئی ہے — Flutter کمیونٹی اور ان لائبریریز کے تمام معاونین کا شکریہ۔';
+
+  @override
+  String get jwPagesSettings => 'صفحہ کی ترتیبات';
+
+  @override
+  String get jwPagesMultiple => 'متعدد صفحات';
+
+  @override
+  String get jwPagesMultipleHint =>
+      'ایک شیٹ پر دو صفحات چھپنے کے لیے شیٹ کو نصف کریں';
+
+  @override
+  String get jwPagesSingle => 'عام (ایک صفحہ)';
+
+  @override
+  String get jwPagesA4ToA5Portrait => 'A4 → 2 × A5 عمودی (کتابچہ)';
+
+  @override
+  String get jwPagesA4ToA5Landscape => 'A4 → 2 × A5 افقی';
+
+  @override
+  String get jwPagesPreview => 'پیش منظر';
+
+  @override
+  String get aboutLinksTitle => 'روابط';
+
+  @override
+  String get aboutDescription =>
+      'JoodCraft ایک مکمل عربی پلیٹ فارم ہے جو پیشہ ورانہ معیار کے ساتھ سرٹیفکیٹ، معاہدے اور دعوت نامے پیدا کرتی ہے۔ ایک ہی سانچا بصری طور پر ڈیزائن کریں، پھر اسے Excel فائل سے جوڑیں تاکہ درست Arabی خطوط اور درست سمت کے ساتھ سینکڑوں دستاویزات بنیں — انٹرنیٹ کے بغیر اور کسی سرور کے بغیر۔';
+
+  @override
+  String get aboutFeatures => 'خصوصیات';
+
+  @override
+  String get aboutFeature10Languages => '10 معاون زبانیں';
+
+  @override
+  String get aboutFeatureArabicText => 'درست Arabی تشکیل';
+
+  @override
+  String get aboutFeatureBulkGeneration => 'Excel سے بلک پیداشار';
+
+  @override
+  String get aboutFeaturePdfExport => 'اعلیٰ معیار کے PDF ایکسپورٹ';
+
+  @override
+  String get aboutDeveloper => 'ڈیولپر';
+
+  @override
+  String get aboutDeveloperNote => 'ذاتی منصوبہ — زیر تکمیلی';
+
+  @override
+  String get aboutLinks => 'روابط';
+
+  @override
+  String get aboutViewLicenses => 'لائسنس دیکھیں';
+
+  @override
+  String get aboutSendFeedback => 'تاثرات بھیجیں';
+
+  @override
+  String get aboutCredits => 'شکریہ';
+
+  @override
+  String get aboutCreditsText =>
+      'JoodCraft کو Flutter اور Dart اور اوپن سورس لائبریریز کے ساتھ بنایا گیا ہے۔ ہر معاون کا شکریہ۔';
 }

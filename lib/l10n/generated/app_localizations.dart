@@ -5855,6 +5855,270 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'قالب كحلي بإطار ذهبي مربّع متناظر وختم دائري علوي.'**
   String get tplCertSquareDesc;
+
+  /// No description provided for @navInvitationsEngine.
+  ///
+  /// In ar, this message translates to:
+  /// **'محرك الدعوات'**
+  String get navInvitationsEngine;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حول JoodCraft'**
+  String get aboutTitle;
+
+  /// No description provided for @aboutTagline.
+  ///
+  /// In ar, this message translates to:
+  /// **'منصة توليد الشهادات والعقود الرسمية بالعربية'**
+  String get aboutTagline;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإصدار {version}'**
+  String aboutVersion(Object version);
+
+  /// No description provided for @aboutSummaryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نبذة'**
+  String get aboutSummaryTitle;
+
+  /// No description provided for @aboutSummaryBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'جودكرافت منصة مكتبية وويب تعمل بالكامل على جهازك: تقرأ ملفات Excel، وتولّد شهادات وعقوداً بصيغة PDF بخطوط عربية محزومة داخل التطبيق. كل المشاريع والقوالب والأصول تُحفظ في قاعدة محلية على الجهاز، ولا يُرفع أي ملف إلى أي خادم — فبياناتك تبقى ملكك وحده.'**
+  String get aboutSummaryBody;
+
+  /// No description provided for @aboutFeaturesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المميزات الرئيسية'**
+  String get aboutFeaturesTitle;
+
+  /// No description provided for @aboutFeatureOffline.
+  ///
+  /// In ar, this message translates to:
+  /// **'أوفلاين بالكامل: بلا إنترنت وبلا رفع أي بيانات'**
+  String get aboutFeatureOffline;
+
+  /// No description provided for @aboutFeatureArabicFonts.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوط عربية محزومة مع تشكيل واتجاه RTL دقيق'**
+  String get aboutFeatureArabicFonts;
+
+  /// No description provided for @aboutFeatureExcel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قراءة Excel وCSV وربط الأعمدة بحقول القالب تلقائياً'**
+  String get aboutFeatureExcel;
+
+  /// No description provided for @aboutFeatureBatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'توليد مئات الشهادات دفعة واحدة — ملف مجمع أو ملف لكل شخص'**
+  String get aboutFeatureBatch;
+
+  /// No description provided for @aboutFeatureVisualEditor.
+  ///
+  /// In ar, this message translates to:
+  /// **'محرّر بصري بالسحب والإفلات مع تحديد متعدد وتراجع وإعادة'**
+  String get aboutFeatureVisualEditor;
+
+  /// No description provided for @aboutFeatureInvitations.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوات جاهزة لرمضان والعيد والزفاف بمقاسات السوشيال والطباعة'**
+  String get aboutFeatureInvitations;
+
+  /// No description provided for @aboutFeatureExports.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PDF وPNG ومشاريع جود قابلة للمشاركة'**
+  String get aboutFeatureExports;
+
+  /// No description provided for @aboutDeveloperTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المطوّر'**
+  String get aboutDeveloperTitle;
+
+  /// No description provided for @aboutDeveloperName.
+  ///
+  /// In ar, this message translates to:
+  /// **'سراج عبدالله البدوي'**
+  String get aboutDeveloperName;
+
+  /// No description provided for @aboutDeveloperEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'serajelroh@gmail.com'**
+  String get aboutDeveloperEmail;
+
+  /// No description provided for @aboutDeveloperStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشروع شخصي — تحت التطوير'**
+  String get aboutDeveloperStatus;
+
+  /// No description provided for @aboutLicenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض التراخيص'**
+  String get aboutLicenses;
+
+  /// No description provided for @aboutFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال ملاحظات'**
+  String get aboutFeedback;
+
+  /// No description provided for @aboutFeedbackCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم نسخ البريد الإلكتروني — أرسل ملاحظاتك في أي وقت'**
+  String get aboutFeedbackCopied;
+
+  /// No description provided for @aboutCreditsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكر وتقدير'**
+  String get aboutCreditsTitle;
+
+  /// No description provided for @aboutCreditsBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'بُني هذا التطبيق باستخدام Flutter ومكتبات مفتوحة المصدر — شكرٌّ لمجتمع Flutter ولكل من ساهم في تلك المكتبات.'**
+  String get aboutCreditsBody;
+
+  /// No description provided for @jwPagesSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الصفحة'**
+  String get jwPagesSettings;
+
+  /// No description provided for @jwPagesMultiple.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصفحات المتعددة'**
+  String get jwPagesMultiple;
+
+  /// No description provided for @jwPagesMultipleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقسيم الورقة إلى نصفين لطباعة صفحتين على ورقة واحدة'**
+  String get jwPagesMultipleHint;
+
+  /// No description provided for @jwPagesSingle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عادي (صفحة واحدة)'**
+  String get jwPagesSingle;
+
+  /// No description provided for @jwPagesA4ToA5Portrait.
+  ///
+  /// In ar, this message translates to:
+  /// **'A4 → 2 × A5 طولي (كتيّب)'**
+  String get jwPagesA4ToA5Portrait;
+
+  /// No description provided for @jwPagesA4ToA5Landscape.
+  ///
+  /// In ar, this message translates to:
+  /// **'A4 → 2 × A5 عرضي'**
+  String get jwPagesA4ToA5Landscape;
+
+  /// No description provided for @jwPagesPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة'**
+  String get jwPagesPreview;
+
+  /// No description provided for @aboutLinksTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'روابط'**
+  String get aboutLinksTitle;
+
+  /// No description provided for @aboutDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'JoodCraft منصة عربية متكاملة لتوليد الشهادات والعقود والدعوات بجودة احترافية. صمّم قالباً واحداً بصرياً، ثم اربطه بملف Excel لتخرج مئات الوثائق بخط عربي مضبوط واتجاه سليم — بلا إنترنت وبلا أي خادم.'**
+  String get aboutDescription;
+
+  /// No description provided for @aboutFeatures.
+  ///
+  /// In ar, this message translates to:
+  /// **'المميزات'**
+  String get aboutFeatures;
+
+  /// No description provided for @aboutFeature10Languages.
+  ///
+  /// In ar, this message translates to:
+  /// **'10 لغات مدعومة'**
+  String get aboutFeature10Languages;
+
+  /// No description provided for @aboutFeatureArabicText.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشكيل عربي دقيق'**
+  String get aboutFeatureArabicText;
+
+  /// No description provided for @aboutFeatureBulkGeneration.
+  ///
+  /// In ar, this message translates to:
+  /// **'توليد جماعي من Excel'**
+  String get aboutFeatureBulkGeneration;
+
+  /// No description provided for @aboutFeaturePdfExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PDF بجودة عالية'**
+  String get aboutFeaturePdfExport;
+
+  /// No description provided for @aboutDeveloper.
+  ///
+  /// In ar, this message translates to:
+  /// **'المطوّر'**
+  String get aboutDeveloper;
+
+  /// No description provided for @aboutDeveloperNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشروع شخصي — تحت التطوير'**
+  String get aboutDeveloperNote;
+
+  /// No description provided for @aboutLinks.
+  ///
+  /// In ar, this message translates to:
+  /// **'روابط'**
+  String get aboutLinks;
+
+  /// No description provided for @aboutViewLicenses.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض التراخيص'**
+  String get aboutViewLicenses;
+
+  /// No description provided for @aboutSendFeedback.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال ملاحظات'**
+  String get aboutSendFeedback;
+
+  /// No description provided for @aboutCredits.
+  ///
+  /// In ar, this message translates to:
+  /// **'شكر وتقدير'**
+  String get aboutCredits;
+
+  /// No description provided for @aboutCreditsText.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم بناء JoodCraft باستخدام Flutter و Dart، ومكتبات مفتوحة المصدر. شكراً لكل من ساهم.'**
+  String get aboutCreditsText;
 }
 
 class _AppLocalizationsDelegate

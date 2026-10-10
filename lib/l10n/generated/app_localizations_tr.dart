@@ -3147,4 +3147,152 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get tplCertSquareDesc =>
       'Simetrik kare altin cerceve ve ustte dairesel muhur iceren lacivert belge.';
+
+  @override
+  String get navInvitationsEngine => 'Davet motoru';
+
+  @override
+  String get aboutTitle => 'JoodCraft hakkında';
+
+  @override
+  String get aboutTagline => 'Resmi Arapça sertifika ve sözleşmeler oluşturun';
+
+  @override
+  String aboutVersion(Object version) {
+    return 'Sürüm $version';
+  }
+
+  @override
+  String get aboutSummaryTitle => 'Genel bakış';
+
+  @override
+  String get aboutSummaryBody =>
+      'JoodCraft tamamen cihazınızda çalışan bir masaüstü ve web uygulamasıdır: Excel dosyalarını okur ve içine gömülü Arapça yazı tipleriyle sertifika ve sözleşmeleri PDF olarak üretir. Tüm projeler, şablonlar ve varlıklar cihazdaki yerel veritabanında kalır — hiçbir şey sunucuya yüklenmez.';
+
+  @override
+  String get aboutFeaturesTitle => 'Temel özellikler';
+
+  @override
+  String get aboutFeatureOffline =>
+      'Tamamen çevrimdışı: internet gerekmez, veri yüklenmez';
+
+  @override
+  String get aboutFeatureArabicFonts =>
+      'Gömülü Arapça yazı tipleri, hassas şekillendirme ve RTL';
+
+  @override
+  String get aboutFeatureExcel =>
+      'Excel ve CSV okur, sütunları şablon alanlarıyla otomatik eşleştirir';
+
+  @override
+  String get aboutFeatureBatch =>
+      'Tek seferde yüzlerce sertifika — tek dosya veya herkes için ayrı dosya';
+
+  @override
+  String get aboutFeatureVisualEditor =>
+      'Sürükle-bırak görsel düzenleyici; çoklu seçim, geri al ve yinele';
+
+  @override
+  String get aboutFeatureInvitations =>
+      'Ramazan, Bayram ve düğün için hazır davetiyeler; baskı ve sosyal medya boyutlarında';
+
+  @override
+  String get aboutFeatureExports =>
+      'PDF, PNG ve paylaşılabilir Jood projeleri dışa aktarımı';
+
+  @override
+  String get aboutDeveloperTitle => 'Geliştirici';
+
+  @override
+  String get aboutDeveloperName => 'Seraj Abdullah Al-Badawi';
+
+  @override
+  String get aboutDeveloperEmail => 'serajelroh@gmail.com';
+
+  @override
+  String get aboutDeveloperStatus =>
+      'Kişisel proje — geliştirilmeye devam ediyor';
+
+  @override
+  String get aboutLicenses => 'Lisansları görüntüle';
+
+  @override
+  String get aboutFeedback => 'Geri bildirim gönder';
+
+  @override
+  String get aboutFeedbackCopied =>
+      'E-posta kopyalandı — geri bildirimleriniz memnuniyetle karşılanır';
+
+  @override
+  String get aboutCreditsTitle => 'Teşekkür';
+
+  @override
+  String get aboutCreditsBody =>
+      'Bu uygulama Flutter ve açık kaynak kitaplıklarıyla geliştirildi — Flutter topluluğuna ve bu kitaplıklara katkıda bulunan herkese teşekkürler.';
+
+  @override
+  String get jwPagesSettings => 'Sayfa ayarları';
+
+  @override
+  String get jwPagesMultiple => 'Çoklu sayfalar';
+
+  @override
+  String get jwPagesMultipleHint =>
+      'İki sayfayı tek sayfada yazdırmak için sayfayı ikiye böl';
+
+  @override
+  String get jwPagesSingle => 'Normal (tek sayfa)';
+
+  @override
+  String get jwPagesA4ToA5Portrait => 'A4 → 2 × A5 dikey (broşür)';
+
+  @override
+  String get jwPagesA4ToA5Landscape => 'A4 → 2 × A5 yatay';
+
+  @override
+  String get jwPagesPreview => 'Önizleme';
+
+  @override
+  String get aboutLinksTitle => 'Bağlantılar';
+
+  @override
+  String get aboutDescription =>
+      'JoodCraft, sertifika, sözleşme ve davetiyeyi profesyonel kalitede Arapça üreten eksiksiz bir platformdur. Tek bir şablonu görsel olarak tasarlayın, ardından bir Excel dosyasına bağlayarak hassas Arapça dizgi ve doğru yönle yüzlerce belge oluşturun — internet olmadan ve sunucu olmadan.';
+
+  @override
+  String get aboutFeatures => 'Özellikler';
+
+  @override
+  String get aboutFeature10Languages => '10 desteklenen dil';
+
+  @override
+  String get aboutFeatureArabicText => 'Hassas Arapça biçimlendirme';
+
+  @override
+  String get aboutFeatureBulkGeneration => 'Excel\'den toplu üretim';
+
+  @override
+  String get aboutFeaturePdfExport => 'Yüksek kaliteli PDF dışa aktarma';
+
+  @override
+  String get aboutDeveloper => 'Geliştirici';
+
+  @override
+  String get aboutDeveloperNote => 'Kişisel proje — geliştiriliyor';
+
+  @override
+  String get aboutLinks => 'Bağlantılar';
+
+  @override
+  String get aboutViewLicenses => 'Lisansları görüntüle';
+
+  @override
+  String get aboutSendFeedback => 'Geri bildirim gönder';
+
+  @override
+  String get aboutCredits => 'Teşekkür';
+
+  @override
+  String get aboutCreditsText =>
+      'JoodCraft, Flutter ve Dart ile açık kaynak kütüphaneler kullanılarak oluşturuldu. Katkıda bulunan herkese teşekkürler.';
 }
