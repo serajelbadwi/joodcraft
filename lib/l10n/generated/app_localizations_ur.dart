@@ -2969,4 +2969,133 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get pdfExportTypeComingSoonMessage =>
       'ویکٹر ایکسپورٹ پر کام جاری ہے — جلدی آ رہا ہے۔';
+
+  @override
+  String get invCategoryTitle => 'دعوتیں اور تقریبے';
+
+  @override
+  String get invCategoryRamadan => 'رمضان';
+
+  @override
+  String get invCategoryEid => 'عید';
+
+  @override
+  String get invCategoryWedding => 'شادی';
+
+  @override
+  String get invRamadan1Title => 'رمضان مبارک — کلاسک';
+
+  @override
+  String get invRamadan2Title => 'رمضان مبارک — اسٹوری';
+
+  @override
+  String get invEid1Title => 'عید مبارک — کلاسک';
+
+  @override
+  String get invEid2Title => 'عید مبارک — اسٹوری';
+
+  @override
+  String get invWedding1Title => 'شادی — کلاسک';
+
+  @override
+  String get invWedding2Title => 'شادی — جدید';
+
+  @override
+  String get invWedding3Title => 'شادی — اسٹوری';
+
+  @override
+  String get invSizeA6Portrait => 'A6 عمودی (105×148 ملی میٹر)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 افقی (148×105 ملی میٹر)';
+
+  @override
+  String get invSizeSquare148 => 'پرنٹنگ مربع (148×148 ملی میٹر)';
+
+  @override
+  String get invSizeA5Folded => 'A5 موڑا ہوا (105×148 ملی میٹر)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram مربع (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram عمودی (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram اسٹوری (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp اسٹیٹس (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook پوسٹ (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG (سوشل میڈیا کے لیے)';
+
+  @override
+  String get invExportFormatPDF => 'PDF (پرنٹنگ کے لیے)';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => 'بلک ذاتی دعوتیں';
+
+  @override
+  String get invBulkModeHint => 'ہر نام کے لیے ایک کارڈ — انفرادی ایکسپورٹ۔';
+
+  @override
+  String get invPreviewTitle => 'پہلی 3 نقول کا پیش نظارہ';
+
+  @override
+  String get invExportFormat => 'ایکسپورٹ فارمیٹ';
+
+  @override
+  String get invNameFieldMissing => 'اس ٹیمپلیٹ میں نام کا فیلد موجود نہیں';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return 'دہرائے گئے نام: $count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return 'خالی خلیات: $count — اِنہیں چھوڑ دیا جائے گا';
+  }
+
+  @override
+  String get invZIPOption => 'ZIP فائل میں کمپریس کریں';
+
+  @override
+  String get invIndexCSVOption => 'CSV انڈکس بنائیں';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return '$total میں سے $done تیار';
+  }
+
+  @override
+  String get navEditors => 'ایڈیٹرز';
+
+  @override
+  String get navLibraries => 'لائبریریز';
+
+  @override
+  String get navAdmin => 'انتظام';
+
+  @override
+  String get navUser => 'اکاؤنٹ';
+
+  @override
+  String get bpWorkTypeLabel => 'ٹیمپلیٹ کی قسم';
+
+  @override
+  String get bpExportFormatLabel => 'ایکسپورٹ کی قسم';
+
+  @override
+  String get bpKindInvitation => 'دعوت';
+
+  @override
+  String get invPackOptions => 'آؤٹ پٹ اختیارات';
 }

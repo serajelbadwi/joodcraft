@@ -23,6 +23,7 @@ import '../../features/contract_builder/presentation/screens/contract_preview_sc
 import '../../features/contract_builder/presentation/screens/template_editor_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/dashboard/presentation/widgets/dashboard_shell.dart';
+import '../../features/invitations/presentation/screens/invitations_screen.dart';
 import '../../features/jood_writer/presentation/screens/jood_writer_screen.dart';
 import '../../features/project_hub/presentation/screens/new_project_screen.dart';
 import '../../features/templates/presentation/screens/template_library_screen.dart';
@@ -229,6 +230,16 @@ abstract final class AppRouter {
                 name: 'jood-writer',
                 builder: (BuildContext context, GoRouterState state) =>
                     const JoodWriterScreen(),
+              ),
+            ]),
+            // الدعوات الشخصية: قالب واحد ← ملف أسماء ← ملف لكل مدعو. فرع جديد
+            // في النهاية (كالسابق) فلا تُزحزح فهارس الأقسام القائمة.
+            _branch('invitations', <RouteBase>[
+              GoRoute(
+                path: AppRoutes.invitations,
+                name: 'invitations',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const InvitationsScreen(),
               ),
             ]),
           ],

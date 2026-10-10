@@ -2997,4 +2997,135 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get pdfExportTypeComingSoonMessage =>
       'La exportación vectorial está en desarrollo — estará disponible pronto.';
+
+  @override
+  String get invCategoryTitle => 'Invitaciones y ocasiones';
+
+  @override
+  String get invCategoryRamadan => 'Ramadán';
+
+  @override
+  String get invCategoryEid => 'Eid';
+
+  @override
+  String get invCategoryWedding => 'Boda';
+
+  @override
+  String get invRamadan1Title => 'Ramadán Karim — Clásico';
+
+  @override
+  String get invRamadan2Title => 'Ramadán Karim — Story';
+
+  @override
+  String get invEid1Title => 'Eid Mubarak — Clásico';
+
+  @override
+  String get invEid2Title => 'Eid Mubarak — Story';
+
+  @override
+  String get invWedding1Title => 'Boda — Clásica';
+
+  @override
+  String get invWedding2Title => 'Boda — Moderna';
+
+  @override
+  String get invWedding3Title => 'Boda — Story';
+
+  @override
+  String get invSizeA6Portrait => 'A6 vertical (105×148 mm)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 horizontal (148×105 mm)';
+
+  @override
+  String get invSizeSquare148 => 'Cuadrado para impresión (148×148 mm)';
+
+  @override
+  String get invSizeA5Folded => 'A5 plegado (105×148 mm)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram cuadrado (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram vertical (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram Story (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp Status (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook Post (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG (para redes sociales)';
+
+  @override
+  String get invExportFormatPDF => 'PDF (para imprimir)';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => 'Invitaciones personales por lotes';
+
+  @override
+  String get invBulkModeHint =>
+      'Una tarjeta por nombre — exportación individual.';
+
+  @override
+  String get invPreviewTitle => 'Vista previa de las 3 primeras copias';
+
+  @override
+  String get invExportFormat => 'Formato de exportación';
+
+  @override
+  String get invNameFieldMissing =>
+      'Esta plantilla no tiene un campo de nombre';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return 'Nombres duplicados: $count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return 'Celdas vacías: $count — se omitirán';
+  }
+
+  @override
+  String get invZIPOption => 'Comprimir en un archivo ZIP';
+
+  @override
+  String get invIndexCSVOption => 'Crear un índice CSV';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return 'Generadas $done de $total';
+  }
+
+  @override
+  String get navEditors => 'Editores';
+
+  @override
+  String get navLibraries => 'Bibliotecas';
+
+  @override
+  String get navAdmin => 'Administración';
+
+  @override
+  String get navUser => 'Cuenta';
+
+  @override
+  String get bpWorkTypeLabel => 'Tipo de plantilla';
+
+  @override
+  String get bpExportFormatLabel => 'Tipo de exportación';
+
+  @override
+  String get bpKindInvitation => 'Invitación';
+
+  @override
+  String get invPackOptions => 'Opciones de salida';
 }

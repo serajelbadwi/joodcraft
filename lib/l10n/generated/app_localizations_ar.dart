@@ -2957,4 +2957,133 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get pdfExportTypeComingSoonMessage =>
       'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.';
+
+  @override
+  String get invCategoryTitle => 'دعوات ومناسبات';
+
+  @override
+  String get invCategoryRamadan => 'رمضان';
+
+  @override
+  String get invCategoryEid => 'عيد';
+
+  @override
+  String get invCategoryWedding => 'زفاف';
+
+  @override
+  String get invRamadan1Title => 'رمضان كريم — كلاسيكي';
+
+  @override
+  String get invRamadan2Title => 'رمضان كريم — Story';
+
+  @override
+  String get invEid1Title => 'عيد مبارك — كلاسيكي';
+
+  @override
+  String get invEid2Title => 'عيد مبارك — Story';
+
+  @override
+  String get invWedding1Title => 'زفاف كلاسيكي';
+
+  @override
+  String get invWedding2Title => 'زفاف حديث';
+
+  @override
+  String get invWedding3Title => 'زفاف Story';
+
+  @override
+  String get invSizeA6Portrait => 'A6 رأسي (105×148 mm)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 أفقي (148×105 mm)';
+
+  @override
+  String get invSizeSquare148 => 'مربع للطباعة (148×148 mm)';
+
+  @override
+  String get invSizeA5Folded => 'A5 مطوي (105×148 mm)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram مربع (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram طولي (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram Story (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp Status (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook Post (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG (للسوشيال ميديا)';
+
+  @override
+  String get invExportFormatPDF => 'PDF (للطباعة)';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => 'دعوات شخصية جماعية';
+
+  @override
+  String get invBulkModeHint => 'كارت واحد لكل اسم — تصدير فردي.';
+
+  @override
+  String get invPreviewTitle => 'معاينة أول 3 نسخ';
+
+  @override
+  String get invExportFormat => 'صيغة التصدير';
+
+  @override
+  String get invNameFieldMissing => 'هذا القالب لا يحتوي على حقل الاسم';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return 'أسماء مكررة: $count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return 'خلايا فارغة: $count — ستُتخطى';
+  }
+
+  @override
+  String get invZIPOption => 'ضغط في ملف ZIP';
+
+  @override
+  String get invIndexCSVOption => 'إنشاء فهرس CSV';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return 'تم توليد $done من $total';
+  }
+
+  @override
+  String get navEditors => 'المحرّكات';
+
+  @override
+  String get navLibraries => 'المكتبات';
+
+  @override
+  String get navAdmin => 'الإدارة';
+
+  @override
+  String get navUser => 'الحساب';
+
+  @override
+  String get bpWorkTypeLabel => 'نوع القالب';
+
+  @override
+  String get bpExportFormatLabel => 'نوع التصدير';
+
+  @override
+  String get bpKindInvitation => 'دعوة';
+
+  @override
+  String get invPackOptions => 'خيارات الإخراج';
 }

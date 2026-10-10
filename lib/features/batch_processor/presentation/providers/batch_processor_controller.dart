@@ -793,10 +793,14 @@ class BatchProcessorController extends ChangeNotifier {
   /// [outputDirectory] و[output] و[mode] الحفظ على القرص: تُمرَّر للمحرّك
   /// كي ينفّذ البنية المنسّقة نفسها (ملف مجمع مباشرة، أو مجلد فرعي بملف لكل
   /// شخص) — بلا مجلد (الويب) يبقى التقرير في الذاكرة فقط.
+  ///
+  /// [format] صيغة الملفات المحفوظة: ‏PDF (الأصل) أو PNG بترميز صفحات
+  /// النتيجة. لا تؤثّر على المعاينة ولا الطباعة (تبقى من ملف PDF نفسه).
   Future<void> generate({
     String? outputFileName,
     String? outputDirectory,
     BulkOutputMode mode = BulkOutputMode.combined,
+    BatchExportFormat format = BatchExportFormat.pdf,
     BatchOutputService? output,
   }) async {
     final TemplateDocument? document = _document;
@@ -832,6 +836,7 @@ class BatchProcessorController extends ChangeNotifier {
         nameOverrides: _nameOverrides,
         fileName: outputFileName,
         mode: mode,
+        format: format,
         outputDirectory: outputDirectory,
         output: output,
         metadata: PdfDocumentMetadata(

@@ -72,6 +72,21 @@ List<DashboardDestination> dashboardDestinations(BuildContext context) {
       description: context.l10n?.destBatchDesc ??
           'قراءة ملف Excel محلياً وتوليد مئات الشهادات دفعة واحدة.',
     ),
+    // الدعوات الشخصية: رمضان/عيد/زفاف — ملف لكل مدعو باسمه.
+    //
+    // **محجوبة عن قوائم التنقّل**: صارت جزءاً من شاشة «التوليد الجماعي»
+    // الموحّدة (اختيار «نوع القالب ← دعوة»)، فلو بقيت في الشريط لصارت
+    // وجهة مكرّرة. المسار وشاشته وفرع الموجّه كما هي — تُفتح من الشاشة
+    // الموحّدة أو بالرابط المباشر، فلا يُحذف شيء.
+    DashboardDestination(
+      path: AppRoutes.invitations,
+      label: context.l10n?.invBulkModeTitle ?? 'دعوات شخصية جماعية',
+      icon: Icons.redeem_rounded,
+      description: context.l10n?.invBulkModeHint ??
+          'كارت واحد لكل اسم — تصدير فردي.',
+      // ليست محطة في شريط التنقّل: مضمّنة في التوليد الجماعي.
+      inNavigation: false,
+    ),
     DashboardDestination(
       path: AppRoutes.templates,
       label: context.l10n?.destTemplates ?? 'مكتبة القوالب',

@@ -903,5 +903,62 @@
   "pdfExportTypeVectorCopyable": "متن کاپی اور تلاش ہو سکتا ہے",
   "pdfExportTypeVectorBestFor": "پروفیشنل پرنٹنگ کے لیے مثالی",
   "pdfExportTypeComingSoon": "جلد آ رہا ہے",
-  "pdfExportTypeComingSoonMessage": "ویکٹر ایکسپورٹ پر کام جاری ہے — جلدی آ رہا ہے۔"
+  "pdfExportTypeComingSoonMessage": "ویکٹر ایکسپورٹ پر کام جاری ہے — جلدی آ رہا ہے۔",
+  "invCategoryTitle": "دعوتیں اور تقریبے",
+  "invCategoryRamadan": "رمضان",
+  "invCategoryEid": "عید",
+  "invCategoryWedding": "شادی",
+  "invRamadan1Title": "رمضان مبارک — کلاسک",
+  "invRamadan2Title": "رمضان مبارک — اسٹوری",
+  "invEid1Title": "عید مبارک — کلاسک",
+  "invEid2Title": "عید مبارک — اسٹوری",
+  "invWedding1Title": "شادی — کلاسک",
+  "invWedding2Title": "شادی — جدید",
+  "invWedding3Title": "شادی — اسٹوری",
+  "invSizeA6Portrait": "A6 عمودی (105×148 ملی میٹر)",
+  "invSizeA6Landscape": "A6 افقی (148×105 ملی میٹر)",
+  "invSizeSquare148": "پرنٹنگ مربع (148×148 ملی میٹر)",
+  "invSizeA5Folded": "A5 موڑا ہوا (105×148 ملی میٹر)",
+  "invSizeInstagramSquare": "Instagram مربع (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram عمودی (1080×1350)",
+  "invSizeInstagramStory": "Instagram اسٹوری (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp اسٹیٹس (1080×1920)",
+  "invSizeFacebookPost": "Facebook پوسٹ (1200×630)",
+  "invExportFormatPNG": "PNG (سوشل میڈیا کے لیے)",
+  "invExportFormatPDF": "PDF (پرنٹنگ کے لیے)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "بلک ذاتی دعوتیں",
+  "invBulkModeHint": "ہر نام کے لیے ایک کارڈ — انفرادی ایکسپورٹ۔",
+  "invPreviewTitle": "پہلی 3 نقول کا پیش نظارہ",
+  "invExportFormat": "ایکسپورٹ فارمیٹ",
+  "invNameFieldMissing": "اس ٹیمپلیٹ میں نام کا فیلد موجود نہیں",
+  "invDuplicateNames": "دہرائے گئے نام: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "خالی خلیات: {count} — اِنہیں چھوڑ دیا جائے گا",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "ZIP فائل میں کمپریس کریں",
+  "invIndexCSVOption": "CSV انڈکس بنائیں",
+  "invProgressText": "{total} میں سے {done} تیار",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "ایڈیٹرز",
+  "navLibraries": "لائبریریز",
+  "navAdmin": "انتظام",
+  "navUser": "اکاؤنٹ",
+  "bpWorkTypeLabel": "ٹیمپلیٹ کی قسم",
+  "bpExportFormatLabel": "ایکسپورٹ کی قسم",
+  "bpKindInvitation": "دعوت",
+  "invPackOptions": "آؤٹ پٹ اختیارات"
 }

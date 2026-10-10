@@ -13,12 +13,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../support/fake_auth_repository.dart';
 
-/// اختبارات شريط التنقّل العلوي الأفقي: التبويبات، التلميح النشط، وأدوات
-/// المستخدم — مع ضمان الاتجاه RTL الافتراضي.
+/// اختبارات شريط التنقّل العلوي **بعد إعادة تنظيمه إلى ستة عناصر**:
+///
+/// 1. لوحة التحكم (مباشر) 2. المحرّكات ▾ 3. التوليد الجماعي (مباشر)
+/// 4. المكتبات ▾ 5. الإدارة ▾ 6. الحساب ▾ (في الطرف)
+///
+/// القواعد التي يتحقق منها: الوجهات الخفية لا تزال قابلة للوصول من داخل
+/// القوائم، ولا مسار ولا شاشة يضيعان، والاتجاه RTL مضمون.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
+  setUp(() async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    // لا `setSurfaceSize` في `setUp` ولا `tearDown`: كلاهما يعمل خارج نطاق
+    // الاختبار فيرمي `'inTest': is not true` (والثاني يتسبّب في انهيار متسلسل
+    // للمشغّل). التوسيع كله يجريه `widen` داخل كل اختبار.
+  });
+
+  /// يُوسّع سطح الاختبار فوق عتبة 1600px: مجموعتا «المكتبات» و«الإدارة»
+  /// تخرجان من نطاق التمرير الأفقي في النوافذ الأضيق، فتتعذّل مراجعتهما.
+  Future<void> widen(WidgetTester tester) async {
+    final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
+    await binding.setSurfaceSize(const Size(1920, 1080));
+    await tester.pump();
+  }
 
   Widget harness({
     required String currentPath,
@@ -29,8 +47,7 @@ void main() {
     bool showAccountDetails = true,
     AuthProvider? auth,
     Locale locale = const Locale('ar'),
-  }) {
-    return MultiProvider(
+  }) {    return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>.value(
           value: auth ?? AuthProvider(null),
@@ -57,21 +74,68 @@ void main() {
     );
   }
 
-  testWidgets('يعرض كل محرّكات العمل والعلامة التجارية', (WidgetTester tester) async {
+  /// مفتاحا كل عنصر من عناصر الشريط الستة (خمسة تنقّل + الحساب).
+  List<Finder> sixItems() => <Finder>[
+        find.byKey(const ValueKey<String>('top-tab-${AppRoutes.dashboard}')),
+        find.byKey(const ValueKey<String>('top-menu-editors')),
+        find.byKey(const ValueKey<String>('top-tab-${AppRoutes.batchProcessor}')),
+        find.byKey(const ValueKey<String>('top-menu-libraries')),
+        find.byKey(const ValueKey<String>('top-menu-admin')),
+        find.byKey(const ValueKey<String>('top-account-menu')),
+      ];
+
+  // ---------------------------------------------------------------------------
+  //  العدد والمجموعات
+  // ---------------------------------------------------------------------------
+
+  testWidgets('الشريط يعرض ستة عناصر لا أحد عشر', (WidgetTester tester) async {
+    await widen(tester);
     await tester.pumpWidget(harness(currentPath: AppRoutes.dashboard));
     await tester.pumpAndSettle();
 
     expect(find.text('JoodCraft'), findsOneWidget);
-    expect(find.text('لوحة التحكم'), findsOneWidget);
-    expect(find.text('محـرّك الشهادات'), findsOneWidget);
-    expect(find.text('مكتبة القوالب'), findsOneWidget);
-    expect(find.text('الهوية والبروفايل'), findsOneWidget);
+
+    for (final Finder item in sixItems()) {
+      expect(item, findsOneWidget, reason: 'عنصر مفقود من الشريط: $item');
+    }
+
+    // الوجهات الخفية لم تعد تبويبات مستقلة…
+    expect(find.text('محـرّك الشهادات'), findsNothing);
+    expect(find.text('محـرّك العقود'), findsNothing);
+    expect(find.text('جود كاتب'), findsNothing);
+    expect(find.text('مكتبة القوالب'), findsNothing);
+    expect(find.text('الأصول والتوقيعات'), findsNothing);
+    expect(find.text('الهوية والبروفايل'), findsNothing);
+    expect(find.text('إدارة المديرين'), findsNothing);
+    // «الدعوات» صارت جزءاً من التوليد الجماعي فخرجت من الشريط (لا من التطبيق).
+    expect(find.text('دعوات شخصية جماعية'), findsNothing);
+    // «مشروع جديد» نافذة عائمة من قائمة «ملف» لا تبويب.
+    expect(find.text('مشروع جديد'), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('top-tab-${AppRoutes.newProject}')),
+      findsNothing,
+    );
   });
 
-  testWidgets('النقر على تبويب يُمرّر مساره', (WidgetTester tester) async {
-    // مساحة عريضة حتى تظهر كل التبويبات دون تمرير أفقي.
-    await tester.binding.setSurfaceSize(const Size(1600, 900));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
+  testWidgets('التسميات الخمس ظاهرة في الوضع العادي', (WidgetTester tester) async {
+    await widen(tester);
+    await tester.pumpWidget(harness(currentPath: AppRoutes.dashboard));
+    await tester.pumpAndSettle();
+
+    expect(find.text('لوحة التحكم'), findsOneWidget);
+    expect(find.text('المحرّكات'), findsOneWidget);
+    expect(find.text('التوليد الجماعي'), findsOneWidget);
+    expect(find.text('المكتبات'), findsOneWidget);
+    expect(find.text('الإدارة'), findsOneWidget);
+  });
+
+  // ---------------------------------------------------------------------------
+  //  التنقل المباشر
+  // ---------------------------------------------------------------------------
+
+  testWidgets('النقر على تبويب مباشر يُمرّر مساره', (WidgetTester tester) async {
+    await widen(tester);
+    await widen(tester);
     String? navigated;
     await tester.pumpWidget(
       harness(
@@ -81,13 +145,157 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('محـرّك العقود').first);
+    await tester.tap(find.text('التوليد الجماعي'));
+    await tester.pumpAndSettle();
+
+    expect(navigated, AppRoutes.batchProcessor);
+  });
+
+  testWidgets('التبويب النشط يعكس المسار الحالي', (WidgetTester tester) async {
+    await widen(tester);
+    await tester.pumpWidget(harness(currentPath: AppRoutes.batchProcessor));
+    await tester.pumpAndSettle();
+
+    // كبسولة التمييز الأساسية = لون primary على تبويب المسار الحالي.
+    final Container active = tester.widget<Container>(
+      find
+          .descendant(
+            of: find.byKey(
+              const ValueKey<String>('top-tab-${AppRoutes.batchProcessor}'),
+            ),
+            matching: find.byType(Container),
+          )
+          .first,
+    );
+    expect(
+      active.decoration,
+      isA<BoxDecoration>().having(
+        (BoxDecoration d) => d.color,
+        'color',
+        isNotNull,
+      ),
+    );
+  });
+
+  // ---------------------------------------------------------------------------
+  //  القوائم المنسدلة
+  // ---------------------------------------------------------------------------
+
+  testWidgets('قائمة المحرّكات تعرض محرّكاتها الثلاثة وتفتح المختار',
+      (WidgetTester tester) async {
+    await widen(tester);
+    String? navigated;
+    await tester.pumpWidget(
+      harness(
+        currentPath: AppRoutes.dashboard,
+        onNavigate: (String path) => navigated = path,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // قبل الضغط: البنود داخل القائمة غير مبنية أصلاً.
+    expect(find.text('محـرّك الشهادات'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('top-menu-editors')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('محـرّك الشهادات'), findsOneWidget);
+    expect(find.text('محـرّك العقود'), findsOneWidget);
+    expect(find.text('جود كاتب'), findsOneWidget);
+
+    await tester.tap(find.text('محـرّك العقود'));
     await tester.pumpAndSettle();
 
     expect(navigated, AppRoutes.contractBuilder);
+    // القائمة تُغلق تلقائياً بعد الاختيار.
+    expect(find.text('محـرّك الشهادات'), findsNothing);
   });
 
+  testWidgets('قائمة المكتبات تعرض مكتباتها الثلاث وتفتح المختار',
+      (WidgetTester tester) async {
+    await widen(tester);
+    String? navigated;
+    await tester.pumpWidget(
+      harness(
+        currentPath: AppRoutes.dashboard,
+        onNavigate: (String path) => navigated = path,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('مكتبة القوالب'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('top-menu-libraries')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('مكتبة القوالب'), findsOneWidget);
+    expect(find.text('الأصول والتوقيعات'), findsOneWidget);
+    expect(find.text('الهوية والبروفايل'), findsOneWidget);
+
+    await tester.tap(find.text('مكتبة القوالب'));
+    await tester.pumpAndSettle();
+
+    expect(navigated, AppRoutes.templates);
+    expect(find.text('مكتبة القوالب'), findsNothing);
+  });
+
+  testWidgets('قائمة الإدارة تعرض إدارة المديرين وتفتحها',
+      (WidgetTester tester) async {
+    await widen(tester);
+    String? navigated;
+    await tester.pumpWidget(
+      harness(
+        currentPath: AppRoutes.dashboard,
+        onNavigate: (String path) => navigated = path,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('إدارة المديرين'), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('top-menu-admin')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('إدارة المديرين'), findsOneWidget);
+
+    await tester.tap(find.text('إدارة المديرين'));
+    await tester.pumpAndSettle();
+
+    expect(navigated, AppRoutes.admins);
+    expect(find.text('إدارة المديرين'), findsNothing);
+  });
+
+  testWidgets('كل وجهة مخفية ما تزال قابلة للوصول من مجموعتها',
+      (WidgetTester tester) async {
+    await widen(tester);
+    final Map<String, String> menuToRoute = <String, String>{
+      'top-menu-editors': AppRoutes.certificateBuilder,
+      'top-menu-libraries': AppRoutes.brand,
+      'top-menu-admin': AppRoutes.admins,
+    };
+    final Map<String, Finder> entryToFinder = <String, Finder>{
+      AppRoutes.certificateBuilder: find.text('محـرّك الشهادات'),
+      AppRoutes.brand: find.text('الهوية والبروفايل'),
+      AppRoutes.admins: find.text('إدارة المديرين'),
+    };
+
+    for (final MapEntry<String, String> menu in menuToRoute.entries) {
+      await tester.pumpWidget(harness(currentPath: AppRoutes.dashboard));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ValueKey<String>(menu.key)));
+      await tester.pumpAndSettle();
+
+      final Finder entry = entryToFinder[menu.value]!;
+      expect(entry, findsOneWidget, reason: 'الوجهة ${menu.value} غير قابلة للوصول');
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  //  العرض والأدوات
+  // ---------------------------------------------------------------------------
+
   testWidgets('يُظهر زر القائمة ويُخفيه حسب الحاجة', (WidgetTester tester) async {
+    await widen(tester);
     await tester.pumpWidget(
       harness(currentPath: AppRoutes.dashboard, onMenuTap: () {}),
     );
@@ -101,18 +309,23 @@ void main() {
 
   testWidgets('يُخفي التسميات في الوضع المضغوط ويُبقي الأيقونات',
       (WidgetTester tester) async {
+    await widen(tester);
     await tester.pumpWidget(
       harness(currentPath: AppRoutes.dashboard, showLabels: false),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('مكتبة القوالب'), findsNothing);
+    expect(find.text('المكتبات'), findsNothing);
     expect(find.byIcon(Icons.collections_bookmark_rounded), findsOneWidget);
-    expect(find.byTooltip('مكتبة القوالب'), findsOneWidget);
+    // التلميح يسدّ مكان النص المخفي.
+    expect(find.byTooltip('المكتبات'), findsOneWidget);
+    expect(find.byTooltip('المحرّكات'), findsOneWidget);
+    expect(find.byTooltip('الإدارة'), findsOneWidget);
   });
 
   testWidgets('يعرض أدوات اللغة وشارة «محلي» بلا حساب بعيد',
       (WidgetTester tester) async {
+    await widen(tester);
     await tester.pumpWidget(harness(currentPath: AppRoutes.dashboard));
     await tester.pumpAndSettle();
 
@@ -124,8 +337,9 @@ void main() {
     expect(find.byIcon(Icons.logout_rounded), findsNothing);
   });
 
-  testWidgets('يعرض الخروج فقط عند وجود حساب مربوط',
+  testWidgets('قائمة الحساب تعرض البروفايل وتسجيل الخروج',
       (WidgetTester tester) async {
+    await widen(tester);
     final FakeAuthRepository repository = FakeAuthRepository();
     final AuthProvider auth = AuthProvider(repository);
     await auth.signIn(email: 'user@joodcraft.dev', password: 'secret');
@@ -139,26 +353,31 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byIcon(Icons.logout_rounded), findsOneWidget);
+    // الشريط نفسه خفيف: لا زرّ خروج مستقل يزاحم الطرف، بل داخل القائمة.
+    expect(find.byIcon(Icons.logout_rounded), findsNothing);
     expect(find.byIcon(Icons.offline_bolt_rounded), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey<String>('top-account-menu')));
+    await tester.pumpAndSettle();
+
+    // البروفايل: الاسم والبريد داخل القائمة.
+    expect(find.text('user@joodcraft.dev'), findsOneWidget);
+    expect(find.byIcon(Icons.logout_rounded), findsOneWidget);
   });
 
-  testWidgets('«مستند جديد» خرج من الشريط العلوي إلى قائمة «ملف»',
+  testWidgets('قائمة الحساب في الوضع المحلي تشرح الحفظ بلا خروج',
       (WidgetTester tester) async {
+    await widen(tester);
     await tester.pumpWidget(harness(currentPath: AppRoutes.dashboard));
     await tester.pumpAndSettle();
 
-    // لا تبويب «مشروع جديد» يزاحم تبويبات المحرّكات، ولا زرّ إنشاء في الشريط:
-    // المدخل الوحيد هنا هو قائمة «ملف» (أو Ctrl+N).
-    expect(find.text('مشروع جديد'), findsNothing);
-    expect(find.text('+ جديد'), findsNothing);
+    await tester.tap(find.byKey(const ValueKey<String>('top-account-menu')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.logout_rounded), findsNothing);
     expect(
-      find.byKey(const ValueKey<String>('top-tab-${AppRoutes.newProject}')),
-      findsNothing,
-    );
-    expect(
-      find.byKey(const ValueKey<String>('top-new-document')),
-      findsNothing,
+      find.textContaining('الحفظ محلي على هذا الجهاز'),
+      findsOneWidget,
     );
   });
 }

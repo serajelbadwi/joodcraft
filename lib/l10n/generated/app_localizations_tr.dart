@@ -2975,4 +2975,134 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get pdfExportTypeComingSoonMessage =>
       'Vektör dışa aktarma geliştirilme aşamasında — yakında.';
+
+  @override
+  String get invCategoryTitle => 'Davetler ve özel günler';
+
+  @override
+  String get invCategoryRamadan => 'Ramazan';
+
+  @override
+  String get invCategoryEid => 'Bayram';
+
+  @override
+  String get invCategoryWedding => 'Düğün';
+
+  @override
+  String get invRamadan1Title => 'Ramazan — Klasik';
+
+  @override
+  String get invRamadan2Title => 'Ramazan — Story';
+
+  @override
+  String get invEid1Title => 'Bayramınız Mübarek — Klasik';
+
+  @override
+  String get invEid2Title => 'Bayramınız Mübarek — Story';
+
+  @override
+  String get invWedding1Title => 'Düğün — Klasik';
+
+  @override
+  String get invWedding2Title => 'Düğün — Modern';
+
+  @override
+  String get invWedding3Title => 'Düğün — Story';
+
+  @override
+  String get invSizeA6Portrait => 'A6 dikey (105×148 mm)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 yatay (148×105 mm)';
+
+  @override
+  String get invSizeSquare148 => 'Baskı karesi (148×148 mm)';
+
+  @override
+  String get invSizeA5Folded => 'A5 katlı (105×148 mm)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram kare (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram dikey (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram Story (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp Status (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook Post (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG (sosyal medya için)';
+
+  @override
+  String get invExportFormatPDF => 'PDF (baskı için)';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => 'Toplu kişisel davetler';
+
+  @override
+  String get invBulkModeHint =>
+      'Her isim için bir kart — ayrı ayrı dışa aktarma.';
+
+  @override
+  String get invPreviewTitle => 'İlk 3 kopyanın önizlemesi';
+
+  @override
+  String get invExportFormat => 'Dışa aktarma biçimi';
+
+  @override
+  String get invNameFieldMissing => 'Bu şablonda isim alanı yok';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return 'Yinelenen isimler: $count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return 'Boş hücreler: $count — atlanacak';
+  }
+
+  @override
+  String get invZIPOption => 'ZIP dosyasında sıkıştır';
+
+  @override
+  String get invIndexCSVOption => 'CSV dizini oluştur';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return '$done/$total oluşturuldu';
+  }
+
+  @override
+  String get navEditors => 'Düzenleyiciler';
+
+  @override
+  String get navLibraries => 'Kütüphaneler';
+
+  @override
+  String get navAdmin => 'Yönetim';
+
+  @override
+  String get navUser => 'Hesap';
+
+  @override
+  String get bpWorkTypeLabel => 'Şablon türü';
+
+  @override
+  String get bpExportFormatLabel => 'Dışa aktarma türü';
+
+  @override
+  String get bpKindInvitation => 'Davetiye';
+
+  @override
+  String get invPackOptions => 'Çıktı seçenekleri';
 }

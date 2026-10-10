@@ -903,5 +903,62 @@
   "pdfExportTypeVectorCopyable": "Metin kopyalanıp aranabilir",
   "pdfExportTypeVectorBestFor": "Profesyonel baskı için ideal",
   "pdfExportTypeComingSoon": "Yakında",
-  "pdfExportTypeComingSoonMessage": "Vektör dışa aktarma geliştirilme aşamasında — yakında."
+  "pdfExportTypeComingSoonMessage": "Vektör dışa aktarma geliştirilme aşamasında — yakında.",
+  "invCategoryTitle": "Davetler ve özel günler",
+  "invCategoryRamadan": "Ramazan",
+  "invCategoryEid": "Bayram",
+  "invCategoryWedding": "Düğün",
+  "invRamadan1Title": "Ramazan — Klasik",
+  "invRamadan2Title": "Ramazan — Story",
+  "invEid1Title": "Bayramınız Mübarek — Klasik",
+  "invEid2Title": "Bayramınız Mübarek — Story",
+  "invWedding1Title": "Düğün — Klasik",
+  "invWedding2Title": "Düğün — Modern",
+  "invWedding3Title": "Düğün — Story",
+  "invSizeA6Portrait": "A6 dikey (105×148 mm)",
+  "invSizeA6Landscape": "A6 yatay (148×105 mm)",
+  "invSizeSquare148": "Baskı karesi (148×148 mm)",
+  "invSizeA5Folded": "A5 katlı (105×148 mm)",
+  "invSizeInstagramSquare": "Instagram kare (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram dikey (1080×1350)",
+  "invSizeInstagramStory": "Instagram Story (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp Status (1080×1920)",
+  "invSizeFacebookPost": "Facebook Post (1200×630)",
+  "invExportFormatPNG": "PNG (sosyal medya için)",
+  "invExportFormatPDF": "PDF (baskı için)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "Toplu kişisel davetler",
+  "invBulkModeHint": "Her isim için bir kart — ayrı ayrı dışa aktarma.",
+  "invPreviewTitle": "İlk 3 kopyanın önizlemesi",
+  "invExportFormat": "Dışa aktarma biçimi",
+  "invNameFieldMissing": "Bu şablonda isim alanı yok",
+  "invDuplicateNames": "Yinelenen isimler: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "Boş hücreler: {count} — atlanacak",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "ZIP dosyasında sıkıştır",
+  "invIndexCSVOption": "CSV dizini oluştur",
+  "invProgressText": "{done}/{total} oluşturuldu",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "Düzenleyiciler",
+  "navLibraries": "Kütüphaneler",
+  "navAdmin": "Yönetim",
+  "navUser": "Hesap",
+  "bpWorkTypeLabel": "Şablon türü",
+  "bpExportFormatLabel": "Dışa aktarma türü",
+  "bpKindInvitation": "Davetiye",
+  "invPackOptions": "Çıktı seçenekleri"
 }

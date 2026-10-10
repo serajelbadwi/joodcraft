@@ -2983,4 +2983,134 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get pdfExportTypeComingSoonMessage =>
       'Векторный экспорт в разработке — скоро будет доступен.';
+
+  @override
+  String get invCategoryTitle => 'Приглашения и торжества';
+
+  @override
+  String get invCategoryRamadan => 'Рамадан';
+
+  @override
+  String get invCategoryEid => 'Ид';
+
+  @override
+  String get invCategoryWedding => 'Свадьба';
+
+  @override
+  String get invRamadan1Title => 'Рамадан Карим — классическая';
+
+  @override
+  String get invRamadan2Title => 'Рамадан Карим — Story';
+
+  @override
+  String get invEid1Title => 'Ид Мубарак — классическая';
+
+  @override
+  String get invEid2Title => 'Ид Мубарак — Story';
+
+  @override
+  String get invWedding1Title => 'Свадьба — классическая';
+
+  @override
+  String get invWedding2Title => 'Свадьба — современная';
+
+  @override
+  String get invWedding3Title => 'Свадьба — Story';
+
+  @override
+  String get invSizeA6Portrait => 'A6 портрет (105×148 мм)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 альбомная (148×105 мм)';
+
+  @override
+  String get invSizeSquare148 => 'Квадрат для печати (148×148 мм)';
+
+  @override
+  String get invSizeA5Folded => 'A5 с фальцем (105×148 мм)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram квадрат (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram портрет (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram Story (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp Status (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook Post (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG (для соцсетей)';
+
+  @override
+  String get invExportFormatPDF => 'PDF (для печати)';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => 'Массовые персональные приглашения';
+
+  @override
+  String get invBulkModeHint =>
+      'Одна открытка на имя — индивидуальный экспорт.';
+
+  @override
+  String get invPreviewTitle => 'Предпросмотр первых 3 копий';
+
+  @override
+  String get invExportFormat => 'Формат экспорта';
+
+  @override
+  String get invNameFieldMissing => 'В этом шаблоне нет поля имени';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return 'Дублирующиеся имена: $count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return 'Пустые ячейки: $count — будут пропущены';
+  }
+
+  @override
+  String get invZIPOption => 'Упаковать в ZIP-архив';
+
+  @override
+  String get invIndexCSVOption => 'Создать индекс CSV';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return 'Создано $done из $total';
+  }
+
+  @override
+  String get navEditors => 'Редакторы';
+
+  @override
+  String get navLibraries => 'Библиотеки';
+
+  @override
+  String get navAdmin => 'Администрирование';
+
+  @override
+  String get navUser => 'Аккаунт';
+
+  @override
+  String get bpWorkTypeLabel => 'Тип шаблона';
+
+  @override
+  String get bpExportFormatLabel => 'Тип экспорта';
+
+  @override
+  String get bpKindInvitation => 'Приглашение';
+
+  @override
+  String get invPackOptions => 'Параметры вывода';
 }

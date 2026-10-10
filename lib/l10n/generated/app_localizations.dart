@@ -5537,6 +5537,252 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.'**
   String get pdfExportTypeComingSoonMessage;
+
+  /// No description provided for @invCategoryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوات ومناسبات'**
+  String get invCategoryTitle;
+
+  /// No description provided for @invCategoryRamadan.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمضان'**
+  String get invCategoryRamadan;
+
+  /// No description provided for @invCategoryEid.
+  ///
+  /// In ar, this message translates to:
+  /// **'عيد'**
+  String get invCategoryEid;
+
+  /// No description provided for @invCategoryWedding.
+  ///
+  /// In ar, this message translates to:
+  /// **'زفاف'**
+  String get invCategoryWedding;
+
+  /// No description provided for @invRamadan1Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمضان كريم — كلاسيكي'**
+  String get invRamadan1Title;
+
+  /// No description provided for @invRamadan2Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمضان كريم — Story'**
+  String get invRamadan2Title;
+
+  /// No description provided for @invEid1Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'عيد مبارك — كلاسيكي'**
+  String get invEid1Title;
+
+  /// No description provided for @invEid2Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'عيد مبارك — Story'**
+  String get invEid2Title;
+
+  /// No description provided for @invWedding1Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'زفاف كلاسيكي'**
+  String get invWedding1Title;
+
+  /// No description provided for @invWedding2Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'زفاف حديث'**
+  String get invWedding2Title;
+
+  /// No description provided for @invWedding3Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'زفاف Story'**
+  String get invWedding3Title;
+
+  /// No description provided for @invSizeA6Portrait.
+  ///
+  /// In ar, this message translates to:
+  /// **'A6 رأسي (105×148 mm)'**
+  String get invSizeA6Portrait;
+
+  /// No description provided for @invSizeA6Landscape.
+  ///
+  /// In ar, this message translates to:
+  /// **'A6 أفقي (148×105 mm)'**
+  String get invSizeA6Landscape;
+
+  /// No description provided for @invSizeSquare148.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربع للطباعة (148×148 mm)'**
+  String get invSizeSquare148;
+
+  /// No description provided for @invSizeA5Folded.
+  ///
+  /// In ar, this message translates to:
+  /// **'A5 مطوي (105×148 mm)'**
+  String get invSizeA5Folded;
+
+  /// No description provided for @invSizeInstagramSquare.
+  ///
+  /// In ar, this message translates to:
+  /// **'Instagram مربع (1080×1080)'**
+  String get invSizeInstagramSquare;
+
+  /// No description provided for @invSizeInstagramPortrait.
+  ///
+  /// In ar, this message translates to:
+  /// **'Instagram طولي (1080×1350)'**
+  String get invSizeInstagramPortrait;
+
+  /// No description provided for @invSizeInstagramStory.
+  ///
+  /// In ar, this message translates to:
+  /// **'Instagram Story (1080×1920)'**
+  String get invSizeInstagramStory;
+
+  /// No description provided for @invSizeWhatsAppStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'WhatsApp Status (1080×1920)'**
+  String get invSizeWhatsAppStatus;
+
+  /// No description provided for @invSizeFacebookPost.
+  ///
+  /// In ar, this message translates to:
+  /// **'Facebook Post (1200×630)'**
+  String get invSizeFacebookPost;
+
+  /// No description provided for @invExportFormatPNG.
+  ///
+  /// In ar, this message translates to:
+  /// **'PNG (للسوشيال ميديا)'**
+  String get invExportFormatPNG;
+
+  /// No description provided for @invExportFormatPDF.
+  ///
+  /// In ar, this message translates to:
+  /// **'PDF (للطباعة)'**
+  String get invExportFormatPDF;
+
+  /// No description provided for @invExportFormatBoth.
+  ///
+  /// In ar, this message translates to:
+  /// **'PNG + PDF'**
+  String get invExportFormatBoth;
+
+  /// No description provided for @invBulkModeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوات شخصية جماعية'**
+  String get invBulkModeTitle;
+
+  /// No description provided for @invBulkModeHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'كارت واحد لكل اسم — تصدير فردي.'**
+  String get invBulkModeHint;
+
+  /// No description provided for @invPreviewTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة أول 3 نسخ'**
+  String get invPreviewTitle;
+
+  /// No description provided for @invExportFormat.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيغة التصدير'**
+  String get invExportFormat;
+
+  /// No description provided for @invNameFieldMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا القالب لا يحتوي على حقل الاسم'**
+  String get invNameFieldMissing;
+
+  /// No description provided for @invDuplicateNames.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسماء مكررة: {count}'**
+  String invDuplicateNames(Object count);
+
+  /// No description provided for @invEmptyNames.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلايا فارغة: {count} — ستُتخطى'**
+  String invEmptyNames(Object count);
+
+  /// No description provided for @invZIPOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضغط في ملف ZIP'**
+  String get invZIPOption;
+
+  /// No description provided for @invIndexCSVOption.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء فهرس CSV'**
+  String get invIndexCSVOption;
+
+  /// No description provided for @invProgressText.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم توليد {done} من {total}'**
+  String invProgressText(Object done, Object total);
+
+  /// No description provided for @navEditors.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحرّكات'**
+  String get navEditors;
+
+  /// No description provided for @navLibraries.
+  ///
+  /// In ar, this message translates to:
+  /// **'المكتبات'**
+  String get navLibraries;
+
+  /// No description provided for @navAdmin.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإدارة'**
+  String get navAdmin;
+
+  /// No description provided for @navUser.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب'**
+  String get navUser;
+
+  /// No description provided for @bpWorkTypeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع القالب'**
+  String get bpWorkTypeLabel;
+
+  /// No description provided for @bpExportFormatLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع التصدير'**
+  String get bpExportFormatLabel;
+
+  /// No description provided for @bpKindInvitation.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوة'**
+  String get bpKindInvitation;
+
+  /// No description provided for @invPackOptions.
+  ///
+  /// In ar, this message translates to:
+  /// **'خيارات الإخراج'**
+  String get invPackOptions;
 }
 
 class _AppLocalizationsDelegate

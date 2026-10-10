@@ -27,7 +27,42 @@ import '../../domain/bulk_generation.dart';
 import '../../domain/output_file_name.dart';
 import '../../domain/sheet_data.dart';
 import '../../domain/sheet_reader.dart';
+import '../../../invitations/domain/invitation_export_service.dart';
+import '../../../invitations/presentation/providers/invitations_controller.dart';
+import '../../../invitations/presentation/screens/invitations_screen.dart';
 import '../providers/batch_processor_controller.dart';
+
+/// وضع العمل في شاشة «التوليد الجماعي» الموحّدة.
+///
+/// صارت الشاشة **محركاً واحداً** يضمّ ثلاثة مسارات:
+///
+/// | الوضع      | المسار                                                        |
+/// |-------------|----------------------------------------------------------------|
+/// | شهادة       | توليد الشهادات من Excel (مسار الشاشة الأصلي كاملاً)             |
+/// | عقد         | توليد العقود من Excel                                          |
+/// | دعوة        | توليد الدعوات الشخصية — كان شاشة مستقلة على `/invitations`،    |
+/// |             | ويُضمَّن محتواها هنا **كما هو** بلا إعادة كتابة                 |
+///
+/// التبديل **لا يمسّ الموجّه**: لا يُحذف مسار ولا وجهة ولا فرع. شاشة الدعوات
+/// تبقى على `/invitations` (وتظهر في لوحة التنقّل على الجوال) وتُستدعى هنا
+/// بوضع `embedded` بديل عن Scaffoldها.
+enum BatchWorkType {
+  certificate('certificate'),
+  contract('contract'),
+  invitation('invitation');
+
+  const BatchWorkType(this.jsonValue);
+
+  final String jsonValue;
+
+  /// نوع المستند الموافق في المتحكّم — أو `null` لوضع «دعوة» لأن له محرّكه
+  /// ومساره الخاص لا علاقة له بـ`BatchProcessorController`.
+  BatchTemplateKind? get documentKind => switch (this) {
+        BatchWorkType.certificate => BatchTemplateKind.certificate,
+        BatchWorkType.contract => BatchTemplateKind.contract,
+        BatchWorkType.invitation => null,
+      };
+}
 
 /// شاشة «التوليد الجماعي» (المرحلة 4).
 ///
@@ -111,6 +146,27 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   /// آخر نمط حفظ اختاره المستخدم — يُعاد عرضه عند فتح النافذة ثانية.
   BulkOutputMode _outputMode = BulkOutputMode.combined;
 
+  // --------------------------------------------------------------------------
+  //  الوضع الموحّد: نوع القالب + صيغة التصدير (شريط أعلى الخطوات)
+  // --------------------------------------------------------------------------
+
+  /// وضع الشاشة الحالي — يبدّل المسار كاملاً بين مسارَي التوليد.
+  BatchWorkType _workType = BatchWorkType.certificate;
+
+  /// صيغة الملفات المحفوظة في مسار الشهادات/العقود.
+  ///
+  /// مسار الدعوات لا نخزّن صيغته هنا: له [InvitationsController.format]
+  /// بخياراته الثلاثة (‏PNG / PDF / الاثنان معاً) فلا نكرّر مصدر حقّ.
+  BatchExportFormat _exportFormat = BatchExportFormat.pdf;
+
+  /// محرّك الدعوات المضمَّن — يُنشأ أول مرة يختار فيها المستخدم «دعوة»
+  /// ويُبقى أثناء تبديل الأنواع كي لا تضيع اختياراته (ملف الأسماء، القالب،
+  /// الصيغة، خيارا ZIP وCSV).
+  InvitationsController? _invitations;
+
+  /// هل أنشأناه نحن (نحن من نُتلفه)؟ أم محقون من الخارج.
+  bool _ownsInvitations = false;
+
   /// هل يوجد مصدر حقيقي لقوالب المستخدم (سحابة/محلي/متحكّم محقون)؟
   ///
   /// نتجنّب تحميلاً لا معنى له (ومؤقّتاً معلّقاً) عندما لا يوجد مصدر — كما في
@@ -137,6 +193,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     } else if (_controller.document == null) {
       unawaited(_controller.selectTemplate(_controller.kind));
     }
+
+    // الوضع المبدئي يتبع نوع المستند المفتوح — فالشريط يعكس ما هو فعلاً
+    // على الشاشة لا قيمةً مفروضة.
+    _workType = _controller.kind == BatchTemplateKind.contract
+        ? BatchWorkType.contract
+        : BatchWorkType.certificate;
   }
 
   @override
@@ -144,6 +206,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
     // لا نُتلف محرّكات يملكها المستدعي.
     if (_ownsLibrary) _library.dispose();
     if (widget.controller == null) _controller.dispose();
+    if (_ownsInvitations) _invitations?.dispose();
     super.dispose();
   }
 
@@ -227,6 +290,35 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       _selectedTemplateTitle = null;
     });
     unawaited(_controller.selectTemplate(kind));
+  }
+
+  // --------------------------------------------------------------------------
+  //  التبديل بين مسارات الشاشة الموحّدة
+  // --------------------------------------------------------------------------
+
+  /// محرّك الدعوات المضمَّن — يُنشأ عند أول اختيار لوضع «دعوة» فقط (فلا
+  /// يتحمّل التطبيق محرّكاً لا يستعمله أصلاً).
+  InvitationsController _ensureInvitations() {
+    if (_invitations == null) {
+      _invitations = InvitationsController();
+      _ownsInvitations = true;
+    }
+    return _invitations!;
+  }
+
+  /// تبديل وضع الشاشة: «شهادة»/«عقد» ينقل إلى مسار التوليد الموافق ويلقّم
+  /// المتحكّم بنفسه، و«دعوة» يفتح المسار المضمَّن مع إبقاء محرّك الشهادات
+  /// كما هو — فيعود المستخدم إليه بحالته لم يضِع.
+  void _setWorkType(BatchWorkType type) {
+    if (type == _workType) return;
+    setState(() {
+      _workType = type;
+      if (type == BatchWorkType.invitation) _ensureInvitations();
+    });
+    final BatchTemplateKind? kind = type.documentKind;
+    if (kind != null && kind != _controller.kind) {
+      _applyDefaultTemplate(kind);
+    }
   }
 
   /// القالب المستخدم المختار حالياً (محلي/سحابي) — أو `null` للقوالب الجاهزة.
@@ -498,6 +590,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       outputFileName: typedName.isEmpty ? null : typedName,
       outputDirectory: directory,
       mode: options.mode,
+      format: _exportFormat,
       output: _output,
     );
     if (!mounted) return;
@@ -570,46 +663,53 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               _hero(),
+              // شريط الاختيار الموحّد: نوع القالب (شهادة/عقد/دعوة) ثم نوع
+              // التصدير (PDF/PNG) — يبقى فوق الخطوات في الوضعين.
+              _workTypeBar(),
               // شريط ثابت يعرض مجلد المخرجات وزرّ فتحه — يبقى ظاهراً بعد التوليد
               // حتى لا يفقد المستخدم مكان الملفات إن نسي أو تنقّل بعيداً.
               if (_outputDirectory != null) _outputBanner(),
               Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 430,
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(AppTheme.space16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            _templateStep(),
-                            const SizedBox(height: AppTheme.space12),
-                            _fileStep(),
-                            const SizedBox(height: AppTheme.space12),
-                            _mappingStep(),
-                            const SizedBox(height: AppTheme.space12),
-                            _optionsStep(),
-                            const SizedBox(height: AppTheme.space12),
-                            // مراجعة الجنس المسبقة: تظهر فقط إن كان القالب يستخدم
-                            // صيغاً شرطية أو رُبط حقل اسم، فلا تزحم المسار السليم.
-                            if (_controller.hasGenderReview) ...<Widget>[
-                              _genderReviewStep(),
-                              const SizedBox(height: AppTheme.space12),
-                            ],
-                            _generateStep(),
-                          ],
-                        ),
+                // وضع «دعوة»: محتوى شاشة الدعوات نفسه (مضمَّن بلا Scaffold)
+                // يشغل المنطقة كاملة — لا خطوات ولا معاينة لهذا المسار.
+                child: _workType == BatchWorkType.invitation
+                    ? _invitationsFlow()
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 430,
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.all(AppTheme.space16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  _templateStep(),
+                                  const SizedBox(height: AppTheme.space12),
+                                  _fileStep(),
+                                  const SizedBox(height: AppTheme.space12),
+                                  _mappingStep(),
+                                  const SizedBox(height: AppTheme.space12),
+                                  _optionsStep(),
+                                  const SizedBox(height: AppTheme.space12),
+                                  // مراجعة الجنس المسبقة: تظهر فقط إن كان القالب يستخدم
+                                  // صيغاً شرطية أو رُبط حقل اسم، فلا تزحم المسار السليم.
+                                  if (_controller.hasGenderReview) ...<Widget>[
+                                    _genderReviewStep(),
+                                    const SizedBox(height: AppTheme.space12),
+                                  ],
+                                  _generateStep(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          VerticalDivider(
+                            width: 1,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          Expanded(child: _previewArea()),
+                        ],
                       ),
-                    ),
-                    VerticalDivider(
-                      width: 1,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    Expanded(child: _previewArea()),
-                  ],
-                ),
               ),
             ],
           ),
@@ -680,6 +780,145 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   }
 
   // ==========================================================================
+  //  شريط الاختيار الموحّد — نوع القالب ونوع التصدير
+  // ==========================================================================
+
+  /// مسار الدعوات المضمَّن: محتوى شاشة `/invitations` نفسه بلا Scaffold،
+  /// بمحرّكه المحقون (أو المنشأ الآن لأول اختيار).
+  Widget _invitationsFlow() {
+    return InvitationsScreen(
+      key: const ValueKey<String>('bp-invitations-flow'),
+      controller: _ensureInvitations(),
+      embedded: true,
+    );
+  }
+
+  /// شريط فوق خطوات التوليد يحدّد **نوع القالب** (شهادة/عقد/دعوة) و**نوع
+  /// التصدير** (PDF/PNG) — وهو ما جعلتَ به الشاشة واحدة تخدم ثلاثة مسارات.
+  ///
+  /// `Wrap` لا `Row`: على عرض ضيّق يلتفّ الشريطان إلى سطرين بدل قصّ أيّهما.
+  Widget _workTypeBar() {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final bool invitationsMode = _workType == BatchWorkType.invitation;
+
+    return Container(
+      key: const ValueKey<String>('bp-work-type-bar'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.space20,
+        vertical: AppTheme.space8,
+      ),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        border: Border(bottom: BorderSide(color: scheme.outline)),
+      ),
+      child: Wrap(
+        spacing: AppTheme.space16,
+        runSpacing: AppTheme.space8,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: <Widget>[
+          _barLabel(context.l10n?.bpWorkTypeLabel ?? 'نوع القالب'),
+          SegmentedButton<BatchWorkType>(
+            showSelectedIcon: false,
+            style: const ButtonStyle(visualDensity: VisualDensity.compact),
+            segments: <ButtonSegment<BatchWorkType>>[
+              ButtonSegment<BatchWorkType>(
+                value: BatchWorkType.certificate,
+                label: Text(_kindLabel(BatchTemplateKind.certificate)),
+                icon: const Icon(Icons.workspace_premium_outlined, size: 15),
+              ),
+              ButtonSegment<BatchWorkType>(
+                value: BatchWorkType.contract,
+                label: Text(_kindLabel(BatchTemplateKind.contract)),
+                icon: const Icon(Icons.handshake_outlined, size: 15),
+              ),
+              ButtonSegment<BatchWorkType>(
+                value: BatchWorkType.invitation,
+                label: Text(context.l10n?.bpKindInvitation ?? 'دعوة'),
+                icon: const Icon(Icons.redeem_rounded, size: 15),
+              ),
+            ],
+            selected: <BatchWorkType>{_workType},
+            onSelectionChanged: (Set<BatchWorkType> selection) {
+              if (selection.isEmpty) return;
+              _setWorkType(selection.first);
+            },
+          ),
+          _barLabel(context.l10n?.bpExportFormatLabel ?? 'نوع التصدير'),
+          // لكل مسار مفتاح صيغته هو: الشهادات/العقود بمحرّكها، والدعوات
+          // بخياراتها الثلاثة الأصلية فلا نُجرّدها إلى خيارين.
+          if (invitationsMode)
+            _invitationFormatButton()
+          else
+            _documentFormatButton(),
+        ],
+      ),
+    );
+  }
+
+  /// تسمية صغيرة تسبق كل مفتاح في الشريط.
+  Widget _barLabel(String label) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return Text(
+      label,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+    );
+  }
+
+  /// مفتاح الصيغة في مسار الشهادات/العقود: ‏PDF (الأصل) أو PNG بترميز
+  /// الصفحات — يُمرَّر إلى `BulkGenerationService` عند التوليد.
+  Widget _documentFormatButton() {
+    return SegmentedButton<BatchExportFormat>(
+      showSelectedIcon: false,
+      style: const ButtonStyle(visualDensity: VisualDensity.compact),
+      segments: <ButtonSegment<BatchExportFormat>>[
+        for (final BatchExportFormat format in BatchExportFormat.values)
+          ButtonSegment<BatchExportFormat>(
+            value: format,
+            label: Text(format.labelAr),
+          ),
+      ],
+      selected: <BatchExportFormat>{_exportFormat},
+      onSelectionChanged: (Set<BatchExportFormat> selection) {
+        if (selection.isEmpty) return;
+        setState(() => _exportFormat = selection.first);
+      },
+    );
+  }
+
+  /// مفتاح الصيغة في مسار الدعوات: خياراته الأصلية الثلاثة كاملة، متحقّقة
+  /// من محرّك الدعوات نفسه.
+  Widget _invitationFormatButton() {
+    final InvitationsController invitations = _ensureInvitations();
+    return SegmentedButton<InvitationExportFormat>(
+      showSelectedIcon: false,
+      style: const ButtonStyle(visualDensity: VisualDensity.compact),
+      segments: <ButtonSegment<InvitationExportFormat>>[
+        for (final InvitationExportFormat format
+            in InvitationExportFormat.values)
+          ButtonSegment<InvitationExportFormat>(
+            value: format,
+            label: Text(switch (format) {
+              InvitationExportFormat.png => 'PNG',
+              InvitationExportFormat.pdf => 'PDF',
+              InvitationExportFormat.both => 'PDF + PNG',
+            }),
+          ),
+      ],
+      selected: <InvitationExportFormat>{invitations.format},
+      onSelectionChanged: (Set<InvitationExportFormat> selection) {
+        if (selection.isEmpty) return;
+        invitations.setFormat(selection.first);
+        // الشريط لا يستمع إلى محرّك الدعوات، فنُحدّث أنفسنا ليعكس القيمة،
+        // ومحتوى المضمر يستمع إلى محرّكه فيتحدّث من ذات الإشعار.
+        setState(() {});
+      },
+    );
+  }
+
+  // ==========================================================================
   //  الخطوات
   // ==========================================================================
   Widget _templateStep() {
@@ -699,31 +938,12 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
           // تحذير صريح: إمّا قالب بلا حقول `{{...}}` إطلاقاً، أو قالب فيه حقول
           // لكن بلا حقل اسم (فيُربط عمود الاسم بحقل تاريخ/رقم خطأً).
           warning: _templateWarning(),
+          // ملاحظة: مفتاح «شهادة/عقد/دعوة» صار في شريط الاختيار أعلى الخطوات،
+          // فبقيت هذه البطاقة لما هي من اختياراته: القالب نفسه ومنتصف قوالب
+          // المستخدم.
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SegmentedButton<BatchTemplateKind>(
-                segments: <ButtonSegment<BatchTemplateKind>>[
-                  for (final BatchTemplateKind kind
-                      in BatchTemplateKind.values)
-                    ButtonSegment<BatchTemplateKind>(
-                      value: kind,
-                      label: Text(_kindLabel(kind)),
-                      icon: Icon(
-                        kind == BatchTemplateKind.certificate
-                            ? Icons.workspace_premium_outlined
-                            : Icons.handshake_outlined,
-                        size: 16,
-                      ),
-                    ),
-                ],
-                selected: <BatchTemplateKind>{_controller.kind},
-                onSelectionChanged: (Set<BatchTemplateKind> selection) {
-                  if (selection.isEmpty) return;
-                  _applyDefaultTemplate(selection.first);
-                },
-              ),
-              const SizedBox(height: AppTheme.space12),
               _userTemplatePicker(),
             ],
           ),

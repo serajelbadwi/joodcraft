@@ -2979,4 +2979,133 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get pdfExportTypeComingSoonMessage =>
       'Ekspor vektor masih dikembangkan — segera hadir.';
+
+  @override
+  String get invCategoryTitle => 'Undangan dan acara';
+
+  @override
+  String get invCategoryRamadan => 'Ramadan';
+
+  @override
+  String get invCategoryEid => 'Idulfitri';
+
+  @override
+  String get invCategoryWedding => 'Pernikahan';
+
+  @override
+  String get invRamadan1Title => 'Ramadan Kareem — Klasik';
+
+  @override
+  String get invRamadan2Title => 'Ramadan Kareem — Story';
+
+  @override
+  String get invEid1Title => 'Idulfitri Mubarak — Klasik';
+
+  @override
+  String get invEid2Title => 'Idulfitri Mubarak — Story';
+
+  @override
+  String get invWedding1Title => 'Pernikahan — Klasik';
+
+  @override
+  String get invWedding2Title => 'Pernikahan — Modern';
+
+  @override
+  String get invWedding3Title => 'Pernikahan — Story';
+
+  @override
+  String get invSizeA6Portrait => 'A6 potret (105×148 mm)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 lanskap (148×105 mm)';
+
+  @override
+  String get invSizeSquare148 => 'Persegi cetak (148×148 mm)';
+
+  @override
+  String get invSizeA5Folded => 'A5 terlipat (105×148 mm)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram persegi (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram potret (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram Story (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp Status (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook Post (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG (untuk media sosial)';
+
+  @override
+  String get invExportFormatPDF => 'PDF (untuk dicetak)';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => 'Undangan pribadi massal';
+
+  @override
+  String get invBulkModeHint => 'Satu kartu per nama — ekspor individual.';
+
+  @override
+  String get invPreviewTitle => 'Pratinjau 3 salinan pertama';
+
+  @override
+  String get invExportFormat => 'Format ekspor';
+
+  @override
+  String get invNameFieldMissing => 'Template ini tidak memiliki kolom nama';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return 'Nama ganda: $count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return 'Sel kosong: $count — akan dilewati';
+  }
+
+  @override
+  String get invZIPOption => 'Kompres ke berkas ZIP';
+
+  @override
+  String get invIndexCSVOption => 'Buat indeks CSV';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return '$done dari $total dibuat';
+  }
+
+  @override
+  String get navEditors => 'Editor';
+
+  @override
+  String get navLibraries => 'Pustaka';
+
+  @override
+  String get navAdmin => 'Administrasi';
+
+  @override
+  String get navUser => 'Akun';
+
+  @override
+  String get bpWorkTypeLabel => 'Jenis template';
+
+  @override
+  String get bpExportFormatLabel => 'Jenis ekspor';
+
+  @override
+  String get bpKindInvitation => 'Undangan';
+
+  @override
+  String get invPackOptions => 'Opsi keluaran';
 }

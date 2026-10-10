@@ -903,5 +903,62 @@
   "pdfExportTypeVectorCopyable": "Текст можно копировать и искать",
   "pdfExportTypeVectorBestFor": "Идеально для профессиональной печати",
   "pdfExportTypeComingSoon": "Скоро",
-  "pdfExportTypeComingSoonMessage": "Векторный экспорт в разработке — скоро будет доступен."
+  "pdfExportTypeComingSoonMessage": "Векторный экспорт в разработке — скоро будет доступен.",
+  "invCategoryTitle": "Приглашения и торжества",
+  "invCategoryRamadan": "Рамадан",
+  "invCategoryEid": "Ид",
+  "invCategoryWedding": "Свадьба",
+  "invRamadan1Title": "Рамадан Карим — классическая",
+  "invRamadan2Title": "Рамадан Карим — Story",
+  "invEid1Title": "Ид Мубарак — классическая",
+  "invEid2Title": "Ид Мубарак — Story",
+  "invWedding1Title": "Свадьба — классическая",
+  "invWedding2Title": "Свадьба — современная",
+  "invWedding3Title": "Свадьба — Story",
+  "invSizeA6Portrait": "A6 портрет (105×148 мм)",
+  "invSizeA6Landscape": "A6 альбомная (148×105 мм)",
+  "invSizeSquare148": "Квадрат для печати (148×148 мм)",
+  "invSizeA5Folded": "A5 с фальцем (105×148 мм)",
+  "invSizeInstagramSquare": "Instagram квадрат (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram портрет (1080×1350)",
+  "invSizeInstagramStory": "Instagram Story (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp Status (1080×1920)",
+  "invSizeFacebookPost": "Facebook Post (1200×630)",
+  "invExportFormatPNG": "PNG (для соцсетей)",
+  "invExportFormatPDF": "PDF (для печати)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "Массовые персональные приглашения",
+  "invBulkModeHint": "Одна открытка на имя — индивидуальный экспорт.",
+  "invPreviewTitle": "Предпросмотр первых 3 копий",
+  "invExportFormat": "Формат экспорта",
+  "invNameFieldMissing": "В этом шаблоне нет поля имени",
+  "invDuplicateNames": "Дублирующиеся имена: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "Пустые ячейки: {count} — будут пропущены",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "Упаковать в ZIP-архив",
+  "invIndexCSVOption": "Создать индекс CSV",
+  "invProgressText": "Создано {done} из {total}",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "Редакторы",
+  "navLibraries": "Библиотеки",
+  "navAdmin": "Администрирование",
+  "navUser": "Аккаунт",
+  "bpWorkTypeLabel": "Тип шаблона",
+  "bpExportFormatLabel": "Тип экспорта",
+  "bpKindInvitation": "Приглашение",
+  "invPackOptions": "Параметры вывода"
 }

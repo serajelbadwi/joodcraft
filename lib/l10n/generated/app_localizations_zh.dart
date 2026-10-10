@@ -2888,4 +2888,133 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pdfExportTypeComingSoonMessage => '矢量导出正在开发中 — 即将推出。';
+
+  @override
+  String get invCategoryTitle => '邀请函与请帖';
+
+  @override
+  String get invCategoryRamadan => '斋月';
+
+  @override
+  String get invCategoryEid => '开斋节';
+
+  @override
+  String get invCategoryWedding => '婚礼';
+
+  @override
+  String get invRamadan1Title => '斋月吉庆 — 经典款';
+
+  @override
+  String get invRamadan2Title => '斋月吉庆 — 竖屏故事';
+
+  @override
+  String get invEid1Title => '开斋节吉庆 — 经典款';
+
+  @override
+  String get invEid2Title => '开斋节吉庆 — 竖屏故事';
+
+  @override
+  String get invWedding1Title => '婚礼 — 经典款';
+
+  @override
+  String get invWedding2Title => '婚礼 — 现代款';
+
+  @override
+  String get invWedding3Title => '婚礼 — 竖屏故事';
+
+  @override
+  String get invSizeA6Portrait => 'A6 竖版 (105×148 毫米)';
+
+  @override
+  String get invSizeA6Landscape => 'A6 横版 (148×105 毫米)';
+
+  @override
+  String get invSizeSquare148 => '印刷方形 (148×148 毫米)';
+
+  @override
+  String get invSizeA5Folded => 'A5 对折 (105×148 毫米)';
+
+  @override
+  String get invSizeInstagramSquare => 'Instagram 方形 (1080×1080)';
+
+  @override
+  String get invSizeInstagramPortrait => 'Instagram 竖版 (1080×1350)';
+
+  @override
+  String get invSizeInstagramStory => 'Instagram 快拍 (1080×1920)';
+
+  @override
+  String get invSizeWhatsAppStatus => 'WhatsApp 状态 (1080×1920)';
+
+  @override
+  String get invSizeFacebookPost => 'Facebook 帖子 (1200×630)';
+
+  @override
+  String get invExportFormatPNG => 'PNG（用于社交媒体）';
+
+  @override
+  String get invExportFormatPDF => 'PDF（用于打印）';
+
+  @override
+  String get invExportFormatBoth => 'PNG + PDF';
+
+  @override
+  String get invBulkModeTitle => '批量个人邀请函';
+
+  @override
+  String get invBulkModeHint => '每个名字一张卡片 — 单独导出。';
+
+  @override
+  String get invPreviewTitle => '前 3 份预览';
+
+  @override
+  String get invExportFormat => '导出格式';
+
+  @override
+  String get invNameFieldMissing => '此模板没有姓名字段';
+
+  @override
+  String invDuplicateNames(Object count) {
+    return '重复的名字：$count';
+  }
+
+  @override
+  String invEmptyNames(Object count) {
+    return '空单元格：$count — 将被跳过';
+  }
+
+  @override
+  String get invZIPOption => '压缩为 ZIP 文件';
+
+  @override
+  String get invIndexCSVOption => '生成 CSV 索引';
+
+  @override
+  String invProgressText(Object done, Object total) {
+    return '已生成 $done/$total';
+  }
+
+  @override
+  String get navEditors => '编辑器';
+
+  @override
+  String get navLibraries => '资源库';
+
+  @override
+  String get navAdmin => '管理';
+
+  @override
+  String get navUser => '账户';
+
+  @override
+  String get bpWorkTypeLabel => '模板类型';
+
+  @override
+  String get bpExportFormatLabel => '导出类型';
+
+  @override
+  String get bpKindInvitation => '邀请';
+
+  @override
+  String get invPackOptions => '输出选项';
 }

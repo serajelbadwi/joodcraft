@@ -27,6 +27,9 @@ abstract final class AppRoutes {
   static const String templates = '/templates';
   static const String assets = '/assets';
 
+  /// الدعوات الشخصية الجماعية: قالب دعوة ← ملف أسماء ← نسخة لكل صاحبها.
+  static const String invitations = '/invitations';
+
   /// إعدادات الهوية والبروفايل (شعار/أختام/توقيعات/ألوان/خطوط).
   static const String brand = '/brand';
 

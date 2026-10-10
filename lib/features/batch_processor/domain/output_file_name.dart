@@ -11,8 +11,9 @@ abstract final class OutputFileName {
   /// الامتداد الافتراضي للملف المدمج.
   static const String defaultExtension = '.pdf';
 
-  /// امتدادات لا نُكرّرها إن كتبها المستخدم بنفسه (‏PDF أو أرشيف مضغوط).
-  static const List<String> knownExtensions = <String>['.pdf', '.zip'];
+  /// امتدادات لا نُكرّرها إن كتبها المستخدم بنفسه (‏PDF، صورة، أو أرشيف
+  /// مضغوط) — فأي امتداد منها يُطرح كي لا يصير الملف `تقرير.png.pdf`.
+  static const List<String> knownExtensions = <String>['.pdf', '.png', '.zip'];
 
   /// المحارف الممنوعة في أسماء الملفات على Windows (وهي ممنوعة أيضاً على
   /// macOS/Linux): `\ / : * ? " < > |`.
@@ -74,8 +75,19 @@ abstract final class OutputFileName {
   }
 
   /// يحوّل إدخال المستخدم إلى اسم ملف نهائي: تنقية ← احتياط ← امتداد.
-  static String resolve(String raw, {String fallbackName = fallback}) {
+  ///
+  /// [extension] صيغة الخروج المختارة (`.pdf` هو الافتراضي، `.png` للصور) —
+  /// والأمتدادات المعروفة في [knownExtensions] تُطرح من أي اسم كتبها المستخدم
+  /// بنفسه فلا يتراكب امتدادان.
+  static String resolve(
+    String raw, {
+    String fallbackName = fallback,
+    String extension = defaultExtension,
+  }) {
     final String cleaned = sanitize(raw);
-    return withExtension(cleaned.isEmpty ? fallbackName : cleaned);
+    return withExtension(
+      cleaned.isEmpty ? fallbackName : cleaned,
+      extension: extension,
+    );
   }
 }

@@ -1317,5 +1317,62 @@
   "pdfExportTypeVectorCopyable": "نص قابل للنسخ والبحث",
   "pdfExportTypeVectorBestFor": "مثالي للطباعة الاحترافية",
   "pdfExportTypeComingSoon": "قريباً",
-  "pdfExportTypeComingSoonMessage": "تصدير الفيكتور قيد التطوير — سيتوفر قريباً."
+  "pdfExportTypeComingSoonMessage": "تصدير الفيكتور قيد التطوير — سيتوفر قريباً.",
+  "invCategoryTitle": "دعوات ومناسبات",
+  "invCategoryRamadan": "رمضان",
+  "invCategoryEid": "عيد",
+  "invCategoryWedding": "زفاف",
+  "invRamadan1Title": "رمضان كريم — كلاسيكي",
+  "invRamadan2Title": "رمضان كريم — Story",
+  "invEid1Title": "عيد مبارك — كلاسيكي",
+  "invEid2Title": "عيد مبارك — Story",
+  "invWedding1Title": "زفاف كلاسيكي",
+  "invWedding2Title": "زفاف حديث",
+  "invWedding3Title": "زفاف Story",
+  "invSizeA6Portrait": "A6 رأسي (105×148 mm)",
+  "invSizeA6Landscape": "A6 أفقي (148×105 mm)",
+  "invSizeSquare148": "مربع للطباعة (148×148 mm)",
+  "invSizeA5Folded": "A5 مطوي (105×148 mm)",
+  "invSizeInstagramSquare": "Instagram مربع (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram طولي (1080×1350)",
+  "invSizeInstagramStory": "Instagram Story (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp Status (1080×1920)",
+  "invSizeFacebookPost": "Facebook Post (1200×630)",
+  "invExportFormatPNG": "PNG (للسوشيال ميديا)",
+  "invExportFormatPDF": "PDF (للطباعة)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "دعوات شخصية جماعية",
+  "invBulkModeHint": "كارت واحد لكل اسم — تصدير فردي.",
+  "invPreviewTitle": "معاينة أول 3 نسخ",
+  "invExportFormat": "صيغة التصدير",
+  "invNameFieldMissing": "هذا القالب لا يحتوي على حقل الاسم",
+  "invDuplicateNames": "أسماء مكررة: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "خلايا فارغة: {count} — ستُتخطى",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "ضغط في ملف ZIP",
+  "invIndexCSVOption": "إنشاء فهرس CSV",
+  "invProgressText": "تم توليد {done} من {total}",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "المحرّكات",
+  "navLibraries": "المكتبات",
+  "navAdmin": "الإدارة",
+  "navUser": "الحساب",
+  "bpWorkTypeLabel": "نوع القالب",
+  "bpExportFormatLabel": "نوع التصدير",
+  "bpKindInvitation": "دعوة",
+  "invPackOptions": "خيارات الإخراج"
 }

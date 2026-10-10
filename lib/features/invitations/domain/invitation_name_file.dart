@@ -18,8 +18,6 @@ const Map<String, String> _commonNames = <String, String>{
   'ابراهيم': 'ibrahim',
   'إسماعيل': 'ismail',
   'اسماعيل': 'ismail',
-  'إسماعيل': 'ismail',
-  'يوسف': 'youssef',
   'يوسف': 'youssef',
   'خالد': 'khaled',
   'سلمان': 'salman',
@@ -178,9 +176,9 @@ abstract final class InvitationFileName {
   }
 
   static String _transliterate(String word) {
-    // ابحث عن أطول أثر للاسم في القاموس (كلمتان متتاليتان ثم كلمة واحدة).
-    final String compact = word.replaceAll(' ', '');
+    // القاموس أولاً: الكلمة كما هي، ثم نسختها بلا مسافات («عبد الله» ⇒ عبدالله).
     if (_commonNames.containsKey(word)) return _commonNames[word]!;
+    final String compact = word.replaceAll(' ', '');
     if (_commonNames.containsKey(compact)) return _commonNames[compact]!;
     final StringBuffer buffer = StringBuffer();
     for (final int rune in word.runes) {

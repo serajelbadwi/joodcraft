@@ -1,0 +1,50 @@
+{
+  "sample_easy.jpg": {
+    "width": 1241,
+    "height": 1754,
+    "megapixels": 2.18,
+    "load_time_s": 2.7,
+    "runs_s": [
+      64.08,
+      63.36
+    ],
+    "median_s": 63.72,
+    "best_s": 63.36,
+    "rss_after_load_mb": 818,
+    "rss_peak_mb": 973,
+    "lines": 26,
+    "chars": 546
+  },
+  "sample_medium.PNG": {
+    "width": 597,
+    "height": 909,
+    "megapixels": 0.54,
+    "load_time_s": 2.7,
+    "runs_s": [
+      37.93,
+      37.02
+    ],
+    "median_s": 37.48,
+    "best_s": 37.02,
+    "rss_after_load_mb": 818,
+    "rss_peak_mb": 957,
+    "lines": 26,
+    "chars": 1558
+  },
+  "sample_hard.PNG": {
+    "width": 495,
+    "height": 849,
+    "megapixels": 0.42,
+    "load_time_s": 2.7,
+    "runs_s": [
+      41.73,
+      41.77
+    ],
+    "median_s": 41.75,
+    "best_s": 41.73,
+    "rss_after_load_mb": 818,
+    "rss_peak_mb": 966,
+    "lines": 28,
+    "chars": 991
+  }
+}

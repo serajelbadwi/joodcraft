@@ -903,5 +903,62 @@
   "pdfExportTypeVectorCopyable": "Texto que se puede copiar y buscar",
   "pdfExportTypeVectorBestFor": "Ideal para impresión profesional",
   "pdfExportTypeComingSoon": "Próximamente",
-  "pdfExportTypeComingSoonMessage": "La exportación vectorial está en desarrollo — estará disponible pronto."
+  "pdfExportTypeComingSoonMessage": "La exportación vectorial está en desarrollo — estará disponible pronto.",
+  "invCategoryTitle": "Invitaciones y ocasiones",
+  "invCategoryRamadan": "Ramadán",
+  "invCategoryEid": "Eid",
+  "invCategoryWedding": "Boda",
+  "invRamadan1Title": "Ramadán Karim — Clásico",
+  "invRamadan2Title": "Ramadán Karim — Story",
+  "invEid1Title": "Eid Mubarak — Clásico",
+  "invEid2Title": "Eid Mubarak — Story",
+  "invWedding1Title": "Boda — Clásica",
+  "invWedding2Title": "Boda — Moderna",
+  "invWedding3Title": "Boda — Story",
+  "invSizeA6Portrait": "A6 vertical (105×148 mm)",
+  "invSizeA6Landscape": "A6 horizontal (148×105 mm)",
+  "invSizeSquare148": "Cuadrado para impresión (148×148 mm)",
+  "invSizeA5Folded": "A5 plegado (105×148 mm)",
+  "invSizeInstagramSquare": "Instagram cuadrado (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram vertical (1080×1350)",
+  "invSizeInstagramStory": "Instagram Story (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp Status (1080×1920)",
+  "invSizeFacebookPost": "Facebook Post (1200×630)",
+  "invExportFormatPNG": "PNG (para redes sociales)",
+  "invExportFormatPDF": "PDF (para imprimir)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "Invitaciones personales por lotes",
+  "invBulkModeHint": "Una tarjeta por nombre — exportación individual.",
+  "invPreviewTitle": "Vista previa de las 3 primeras copias",
+  "invExportFormat": "Formato de exportación",
+  "invNameFieldMissing": "Esta plantilla no tiene un campo de nombre",
+  "invDuplicateNames": "Nombres duplicados: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "Celdas vacías: {count} — se omitirán",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "Comprimir en un archivo ZIP",
+  "invIndexCSVOption": "Crear un índice CSV",
+  "invProgressText": "Generadas {done} de {total}",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "Editores",
+  "navLibraries": "Bibliotecas",
+  "navAdmin": "Administración",
+  "navUser": "Cuenta",
+  "bpWorkTypeLabel": "Tipo de plantilla",
+  "bpExportFormatLabel": "Tipo de exportación",
+  "bpKindInvitation": "Invitación",
+  "invPackOptions": "Opciones de salida"
 }

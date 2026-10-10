@@ -1,5 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:printing/printing.dart';
+
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/dynamic_fields.dart';
 import '../../../core/errors/app_error_code.dart';
 import '../../../core/errors/app_exception.dart';
@@ -78,7 +81,57 @@ enum BulkOutputMode {
   }
 }
 
-/// ملف PDF مستقل ناتج في الوضع المنفصل (ملف لكل شخص).
+/// صيغة الملفات التي تُحفظ على القرص في التوليد الجماعي.
+///
+/// محرّك الرسم ينتج **PDF دائماً**؛ و[png] يحوّل الناتج إلى صور عبر ترميز
+/// صفحاته، فيناسب مشاركة السوشيال ميديا والمعاينة الخارجية. الاختيار لا يمسّ
+/// المعاينة ولا الطباعة (تبقى PDF لأنها الأصل).
+enum BatchExportFormat {
+  pdf('pdf', 'PDF'),
+  png('png', 'PNG');
+
+  const BatchExportFormat(this.jsonValue, this.labelAr);
+
+  /// القيمة المخزّنة في JSON (للتوافق مع حفظ التفضيلات لاحقاً).
+  final String jsonValue;
+
+  /// التسمية الظاهرة في الواجهة — اسم الصيغة نفسه بلغتها.
+  final String labelAr;
+
+  /// امتداد ملف الناتج (`.pdf` / `.png`).
+  String get extension => '.$jsonValue';
+
+  static BatchExportFormat fromJson(String? value) {
+    final String needle = value?.trim().toLowerCase() ?? '';
+    return values.firstWhere(
+      (BatchExportFormat format) => format.jsonValue == needle,
+      orElse: () => pdf,
+    );
+  }
+}
+
+/// تحويل ملف PDF إلى صفحاته كصور PNG.
+///
+/// تُحقن وظيفة بديلة في الاختبارات فلا يُستدعى محرّك الترميز الفعلي.
+typedef BulkPdfRasterizer = Future<List<Uint8List>> Function(
+  Uint8List pdf, {
+  required int dpi,
+});
+
+/// التحويل الافتراضي عبر `Printing.raster` — نفس محرّك الدعوات، فيعمل على
+/// سطح المكتب والويب.
+Future<List<Uint8List>> _rasterizePdfWithPrinting(
+  Uint8List pdf, {
+  required int dpi,
+}) async {
+  final List<PdfRaster> pages =
+      await Printing.raster(pdf, dpi: dpi.toDouble()).toList();
+  return <Uint8List>[
+    for (final PdfRaster page in pages) await page.toPng(),
+  ];
+}
+
+/// ملف مستقل ناتج في الوضع المنفصل (ملف لكل شخص).
 class BulkIndividualPdf {
   const BulkIndividualPdf({
     required this.rowNumber,
@@ -224,9 +277,15 @@ class BulkGenerationReport {
 /// يرسم، وهذا **يقرّر ماذا يُرسم ولمن** — وهو منطق العمل الذي تستحق قواعده
 /// (الخلايا الفارغة، تخطي الصفوف، التقارير) اختبارات مستقلة.
 class BulkGenerationService {
-  const BulkGenerationService({required this.generator});
+  const BulkGenerationService({
+    required this.generator,
+    this.rasterizer = _rasterizePdfWithPrinting,
+  });
 
   final PdfGeneratorService generator;
+
+  /// محوّل PDF → صفحات PNG؛ يُحقن في الاختبارات بدل محرّك الترميز الفعلي.
+  final BulkPdfRasterizer rasterizer;
 
   /// القيمة التجريبية لحقل: ما مرّره المستدعي (بيانات القالب النموذجية) أولاً،
   /// ثم مكتبة الحقول الديناميكية، وإلا الفراغ.
@@ -252,6 +311,10 @@ class BulkGenerationService {
   ///
   /// [mode] نمط الحفظ: مجمع (ملف واحد) أو منفصل (ملف لكل شخص داخل مجلد فرعي).
   ///
+  /// [format] صيغة الملفات المحفوظة: ‏[BatchExportFormat.pdf] هو الأصل، و
+  /// [BatchExportFormat.png] يحوّل كل نتيجة إلى صورة قبل الحفظ. **المعاينة
+  /// والطباعة تبقى PDF** في الحالتين لأنها مصدر التوليد نفسه.
+  ///
   /// [outputDirectory] المجلد الذي اختاره المستخدم + [output] عقدة الكتابة
   /// عليه: معاً يُفعِّلان الحفظ داخل المحرّك (ينشئ [output] المجلد الفرعي
   /// للوضع المنفصل قبل كتابة الملفات فيه). بلا مجلد (الويب) يبقى التقرير
@@ -267,6 +330,7 @@ class BulkGenerationService {
     String? fileName,
     PdfDocumentMetadata? metadata,
     BulkOutputMode mode = BulkOutputMode.combined,
+    BatchExportFormat format = BatchExportFormat.pdf,
     String? outputDirectory,
     BatchOutputService? output,
     void Function(int done, int total)? onProgress,
@@ -404,21 +468,42 @@ class BulkGenerationService {
 
     // -------------------------------------------------------------------------
     //  الحفظ على القرص — البنية المنسّقة داخل المحرّك نفسه:
-    //  * مجمع: الملف مباشرة في المجلد المختار.
+    //  * مجمع + PDF: ملف واحد مباشرة في المجلد المختار (السلوك الأصلي).
     //  * منفصل: مجلد فرعي باسم التصدير أولاً، ثم ملف لكل شخص **داخله**.
+    //  * مجمع + PNG: صفحات الملف المدمج كصور داخل مجلد فرعي — لا يتسع ملف
+    //    واحد لعدة صور، ولا يُبعثر شيء في المجلد الأصل.
     // -------------------------------------------------------------------------
     String? savedFilePath;
     String? savedDirectory;
     List<BulkIndividualPdf> individualPdfs = const <BulkIndividualPdf>[];
-    final String resolvedFileName = OutputFileName.resolve(fileName ?? '');
+    final String resolvedFileName =
+        OutputFileName.resolve(fileName ?? '', extension: format.extension);
 
-    if (canSave && mode == BulkOutputMode.combined && combinedPdf != null) {
+    // الصفوف المُصدرة بنفس ترتيب effectiveRows (كُتِبت في الحلقة نفسها).
+    final List<BulkRowResult> generatedRows = <BulkRowResult>[
+      for (final BulkRowResult row in results)
+        if (row.isGenerated) row,
+    ];
+
+    // هل الناتج ملف PDF واحد مدمج يُكتب في المجلد مباشرةً؟
+    final bool singlePdf = mode == BulkOutputMode.combined &&
+        format == BatchExportFormat.pdf;
+    // وإلا يُجمع الإخراج في مجلد فرعي: المنفصل حسب صفّه، والمدمج الصوري
+    // حسب صفحته.
+    final bool intoFolder = canSave &&
+        effectiveRows.isNotEmpty &&
+        combinedPdf != null &&
+        !singlePdf &&
+        (mode == BulkOutputMode.individual ||
+            format == BatchExportFormat.png);
+
+    if (canSave && singlePdf && combinedPdf != null) {
       savedFilePath = await output.savePdf(
         directory: outputDirectory,
         fileName: resolvedFileName,
         bytes: combinedPdf,
       );
-    } else if (savesIndividual) {
+    } else if (intoFolder) {
       // اسم المجلد = اسم التصدير بلا امتداد (أو الاسم الافتراضي) — مثل
       // «شهادات_دفعة_أغسطس» — فلا تُبعثَر ملفات الأشخاص في المجلد الأصل.
       final String folderName = OutputFileName.baseName(fileName ?? '');
@@ -431,34 +516,66 @@ class BulkGenerationService {
           'تعذّر إنشاء مجلد الملفات المنفصلة «$folderName» — لم يُحفظ أي ملف.',
         );
       } else {
-        // الصفوف المُصدرة بنفس ترتيب effectiveRows (كُتِبت في الحلقة نفسها).
-        final List<BulkRowResult> generatedRows = <BulkRowResult>[
-          for (final BulkRowResult row in results)
-            if (row.isGenerated) row,
-        ];
         final Set<String> usedNames = <String>{};
         final List<BulkIndividualPdf> files = <BulkIndividualPdf>[];
-        for (int i = 0; i < effectiveRows.length; i++) {
-          final PdfGenerationReport pdf = await generator.generate(
-            document: document,
-            data: effectiveRows[i],
-            metadata: metadata,
-          );
-          final BulkRowResult row = generatedRows[i];
-          files.add(
-            BulkIndividualPdf(
-              rowNumber: row.rowNumber,
-              name: row.name,
-              fileName: _individualFileName(
-                name: row.name,
-                rowNumber: row.rowNumber,
-                usedNames: usedNames,
+        final bool rasterPages = format == BatchExportFormat.png;
+
+        if (mode == BulkOutputMode.combined) {
+          // مدمج + PNG: كل صفحة من الملف المدمج تصبح صورة باسم صاحب صفّها.
+          // الترميز يجري بعد اكتمال التوليد (الشريط عند 100% مع مؤشّر الانشغال).
+          // `combinedPdf` غير قابلة للفراغ هنا لأن [intoFolder] شرطها.
+          final List<Uint8List> pages =
+              await rasterizer(combinedPdf, dpi: rasterDpi(document));
+          for (int i = 0; i < pages.length; i++) {
+            final BulkRowResult? row =
+                i < generatedRows.length ? generatedRows[i] : null;
+            files.add(
+              BulkIndividualPdf(
+                rowNumber: row?.rowNumber ?? (i + 1),
+                name: row?.name,
+                fileName: _individualFileName(
+                  name: row?.name ?? 'صف_${i + 1}',
+                  rowNumber: i + 1,
+                  usedNames: usedNames,
+                  extension: format.extension,
+                ),
+                bytes: pages[i],
               ),
-              bytes: pdf.bytes,
-            ),
-          );
-          onProgress?.call(effectiveRows.length + i + 1, phaseTotal);
+            );
+          }
+        } else {
+          for (int i = 0; i < effectiveRows.length; i++) {
+            final PdfGenerationReport pdf = await generator.generate(
+              document: document,
+              data: effectiveRows[i],
+              metadata: metadata,
+            );
+            final BulkRowResult row = generatedRows[i];
+            // بصيغة PNG يُحوَّل كل ملف إلى صور صفحاته؛ وبصيغة PDF تبقى كما هي.
+            final List<Uint8List> outputs = rasterPages
+                ? await rasterizer(pdf.bytes, dpi: rasterDpi(document))
+                : <Uint8List>[pdf.bytes];
+            for (int page = 0; page < outputs.length; page++) {
+              files.add(
+                BulkIndividualPdf(
+                  rowNumber: row.rowNumber,
+                  name: row.name,
+                  fileName: _individualFileName(
+                    name: row.name,
+                    rowNumber: row.rowNumber,
+                    usedNames: usedNames,
+                    extension: format.extension,
+                    // صفحة ثانية فأبعد تحمل لاحقة حتى لا يتداعى ملفان.
+                    page: outputs.length > 1 ? page + 1 : null,
+                  ),
+                  bytes: outputs[page],
+                ),
+              );
+            }
+            onProgress?.call(effectiveRows.length + i + 1, phaseTotal);
+          }
         }
+
         individualPdfs = files;
         for (final BulkIndividualPdf file in files) {
           final String? path = await output.savePdf(
@@ -488,27 +605,42 @@ class BulkGenerationService {
     );
   }
 
+  /// دقّة ترميز الصفحات إلى صور: مساحة التصميم بالبكسل (‏96) للصفحة الرقمية،
+  /// ودقّة الطباعة للمطبوعة — **نفس منطق الدعوات** كي تتسق جودة الصور عبر
+  /// التطبيق كله.
+  static int rasterDpi(TemplateDocument document) {
+    final CustomPageSize? custom = document.customPageSize;
+    final bool digital = custom != null && custom.unit == MeasurementUnit.px;
+    return (digital ? TemplateDocument.designDpi : document.dpi).round();
+  }
+
   /// اسم ملف مستقل في الوضع المنفصل: `شهادة_<الاسم>.pdf` — مسافات محوّلة إلى
   /// `_` (مثل `شهادة_عبدالله_بن_أحمد.pdf`)، وتكرار الأسماء يُميَّز بلاحقة
   /// `_2`/`_3`… (بلا مراعاة حالة الأحرف كي لا يتراكب ملفان على Windows)، واسم
   /// من رقم الصف إن غاب الاسم.
+  ///
+  /// [extension] صيغة الخروج (`.pdf` افتراضياً أو `.png`)، و[page] لاحقة
+  /// الصفحات حين يخرج من ملف واحد أكثر من صورة (`شهادة_علي_p2.png`).
   static String _individualFileName({
     required String? name,
     required int rowNumber,
     required Set<String> usedNames,
+    String extension = OutputFileName.defaultExtension,
+    int? page,
   }) {
     String base = OutputFileName.sanitize(name ?? '')
         .replaceAll(RegExp(r'\s+'), '_');
     base = String.fromCharCodes(base.runes.take(60));
     if (base.isEmpty) base = 'صف_$rowNumber';
 
-    String candidate = 'شهادة_$base';
+    final String pageSuffix = page != null && page > 1 ? '_p$page' : '';
+    String candidate = 'شهادة_$base$pageSuffix';
     String key = candidate.toLowerCase();
     for (int copy = 2; usedNames.contains(key); copy++) {
-      candidate = 'شهادة_${base}_$copy';
+      candidate = 'شهادة_$base${pageSuffix}_$copy';
       key = candidate.toLowerCase();
     }
     usedNames.add(key);
-    return OutputFileName.withExtension(candidate);
+    return OutputFileName.withExtension(candidate, extension: extension);
   }
 }

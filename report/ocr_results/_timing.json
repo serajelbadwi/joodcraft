@@ -1,0 +1,17 @@
+{
+  "sample_easy.jpg": {
+    "width": 1241,
+    "height": 1754,
+    "megapixels": 2.18,
+    "load_time_s": 2.73,
+    "runs_s": [
+      72.69
+    ],
+    "median_s": 72.69,
+    "best_s": 72.69,
+    "rss_after_load_mb": 820,
+    "rss_peak_mb": 892,
+    "lines": 38,
+    "chars": 179
+  }
+}

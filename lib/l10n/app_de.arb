@@ -905,5 +905,62 @@
   "pdfExportTypeVectorCopyable": "Text lässt sich kopieren und durchsuchen",
   "pdfExportTypeVectorBestFor": "Ideal für den professionellen Druck",
   "pdfExportTypeComingSoon": "Bald verfügbar",
-  "pdfExportTypeComingSoonMessage": "Der Vektor-Export ist in Entwicklung — bald verfügbar."
+  "pdfExportTypeComingSoonMessage": "Der Vektor-Export ist in Entwicklung — bald verfügbar.",
+  "invCategoryTitle": "Einladungen und Anlässe",
+  "invCategoryRamadan": "Ramadan",
+  "invCategoryEid": "Eid",
+  "invCategoryWedding": "Hochzeit",
+  "invRamadan1Title": "Ramadan Karim — Klassisch",
+  "invRamadan2Title": "Ramadan Karim — Story",
+  "invEid1Title": "Eid Mubarak — Klassisch",
+  "invEid2Title": "Eid Mubarak — Story",
+  "invWedding1Title": "Hochzeit — Klassisch",
+  "invWedding2Title": "Hochzeit — Modern",
+  "invWedding3Title": "Hochzeit — Story",
+  "invSizeA6Portrait": "A6 hochkant (105×148 mm)",
+  "invSizeA6Landscape": "A6 quer (148×105 mm)",
+  "invSizeSquare148": "Druckquadrat (148×148 mm)",
+  "invSizeA5Folded": "A5 gefaltet (105×148 mm)",
+  "invSizeInstagramSquare": "Instagram Quadrat (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram hochkant (1080×1350)",
+  "invSizeInstagramStory": "Instagram Story (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp Status (1080×1920)",
+  "invSizeFacebookPost": "Facebook Post (1200×630)",
+  "invExportFormatPNG": "PNG (für soziale Medien)",
+  "invExportFormatPDF": "PDF (zum Drucken)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "Persönliche Einladungen im Stapel",
+  "invBulkModeHint": "Eine Karte pro Name — Einzelexport.",
+  "invPreviewTitle": "Vorschau der ersten 3 Exemplare",
+  "invExportFormat": "Exportformat",
+  "invNameFieldMissing": "Diese Vorlage hat kein Namensfeld",
+  "invDuplicateNames": "Doppelte Namen: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "Leere Zellen: {count} — werden übersprungen",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "In eine ZIP-Datei packen",
+  "invIndexCSVOption": "CSV-Index erstellen",
+  "invProgressText": "{done} von {total} erstellt",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "Editoren",
+  "navLibraries": "Bibliotheken",
+  "navAdmin": "Verwaltung",
+  "navUser": "Konto",
+  "bpWorkTypeLabel": "Vorlagentyp",
+  "bpExportFormatLabel": "Exporttyp",
+  "bpKindInvitation": "Einladung",
+  "invPackOptions": "Ausgabeoptionen"
 }

@@ -1174,6 +1174,15 @@ class _PresetFamilyCardState extends State<_PresetFamilyCard> {
         : base;
   }
 
+  /// ارتفاع أيقونة الورقة — يتقلّص للمقاسات العريضة كي يبقى صفّ البطاقة
+  /// (أيقونة + شارة «رقمي») داخل عرض البطاقة الضيّق بلا فيض.
+  double get _iconHeight {
+    final double ratio = _displayRatio;
+    if (ratio > 1.3) return 22;
+    if (ratio > 1) return 26;
+    return 30;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ProjectPresetFamily family = widget.family;
@@ -1193,6 +1202,7 @@ class _PresetFamilyCardState extends State<_PresetFamilyCard> {
                   aspectRatio: _displayRatio,
                   selected: selected,
                   hovered: _hovered,
+                  height: _iconHeight,
                 ),
                 const Spacer(),
                 if (family.isDigital) const _Badge(label: 'رقمي'),

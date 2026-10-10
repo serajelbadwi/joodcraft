@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart' show immutable;
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/models/template_document.dart';
-import '../../../../core/templates/project_preset.dart';
+import '../constants/app_constants.dart';
+import '../models/template_document.dart';
+import '../models/template_element.dart';
+import 'project_preset.dart';
 
 /// مقاسات الدعوات الجاهزة — طباعة (ملم) وسوشيال ميديا (بكسل).
 ///

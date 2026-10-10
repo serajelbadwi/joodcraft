@@ -905,5 +905,62 @@
   "pdfExportTypeVectorCopyable": "Text you can copy and search",
   "pdfExportTypeVectorBestFor": "Ideal for professional printing",
   "pdfExportTypeComingSoon": "Coming soon",
-  "pdfExportTypeComingSoonMessage": "Vector export is still in development — coming soon."
+  "pdfExportTypeComingSoonMessage": "Vector export is still in development — coming soon.",
+  "invCategoryTitle": "Invitations & occasions",
+  "invCategoryRamadan": "Ramadan",
+  "invCategoryEid": "Eid",
+  "invCategoryWedding": "Wedding",
+  "invRamadan1Title": "Ramadan Kareem — Classic",
+  "invRamadan2Title": "Ramadan Kareem — Story",
+  "invEid1Title": "Eid Mubarak — Classic",
+  "invEid2Title": "Eid Mubarak — Story",
+  "invWedding1Title": "Wedding — Classic",
+  "invWedding2Title": "Wedding — Modern",
+  "invWedding3Title": "Wedding — Story",
+  "invSizeA6Portrait": "A6 portrait (105×148 mm)",
+  "invSizeA6Landscape": "A6 landscape (148×105 mm)",
+  "invSizeSquare148": "Print square (148×148 mm)",
+  "invSizeA5Folded": "A5 folded (105×148 mm)",
+  "invSizeInstagramSquare": "Instagram square (1080×1080)",
+  "invSizeInstagramPortrait": "Instagram portrait (1080×1350)",
+  "invSizeInstagramStory": "Instagram Story (1080×1920)",
+  "invSizeWhatsAppStatus": "WhatsApp Status (1080×1920)",
+  "invSizeFacebookPost": "Facebook Post (1200×630)",
+  "invExportFormatPNG": "PNG (for social media)",
+  "invExportFormatPDF": "PDF (for printing)",
+  "invExportFormatBoth": "PNG + PDF",
+  "invBulkModeTitle": "Bulk personal invitations",
+  "invBulkModeHint": "One card per name — individual export.",
+  "invPreviewTitle": "Preview of the first 3 copies",
+  "invExportFormat": "Export format",
+  "invNameFieldMissing": "This template has no name field",
+  "invDuplicateNames": "Duplicate names: {count}",
+  "@invDuplicateNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invEmptyNames": "Empty cells: {count} — they will be skipped",
+  "@invEmptyNames": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "invZIPOption": "Compress into a ZIP file",
+  "invIndexCSVOption": "Create a CSV index",
+  "invProgressText": "Generated {done} of {total}",
+  "@invProgressText": {
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "navEditors": "Editors",
+  "navLibraries": "Libraries",
+  "navAdmin": "Admin",
+  "navUser": "Account",
+  "bpWorkTypeLabel": "Template type",
+  "bpExportFormatLabel": "Export type",
+  "bpKindInvitation": "Invitation",
+  "invPackOptions": "Output options"
 }
