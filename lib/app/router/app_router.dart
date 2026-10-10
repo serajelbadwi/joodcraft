@@ -11,6 +11,7 @@ import '../../core/templates/template_draft.dart';
 import '../../core/templates/template_record.dart';
 import '../../core/templates/template_repository.dart';
 import '../../features/assets_manager/presentation/screens/assets_manager_screen.dart';
+import '../../features/about/presentation/screens/about_screen.dart';
 import '../../features/brand/presentation/screens/brand_settings_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/screens/admin_accounts_screen.dart';
@@ -243,6 +244,17 @@ abstract final class AppRouter {
               ),
             ]),
           ],
+        ),
+
+        // ------------------------- حول البرنامج -------------------------
+        // **خارج** هيكل الفروع مقصود: صفحة معلومات تُفتح فوق القسم الحالي
+        // (من قائمة «مساعدة») فتبقى حالة القسم حيّة، ولا تُزحزح إضافة هذا
+        // المسار فهارس الفروع القائمة.
+        GoRoute(
+          path: AppRoutes.about,
+          name: 'about',
+          builder: (BuildContext context, GoRouterState state) =>
+              const AboutScreen(),
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) =>

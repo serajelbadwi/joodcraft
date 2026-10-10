@@ -93,12 +93,47 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// معرّف المجموعة التي يقع فيها كل مسار بعد إعادة هيكلة الشريط العلوي:
+  /// الوجهات صارت خمس مجموعات، وكثير منها بنود داخل قوائم منسدلة لا تبويبات.
+  const Map<String, String> menuOfPath = <String, String>{
+    AppRoutes.certificateBuilder: 'editors',
+    AppRoutes.contractBuilder: 'editors',
+    AppRoutes.joodWriter: 'editors',
+    AppRoutes.templates: 'libraries',
+    AppRoutes.assets: 'libraries',
+    AppRoutes.brand: 'libraries',
+    AppRoutes.admins: 'admin',
+  };
+
   /// ينقر تبويباً في الشريط العلوي (لا بطاقة في اللوحة) ثم يستقرّ.
   ///
   /// يُستهدف بمفتاح ثابت لا بالنص، لأن التسمية قد تُخفى في العرض الضيّق وتظهر
   /// في تلميح فقط.
+  ///
+  /// بعد إعادة الهيكلة: الوجهات المباشرة تبويب (`top-tab-<path>`)، وباقي
+  /// الوجهات بنود في قائمة منسدلة (`top-menu-<groupId>`) — فيُفتح القائمة أولاً
+  /// ثم يُنقر البند بـ`value` لا بنصّه.
   Future<void> tapTab(WidgetTester tester, String path) async {
-    await tester.tap(find.byKey(ValueKey<String>('top-tab-$path')));
+    final Finder direct = find.byKey(ValueKey<String>('top-tab-$path'));
+    if (direct.evaluate().isNotEmpty) {
+      await tester.tap(direct);
+      await tester.pumpAndSettle();
+      return;
+    }
+
+    final String? groupId = menuOfPath[path];
+    if (groupId == null) {
+      fail('لا تبويب ولا مجموعة للمسار: $path');
+    }
+
+    await tester.tap(find.byKey(ValueKey<String>('top-menu-$groupId')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byWidgetPredicate(
+        (Widget w) => w is PopupMenuItem<String> && w.value == path,
+      ),
+    );
     await tester.pumpAndSettle();
   }
 

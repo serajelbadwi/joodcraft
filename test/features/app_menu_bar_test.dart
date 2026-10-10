@@ -165,13 +165,15 @@ void main() {
     expect(NewDocumentController.recentFamilyIds, isEmpty);
   });
 
-  testWidgets('«مساعدة» تعرض تعريفاً بالبرنامج', (WidgetTester tester) async {
+  testWidgets('«مساعدة» تنقل إلى شاشة «حول»', (WidgetTester tester) async {
     await pumpBar(tester);
 
     await openMenu(tester, 'مساعدة');
     await tester.tap(find.text('حول JoodCraft'));
     await tester.pumpAndSettle();
 
-    expect(find.text('JoodCraft'), findsOneWidget);
+    // الأمر لم يبقَ نافذة `showAboutDialog` صغيرة، بل ينقل إلى شاشة «حول»
+    // الكاملة (`AppRoutes.about`) — نفس نمط بقية أوامر القوائم.
+    expect(navigated, <String>[AppRoutes.about]);
   });
 }

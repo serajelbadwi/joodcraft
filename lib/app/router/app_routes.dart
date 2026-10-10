@@ -39,4 +39,8 @@ abstract final class AppRoutes {
 
   /// **جود كاتب**: مستندات وتقارير نصّية ذات صفحات متتالية بتدفّق تلقائي.
   static const String joodWriter = '/jood-writer';
+
+  /// **حول JoodCraft**: صفحة معلومات كاملة عن البرنامج والمطوّر والمميزات
+  /// والتراخيص.
+  static const String about = '/about';
 }

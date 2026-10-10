@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../../app/router/app_routes.dart';
 import '../../../../core/assets/asset_image_cache.dart';
 import '../../../../core/assets/asset_image_disk_cache.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/locale/app_locale.dart';
 import '../../../../core/locale/locale_controller.dart';
@@ -14,7 +13,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/utils/ui_feedback.dart';
-import '../../../../core/widgets/joodcraft_logo.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../project_hub/presentation/providers/new_document_controller.dart';
@@ -227,7 +225,7 @@ class AppMenuBar extends StatelessWidget {
       _item(
         label: l10n?.menuAbout ?? 'حول JoodCraft',
         icon: Icons.info_outline_rounded,
-        onSelected: () => _showAbout(context),
+        onSelected: () => onNavigate(AppRoutes.about),
       ),
     ];
   }
@@ -313,19 +311,6 @@ class AppMenuBar extends StatelessWidget {
     AssetImageCache.instance.clear();
     if (!context.mounted) return;
     context.showSuccess(l10n?.amCacheCleared ?? 'تم مسح ذاكرة الصور على القرص.');
-  }
-
-  void _showAbout(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: AppConstants.appName,
-      applicationVersion:
-          '${AppConstants.appNameAr} · v${AppConstants.appVersion}',
-      applicationIcon: const JoodCraftLogo(size: 40),
-      children: <Widget>[
-        Text(context.l10n?.appTagline ?? AppConstants.appTagline),
-      ],
-    );
   }
 }
 

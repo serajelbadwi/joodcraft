@@ -399,6 +399,14 @@ const Map<String, String> _enTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'This contract was drawn up electronically via the JoodCraft platform '
           'on {{تاريخ_العقد}}',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Certificate',
+  'شهادة تقدير': 'Certificate of Appreciation',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': 'in recognition of their distinguished effort and outstanding performance in {{اسم_الدورة}} over {{مدة_الدورة}} under the supervision of {{المدرب}}. We wish them continued success.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'Certificate no.: {{رقم_الشهادة}} — scan the code to verify',
+  'شهادة تقدير مباركة': 'Blessed Certificate of Appreciation',
+  'شهادة تقدير معتمدة': 'Certified Certificate of Appreciation',
+  'شهادة تميّز': 'Certificate of Distinction',
 };
 
 const Map<String, String> _enSamples = <String, String>{
@@ -667,6 +675,14 @@ const Map<String, String> _frTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'Ce contrat a été établi électroniquement via la plateforme JoodCraft le '
           '{{تاريخ_العقد}}',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Certificat',
+  'شهادة تقدير': 'Certificat de reconnaissance',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': 'en reconnaissance de leurs efforts distingués et de leurs performances exceptionnelles dans {{اسم_الدورة}} pendant {{مدة_الدورة}}, sous la supervision de {{المدرب}}. Nous leur souhaitons un succès continu.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'Certificat n° : {{رقم_الشهادة}} — scannez le code pour vérifier',
+  'شهادة تقدير مباركة': 'Certificat de reconnaissance béni',
+  'شهادة تقدير معتمدة': 'Certificat de reconnaissance certifié',
+  'شهادة تميّز': 'Certificat de distinction',
 };
 
 const Map<String, String> _frSamples = <String, String>{
@@ -932,6 +948,14 @@ const Map<String, String> _esTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'Este contrato se redactó electrónicamente a través de la plataforma '
           'JoodCraft el {{تاريخ_العقد}}',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Certificado',
+  'شهادة تقدير': 'Certificado de agradecimiento',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': 'en reconocimiento a su esfuerzo distinguido y desempeño sobresaliente en {{اسم_الدورة}} durante {{مدة_الدورة}}, bajo la supervisión de {{المدرب}}. Le deseamos éxito continuo.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'Certificado n.º: {{رقم_الشهادة}} — escanee el código para verificar',
+  'شهادة تقدير مباركة': 'Certificado de agradecimiento bendecido',
+  'شهادة تقدير معتمدة': 'Certificado de agradecimiento certificado',
+  'شهادة تميّز': 'Certificado de distinción',
 };
 
 const Map<String, String> _esSamples = <String, String>{
@@ -1189,6 +1213,14 @@ const Map<String, String> _deTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'Dieser Vertrag wurde am {{تاريخ_العقد}} elektronisch über die Plattform '
           'JoodCraft erstellt.',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Zertifikat',
+  'شهادة تقدير': 'Anerkennungszertifikat',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': 'in Anerkennung ihrer herausragenden Leistungen und ihres ausgezeichneten Wirkens in {{اسم_الدورة}} über {{مدة_الدورة}} unter der Leitung von {{المدرب}}. Wir wünschen ihnen weiterhin Erfolg.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'Zertifikat Nr.: {{رقم_الشهادة}} — Code zum Prüfen scannen',
+  'شهادة تقدير مباركة': 'Gesegnetes Anerkennungszertifikat',
+  'شهادة تقدير معتمدة': 'Beglaubigtes Anerkennungszertifikat',
+  'شهادة تميّز': 'Auszeichnungszertifikat',
 };
 
 const Map<String, String> _deSamples = <String, String>{
@@ -1439,6 +1471,14 @@ const Map<String, String> _trTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'Bu sözleşme {{تاريخ_العقد}} tarihinde JoodCraft platformu üzerinden '
           'elektronik olarak düzenlenmiştir.',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Belge',
+  'شهادة تقدير': 'Takdir Belgesi',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': '{{اسم_الدورة}} konusunda {{مدة_الدورة}} boyunca {{المدرب}} gözetiminde gösterdiği üstün çaba ve başarılı performansın takdiri olarak. Kendisine sürekli başarılar dileriz.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'Belge no: {{رقم_الشهادة}} — doğrulamak için kodu tarayın',
+  'شهادة تقدير مباركة': 'Mübarek Takdir Belgesi',
+  'شهادة تقدير معتمدة': 'Onaylı Takdir Belgesi',
+  'شهادة تميّز': 'Üstün Başarı Belgesi',
 };
 
 const Map<String, String> _trSamples = <String, String>{
@@ -1697,6 +1737,14 @@ const Map<String, String> _idTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'Perjanjian ini dibuat secara elektronik melalui platform JoodCraft '
           'pada {{تاريخ_العقد}}',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Sertifikat',
+  'شهادة تقدير': 'Sertifikat Apresiasi',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': 'atas usaha istimewa dan kinerja luar biasanya dalam {{اسم_الدورة}} selama {{مدة_الدورة}} di bawah bimbingan {{المدرب}}. Semoga kesuksesan senantiasa menyertai.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'No. sertifikat: {{رقم_الشهادة}} — pindai kode untuk verifikasi',
+  'شهادة تقدير مباركة': 'Sertifikat Apresiasi yang Diberkahi',
+  'شهادة تقدير معتمدة': 'Sertifikat Apresiasi Tersertifikasi',
+  'شهادة تميّز': 'Sertifikat Keunggulan',
 };
 
 const Map<String, String> _idSamples = <String, String>{
@@ -1957,6 +2005,14 @@ const Map<String, String> _ruTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'Настоящий договор составлен в электронном виде на платформе JoodCraft '
           '{{تاريخ_العقد}}',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'Сертификат',
+  'شهادة تقدير': 'Благодарственный сертификат',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': 'в знак признания их выдающихся усилий и превосходных результатов в {{اسم_الدورة}} в течение {{مدة_الدورة}} под руководством {{المدرب}}. Желаем им дальнейших успехов.',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'Сертификат № {{رقم_الشهادة}} — отсканируйте код для проверки',
+  'شهادة تقدير مباركة': 'Благословенный благодарственный сертификат',
+  'شهادة تقدير معتمدة': 'Заверенный благодарственный сертификат',
+  'شهادة تميّز': 'Сертификат отличия',
 };
 
 const Map<String, String> _ruSamples = <String, String>{
@@ -2165,6 +2221,14 @@ const Map<String, String> _zhTexts = <String, String>{
       '本合同通过 JoodCraft 平台以电子方式订立。',
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       '本合同于 {{تاريخ_العقد}} 通过 JoodCraft 平台以电子方式订立',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': '证书',
+  'شهادة تقدير': '嘉奖证书',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': '以嘉奖其在{{اسم_الدورة}}中于{{مدة_الدورة}}期间、在{{المدرب}}指导下所展现的卓越努力与出色表现，并祝愿其不断取得新的成功。',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': '证书编号：{{رقم_الشهادة}} — 扫码验证',
+  'شهادة تقدير مباركة': '祝福嘉奖证书',
+  'شهادة تقدير معتمدة': '认证嘉奖证书',
+  'شهادة تميّز': '卓越证书',
 };
 
 const Map<String, String> _zhSamples = <String, String>{
@@ -2413,6 +2477,14 @@ const Map<String, String> _urTexts = <String, String>{
   'حُرّر هذا العقد إلكترونياً عبر منصة جودكرافت بتاريخ {{تاريخ_العقد}}':
       'یہ معاہدہ {{تاريخ_العقد}} کو جود کرافٹ پلیٹ فارم کے ذریعے برقی طور '
           'پر تیار کیا گیا',
+  // ---- ستايل الكحلي/الذهبي (6 قوالب جديدة) ----
+  'شهادة': 'سرٹیفکیٹ',
+  'شهادة تقدير': 'سرٹیفکیٹِ تقدیر',
+  'تقديرًا لجهوده المتميّزة وأدائه البارز في {{اسم_الدورة}} بمدة {{مدة_الدورة}}، وإشراف {{المدرب}}، مع تمنياتنا له بدوام التوفيق.': '{{اسم_الدورة}} میں {{مدة_الدورة}} کے دوران {{المدرب}} کی نگرانی میں ان کی ممتاز کاوشوں اور بہترین کارکردگی کے اعزاز کے طور پر، ہم ان کے لیے مسلسل کامیابیوں کی دعا کرتے ہیں۔',
+  'رقم الشهادة: {{رقم_الشهادة}} — للتحقق امسح الرمز': 'سرٹیفکیٹ نمبر: {{رقم_الشهادة}} — تصدیق کے لیے کوڈ اسکین کریں',
+  'شهادة تقدير مباركة': 'مبارک سرٹیفکیٹِ تقدیر',
+  'شهادة تقدير معتمدة': 'تصدیق شدہ سرٹیفکیٹِ تقدیر',
+  'شهادة تميّز': 'سرٹیفکیٹِ امتیاز',
 };
 
 const Map<String, String> _urSamples = <String, String>{

@@ -26,7 +26,7 @@ class TopNavMenuEntry {
 /// | المجموعة   | النوع  | البنود                                        |
 /// |-------------|--------|-----------------------------------------------|
 /// | لوحة التحكم | مباشر  | `/dashboard`                                  |
-/// | المحرّكات   | منسدلة | الشهادات · العقود · جود كاتب                  |
+/// | المحرّكات   | منسدلة | الشهادات · العقود · جود كاتب · محرك الدعوات      |
 /// | التوليد الجماعي | مباشر | `/batch-processor` (يشمل الدعوات)          |
 /// | المكتبات    | منسدلة | القوالب · الأصول · الهوية                     |
 /// | الإدارة     | منسدلة | إدارة المديرين                                |
@@ -100,6 +100,13 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
             path: AppRoutes.joodWriter,
             label: context.l10n?.destJoodWriter ?? 'جود كاتب',
             icon: Icons.menu_book_rounded,
+          ),
+          // محرك الدعوات الشخصية: رمضان/عيد/زفاف فئاتٌ **داخلية** للصفحة —
+          // لا بنوداً في القائمة المنسدلة (اسم فقط بلا وصف).
+          TopNavMenuEntry(
+            path: AppRoutes.invitations,
+            label: context.l10n?.navInvitationsEngine ?? 'محرك الدعوات',
+            icon: Icons.redeem_rounded,
           ),
         ],
       ),

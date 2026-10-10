@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/app/router/app_routes.dart';
 import 'package:joodcraft/core/locale/app_locale.dart';
@@ -106,7 +107,7 @@ void main() {
     expect(find.text('مكتبة القوالب'), findsNothing);
     expect(find.text('الأصول والتوقيعات'), findsNothing);
     expect(find.text('الهوية والبروفايل'), findsNothing);
-    expect(find.text('إدارة المديرين'), findsNothing);
+    expect(find.text('إدارة المديرين المحليين'), findsNothing);
     // «الدعوات» صارت جزءاً من التوليد الجماعي فخرجت من الشريط (لا من التطبيق).
     expect(find.text('دعوات شخصية جماعية'), findsNothing);
     // «مشروع جديد» نافذة عائمة من قائمة «ملف» لا تبويب.
@@ -251,18 +252,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('إدارة المديرين'), findsNothing);
+    expect(find.text('إدارة المديرين المحليين'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey<String>('top-menu-admin')));
     await tester.pumpAndSettle();
 
-    expect(find.text('إدارة المديرين'), findsOneWidget);
+    expect(find.text('إدارة المديرين المحليين'), findsOneWidget);
 
-    await tester.tap(find.text('إدارة المديرين'));
+    await tester.tap(find.text('إدارة المديرين المحليين'));
     await tester.pumpAndSettle();
 
     expect(navigated, AppRoutes.admins);
-    expect(find.text('إدارة المديرين'), findsNothing);
+    expect(find.text('إدارة المديرين المحليين'), findsNothing);
   });
 
   testWidgets('كل وجهة مخفية ما تزال قابلة للوصول من مجموعتها',
@@ -276,7 +277,7 @@ void main() {
     final Map<String, Finder> entryToFinder = <String, Finder>{
       AppRoutes.certificateBuilder: find.text('محـرّك الشهادات'),
       AppRoutes.brand: find.text('الهوية والبروفايل'),
-      AppRoutes.admins: find.text('إدارة المديرين'),
+      AppRoutes.admins: find.text('إدارة المديرين المحليين'),
     };
 
     for (final MapEntry<String, String> menu in menuToRoute.entries) {
@@ -287,6 +288,11 @@ void main() {
 
       final Finder entry = entryToFinder[menu.value]!;
       expect(entry, findsOneWidget, reason: 'الوجهة ${menu.value} غير قابلة للوصول');
+
+      // إغلاق القائمة قبل الدورة التالية: نافذتها المنبثقة تبقى مفتوحة
+      // فتحجب (AbsorbPointer) نقر الزرّ التالي فتفشل عمليّة النقر.
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
     }
   });
 
