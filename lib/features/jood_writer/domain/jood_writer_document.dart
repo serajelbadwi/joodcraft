@@ -128,8 +128,15 @@ class PageNumberingConfig {
       other.pattern == pattern;
 
   @override
-  int get hashCode =>
-      Object.hash(enabled, startPage, excludeFirstN, fontSize, color, align, pattern);
+  int get hashCode => Object.hash(
+    enabled,
+    startPage,
+    excludeFirstN,
+    fontSize,
+    color,
+    align,
+    pattern,
+  );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'enabled': enabled,

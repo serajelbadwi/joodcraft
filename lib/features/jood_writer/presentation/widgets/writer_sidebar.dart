@@ -40,7 +40,7 @@ class WriterSidebar extends StatelessWidget {
               Text('حجم الورقة', style: Theme.of(context).textTheme.labelSmall),
               const SizedBox(height: AppTheme.space4),
               DropdownButtonFormField<JoodWriterPageSize>(
-                value: doc.pageSize,
+                initialValue: doc.pageSize,
                 decoration: const InputDecoration(isDense: true),
                 items: JoodWriterPageSize.all
                     .map(
@@ -450,15 +450,12 @@ class _PageNumberStylePanel extends StatelessWidget {
                 (a) => ButtonSegment(
                   value: a,
                   label: Text(a.labelAr),
-                  icon: Icon(
-                    size: 16,
-                    switch (a) {
-                      // في الاتجاه العربي: `format_align_left` يُقرأ «يمين».
-                      PageNumberAlign.right => Icons.format_align_left,
-                      PageNumberAlign.center => Icons.format_align_center,
-                      PageNumberAlign.left => Icons.format_align_right,
-                    },
-                  ),
+                  icon: Icon(size: 16, switch (a) {
+                    // في الاتجاه العربي: `format_align_left` يُقرأ «يمين».
+                    PageNumberAlign.right => Icons.format_align_left,
+                    PageNumberAlign.center => Icons.format_align_center,
+                    PageNumberAlign.left => Icons.format_align_right,
+                  }),
                 ),
               )
               .toList(),

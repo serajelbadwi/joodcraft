@@ -346,9 +346,7 @@ class _WriterCanvasState extends State<WriterCanvas> {
                     padding: WriterCanvas.canvasPadding,
                     // طي الكتاب: صفّ واحد يحمل صفحتين متقابلتين (الفردية يميناً
                     // في الاتجاه العربي، والزوجية إلى يسارها كالكتاب المطبوع).
-                    itemCount: spread
-                        ? (pages.length + 1) ~/ 2
-                        : pages.length,
+                    itemCount: spread ? (pages.length + 1) ~/ 2 : pages.length,
                     separatorBuilder: (_, _) =>
                         const SizedBox(height: WriterCanvas.pageGap),
                     itemBuilder: (context, index) {
@@ -361,6 +359,10 @@ class _WriterCanvasState extends State<WriterCanvas> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
+                          // «جود كاتب» عربيّ-first: الصفحة الفردية يمين والزوجية
+                          // إلى يسارها كالكتاب المطبوع، بلا اعتماد على اتجاه
+                          // الواجهة المحيطة (كما تُرسم الأسطر بـrtl صراحةً).
+                          textDirection: TextDirection.rtl,
                           children: [
                             pageCard(rightIndex),
                             const SizedBox(width: WriterCanvas.pageGap),
@@ -678,7 +680,11 @@ class _DashedLinePainter extends CustomPainter {
     final double y = size.height / 2;
     double x = 0;
     while (x < size.width) {
-      canvas.drawLine(Offset(x, y), Offset(math.min(x + _dash, size.width), y), _paint);
+      canvas.drawLine(
+        Offset(x, y),
+        Offset(math.min(x + _dash, size.width), y),
+        _paint,
+      );
       x += _dash + _gap;
     }
   }

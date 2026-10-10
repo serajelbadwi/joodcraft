@@ -5,7 +5,10 @@ import 'package:joodcraft/features/jood_writer/presentation/screens/jood_writer_
 
 /// اختبارات وِدجت لشاشة «جود كاتب» بمظهرها الجديد: الشريط العلوي، اللوحة الجانبية، ومساحة العمل.
 void main() {
-  Future<void> pumpScreen(WidgetTester tester, {Size size = const Size(1280, 800)}) async {
+  Future<void> pumpScreen(
+    WidgetTester tester, {
+    Size size = const Size(1280, 800),
+  }) async {
     // استخدم حجم كبير للشاشة لضمان ظهور اللوحة الجانبية ومساحة العمل
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -91,10 +94,7 @@ void main() {
       // ارتفاع كافٍ ليبقى الصف الثاني داخل مدى البناء.
       await pumpScreen(tester, size: const Size(1280, 1600));
 
-      expect(
-        find.byKey(const ValueKey<String>('writer-page-2')),
-        findsNothing,
-      );
+      expect(find.byKey(const ValueKey<String>('writer-page-2')), findsNothing);
 
       await tester.enterText(
         find.byKey(const ValueKey<String>('writer-field-0')),
@@ -102,9 +102,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(
-        find.byTooltip('فاصل صفحات (صفحة جديدة عند المؤشر)'),
-      );
+      await tester.tap(find.byTooltip('فاصل صفحات (صفحة جديدة عند المؤشر)'));
       await tester.pumpAndSettle();
 
       // صفحة ثانية وُلدت فوراً حتى لا يملأ النص صفحة واحدة…
@@ -130,9 +128,7 @@ void main() {
         'نص قصير',
       );
       await tester.pumpAndSettle();
-      await tester.tap(
-        find.byTooltip('فاصل صفحات (صفحة جديدة عند المؤشر)'),
-      );
+      await tester.tap(find.byTooltip('فاصل صفحات (صفحة جديدة عند المؤشر)'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('عرض صفحتين متقابلتين (طي الكتاب)'));
@@ -152,12 +148,13 @@ void main() {
         closeTo(tester.getTopLeft(page2).dy, 1),
       );
 
-      // الزر مُفعَّل (محدَّد) في الوضع المتقابل.
-      final Finder toggle = find.byTooltip(
-        'عرض صفحتين متقابلتين (طي الكتاب)',
+      // الزر مُفعَّل (خلفية ملوّنة) في الوضع المتقابل.
+      final Finder toggle = find.byTooltip('عرض صفحتين متقابلتين (طي الكتاب)');
+      final Container container = tester.widget<Container>(
+        find.descendant(of: toggle, matching: find.byType(Container)),
       );
-      final dynamic state = tester.state(toggle);
-      expect(state.isSelected, contains(true));
+      final BoxDecoration decoration = container.decoration! as BoxDecoration;
+      expect(decoration.color, isNot(Colors.transparent));
       expect(tester.takeException(), isNull);
     });
 
@@ -178,14 +175,22 @@ void main() {
         DropdownButtonFormField<PageNumberPattern>,
       );
       expect(patternDropdown, findsOneWidget);
+      await tester.ensureVisible(patternDropdown);
+      await tester.pumpAndSettle();
       await tester.tap(patternDropdown);
       await tester.pumpAndSettle();
       await tester.tap(find.text('X فقط').last);
       await tester.pumpAndSettle();
       expect(find.text('X فقط').last, findsOneWidget);
 
-      // تغيير المحاذاة إلى «يمين».
-      await tester.tap(find.text('يمين').last);
+      // تغيير المحاذاة إلى «يمين» (داخل زر المحاذاة لا في حقول الهوامش).
+      final Finder segmented = find.byType(SegmentedButton<PageNumberAlign>);
+      expect(segmented, findsOneWidget);
+      await tester.ensureVisible(segmented);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(of: segmented, matching: find.text('يمين')),
+      );
       await tester.pumpAndSettle();
       final Finder rightSelected = find.byWidgetPredicate(
         (Widget w) =>
@@ -195,17 +200,24 @@ void main() {
       expect(rightSelected, findsOneWidget);
 
       // تكبير الحجم مرّتين (10 ← 12) وتصغيره مرّة (← 11).
-      await tester.tap(find.byTooltip('تكبير الرقم'));
+      final Finder bigger = find.byTooltip('تكبير الرقم');
+      final Finder smaller = find.byTooltip('تصغير الرقم');
+      await tester.ensureVisible(bigger);
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('تكبير الرقم'));
+      await tester.tap(bigger);
+      await tester.pumpAndSettle();
+      await tester.tap(bigger);
       await tester.pumpAndSettle();
       expect(find.text('12'), findsOneWidget);
-      await tester.tap(find.byTooltip('تصغير الرقم'));
+      await tester.tap(smaller);
       await tester.pumpAndSettle();
       expect(find.text('11'), findsOneWidget);
 
-      // اختيار لون أحمر من Алексанات.
-      await tester.tap(find.byTooltip('تلقائي'));
+      // التبديل إلى اللون التلقائي (رمادي التذييل الافتراضي).
+      final Finder autoSwatch = find.byTooltip('تلقائي');
+      await tester.ensureVisible(autoSwatch);
+      await tester.pumpAndSettle();
+      await tester.tap(autoSwatch);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     });

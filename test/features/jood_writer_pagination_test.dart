@@ -54,7 +54,9 @@ void main() {
   /// مزاح التمرير اللحظي لمساحة العمل.
   ScrollController canvasScroll(WidgetTester tester) {
     final ListView list = tester.widget<ListView>(
-      find.byWidgetPredicate((Widget w) => w is ListView && w.controller != null),
+      find.byWidgetPredicate(
+        (Widget w) => w is ListView && w.controller != null,
+      ),
     );
     return list.controller!;
   }
@@ -63,10 +65,7 @@ void main() {
   /// الحافة اليمنى لأن السطر يبدأ عندها، والإزاحة البادئة تزيحه يساراً.
   List<double> lineRightEdges(WidgetTester tester, Key pageKey) {
     final Iterable<Element> elements = find
-        .descendant(
-          of: find.byKey(pageKey),
-          matching: find.byType(Text),
-        )
+        .descendant(of: find.byKey(pageKey), matching: find.byType(Text))
         .evaluate()
         .where((Element e) {
           final Widget w = e.widget;
@@ -74,7 +73,9 @@ void main() {
         });
     return elements.map<double>((Element e) {
       final RenderBox box = e.renderObject! as RenderBox;
-      final Offset bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero));
+      final Offset bottomRight = box.localToGlobal(
+        box.size.bottomRight(Offset.zero),
+      );
       return bottomRight.dx;
     }).toList();
   }
@@ -105,30 +106,30 @@ void main() {
       expect(controller.controllers[1].text, 'cdef');
     });
 
-    test('المحرّك يفتح صفحة جديدة للكتلة ذات الفاصل ولو كان المحتوى قصيراً', () {
-      final List<JoodPage> pages = FlowPaginator.paginate(
-        blocks: const <JoodWriterBlock>[
-          JoodWriterBlock(text: 'سطر'),
-          JoodWriterBlock(text: 'سطر', pageBreakBefore: true),
-        ],
-        contentHeight: 297 * WriterCanvas.pxPerMm - 50,
-        measurer: TextPainterBlockMeasurer(
-          contentWidth: 210 * WriterCanvas.pxPerMm - 50,
-        ),
-      );
-      expect(pages.length, 2);
-      expect(pages[1].slices.first.blockIndex, 1);
-    });
+    test(
+      'المحرّك يفتح صفحة جديدة للكتلة ذات الفاصل ولو كان المحتوى قصيراً',
+      () {
+        final List<JoodPage> pages = FlowPaginator.paginate(
+          blocks: const <JoodWriterBlock>[
+            JoodWriterBlock(text: 'سطر'),
+            JoodWriterBlock(text: 'سطر', pageBreakBefore: true),
+          ],
+          contentHeight: 297 * WriterCanvas.pxPerMm - 50,
+          measurer: TextPainterBlockMeasurer(
+            contentWidth: 210 * WriterCanvas.pxPerMm - 50,
+          ),
+        );
+        expect(pages.length, 2);
+        expect(pages[1].slices.first.blockIndex, 1);
+      },
+    );
 
     testWidgets('اللوحة ترسم صفحة ثانية فور الإدراج حتى مع محتوى قصير', (
       WidgetTester tester,
     ) async {
       final WriterDocumentController controller = makeController();
       await pumpCanvas(tester, controller);
-      expect(
-        find.byKey(const ValueKey<String>('writer-page-2')),
-        findsNothing,
-      );
+      expect(find.byKey(const ValueKey<String>('writer-page-2')), findsNothing);
 
       await tester.enterText(find.byKey(field0), 'نص قصير جداً');
       await tester.pump();
@@ -149,40 +150,43 @@ void main() {
   });
 
   group('2) تدفّق الفقرة بين صفحتين', () {
-    testWidgets('الجزء المنقول يستأنف في قمة الصفحة التالية بلا إزاحة ولا فراغ', (
-      WidgetTester tester,
-    ) async {
-      final WriterDocumentController controller = makeController(
-        initialDocument: const JoodWriterDocument(
-          title: 't',
-          blocks: <JoodWriterBlock>[
-            JoodWriterBlock(
-              text: 'فقرة طويلة جداً لتنشطر بين صفحتين',
-              firstLineIndentCm: 1.0,
-              spaceBefore: 12,
-            ),
-          ],
-        ),
-      );
-      await pumpCanvas(tester, controller);
+    testWidgets(
+      'الجزء المنقول يستأنف في قمة الصفحة التالية بلا إزاحة ولا فراغ',
+      (WidgetTester tester) async {
+        final WriterDocumentController controller = makeController(
+          initialDocument: const JoodWriterDocument(
+            title: 't',
+            blocks: <JoodWriterBlock>[
+              JoodWriterBlock(
+                text: 'فقرة طويلة جداً لتنشطر بين صفحتين',
+                firstLineIndentCm: 1.0,
+                spaceBefore: 12,
+              ),
+            ],
+          ),
+        );
+        await pumpCanvas(tester, controller);
 
-      await tester.enterText(find.byKey(field0), longLine * 400);
-      await tester.pump();
-      await settleScroll(tester);
+        await tester.enterText(find.byKey(field0), longLine * 400);
+        await tester.pump();
+        await settleScroll(tester);
 
-      final List<JoodWriterBlock> blocks = controller.document.blocks;
-      expect(blocks.length, greaterThan(1));
-      // كل جزء بعد الشطر يستأنف الفقرة: بلا إزاحة سطر أول (ليس مطلع فقرة)
-      // وبلا مسافة قبله ⇒ يلامس قمة صفحته تماماً كبقية سطور الفقرة.
-      for (int i = 1; i < blocks.length; i++) {
-        expect(blocks[i].firstLineIndentCm, 0);
-        expect(blocks[i].spaceBefore, 0);
-      }
-      // والأجزاء تحمل نصّها بلا فقد حرف واحد (فقرة واحدة منشطرة طبيعياً).
-      final String rejoined = blocks.map((JoodWriterBlock b) => b.text).join();
-      expect(rejoined, longLine * 400);
-      expect(tester.takeException(), isNull);
-    });
+        final List<JoodWriterBlock> blocks = controller.document.blocks;
+        expect(blocks.length, greaterThan(1));
+        // كل جزء بعد الشطر يستأنف الفقرة: بلا إزاحة سطر أول (ليس مطلع فقرة)
+        // وبلا مسافة قبله ⇒ يلامس قمة صفحته تماماً كبقية سطور الفقرة.
+        for (int i = 1; i < blocks.length; i++) {
+          expect(blocks[i].firstLineIndentCm, 0);
+          expect(blocks[i].spaceBefore, 0);
+        }
+        // والأجزاء تحمل نصّها بلا فقد حرف واحد (فقرة واحدة منشطرة طبيعياً).
+        final String rejoined = blocks
+            .map((JoodWriterBlock b) => b.text)
+            .join();
+        expect(rejoined, longLine * 400);
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
   group('3) تخصيص أرقام الصفحات بالكامل', () {
@@ -311,10 +315,7 @@ void main() {
         initialDocument: JoodWriterDocument(
           title: 't',
           blocks: <JoodWriterBlock>[
-            JoodWriterBlock(
-              text: longLine * 8,
-              firstLineIndentCm: 1.0,
-            ),
+            JoodWriterBlock(text: longLine * 8, firstLineIndentCm: 1.0),
             const JoodWriterBlock(text: ''),
           ],
         ),
