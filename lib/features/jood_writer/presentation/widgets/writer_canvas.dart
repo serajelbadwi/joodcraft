@@ -61,6 +61,11 @@ class _WriterCanvasState extends State<WriterCanvas> {
   /// يُقرأ في كل إطار ويُمرَّر إلى المُقاس، فلا يُقاس النص أصغر ممّا يُرسم.
   TextScaler _textScaler = TextScaler.noScaling;
 
+  /// آخر نسخة نصّية رأتها الطبقة الرسومية. الشطر الآلي مربوط بها لا بإشعارات
+  /// المتحكّم عامّةً، فلا يُعاد الترقيم عند التنقّل/التكبير (انظر
+  /// [_onControllerChanged]).
+  int _lastSeenTextRevision = 0;
+
   @override
   void initState() {
     super.initState();
@@ -90,7 +95,17 @@ class _WriterCanvasState extends State<WriterCanvas> {
   }
 
   void _onControllerChanged() {
-    // تفعيل التقسيم الآلي بعد كل تعديل (تنسيق/تكبير/...)
+    // تفعيل التقسيم الآلي بعد كل تعديل نصّي **فحسْب**.
+    //
+    // ⚠️ كان يُستدعى عند **كل** `notifyListeners()` — بما فيها التنقّل بين
+    // الكتل، تغيير التكبير، وتبديل وضع العرض. والشطر يُعيد ترقيم الصفحات،
+    // وبطاقاتها مفتاحها `writer-page-<فهرس>`، فتُبنى البطاقة التي أمام
+    // المستخدم من جديد بمحتوى صفحة أخرى ⇒ **يبدو أنّ نصف الكتابة اختفى**.
+    // الآن: الشطر عند تغيّر النصّ فقط (يتتبّعه `textRevision`)، والتنقّل
+    // والتكبير والعرض لا يُحرّكون شيئاً.
+    final int revision = controller.textRevision;
+    if (revision == _lastSeenTextRevision) return;
+    _lastSeenTextRevision = revision;
     _autoSplitIfNeeded();
   }
 
@@ -105,8 +120,12 @@ class _WriterCanvasState extends State<WriterCanvas> {
     try {
       // قد يتجاوز النص المساحة بعدة صفحات دفعةً واحدة (لصق طويل) ⇒
       // نشطر حتى يستقر التدفّق على صفحات كلها تتّسع لمحتواها.
+      //
+      // الحدّ الأقصى سقفٌ أماني لا هدفٌ: الحلقة تتوقّف من تلقاء نفسها حين
+      // لم يبقَ كتلة متجاوزة (`_splitOnce` يُعيد null). كان 100 — وهو لا
+      // يكفي لصق مئات الصفحات من Word فيتوقّف الشطر في منتصفه.
       int? lastSplitIndex;
-      for (int guard = 0; guard < 100; guard++) {
+      for (int guard = 0; guard < 2000; guard++) {
         final int? splitIndex = _splitOnce();
         if (splitIndex == null) break;
         lastSplitIndex = splitIndex;
@@ -116,6 +135,29 @@ class _WriterCanvasState extends State<WriterCanvas> {
     } finally {
       _isSplitting = false;
     }
+  }
+
+  /// موضع الحرف في النصّ الأصلي الذي يبدأ عنده السطر [lineEnd].
+  ///
+  /// `BlockMeasurer.linesOf` يعيد السطور **بلا** فواصلها (`getLineBoundary`
+  /// يستثني '\n')، فالجمع المباشر للأطوال يمحو الفواصل الصريحة. هنا — بعد كل
+  /// سطر مَرسوم — نتحقّق من النصّ الأصلي: إن وُجد '\n' فهو فاصل ذلك السطر
+  /// فيتخطّاه المؤشر، وإلا فالانتقال التفافٌ طبيعي بلا فاصل.
+  ///
+  /// تبقى الفواصل في مواضعها بعد التقسيم ⇒ لا يضيع سطر ولا تُدمج الفقرات.
+  static int _offsetAfterLine(String text, List<String> lines, int lineEnd) {
+    int offset = 0;
+    final int bounded = lineEnd > lines.length ? lines.length : lineEnd;
+    for (int i = 0; i < bounded; i++) {
+      offset += lines[i].length;
+      while (offset < text.length && text[offset] == '\n') {
+        offset++; // الفاصل الصريح يلي السطر مباشرةً.
+      }
+    }
+    // حماية: موضع غير صالح يُرجِع حدّاً آمناً.
+    if (offset < 0) return 0;
+    if (offset > text.length) return text.length;
+    return offset;
   }
 
   /// قسْم واحد إن وُجد كتلة متجاوزة لصفحتها، ويُعيد فهرس الكتلة المُنشأة
@@ -158,11 +200,20 @@ class _WriterCanvasState extends State<WriterCanvas> {
           final block = slice.block;
           final lines = measurer.linesOf(block);
           if (slice.lineEnd < lines.length && slice.lineEnd > 0) {
-            // حساب نقطة القطع في النص الأصلي
-            final String textBefore = lines.sublist(0, slice.lineEnd).join('');
-            final String textAfter = lines.sublist(slice.lineEnd).join('');
+            // حساب نقطة القطع في النص الأصلي.
+            //
+            // ⚠️ لم يكن يجوز `lines.sublist(...).join('')`: `getLineBoundary`
+            // يعيد السطر **بلا** فاصل أسطره، فكان `.join('')` يمحو كل '\n'
+            // صريحة في النصّ. أثر ذلك كارثي على لصق Word: آلاف الفقرات
+            // المفصولة بـ'\n' كانت تُدمج في سطر واحد متّصل ⇒ عدد الأسطر
+            // المَرسومة يهبط ⇒ الصفحات الزائدة **تختفي** فيبدو المستند
+            // صفحةً واحدة. الصحيح: القصّ بموضع حرفيّ في النصّ الأصلي مع
+            // حفظ الفاصل، فيبقى كل سطر صريح كما كتبه المستخدم.
+            final int breakAt = _offsetAfterLine(block.text, lines, slice.lineEnd);
+            final String textBefore = block.text.substring(0, breakAt);
+            final String textAfter = block.text.substring(breakAt);
 
-            if (textAfter.isNotEmpty) {
+            if (textAfter.isNotEmpty && textBefore != block.text) {
               controller.splitBlockAt(slice.blockIndex, textBefore, textAfter);
               return slice.blockIndex + 1; // فهرس الكتلة الجديدة
             }

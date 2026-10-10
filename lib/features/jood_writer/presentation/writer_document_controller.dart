@@ -105,6 +105,22 @@ class WriterDocumentController extends ChangeNotifier {
   /// أُغلق المتحكّم: لا حقل بعده، فلا تُنفَّذ أي دولة مؤجّلة بعد الإطار.
   bool _disposed = false;
 
+  /// عدّاد يزيد **فقط** عند تغيّر نصّ أي كتلة.
+  ///
+  /// لماذا؟ الطبقة الرسومية تريد الشطر الآلي عند الكتابة واللصق، لا عند
+  /// التنقّل أو التكبير أو تبديل العرض. لو اعتمدت على `notifyListeners()`
+  /// عامّةً لأعادت ترقيم الصفحات عند كل نقرة، فتتبدّل محتويات البطاقة
+  /// المفتوحة أمام المستخدم (يبدو المحتوى «مختفياً»). هذا العدّاد يفصل
+  /// «تغيّر المحتوى» عن «تغيّر طريقة العرض» بدقّة.
+  int _textRevision = 0;
+
+  int get textRevision => _textRevision;
+
+  /// يُستدعى بعد أي تعديل نصّي (كتابة/لصق/مسح) — يزيد [textRevision].
+  void _bumpTextRevision() {
+    _textRevision++;
+  }
+
   /// يستدعي [onEdited] مرة واحدة لكل موجة تعديلات، ويمنع التداخل اللانهائي
   /// حين يُنفِّذ المستمع نفسه تعديلاً جديداً (كالشطر الآلي نفسه).
   void _requestAutoSplit() {
@@ -293,7 +309,6 @@ class WriterDocumentController extends ChangeNotifier {
     // وحفظ تلقائي مؤجّل بعد استقرار الكتابة.
     _scheduleAutosave();
   }
-
   @override
   void dispose() {
     _disposed = true;
@@ -380,6 +395,8 @@ class WriterDocumentController extends ChangeNotifier {
     if (index < 0 || index >= _doc.blocks.length) return;
     final String text = controller.text;
     if (_doc.blocks[index].text == text) return;
+    // تغيّر نصّي حقيقي (كتابة أو لصق): يُعلَم حتى يشطر المحرّك تلقائياً.
+    _bumpTextRevision();
     _updateBlock(index, _doc.blocks[index].copyWith(text: text));
     _requestAutoSplit();
   }

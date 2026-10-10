@@ -93,12 +93,35 @@ class TextPainterBlockMeasurer implements BlockMeasurer {
     final int length = block.text.length;
     int start = 0;
     while (start < length) {
+      // موقف فاصل أسطر صريح ('\n') لا يبدأ سطراً: `getLineBoundary` يُعيد
+      // عنده مدىً صفريّاً (مدى فارغ)، فكان المحرّك يضيف سطراً فارغاً زائفاً
+      // ثم يتوقّف — فيرى ‎«سطرين فقط»‎ لمستند كامل مليء بالفواصل.
+      //
+      // أثر ذلك كارثي: لصق مئات الصفحات من Word يُقاس سطرين ⇒ صفحة واحدة،
+      // وكل ما بعدها «مخفي». التخطّي اليدوي يضمن مروراً على كل سطر حقيقي.
+      if (block.text.codeUnitAt(start) == 0x0A) {
+        start++;
+        continue;
+      }
+
       final TextRange range = painter.getLineBoundary(
         TextPosition(offset: start),
       );
       final int end = range.end.clamp(start, length);
-      lines.add(block.text.substring(start, end));
-      if (end <= start) break; // حماية من حلقة لا نهائية.
+      String line = block.text.substring(start, end);
+
+      // الفاصل الصريح يلي السطر ولا يُرسم: يُطرح من آخره.
+      if (line.isNotEmpty && line.codeUnitAt(line.length - 1) == 0x0A) {
+        line = line.substring(0, line.length - 1);
+      }
+
+      lines.add(line);
+
+      // حماية من التعليق إن لم يتقدّم المؤشر.
+      if (end <= start) {
+        start++;
+        continue;
+      }
       start = end;
     }
     if (lines.isEmpty) lines.add('');
