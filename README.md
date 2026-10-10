@@ -1,4 +1,4 @@
-# JoodCraft — جودكرافت
+# JoodCraft — جودكرافت ![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)
 
 منصة توليد الشهادات والعقود الرسمية بالعربية بأسلوب متقدم وعالي الجودة.
 تطبيق مكتبي/ويب مبني على Flutter، يعالج بيانات الإكسيل ويولّد PDF بالخطوط
