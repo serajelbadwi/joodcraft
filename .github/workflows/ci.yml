@@ -1,14 +1,14 @@
 # CI — JoodCraft
 #
-# يشغّل على كل push وpull request نحو main: تحليل ساكن ثم اختبارات الوحدة/الواجهة.
-# لا يحتاج أي secret — كل الخطوات محلية بلا شبكة ولا نشر.
+# يشغّل على كل push وpull request نحو main أو master: تحليل ساكن ثم اختبارات
+# الوحدة/الواجهة. لا يحتاج أي secret — كل الخطوات محلية بلا شبكة ولا نشر.
 name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 # إلغاء أي تشغيل قديم لنفس الطلب لم يكتمل بعد.
 concurrency:
