@@ -36,7 +36,8 @@ class WriterCanvas extends StatefulWidget {
   /// * `SizedBox` سالب ⇒ `BoxConstraints` سالبة غير مُطبَّعة.
   ///
   /// القَصّ يُبقي الورقة صالحة في الحالتين — ولا يمسّ القياس الافتراضي إطلاقاً.
-  static double mmToPx(double millimeters) => math.max(0, millimeters * pxPerMm);
+  static double mmToPx(double millimeters) =>
+      math.max(0, millimeters * pxPerMm);
 
   /// عرض (أو ارتفاع) منطقة المحتوى داخل الورقة — **لا يقلّ عن صفر أبداً**،
   /// فالهوامش قد تفوق الورقة نفسها فيصير الطرح سالباً. انظر [mmToPx].
@@ -243,15 +244,23 @@ class _WriterCanvasState extends State<WriterCanvas> {
   int? _splitOnce() {
     final doc = controller.document;
     final double pageWidth = WriterCanvas.mmToPx(doc.effectivePageSize.widthMm);
-    final double pageHeight =
-        WriterCanvas.mmToPx(doc.effectivePageSize.heightMm);
+    final double pageHeight = WriterCanvas.mmToPx(
+      doc.effectivePageSize.heightMm,
+    );
     final double marginT = WriterCanvas.mmToPx(doc.margins.top);
     final double marginB = WriterCanvas.mmToPx(doc.margins.bottom);
     final double marginL = WriterCanvas.mmToPx(doc.margins.left);
     final double marginR = WriterCanvas.mmToPx(doc.margins.right);
-    final double contentWidth = WriterCanvas.contentOf(pageWidth, marginL, marginR);
-    final double contentHeight =
-        WriterCanvas.contentOf(pageHeight, marginT, marginB);
+    final double contentWidth = WriterCanvas.contentOf(
+      pageWidth,
+      marginL,
+      marginR,
+    );
+    final double contentHeight = WriterCanvas.contentOf(
+      pageHeight,
+      marginT,
+      marginB,
+    );
 
     // مقياسٌ مشترك حيٌّ بين الإطارات: الكتل الثابتة لا تُقاس من جديد
     // (انظر [measurerFor]).
@@ -403,15 +412,23 @@ class _WriterCanvasState extends State<WriterCanvas> {
   Widget _buildPages(BuildContext context) {
     final doc = controller.document;
     final double pageWidth = WriterCanvas.mmToPx(doc.effectivePageSize.widthMm);
-    final double pageHeight =
-        WriterCanvas.mmToPx(doc.effectivePageSize.heightMm);
+    final double pageHeight = WriterCanvas.mmToPx(
+      doc.effectivePageSize.heightMm,
+    );
     final double marginT = WriterCanvas.mmToPx(doc.margins.top);
     final double marginB = WriterCanvas.mmToPx(doc.margins.bottom);
     final double marginL = WriterCanvas.mmToPx(doc.margins.left);
     final double marginR = WriterCanvas.mmToPx(doc.margins.right);
-    final double contentWidth = WriterCanvas.contentOf(pageWidth, marginL, marginR);
-    final double contentHeight =
-        WriterCanvas.contentOf(pageHeight, marginT, marginB);
+    final double contentWidth = WriterCanvas.contentOf(
+      pageWidth,
+      marginL,
+      marginR,
+    );
+    final double contentHeight = WriterCanvas.contentOf(
+      pageHeight,
+      marginT,
+      marginB,
+    );
 
     // مقياس تكبير النص الفعّال في هذا الإطار — من المصدر الوحيد،
     // فالقيمة نفسها التي تأخذها ودجات الرسم ضمناً من `MediaQuery`؛
@@ -583,7 +600,11 @@ class _PageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> children = [];
-    final double contentWidth = WriterCanvas.contentOf(pageWidth, marginL, marginR);
+    final double contentWidth = WriterCanvas.contentOf(
+      pageWidth,
+      marginL,
+      marginR,
+    );
 
     for (final slice in page.slices) {
       final int blockIndex = slice.blockIndex;
@@ -1013,7 +1034,17 @@ class _BlockLines extends StatelessWidget {
                   right: math.max(0, indent + (line == 0 ? firstIndent : 0)),
                 ),
                 child: prefixLabel == null
-                    ? _text(lines[line], style, align)
+                    ? Padding(
+                        // **هامش المؤشّر في المسار الثابت**: `RenderEditable`
+                        // يخصم 3px من كل سطرٍ يرسمه ليستديع موضعاً للمؤشّر،
+                        // فتُخصم هنا من مربّع السطر نفسه — لا من صندوقه
+                        // (المحفظة) كي لا ينزاح عنه — فيصير مربّع الالتفاف
+                        // واحداً في المسارين ولا يقفز النصّ 3px عند الوقوف.
+                        padding: const EdgeInsets.only(
+                          right: JoodWriterTextStyles.caretMargin,
+                        ),
+                        child: _text(lines[line], style, align),
+                      )
                     : Row(
                         textDirection: TextDirection.rtl,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1023,7 +1054,17 @@ class _BlockLines extends StatelessWidget {
                             width: prefixWidth,
                             label: line == 0 ? prefixLabel : null,
                           ),
-                          Expanded(child: _text(lines[line], style, align)),
+                          Expanded(
+                            // هامش المؤشّر: يخصم من مربّع النصّ دون أن يمسّ
+                            // المقدّمة (فهي تبقى على حافة المحتوى كما في
+                            // المحرّر تماماً).
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: JoodWriterTextStyles.caretMargin,
+                              ),
+                              child: _text(lines[line], style, align),
+                            ),
+                          ),
                         ],
                       ),
               ),
@@ -1064,13 +1105,6 @@ class _BlockEditor extends StatelessWidget {
   final bool showSpaceBefore;
   final double prefixWidth;
   final String? prefixLabel;
-
-  /// هامش المؤشّر الذي يخصمه `RenderEditable` من عرض سطرّه:
-  /// `_kCaretGap (1.0) + cursorWidth (2.0)` — ولم تُغيَّر اللوحة `cursorWidth`
-  /// فبقي افتراضياً. يُتعوَّض بتوسيع حقل المحرّر (انظر التعليق عند
-  /// `EdgeInsets.only(right: -_caretMargin)`) حتى يلتفّ عند عرض المحتوى
-  /// نفسه الذي يقيسه المُقاس ويصطفّ مع النصّ الثابت حافةً بحافة.
-  static const double _caretMargin = 3.0;
 
   @override
   Widget build(BuildContext context) {
@@ -1130,62 +1164,51 @@ class _BlockEditor extends StatelessWidget {
 
                   return KeyEventResult.ignored;
                 },
-                child: Stack(
-                  // **تعويض هامش المؤشّر**: `RenderEditable` يخصم من عرض
-                  // سطرّه `_caretMargin = _kCaretGap (1.0) + cursorWidth (2.0)`
-                  // = 3px ليجد موضعًا لرسم المؤشّر عند نهاية السطر، فتلتفّ
-                  // أسطره عند `الحقل − 3` ويقفز نصّها 3px يساراً عمّا يرسمه
-                  // المسار الثابت عند حافة المحتوى. نمدّ صندوق الحقل 3px إلى
-                  // اليمين ( Positioned بعرضٍ أوسع من خانته) فـ`الحقل − 3 =
-                  // عرض المحتوى` بالضبط: الالتفاف والحافة — وبكل المحاذاة
-                  // (بداية/وسط/نهاية) — تطابق المسار الثابت حرفياً، ولا
-                  // يتحرّك السطر عند الوقوف عليه.
-                  //
-                  // `Clip.none` لأنّ الـ3px الزائدة تقع خارج صندوق الحقل،
-                  // و`Stack` لا يلصق تجاوزه بتحذير المِنطيات (على عكس `Row`).
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned(
-                      left: 0,
-                      right: -_caretMargin,
-                      child: TextField(
-                        key: ValueKey('writer-field-$index'),
-                        controller: controller.controllers[index],
-                        focusNode: controller.focusNodes[index],
-                        maxLines: null,
-                        minLines: 1,
-                        style: style,
-                        textAlign: JoodWriterTextStyles.textAlign(block.align),
-                        textDirection: TextDirection.rtl,
-                        // أزرق ناعم: شفاف بما يكفي لقراءة النص 100% أثناء التحديد
-                        // (لون التحديد نفسه يأتي من Theme الموضّح على اللوحة).
-                        cursorColor: WriterCanvas.selectionBlue,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          // ورقة بيضاء ناصعة: بلا خلفيات أو ظلال رمادية حول النص.
-                          filled: false,
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.zero,
-                          // ⚠️ لا `prefix` هنا: كان يُرسم مرة واحدة قبل منطقة النص
-                          // بأكملها فيُضيّق نطاق الالتفاف، فتبدو كل الأسطر مُزاحة لا
-                          // أولها. الإزاحة تُضاف إلى تدفّق النص نفسه (WidgetSpan واحد
-                          // في أوله — راجع [WriterTextEditingController.buildTextSpan])
-                          // فيأخذها السطر الأول وحده.
-                          hintText: block.kind == JoodWriterBlockKind.paragraph
-                              ? 'اكتب...'
-                              : block.kind.labelAr,
-                          hintStyle: style.copyWith(
-                            color: Colors.grey.withValues(alpha: 0.5),
-                          ),
-                        ),
-                      ),
+                // **لا نمدّ صندوق الحقل** لتعويض هامش المؤشّر 3px الذي يخصمه
+                // `RenderEditable` من كل سطرٍ يرسمه. كل محاولة توسيعٍ لصندوق
+                // الحقل عن خانته تنهار: `Padding` بقيمة سالبة يُسقطه
+                // `padding.isNonNegative`، و`OverflowBox` لا يرث الأبعاد، و`Stack`
+                // بابنٍ مُحدَّد (Positioned) يعطي `IntrinsicHeight` ارتفاع صفر —
+                // فيختفي صندوق الكتلة ويتراكب النصّ الثابت الذي تحتها.
+                // التعويض إذن على **المسار الثابت**: يخصم المُقاس هامش
+                // المؤشّر من عرضَيه، ويخصم رسم الأسطر 3px من مربّع كل سطر
+                // (اللّوحات والمعاينة معاً) — فمربّع الالتفاف واحدٌ بالضبط في
+                // المسارين وبأيّ محاذاة، ولا يتحرّك السطر عند الوقوف.
+                child: TextField(
+                  key: ValueKey('writer-field-$index'),
+                  controller: controller.controllers[index],
+                  focusNode: controller.focusNodes[index],
+                  maxLines: null,
+                  minLines: 1,
+                  style: style,
+                  textAlign: JoodWriterTextStyles.textAlign(block.align),
+                  textDirection: TextDirection.rtl,
+                  // أزرق ناعم: شفاف بما يكفي لقراءة النص 100% أثناء التحديد
+                  // (لون التحديد نفسه يأتي من Theme الموضّح على اللوحة).
+                  cursorColor: WriterCanvas.selectionBlue,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    // ورقة بيضاء ناصعة: بلا خلفيات أو ظلال رمادية حول النص.
+                    filled: false,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    focusedErrorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    // ⚠️ لا `prefix` هنا: كان يُرسم مرة واحدة قبل منطقة النص
+                    // بأكملها فيُضيّق نطاق الالتفاف، فتبدو كل الأسطر مُزاحة لا
+                    // أولها. الإزاحة تُضاف إلى تدفّق النص نفسه (WidgetSpan واحد
+                    // في أوله — راجع [WriterTextEditingController.buildTextSpan])
+                    // فيأخذها السطر الأول وحده.
+                    hintText: block.kind == JoodWriterBlockKind.paragraph
+                        ? 'اكتب...'
+                        : block.kind.labelAr,
+                    hintStyle: style.copyWith(
+                      color: Colors.grey.withValues(alpha: 0.5),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

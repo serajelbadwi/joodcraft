@@ -183,25 +183,39 @@ class JoodWriterPagesView extends StatelessWidget {
                         const SizedBox(width: 4),
                       ],
                       Expanded(
-                        child: Text(
-                          lines[line],
-                          style: style,
-                          textAlign: align,
-                          textDirection: TextDirection.rtl,
-                          softWrap: false,
-                          overflow: TextOverflow.clip,
+                        child: Padding(
+                          // **هامش المؤشّر**: نفس ما يخصمه المحرّر من كل سطر
+                          // يرسمه (caretMargin × scale) — فمربّع الالتفاف هنا
+                          // = مربّعه على اللوحة = مربّع المحرّر بالضبط.
+                          padding: EdgeInsets.only(
+                            right: JoodWriterTextStyles.caretMargin * scale,
+                          ),
+                          child: Text(
+                            lines[line],
+                            style: style,
+                            textAlign: align,
+                            textDirection: TextDirection.rtl,
+                            softWrap: false,
+                            overflow: TextOverflow.clip,
+                          ),
                         ),
                       ),
                     ],
                   )
-                : Text(
-                    lines[line],
-                    style: style,
-                    textAlign: align,
-                    textDirection: TextDirection.rtl,
-                    // كل سطر مقيس مسبقاً ⇒ يمنع التفافاً ثانياً يُفسد الترقيم.
-                    softWrap: false,
-                    overflow: TextOverflow.clip,
+                : Padding(
+                    // هامش المؤشّر هنا أيضاً (لا مقدّمة أمامه فينضمّ للإزاحة).
+                    padding: EdgeInsets.only(
+                      right: JoodWriterTextStyles.caretMargin * scale,
+                    ),
+                    child: Text(
+                      lines[line],
+                      style: style,
+                      textAlign: align,
+                      textDirection: TextDirection.rtl,
+                      // كل سطر مقيس مسبقاً ⇒ يمنع التفافاً ثانياً يُفسد الترقيم.
+                      softWrap: false,
+                      overflow: TextOverflow.clip,
+                    ),
                   ),
           ),
         );
