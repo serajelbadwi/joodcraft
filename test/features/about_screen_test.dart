@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/app/router/app_routes.dart';
 import 'package:joodcraft/core/locale/app_locale.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
-import 'package:joodcraft/core/widgets/app_icon.dart';
+import 'package:joodcraft/core/widgets/joodcraft_logo.dart';
 import 'package:joodcraft/features/about/presentation/screens/about_screen.dart';
 import 'package:joodcraft/l10n/generated/app_localizations.dart';
 import 'package:joodcraft/l10n/generated/app_localizations_ar.dart';
@@ -47,7 +47,7 @@ void main() {
 
       expect(find.byType(AboutScreen), findsOneWidget);
       expect(find.byType(Scaffold), findsOneWidget);
-      expect(find.byType(AppIcon), findsOneWidget);
+      expect(find.byType(JoodCraftLogo), findsOneWidget);
       expect(find.text(l10nOf(tester).aboutTitle), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
