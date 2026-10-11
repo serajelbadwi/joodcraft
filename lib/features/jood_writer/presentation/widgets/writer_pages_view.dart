@@ -8,6 +8,7 @@ import '../../domain/jood_writer_block.dart';
 import '../../domain/jood_writer_document.dart';
 import '../jood_writer_text_styles.dart';
 import '../text_painter_measurer.dart';
+import '../writer_text_scale.dart';
 
 /// معاينة صفحات مستند «جود كاتب»: يدفّق كتل المستند على صفحات A4 ويولّد صفحة
 /// جديدة تلقائياً عند الفيض، فلا يفقد النص سطراً.
@@ -50,6 +51,10 @@ class JoodWriterPagesView extends StatelessWidget {
         final TextPainterBlockMeasurer measurer = TextPainterBlockMeasurer(
           contentWidth: contentWidth,
           scale: scale,
+          // نفس مقياس التكبير الذي تستخدمه ودجات النص أدناه ضمناً من
+          // `MediaQuery` — ومن المصدر الوحيد ذاته (`context.writerTextScaler`)،
+          // فتمريره صريحاً هنا هو ما يجعل القياس = العرض في هذا المسار أيضاً.
+          textScaler: context.writerTextScaler,
         );
         final List<JoodPage> pages = FlowPaginator.paginate(
           blocks: document.blocks,

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -83,6 +84,16 @@ class WriterDocumentController extends ChangeNotifier {
   int _activeBlockIndex = 0;
   int get activeBlockIndex => _activeBlockIndex;
 
+  /// إشارة تغيّر **الكتلة النشطة فقط** — يقرأها رسم الكتل وحده.
+  ///
+  /// لماذا إشارة منفصلة؟ لأنّ التركيز على نصّ (أو مغادرته) يغيّر الكتلة
+  /// النشطة، وإشعار المتحكّم العام كان يُعيد بناء اللوحة كلها — بما فيها
+  /// ترقيم الصفحات — فيبدو النصّ وكأنّه يُعاد بناؤه. بهذه الإشارة يُعاد
+  /// بناء الكتلة التي تكتسب التركيز وحدها (والتي تفقده)، ولا شيء سواها.
+  final ValueNotifier<int> _activeBlockSignal = ValueNotifier<int>(0);
+
+  ValueListenable<int> get activeBlockSignal => _activeBlockSignal;
+
   double _zoomLevel = 1.0;
   double get zoomLevel => _zoomLevel;
 
@@ -121,12 +132,51 @@ class WriterDocumentController extends ChangeNotifier {
     _textRevision++;
   }
 
+  /// آخر مراجعة نصّية فُحص فيها الشطر الآلي **فعلاً** (قبل الرسم).
+  ///
+  /// الطبقة الرسومية تستعملها لتعرف أنّ الشطر قد جرى مع التعديل نفسه فلا
+  /// تُعيده ثانيةً عند الإشعار — فكل ضغطة حرف كانت تُشغّل التدفّق الكامل
+  /// مرّتين.
+  int get autoSplitRevision => _autoSplitRevision;
+
+  int _autoSplitRevision = 0;
+
+  // ───────────────────────────────────────────────────────────────────────────
+  //  تثبيت الكتابة: تحديثٌ واحد لكل موجة ضغطات
+  // ───────────────────────────────────────────────────────────────────────────
+
+  /// إشعار مؤجَّل بانتظار التصرّف — يُذعَن مرّةً واحدة لموجة الضغطات كلّها.
+  bool _uiUpdateScheduled = false;
+
+  /// يذيع إشعاراً واحداً لكل ما يُعَدَّل داخل اللحظة نفسها.
+  ///
+  /// ضغطة المفتاح الواحدة كانت تُنتج: إشعار `_markDirty` + إشعار
+  /// `_updateBlock` + إشعار `splitBlockAt` ⇒ ثلاث إعادات بناء لمساحة العمل
+  /// في الإطار ذاته، وكلّها ترسم الصفحات من جديد. هنا تُدمج في إشعار واحد
+  /// **بعد** أن يستقرّ كلّ شيء (الشطر الآلي وإنشاء الصفحة الجديدة)، فاللقطة
+  /// التي يراها المستخدم تُبنى مرّةً واحدة من الحالة النهائية.
+  ///
+  /// `scheduleMicrotask` لا `Future`/`Timer`: تُصرَّف قبل الإطار التالي مباشرةً
+  /// — بلا تأخير مرئي، وقبل أي لقطة غير مكتملة.
+  void _scheduleUiUpdate() {
+    if (_uiUpdateScheduled || _disposed) return;
+    _uiUpdateScheduled = true;
+    scheduleMicrotask(_flushUiUpdate);
+  }
+
+  void _flushUiUpdate() {
+    _uiUpdateScheduled = false;
+    if (_disposed) return;
+    notifyListeners();
+  }
+
   /// يستدعي [onEdited] مرة واحدة لكل موجة تعديلات، ويمنع التداخل اللانهائي
   /// حين يُنفِّذ المستمع نفسه تعديلاً جديداً (كالشطر الآلي نفسه).
   void _requestAutoSplit() {
     final VoidCallback? handler = onEdited;
     if (handler == null || _autoSplitting) return;
     _autoSplitting = true;
+    _autoSplitRevision = _textRevision;
     try {
       handler();
     } finally {
@@ -302,19 +352,22 @@ class WriterDocumentController extends ChangeNotifier {
   void _markDirty() {
     if (!_isDirty) {
       _isDirty = true;
-      notifyListeners();
     }
     // أي تعديل (نص أو تنسيق) قد يغيّر ارتفاع الكتلة ⇒ فحص الشطر الآلي فوراً.
     _requestAutoSplit();
     // وحفظ تلقائي مؤجّل بعد استقرار الكتابة.
     _scheduleAutosave();
+    // إشعار واحد لموجة التعديلات كلّها (انظر [_scheduleUiUpdate]).
+    _scheduleUiUpdate();
   }
+
   @override
   void dispose() {
     _disposed = true;
     onEdited = null;
     _autosaveTimer?.cancel();
     _autosaveTimer = null;
+    _activeBlockSignal.dispose();
     _disposeControllers();
     super.dispose();
   }
@@ -336,6 +389,8 @@ class WriterDocumentController extends ChangeNotifier {
   FocusNode _newFocusNode(int blockIndex) {
     final FocusNode node = FocusNode(debugLabel: 'writer-block-$blockIndex');
     node.addListener(() {
+      // التركيز فقط: مغادرة النصّ (Blur) لا تُعيد بناء شيء — لا إشعار ولا
+      // انتقال نشاط — فالنصّ يبقى كما هو حرفاً حرفاً وموضعاً موضعاً.
       if (node.hasFocus) {
         // الفهرس يُقرأ من مكانه الحالي في القائمة؛ فالحقول تُدرج وتُزال في
         // منتصفها مع كل شطر أو دمج.
@@ -390,6 +445,12 @@ class WriterDocumentController extends ChangeNotifier {
 
   /// **مستمع تغيير النص**: يزامن نص الحقل مع كتلته ثم يفعّل الشطر الآلي
   /// مباشرةً (قبل الرسم) حتى لا تتجاوز الكتلة صفحتها.
+  ///
+  /// كلّ ما يقع هنا يُدمج في **إشعار واحد** مؤجَّل حتى نهاية الموجة: ضغطةٌ
+  /// واحدة كانت تُنتج ثلاثة إشعارات (الكتلة + الشطر + الصفحة الجديدة) ⇒
+  /// ثلاث إعادات بناء لمساحة العمل في الإطار نفسه، وكلّها تُعيد تدفّق
+  /// المستند وقياسه. والآن: القياس والشطر يقعان فعلاً (قبل الرسم)، والإشعار
+  /// يقع مرّةً واحدة على الحالة المستقرّة.
   void _onTextChanged(WriterTextEditingController controller) {
     final int index = _controllers.indexOf(controller);
     if (index < 0 || index >= _doc.blocks.length) return;
@@ -397,8 +458,16 @@ class WriterDocumentController extends ChangeNotifier {
     if (_doc.blocks[index].text == text) return;
     // تغيّر نصّي حقيقي (كتابة أو لصق): يُعلَم حتى يشطر المحرّك تلقائياً.
     _bumpTextRevision();
-    _updateBlock(index, _doc.blocks[index].copyWith(text: text));
+    _isDirty = true;
+    _updateBlock(
+      index,
+      _doc.blocks[index].copyWith(text: text),
+      notify: false,
+      autoSplit: false,
+    );
     _requestAutoSplit();
+    _scheduleAutosave();
+    _scheduleUiUpdate();
   }
 
   void loadDocument(JoodWriterDocument document) {
@@ -413,6 +482,7 @@ class WriterDocumentController extends ChangeNotifier {
     _focusNodes.clear();
     _doc = document;
     _activeBlockIndex = 0;
+    _activeBlockSignal.value = 0;
     _isDirty = false;
     _syncControllers();
     notifyListeners();
@@ -423,22 +493,57 @@ class WriterDocumentController extends ChangeNotifier {
     return _doc.blocks[_activeBlockIndex.clamp(0, _doc.blocks.length - 1)];
   }
 
+  /// ينقل النشاط إلى الكتلة [index] — ويُشعل إشارة النشاط وحدها.
+  ///
+  /// الإشعار العام يبقى للشريط الجانبي وشريط الأدوات (يقرآن خصائص الكتلة
+  /// النشطة)، بينما رسم الكتل يقرأ [_activeBlockSignal] فلا يُعاد بناء
+  /// الصفحات عند التركيز أو عند مغادرته.
   void setActiveBlock(int index) {
     if (_activeBlockIndex != index &&
         index >= 0 &&
         index < _doc.blocks.length) {
       _activeBlockIndex = index;
-      notifyListeners();
+      _activeBlockSignal.value = index;
+      // مؤجَّل: تبديل النشاط يقع أثناء الكتابة (شطر/دمج) فلا يُضاعف إعادات
+      // البناء في الإطار نفسه — الإشارة النشطة تبقى فورية للرسم.
+      _scheduleUiUpdate();
     }
   }
 
-  void _updateBlock(int index, JoodWriterBlock block, {bool notify = true}) {
+  /// يطلب تركيز حقل الكتلة [index] **بعد** الإطار الذي يُركَّب فيه.
+  ///
+  /// الحقل يُبنى في الإطار التالي لتنشيط الكتلة، وطلب التركيز قبل أن تتصل
+  /// عقدته بأي ودجة يُهمَل بصمت — فيبدو النقر على النصّ بلا أثر. التأجيل
+  /// لإطار واحد يجعل النقر على نصٍّ ثابتاً يُظهر الحقل القابل للتحرير
+  /// ومؤشّره فوراً.
+  void requestBlockFocus(int index) {
+    if (_disposed || index < 0 || index >= _focusNodes.length) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_disposed || index >= _focusNodes.length) return;
+      _focusNodes[index].requestFocus();
+    });
+  }
+
+  void _updateBlock(
+    int index,
+    JoodWriterBlock block, {
+    bool notify = true,
+    bool autoSplit = true,
+  }) {
     if (index < 0 || index >= _doc.blocks.length) return;
     final List<JoodWriterBlock> blocks = List<JoodWriterBlock>.of(_doc.blocks);
     blocks[index] = block;
     _doc = _doc.copyWith(blocks: blocks);
-    _markDirty();
-    if (notify) notifyListeners();
+    _isDirty = true;
+    // الشطر الآلي: فوريٌّ في مسار الكتابة (قبل الرسم)، ومؤجَّلٌ إلى إشعار
+    // الموجة في بقيّة المسارات (شطر/دمج/كتابة برمجية) فلا يتوالى تدفّقان
+    // في الإطار ذاته.
+    if (autoSplit) {
+      _markDirty();
+      if (notify) _scheduleUiUpdate();
+      return;
+    }
+    if (notify) _scheduleUiUpdate();
   }
 
   void updateActiveBlock(JoodWriterBlock block) {
@@ -568,7 +673,8 @@ class WriterDocumentController extends ChangeNotifier {
       }
     });
 
-    notifyListeners();
+    // إشعار واحد مؤجَّل لموجة الكتلة الجديدة (المؤشّر + الشطر + البناء).
+    _scheduleUiUpdate();
   }
 
   void deleteActiveBlock() {
@@ -586,7 +692,7 @@ class WriterDocumentController extends ChangeNotifier {
         ? blocks.length - 1
         : removedIndex;
     setActiveBlock(newActive);
-    notifyListeners();
+    _scheduleUiUpdate();
   }
 
   // -------------------------------- Auto-Split & Merge --------------------------------
@@ -643,6 +749,14 @@ class WriterDocumentController extends ChangeNotifier {
     );
     _insertControllerAt(blockIndex + 1, textAfter);
 
+    // المؤشر فوراً وبلا انتظار إطار: الجزء المنقول هو الذي يستقبل الكتابة
+    // مباشرةً، ولا معنى لتأجيل موضعه إلى ما بعد الرسم (وكان التأجيل يُسقطه
+    // كلّما لم يكن إطار مجدول فيستقبل الإشعار المؤجَّل قبل أن يُنفَّذ الإطار).
+    final WriterTextEditingController next = _controllers[blockIndex + 1];
+    next.selection = TextSelection.collapsed(
+      offset: caretAtStartOfAfter ? 0 : next.text.length,
+    );
+
     // نقل التركيز والمؤشر للكتلة الجديدة في صفحتها الجديدة.
     _activeBlockIndex = blockIndex + 1;
     _markDirty();
@@ -658,7 +772,9 @@ class WriterDocumentController extends ChangeNotifier {
       );
     });
 
-    notifyListeners();
+    // إشعار واحد لموجة الشطر: الكتلة الجديدة + المؤشّر + إعادة التدفّق —
+    // لا إعادةٌ لبناء مساحة العمل قبل أن تستقرّ كلّها.
+    _scheduleUiUpdate();
   }
 
   /// يُدرج فاصل صفحات يدوياً عند موضع المؤشر: النص اللاحق يبدأ صفحةً جديدة
@@ -680,7 +796,7 @@ class WriterDocumentController extends ChangeNotifier {
     final List<JoodWriterBlock> blocks = List<JoodWriterBlock>.of(_doc.blocks);
     blocks[index + 1] = blocks[index + 1].copyWith(pageBreakBefore: true);
     _doc = _doc.copyWith(blocks: blocks);
-    notifyListeners();
+    _scheduleUiUpdate();
   }
 
   /// يدمج كتلة مع الكتلة السابقة (Backspace في بداية كتلة).
@@ -714,7 +830,7 @@ class WriterDocumentController extends ChangeNotifier {
       _focusNodes[blockIndex - 1].requestFocus();
     });
 
-    notifyListeners();
+    // [_markDirty] أعلاه ذاع إشعار الموجة واحداً — لا إشعار ثانٍ للدمج.
   }
 
   // -------------------------------- إعدادات الصفحة والتكبير --------------------------------

@@ -11,6 +11,7 @@ import '../../domain/flow_paginator.dart';
 import '../jood_writer_text_styles.dart';
 import '../text_painter_measurer.dart';
 import '../writer_document_controller.dart';
+import '../writer_text_scale.dart';
 
 /// محرّر «جود كاتب» بنظام صفحات A4 ثابتة الأبعاد.
 ///
@@ -57,14 +58,55 @@ class _WriterCanvasState extends State<WriterCanvas> {
   /// حين تكون أضيق. الطلاء فقط هو الذي يُصغَّر — تخطيط الورقة يبقى A4.
   double _pageFit = 1.0;
 
-  /// مقياس تكبير النص الفعّال من `MediaQuery` (تكبير النظام أو اليدوي)؛
-  /// يُقرأ في كل إطار ويُمرَّر إلى المُقاس، فلا يُقاس النص أصغر ممّا يُرسم.
+  /// مقياس تكبير النص الفعّال من **المصدر الوحيد**
+  /// (`context.writerTextScaler` → `MediaQuery.textScalerOf`)؛
+  /// يُقرأ مرّة واحدة عند كل بناء فيُثبَّت للاستعمال في كل مسارات القياس
+  /// (البناء، الشطر الآلي، التمرير)، فلا يُقاس النص أصغر ممّا يُرسم.
   TextScaler _textScaler = TextScaler.noScaling;
 
   /// آخر نسخة نصّية رأتها الطبقة الرسومية. الشطر الآلي مربوط بها لا بإشعارات
   /// المتحكّم عامّةً، فلا يُعاد الترقيم عند التنقّل/التكبير (انظر
   /// [_onControllerChanged]).
   int _lastSeenTextRevision = 0;
+
+  /// بصمة كلّ ما يعيد تخطيط الصفحات: المستند، التكبير، وضع العرض.
+  ///
+  /// **تغيّر الكتلة النشطة ليس فيها**: الوقوف على نصٍّ (أو مغادرته) يغيّر
+  /// النشاط فقط، فلا يُعاد بناء الصفحات ولا يُعاد ترقيمها — والنصّ يبقى
+  /// ثابتاً. الكتل تقرأ النشاط من [_activeBlockSignal] فحسب.
+  Object? _layoutSignature;
+
+  // ───────────────────────────────────────────────────────────────────────────
+  //  مقياس مشترك: مخزن القياس يعمل فعلاً فقط إذا عاش بين الاستدعاءات
+  // ───────────────────────────────────────────────────────────────────────────
+
+  /// آخر مقياس بُنِي، ولـ [TextPainterBlockMeasurer] مخزّنٌ داخليّ (بصمة
+  /// المحتوى) لا يعمل إن أُنشئ مقياساً جديداً في كل استدعاء: كان كل حرف
+  /// يُنشئ مقياساً في `_splitOnce` وآخر في التمرير وثالثاً في `build`
+  /// ⇒ تُقاس كل كتل المستند من جديد في كل إطار. هنا مقياسٌ واحد يبقى
+  /// حيّاً بين الإطارات، فتُعاد قياس الكتلة التي تغيّر نصّها فقط.
+  TextPainterBlockMeasurer? _sharedMeasurer;
+  double? _sharedMeasurerWidth;
+  TextScaler? _sharedMeasurerScaler;
+
+  /// يعيد المقياس الموحّد لعرض [contentWidth] الحالي — يُعاد بناؤه فقط إن
+  /// تغيّر العرض أو مقياس الخط (أي تغيّر تخطيط فعلاً).
+  TextPainterBlockMeasurer measurerFor(double contentWidth) {
+    final TextScaler scaler = _textScaler;
+    final TextPainterBlockMeasurer? current = _sharedMeasurer;
+    if (current != null &&
+        _sharedMeasurerWidth == contentWidth &&
+        _sharedMeasurerScaler == scaler) {
+      return current;
+    }
+    _sharedMeasurerWidth = contentWidth;
+    _sharedMeasurerScaler = scaler;
+    return _sharedMeasurer = TextPainterBlockMeasurer(
+      contentWidth: contentWidth,
+      scale: 1.0,
+      textScaler: scaler,
+    );
+  }
 
   @override
   void initState() {
@@ -104,9 +146,28 @@ class _WriterCanvasState extends State<WriterCanvas> {
     // الآن: الشطر عند تغيّر النصّ فقط (يتتبّعه `textRevision`)، والتنقّل
     // والتكبير والعرض لا يُحرّكون شيئاً.
     final int revision = controller.textRevision;
-    if (revision == _lastSeenTextRevision) return;
-    _lastSeenTextRevision = revision;
-    _autoSplitIfNeeded();
+    if (revision != _lastSeenTextRevision) {
+      _lastSeenTextRevision = revision;
+      // الشطر الآلي يقع **متزامناً** داخل المتحكّم نفسه مع التعديل
+      // (`onEdited` → `_requestAutoSplit`)، ويعلَن عن ذلك بـ
+      // [WriterDocumentController.autoSplitRevision]. هذا الإشعار يصل بعد
+      // ذلك مباشرةً ⇒ المراجعة نفسها، فلا يُعاد الشطر ثانيةً (كان كل حرف
+      // يُشغّل التدفّق الكامل مرّتين: مرة مع التعديل ومرة مع إشعاره).
+      if (revision != controller.autoSplitRevision) {
+        _autoSplitIfNeeded();
+      }
+    }
+
+    // إعادة بناء الصفحات **فقط** عند تغيّر بصمة التخطيط. التركيز على نصٍّ
+    // (أو مغادرته) لا يغيّرها ⇒ لا يُعاد بناء الصفحات ولا يُعاد ترقيمها.
+    final Object signature = Object.hash(
+      controller.document,
+      controller.zoomLevel,
+      controller.viewMode,
+    );
+    if (signature == _layoutSignature) return;
+    _layoutSignature = signature;
+    if (mounted) setState(() {});
   }
 
   /// يقيس الكتلة النشطة ويقسمها إذا تجاوزت المساحة المتاحة في صفحتها.
@@ -175,11 +236,9 @@ class _WriterCanvasState extends State<WriterCanvas> {
     final double contentWidth = pageWidth - marginL - marginR;
     final double contentHeight = pageHeight - marginT - marginB;
 
-    final measurer = TextPainterBlockMeasurer(
-      contentWidth: contentWidth,
-      scale: 1.0,
-      textScaler: _textScaler,
-    );
+    // مقياسٌ مشترك حيٌّ بين الإطارات: الكتل الثابتة لا تُقاس من جديد
+    // (انظر [measurerFor]).
+    final measurer = measurerFor(contentWidth);
 
     // حساب الصفحات
     final pages = FlowPaginator.paginate(
@@ -209,7 +268,11 @@ class _WriterCanvasState extends State<WriterCanvas> {
             // المَرسومة يهبط ⇒ الصفحات الزائدة **تختفي** فيبدو المستند
             // صفحةً واحدة. الصحيح: القصّ بموضع حرفيّ في النصّ الأصلي مع
             // حفظ الفاصل، فيبقى كل سطر صريح كما كتبه المستخدم.
-            final int breakAt = _offsetAfterLine(block.text, lines, slice.lineEnd);
+            final int breakAt = _offsetAfterLine(
+              block.text,
+              lines,
+              slice.lineEnd,
+            );
             final String textBefore = block.text.substring(0, breakAt);
             final String textAfter = block.text.substring(breakAt);
 
@@ -244,11 +307,8 @@ class _WriterCanvasState extends State<WriterCanvas> {
       final pages = FlowPaginator.paginate(
         blocks: doc.blocks,
         contentHeight: contentHeight,
-        measurer: TextPainterBlockMeasurer(
-          contentWidth: contentWidth,
-          scale: 1.0,
-          textScaler: _textScaler,
-        ),
+        // مقياسٌ مشترك حيّ: لا تُعاد قياس كل كتل المستند لتحديد الهدف.
+        measurer: measurerFor(contentWidth),
       );
       int pageIndex = pages.indexWhere(
         (page) => page.slices.any((slice) => slice.blockIndex == blockIndex),
@@ -259,12 +319,37 @@ class _WriterCanvasState extends State<WriterCanvas> {
       // موضع صفحتها وحدها.
       final bool spread = controller.viewMode == WriterViewMode.spread;
       final int row = spread ? pageIndex ~/ 2 : pageIndex;
-      final double target =
-          (WriterCanvas.listTopPadding +
-                  row *
-                      (pageHeight * _pageFit * controller.zoomLevel +
-                          WriterCanvas.pageGap))
-              .clamp(0.0, _pagesScroll.position.maxScrollExtent);
+      final double rowHeight = pageHeight * _pageFit * controller.zoomLevel;
+      final double rowTop =
+          WriterCanvas.listTopPadding +
+          row * (rowHeight + WriterCanvas.pageGap);
+      final double target = rowTop.clamp(
+        0.0,
+        _pagesScroll.position.maxScrollExtent,
+      );
+
+      // ⚠️ كان يُستدعى **دائماً** بأنيميشن 220ms — حتى لو كانت الصفحة
+      // الهدف معروضة أصلاً، وحتى أثناء حركة تمرير جارية. النتيجة: كل ضغطة
+      // تُنفّذ شطرًاً قصيراً كانتباهات في موضع المستخدم («قفز/اهتزاز»
+      // النص). الآن: لا قَفْزة إن كان المستخدم ينظر إلى صفّ الهدف نفسه، ولا
+      // قَفْزة فوق حركةٍ جارية (سحب/انطلاق/أنيميشن) تؤجّل نفسها.
+      //
+      // ملاحظة: الورقة (A4 ≈ 1122px) أطول من شاشة العرض عادةً، فلا يكفي
+      // فحص «الهدف ظاهرٌ بالكامل» — الصحيح أنّ الهدف هو **الصفّ الذي ينظر
+      // إليه المستخدم أصلاً**، فلا يُحرَّك شيء.
+      final ScrollPosition position = _pagesScroll.position;
+      if (position.isScrollingNotifier.value) return;
+      final double pitch = rowHeight + WriterCanvas.pageGap;
+      // صفّ «سطح النظر» — يُصفَّر للبداية قبل أول بادئة.
+      final int currentRow = math.max(
+        0,
+        ((position.pixels - WriterCanvas.listTopPadding) / pitch).floor(),
+      );
+      if (currentRow == row) return; // صفّ الهدف تحت سطح النظر بالفعل.
+      final double viewBottom = position.pixels + position.viewportDimension;
+      if (rowTop >= position.pixels && rowTop + rowHeight <= viewBottom) {
+        return; // الهدف ظاهرٌ بالكامل — النصّ ثابتٌ في مكانه.
+      }
       _pagesScroll.animateTo(
         target,
         duration: const Duration(milliseconds: 220),
@@ -287,156 +372,160 @@ class _WriterCanvasState extends State<WriterCanvas> {
       data: themed,
       child: Container(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        child: ListenableBuilder(
-          listenable: controller,
-          builder: (context, _) {
-            final doc = controller.document;
-            final double pageWidth =
-                doc.effectivePageSize.widthMm * WriterCanvas.pxPerMm;
-            final double pageHeight =
-                doc.effectivePageSize.heightMm * WriterCanvas.pxPerMm;
-            final double marginT = doc.margins.top * WriterCanvas.pxPerMm;
-            final double marginB = doc.margins.bottom * WriterCanvas.pxPerMm;
-            final double marginL = doc.margins.left * WriterCanvas.pxPerMm;
-            final double marginR = doc.margins.right * WriterCanvas.pxPerMm;
-            final double contentWidth = pageWidth - marginL - marginR;
-            final double contentHeight = pageHeight - marginT - marginB;
-
-            // مقياس تكبير النص الفعّال في هذا الإطار: نفس ما يُطبَّق على
-            // الرسم، فيقيس المحرّر ما يُرسم بالضبط (لا فيض مهما كبّر المستخدم).
-            _textScaler = MediaQuery.textScalerOf(context);
-
-            final measurer = TextPainterBlockMeasurer(
-              contentWidth: contentWidth,
-              scale: 1.0,
-              textScaler: _textScaler,
-            );
-
-            final List<JoodPage> pages = FlowPaginator.paginate(
-              blocks: doc.blocks,
-              contentHeight: contentHeight,
-              measurer: measurer,
-            );
-
-            // «الحجم الحقيقي»: الورقة تُرسم بمقاسها الورقي الفعلي (96dpi)، ولا
-            // تُصغَّر إلا حين تكون مساحة العمل أضيق منها — وبقياسٍ على الطلاء
-            // فقط، فيبقى تخطيط الورقة وقياسها A4 تماماً فلا يختلف التفاف النص
-            // عن القياس أبداً.
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                // طي الكتاب: صفحتان متقابلتان في الصف ⇒ مقاسهما المشترك هو
-                // المحدِّد لمعامل التصغير.
-                final bool spread =
-                    controller.viewMode == WriterViewMode.spread;
-                final double pagesPerRow = spread ? 2.0 : 1.0;
-                final double fit = constraints.hasBoundedWidth
-                    ? math.min(
-                        1.0,
-                        (constraints.maxWidth -
-                                WriterCanvas.canvasPadding.horizontal -
-                                (spread ? WriterCanvas.pageGap : 0)) /
-                            (pageWidth * pagesPerRow),
-                      )
-                    : 1.0;
-                _pageFit = fit;
-
-                // بطاقة صفحة واحدة بمقاسها الورقي الحقيقي: تُخطَّط A4 تماماً
-                // ثم تُطلَى بالمعامل — تُستعمل في الوضع المفرد وطي الكتاب.
-                Widget pageCard(int index) {
-                  return SizedBox(
-                    width: pageWidth * fit,
-                    height: pageHeight * fit,
-                    child: OverflowBox(
-                      minWidth: pageWidth,
-                      maxWidth: pageWidth,
-                      minHeight: pageHeight,
-                      maxHeight: pageHeight,
-                      alignment: Alignment.topCenter,
-                      child: Transform.scale(
-                        scale: fit * controller.zoomLevel,
-                        alignment: Alignment.topCenter,
-                        child: _PageCard(
-                          key: ValueKey<String>('writer-page-${index + 1}'),
-                          controller: controller,
-                          doc: doc,
-                          page: pages[index],
-                          pageNum: index + 1,
-                          totalPages: pages.length,
-                          pageWidth: pageWidth,
-                          pageHeight: pageHeight,
-                          marginT: marginT,
-                          marginB: marginB,
-                          marginL: marginL,
-                          marginR: marginR,
-                          contentHeight: contentHeight,
-                          measurer: measurer,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                return Listener(
-                  onPointerSignal: (event) {
-                    if (event is PointerScrollEvent) {
-                      final keys = HardwareKeyboard.instance.logicalKeysPressed;
-                      if (keys.contains(LogicalKeyboardKey.altLeft) ||
-                          keys.contains(LogicalKeyboardKey.altRight) ||
-                          keys.contains(LogicalKeyboardKey.controlLeft)) {
-                        final double scrollDelta = event.scrollDelta.dy;
-                        if (scrollDelta > 0) {
-                          controller.zoomOut();
-                        } else if (scrollDelta < 0) {
-                          controller.zoomIn();
-                        }
-                      }
-                    }
-                  },
-                  child: ListView.separated(
-                    controller: _pagesScroll,
-                    padding: WriterCanvas.canvasPadding,
-                    // طي الكتاب: صفّ واحد يحمل صفحتين متقابلتين (الفردية يميناً
-                    // في الاتجاه العربي، والزوجية إلى يسارها كالكتاب المطبوع).
-                    itemCount: spread ? (pages.length + 1) ~/ 2 : pages.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: WriterCanvas.pageGap),
-                    itemBuilder: (context, index) {
-                      if (!spread) {
-                        return Center(child: pageCard(index));
-                      }
-                      final int rightIndex = index * 2;
-                      final int leftIndex = rightIndex + 1;
-                      return Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          // «جود كاتب» عربيّ-first: الصفحة الفردية يمين والزوجية
-                          // إلى يسارها كالكتاب المطبوع، بلا اعتماد على اتجاه
-                          // الواجهة المحيطة (كما تُرسم الأسطر بـrtl صراحةً).
-                          textDirection: TextDirection.rtl,
-                          children: [
-                            pageCard(rightIndex),
-                            const SizedBox(width: WriterCanvas.pageGap),
-                            if (leftIndex < pages.length)
-                              pageCard(leftIndex)
-                            else
-                              // عدد الصفحات فردي: فراغ بمقدار الورقة يحفظ
-                              // توازن الصفّ المتقابل.
-                              SizedBox(
-                                width: pageWidth * fit,
-                                height: pageHeight * fit,
-                              ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            );
-          },
-        ),
+        child: _buildPages(context),
       ),
+    );
+  }
+
+  /// تبني قائمة الصفحات — تُستدعى من [build] فقط.
+  ///
+  /// لا تستمع للمتحكّم مباشرةً: إعادة البناء تمرّ عبر [setState] في
+  /// [_onControllerChanged] عند تغيّر بصمة التخطيط فقط، فالوقوف على نصٍّ
+  /// (أو مغادرته) لا يُعيد بناء الصفحات ولا يُعيد ترقيمها — والنصّ يبقى
+  /// ثابتاً كما هو.
+  Widget _buildPages(BuildContext context) {
+    final doc = controller.document;
+    final double pageWidth =
+        doc.effectivePageSize.widthMm * WriterCanvas.pxPerMm;
+    final double pageHeight =
+        doc.effectivePageSize.heightMm * WriterCanvas.pxPerMm;
+    final double marginT = doc.margins.top * WriterCanvas.pxPerMm;
+    final double marginB = doc.margins.bottom * WriterCanvas.pxPerMm;
+    final double marginL = doc.margins.left * WriterCanvas.pxPerMm;
+    final double marginR = doc.margins.right * WriterCanvas.pxPerMm;
+    final double contentWidth = pageWidth - marginL - marginR;
+    final double contentHeight = pageHeight - marginT - marginB;
+
+    // مقياس تكبير النص الفعّال في هذا الإطار — من المصدر الوحيد،
+    // فالقيمة نفسها التي تأخذها ودجات الرسم ضمناً من `MediaQuery`؛
+    // يُثبَّت هنا عند البناء ويُمرَّر إلى كل المُقاسات، فيقيس المحرّر
+    // ما يُرسم بالضبط (لا فيض مهما كبّر المستخدم).
+    _textScaler = context.writerTextScaler;
+
+    // مقياسٌ مشترك حيّ بين الإطارات: الكتل التي لم يتغيّر نصّها لا تُقاس
+    // من جديد عند كل ضغطة (انظر [measurerFor]).
+    final measurer = measurerFor(contentWidth);
+
+    final List<JoodPage> pages = FlowPaginator.paginate(
+      blocks: doc.blocks,
+      contentHeight: contentHeight,
+      measurer: measurer,
+    );
+
+    // «الحجم الحقيقي»: الورقة تُرسم بمقاسها الورقي الفعلي (96dpi)، ولا
+    // تُصغَّر إلا حين تكون مساحة العمل أضيق منها — وبقياسٍ على الطلاء
+    // فقط، فيبقى تخطيط الورقة وقياسها A4 تماماً فلا يختلف التفاف النص
+    // عن القياس أبداً.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // طي الكتاب: صفحتان متقابلتان في الصف ⇒ مقاسهما المشترك هو
+        // المحدِّد لمعامل التصغير.
+        final bool spread = controller.viewMode == WriterViewMode.spread;
+        final double pagesPerRow = spread ? 2.0 : 1.0;
+        final double fit = constraints.hasBoundedWidth
+            ? math.min(
+                1.0,
+                (constraints.maxWidth -
+                        WriterCanvas.canvasPadding.horizontal -
+                        (spread ? WriterCanvas.pageGap : 0)) /
+                    (pageWidth * pagesPerRow),
+              )
+            : 1.0;
+        _pageFit = fit;
+
+        // بطاقة صفحة واحدة بمقاسها الورقي الحقيقي: تُخطَّط A4 تماماً
+        // ثم تُطلَى بالمعامل — تُستعمل في الوضع المفرد وطي الكتاب.
+        Widget pageCard(int index) {
+          return SizedBox(
+            width: pageWidth * fit,
+            height: pageHeight * fit,
+            child: OverflowBox(
+              minWidth: pageWidth,
+              maxWidth: pageWidth,
+              minHeight: pageHeight,
+              maxHeight: pageHeight,
+              alignment: Alignment.topCenter,
+              child: Transform.scale(
+                scale: fit * controller.zoomLevel,
+                alignment: Alignment.topCenter,
+                child: _PageCard(
+                  key: ValueKey<String>('writer-page-${index + 1}'),
+                  controller: controller,
+                  doc: doc,
+                  page: pages[index],
+                  pageNum: index + 1,
+                  totalPages: pages.length,
+                  pageWidth: pageWidth,
+                  pageHeight: pageHeight,
+                  marginT: marginT,
+                  marginB: marginB,
+                  marginL: marginL,
+                  marginR: marginR,
+                  contentHeight: contentHeight,
+                  measurer: measurer,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Listener(
+          onPointerSignal: (event) {
+            if (event is PointerScrollEvent) {
+              final keys = HardwareKeyboard.instance.logicalKeysPressed;
+              if (keys.contains(LogicalKeyboardKey.altLeft) ||
+                  keys.contains(LogicalKeyboardKey.altRight) ||
+                  keys.contains(LogicalKeyboardKey.controlLeft)) {
+                final double scrollDelta = event.scrollDelta.dy;
+                if (scrollDelta > 0) {
+                  controller.zoomOut();
+                } else if (scrollDelta < 0) {
+                  controller.zoomIn();
+                }
+              }
+            }
+          },
+          child: ListView.separated(
+            controller: _pagesScroll,
+            padding: WriterCanvas.canvasPadding,
+            // طي الكتاب: صفّ واحد يحمل صفحتين متقابلتين (الفردية يميناً
+            // في الاتجاه العربي، والزوجية إلى يسارها كالكتاب المطبوع).
+            itemCount: spread ? (pages.length + 1) ~/ 2 : pages.length,
+            separatorBuilder: (_, _) =>
+                const SizedBox(height: WriterCanvas.pageGap),
+            itemBuilder: (context, index) {
+              if (!spread) {
+                return Center(child: pageCard(index));
+              }
+              final int rightIndex = index * 2;
+              final int leftIndex = rightIndex + 1;
+              return Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // «جود كاتب» عربيّ-first: الصفحة الفردية يمين والزوجية
+                  // إلى يسارها كالكتاب المطبوع، بلا اعتماد على اتجاه
+                  // الواجهة المحيطة (كما تُرسم الأسطر بـrtl صراحةً).
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    pageCard(rightIndex),
+                    const SizedBox(width: WriterCanvas.pageGap),
+                    if (leftIndex < pages.length)
+                      pageCard(leftIndex)
+                    else
+                      // عدد الصفحات فردي: فراغ بمقدار الورقة يحفظ
+                      // توازن الصفّ المتقابل.
+                      SizedBox(
+                        width: pageWidth * fit,
+                        height: pageHeight * fit,
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -480,90 +569,30 @@ class _PageCard extends StatelessWidget {
     final double contentWidth = pageWidth - marginL - marginR;
 
     for (final slice in page.slices) {
-      // مسافة قبل الكتلة (تُهمَل في رأس الصفحة)
-      if (slice.isBlockStart && children.isNotEmpty) {
-        children.add(SizedBox(height: slice.block.spaceBefore));
-      }
-
       final int blockIndex = slice.blockIndex;
-      final bool isActiveBlock = controller.activeBlockIndex == blockIndex;
+      final JoodWriterBlock block = slice.block;
 
-      if (isActiveBlock && slice.isBlockStart) {
-        // الكتلة النشطة: حقل إدخال قابل للتحرير
-        children.add(
-          _BlockEditor(
-            index: blockIndex,
-            block: slice.block,
-            controller: controller,
-          ),
-        );
-      } else {
-        // كتلة غير نشطة أو شريحة مكملة: نص ثابت قابل للنقر
-        final lines = measurer.linesOf(slice.block);
-        final style = JoodWriterTextStyles.of(slice.block);
-        final align = JoodWriterTextStyles.textAlign(slice.block.align);
-        final isBullet = slice.block.kind == JoodWriterBlockKind.bullet;
-
-        for (
-          int line = slice.lineStart;
-          line < slice.lineEnd && line < lines.length;
-          line++
-        ) {
-          final bool isFirst = line == 0;
-          // المسافة البادئة للسطر **الأول فقط**؛ بقية الأسطر على حافة الهامش.
-          final double firstIndent = isFirst
-              ? JoodWriterTextStyles.firstLineIndentPx(slice.block)
-              : 0.0;
-
-          final Widget lineText = isBullet
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (isFirst) ...[
-                      Text('•', style: style),
-                      const SizedBox(width: 4),
-                    ],
-                    Expanded(
-                      child: Text(
-                        lines[line],
-                        style: style,
-                        textAlign: align,
-                        textDirection: TextDirection.rtl,
-                        softWrap: false,
-                        overflow: TextOverflow.clip,
-                      ),
-                    ),
-                  ],
-                )
-              : Text(
-                  lines[line],
-                  style: style,
-                  textAlign: align,
-                  textDirection: TextDirection.rtl,
-                  softWrap: false,
-                  overflow: TextOverflow.clip,
-                );
-
-          children.add(
-            GestureDetector(
-              onTap: () {
-                controller.setActiveBlock(blockIndex);
-                if (blockIndex < controller.focusNodes.length) {
-                  controller.focusNodes[blockIndex].requestFocus();
-                }
-              },
-              child: Padding(
-                padding: EdgeInsets.only(
-                  right:
-                      slice.block.indentCm * 10 * WriterCanvas.pxPerMm +
-                      firstIndent,
-                ),
-                child: lineText,
-              ),
-            ),
-          );
-        }
-      }
+      // «موضع» واحد لكل شريحة: الشريحة الأولى تتحوّل إلى محرّر حين تكتسب
+      // كتلتها التركيز، وتبقى الشرائح المكملة أسطراً ثابتة — فلا يختفي نصٌّ
+      // من الصفحة ولا يُعاد ترقيمها عند الوقوف على نصٍّ (أو مغادرته).
+      //
+      // المسافة قبل الكتلة تُرسم هنا (وهي موضع مشترك بين المسارين) ولا
+      // تُرسم في رأس الصفحة — كما يقيسها التدفّق تماماً.
+      children.add(
+        _BlockSlot(
+          key: ValueKey<String>('writer-block-$blockIndex-${slice.lineStart}'),
+          index: blockIndex,
+          controller: controller,
+          block: block,
+          lines: measurer.linesOf(block),
+          lineStart: slice.lineStart,
+          lineEnd: slice.lineEnd,
+          editable: slice.isBlockStart,
+          showSpaceBefore: slice.isBlockStart && children.isNotEmpty,
+          prefixWidth: measurer.prefixWidthOf(block),
+          prefixLabel: _prefixLabel(controller, blockIndex),
+        ),
+      );
     }
 
     return Container(
@@ -748,56 +777,301 @@ class _DashedLinePainter extends CustomPainter {
 // محرّر الكتلة (TextField)
 // ─────────────────────────────────────────────────────────────────────────────
 
+// موضع الكتلة: محرّر حين تكتسب كتلتها التركيز، وأسطر ثابتة حين لا تكتبه
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// موضع شريحة من كتلة داخل الصفحة.
+///
+/// **الوقوف على النصّ لا يغيّر شكله**: هذا الموضع يستمع إلى
+/// [WriterDocumentController.activeBlockSignal] — إشارة النشاط وحدها — لا إلى
+/// إشعارات المتحكّم العامة، فلا تُعاد بناء الصفحة ولا يُعاد ترقيمها عند
+/// التركيز أو عند مغادرته؛ يتبدّل شكل **هذا الموضع** فحسب، بحرفين متطابقين.
+class _BlockSlot extends StatefulWidget {
+  const _BlockSlot({
+    super.key,
+    required this.index,
+    required this.controller,
+    required this.block,
+    required this.lines,
+    required this.lineStart,
+    required this.lineEnd,
+    required this.editable,
+    required this.showSpaceBefore,
+    required this.prefixWidth,
+    required this.prefixLabel,
+  });
+
+  /// فهرس الكتلة في المستند — مفتاح النشاط وموضع عقدة التركيز والمحرّق.
+  final int index;
+  final WriterDocumentController controller;
+  final JoodWriterBlock block;
+
+  /// الأسطر **المقيسة مسبقاً** لكل الكتلة — نفس التي يلتفّ عندها المحرّر.
+  final List<String> lines;
+  final int lineStart;
+  final int lineEnd;
+
+  /// الشريحة الأولى من الكتلة هي وحدها التي تتحوّل إلى محرّر؛ فتشترك في
+  /// عقدة التركيز والمحرّق والنداء للكتلة كاملة.
+  final bool editable;
+
+  /// تُرسم قبل أول شريحة من الكتلة — ولا تُرسم في رأس الصفحة.
+  final bool showSpaceBefore;
+
+  /// عرض مقدّمة القائمة بالبكسل — من المُقاس نفسه، لا من تقدير العارض.
+  final double prefixWidth;
+
+  /// مقدّمة القائمة (• / 1.) إن كانت الكتلة قائمة.
+  final String? prefixLabel;
+
+  @override
+  State<_BlockSlot> createState() => _BlockSlotState();
+}
+
+class _BlockSlotState extends State<_BlockSlot> {
+  /// هل تملك هذه الشريحة التركيز الآن؟ تُشتقّ من الإشارة لا من الإشعار العام.
+  late bool _isActive;
+
+  @override
+  void initState() {
+    super.initState();
+    _isActive = _computeActive();
+    widget.controller.activeBlockSignal.addListener(_onActiveChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant _BlockSlot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // الودجة قد تُستعمل لكتلة أخرى بعد شطر أو دمج (يتحدّث مفتاحها) ⇒ تُعاد
+    // اشتقاق النشاط، وإلا بقيت الكتلة القديمة «نشطةً» بمحرّر لا كتلة له.
+    if (oldWidget.index != widget.index ||
+        oldWidget.editable != widget.editable) {
+      _isActive = _computeActive();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.activeBlockSignal.removeListener(_onActiveChanged);
+    super.dispose();
+  }
+
+  bool _computeActive() =>
+      widget.editable && widget.controller.activeBlockIndex == widget.index;
+
+  void _onActiveChanged() {
+    if (!mounted) return;
+    final bool active = _computeActive();
+    if (active == _isActive) return;
+    setState(() => _isActive = active);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isActive) {
+      return _BlockEditor(
+        index: widget.index,
+        block: widget.block,
+        controller: widget.controller,
+        showSpaceBefore: widget.showSpaceBefore,
+        prefixWidth: widget.prefixWidth,
+        prefixLabel: widget.prefixLabel,
+      );
+    }
+    return _BlockLines(
+      block: widget.block,
+      lines: widget.lines,
+      lineStart: widget.lineStart,
+      lineEnd: widget.lineEnd,
+      showSpaceBefore: widget.showSpaceBefore,
+      prefixWidth: widget.prefixWidth,
+      prefixLabel: widget.prefixLabel,
+      onActivate: () {
+        widget.controller.setActiveBlock(widget.index);
+        widget.controller.requestBlockFocus(widget.index);
+      },
+    );
+  }
+}
+
+/// مقدّمة القائمة (• أو 1.) في صندوق **عرضه ثابت** — بالعرض ذاته الذي يخصمه
+/// المُقاس من عرض كل سطر ([TextPainterBlockMeasurer.prefixWidthOf]).
+///
+/// لماذا عرض ثابت؟ لأنّ المحرّر يلتفّ عند عرضٍ يخصم فيه هذا الصندوق، فلو
+/// اختلف عرضه في النصّ الثابت لالتفّت الأسطر عند موضع آخر ويبدو النصّ
+/// «متحرّكاً» عند الوقوف عليه. ذات الصندوق يُرسم في المسارين، وفراغه (بلا
+/// نصّ) يُرسم في أسطر القائمة التالية كي يطابق عرض مربعة المحرّر تماماً.
+class _BlockPrefix extends StatelessWidget {
+  const _BlockPrefix({
+    required this.block,
+    required this.width,
+    required this.label,
+  });
+
+  final JoodWriterBlock block;
+  final double width;
+
+  /// `null` لسطرٍ لا مقدّمة له (أسطر القائمة بعد الأول) — يُرسم الصندوق
+  /// فارغاً ليبقى عرض السطر نفسه.
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    // متغيّر محليّ: الحقل العام لا يُرقَّم في Dart بعد فحص `null`.
+    final String? text = label;
+    if (text == null) return SizedBox(width: width);
+    return SizedBox(
+      width: width,
+      child: Text(
+        text,
+        style: JoodWriterTextStyles.of(block),
+        textDirection: TextDirection.rtl,
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.clip,
+      ),
+    );
+  }
+}
+
+/// أسطر كتلة ثابتة — تُرسم سطراً سطراً **كما قِيست بالضبط**.
+///
+/// كل سطر ودجة `Text` مستقلة بـ`softWrap: false` فلا يُعاد التفافه أبداً؛
+/// والمحرّر يلتفّ عند الموضع نفسه (نفس العرض المتاح لكل سطر، ونفس مقدّمة
+/// القائمة ومسافة السطر الأول) — فيبدو النصّ واحداً قبل الوقوف عليه وبعده.
+class _BlockLines extends StatelessWidget {
+  const _BlockLines({
+    required this.block,
+    required this.lines,
+    required this.lineStart,
+    required this.lineEnd,
+    required this.showSpaceBefore,
+    required this.prefixWidth,
+    required this.prefixLabel,
+    required this.onActivate,
+  });
+
+  final JoodWriterBlock block;
+  final List<String> lines;
+  final int lineStart;
+  final int lineEnd;
+  final bool showSpaceBefore;
+  final double prefixWidth;
+  final String? prefixLabel;
+
+  /// النقر على أي سطر من السطرين ينشّط الكتلة ويطلب تركيز حقلها.
+  final VoidCallback onActivate;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle style = JoodWriterTextStyles.of(block);
+    final TextAlign align = JoodWriterTextStyles.textAlign(block.align);
+    final double indent = JoodWriterTextStyles.indentPx(block);
+    final double firstIndent = JoodWriterTextStyles.firstLineIndentPx(block);
+
+    return Padding(
+      // نفس المسافة قبل الكتلة التي يرسمها المحرّر — فلا ينزلق نصّ الصفحة
+      // عند الوقوف على كتلةٍ ولا عند مغادرتها.
+      padding: EdgeInsets.only(top: showSpaceBefore ? block.spaceBefore : 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          for (
+            int line = lineStart;
+            line < lineEnd && line < lines.length;
+            line++
+          )
+            GestureDetector(
+              onTap: onActivate,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: indent + (line == 0 ? firstIndent : 0),
+                ),
+                child: prefixLabel == null
+                    ? _text(lines[line], style, align)
+                    : Row(
+                        textDirection: TextDirection.rtl,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _BlockPrefix(
+                            block: block,
+                            width: prefixWidth,
+                            label: line == 0 ? prefixLabel : null,
+                          ),
+                          Expanded(child: _text(lines[line], style, align)),
+                        ],
+                      ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _text(String line, TextStyle style, TextAlign align) => Text(
+    line,
+    style: style,
+    textAlign: align,
+    textDirection: TextDirection.rtl,
+    // كل سطر مقيس مسبقاً ⇒ يمنع تكافّاً ثانياً يُفسد الترقيم.
+    softWrap: false,
+    overflow: TextOverflow.clip,
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// محرّر الكتلة (TextField)
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _BlockEditor extends StatelessWidget {
   const _BlockEditor({
     required this.index,
     required this.block,
     required this.controller,
+    required this.showSpaceBefore,
+    required this.prefixWidth,
+    required this.prefixLabel,
   });
 
   final int index;
   final JoodWriterBlock block;
   final WriterDocumentController controller;
+  final bool showSpaceBefore;
+  final double prefixWidth;
+  final String? prefixLabel;
+
+  /// هامش المؤشّر الذي يخصمه `RenderEditable` من عرض سطرّه:
+  /// `_kCaretGap (1.0) + cursorWidth (2.0)` — ولم تُغيَّر اللوحة `cursorWidth`
+  /// فبقي افتراضياً. يُتعوَّض بتوسيع حقل المحرّر (انظر التعليق عند
+  /// `EdgeInsets.only(right: -_caretMargin)`) حتى يلتفّ عند عرض المحتوى
+  /// نفسه الذي يقيسه المُقاس ويصطفّ مع النصّ الثابت حافةً بحافة.
+  static const double _caretMargin = 3.0;
 
   @override
   Widget build(BuildContext context) {
     if (index >= controller.controllers.length) return const SizedBox.shrink();
 
     final TextStyle style = JoodWriterTextStyles.of(block);
-    final bool isBullet = block.kind == JoodWriterBlockKind.bullet;
-    final bool isNumbered = block.kind == JoodWriterBlockKind.numbered;
-
-    int listIndex = 1;
-    if (isNumbered) {
-      for (int i = index - 1; i >= 0; i--) {
-        if (controller.document.blocks[i].kind ==
-            JoodWriterBlockKind.numbered) {
-          listIndex++;
-        } else {
-          break;
-        }
-      }
-    }
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: block.spaceAfter,
-        top: index == 0 ? 0 : block.spaceBefore,
-        right: block.indentCm * 10 * WriterCanvas.pxPerMm,
+        // **لا مسافة بعد الكتلة هنا**: المسار الثابت لا يرسمها، فكانت
+        // إضافتها في المحرّر وحده تنزق كل ما تحت الكتلة 8px عند الوقوف
+        // عليه وتعيده عند المغادرة. المسافة محجوزة في التدفّق لا في الرسم.
+        top: showSpaceBefore ? block.spaceBefore : 0,
+        right: JoodWriterTextStyles.indentPx(block),
       ),
       child: IntrinsicHeight(
         child: Row(
+          textDirection: TextDirection.rtl,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isBullet)
-              Padding(
-                padding: const EdgeInsets.only(top: 2, left: 6, right: 6),
-                child: Text('•', style: style),
-              ),
-            if (isNumbered)
-              Padding(
-                padding: const EdgeInsets.only(top: 2, left: 6, right: 6),
-                child: Text('$listIndex.', style: style),
+            if (prefixLabel != null)
+              _BlockPrefix(
+                block: block,
+                width: prefixWidth,
+                label: prefixLabel,
               ),
             Expanded(
               child: Focus(
@@ -832,8 +1106,18 @@ class _BlockEditor extends StatelessWidget {
 
                   return KeyEventResult.ignored;
                 },
-                child: TextField(
-                  key: ValueKey('writer-field-$index'),
+                child: Padding(
+                  // **تعويض هامش المؤشّر**: `RenderEditable` يخصم من عرض
+                  // سطرّه `_caretMargin = _kCaretGap (1.0) + cursorWidth (2.0)`
+                  // = 3px ليجد موضعًا لرسم المؤشّر عند نهاية السطر، فتلتفّ
+                  // أسطره عند `العرض − 3` ويقفز نصّها 3px يساراً عمّا يرسمه
+                  // المسار الثابت عند حافة المحتوى. نُوسّع الحقل 3px إلى
+                  // اليمين (بلا تبديل في موضع النصّ) فـ`الحقل − 3 = عرض
+                  // المحتوى` بالضبط: الالتفاف والحافة يطابقان المسار الثابت
+                  // حرفياً ولا يتحرّك السطر عند الوقوف عليه.
+                  padding: const EdgeInsets.only(right: -_caretMargin),
+                  child: TextField(
+                    key: ValueKey('writer-field-$index'),
                   controller: controller.controllers[index],
                   focusNode: controller.focusNodes[index],
                   maxLines: null,
@@ -866,6 +1150,7 @@ class _BlockEditor extends StatelessWidget {
                     hintStyle: style.copyWith(
                       color: Colors.grey.withValues(alpha: 0.5),
                     ),
+                  ),
                   ),
                 ),
               ),
@@ -951,4 +1236,43 @@ class _ShapePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _ShapePainter oldDelegate) =>
       oldDelegate.shape != shape;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// مقدّمات القائمة (تُشتقّ من المستند نفسه في المسارين)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// الرقم التسلسلي لكتلة مرقّمة داخل سلسلتها المتصلة: يعدّ الكتل المرقّمة التي
+/// تسبقها متجاورةً حتى ينقطع الصفّ.
+///
+/// **من المستند لا من الودجات**: المسار الثابت والمحرّر يقرأان المقدّمة من
+/// هنا معاً، فلا تختلف «1.» عن «2.» بين الحالتين.
+int _numberedIndex(WriterDocumentController controller, int blockIndex) {
+  int index = 1;
+  for (int i = blockIndex - 1; i >= 0; i--) {
+    if (controller.document.blocks[i].kind == JoodWriterBlockKind.numbered) {
+      index++;
+    } else {
+      break;
+    }
+  }
+  return index;
+}
+
+/// مقدّمة القائمة المرسومة قبل نصّ الكتلة: «•» للنقاط و«1.» للمرقّمة،
+/// و`null` لبقية الأنواع.
+String? _prefixLabel(WriterDocumentController controller, int blockIndex) {
+  if (blockIndex < 0 || blockIndex >= controller.document.blocks.length) {
+    return null;
+  }
+  switch (controller.document.blocks[blockIndex].kind) {
+    case JoodWriterBlockKind.bullet:
+      return '•';
+    case JoodWriterBlockKind.numbered:
+      return '${_numberedIndex(controller, blockIndex)}.';
+    case JoodWriterBlockKind.heading1:
+    case JoodWriterBlockKind.heading2:
+    case JoodWriterBlockKind.paragraph:
+      return null;
+  }
 }

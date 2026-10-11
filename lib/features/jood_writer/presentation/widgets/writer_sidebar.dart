@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/jood_writer_document.dart';
 import '../writer_document_controller.dart';
+
+/// تسمية وضع تقسيم الصفحات من الترجمة (مع احتياطي عربي).
+String _pageLayoutLabel(BuildContext context, WriterPageLayout layout) {
+  final l10n = context.l10n;
+  switch (layout) {
+    case WriterPageLayout.single:
+      return l10n?.jwPagesSingle ?? 'عادي (صفحة واحدة)';
+    case WriterPageLayout.twoUpPortrait:
+      return l10n?.jwPagesA4ToA5Portrait ?? 'A4 → 2 × A5 طولي (كتيّب)';
+    case WriterPageLayout.twoUpLandscape:
+      return l10n?.jwPagesA4ToA5Landscape ?? 'A4 → 2 × A5 عرضي';
+  }
+}
 
 class WriterSidebar extends StatelessWidget {
   const WriterSidebar({super.key, required this.controller});
@@ -78,7 +92,39 @@ class WriterSidebar extends StatelessWidget {
                   padding: EdgeInsets.zero,
                 ),
               ),
-              const SizedBox(height: AppTheme.space24),
+              const SizedBox(height: AppTheme.space16),
+
+              // الصفحات المتعددة: تقسيم الورقة إلى نصفين (A4 → 2 × A5).
+              Text(
+                context.l10n?.jwPagesMultiple ?? 'الصفحات المتعددة',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+              const SizedBox(height: AppTheme.space4),
+              DropdownButtonFormField<WriterPageLayout>(
+                key: const ValueKey<String>('writer-page-layout'),
+                initialValue: doc.pageLayout,
+                isExpanded: true,
+                decoration: const InputDecoration(isDense: true),
+                items: WriterPageLayout.values
+                    .map(
+                      (l) => DropdownMenuItem(
+                        value: l,
+                        child: Text(
+                          _pageLayoutLabel(context, l),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) {
+                  if (v != null) controller.setPageLayout(v);
+                },
+              ),
+              const SizedBox(height: AppTheme.space8),
+
+              // معاينة مصغّرة: نصفان فوق بعض (طيّ أفقي) أو جنب بعض (طيّ عمودي).
+              _PageLayoutPreview(layout: doc.pageLayout, doc: doc),
+              const SizedBox(height: AppTheme.space16),
 
               // الهوامش
               Text(
@@ -598,6 +644,83 @@ class _MarginField extends StatelessWidget {
           onChanged(val);
         }
       },
+    );
+  }
+}
+
+/// معاينة مصغّرة لتقسيم الصفحة — كما يعرض Word شكل الورقة بعد التقسيم.
+///
+/// الورقة الرمادية هي ورقة الطباعة (A4)، والمستطيلان الفاتحان هما صفحتا
+/// المحرّر: فوق بعض عند الطيّ الأفقي، وجنب بعض عند الطيّ العمودي.
+class _PageLayoutPreview extends StatelessWidget {
+  const _PageLayoutPreview({required this.layout, required this.doc});
+
+  final WriterPageLayout layout;
+  final JoodWriterDocument doc;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final ThemeData theme = Theme.of(context);
+    if (!layout.splitsPage) {
+      return Text(
+        l10n?.jwPagesPreview ?? 'معاينة',
+        style: theme.textTheme.bodySmall,
+      );
+    }
+
+    final ColorScheme scheme = theme.colorScheme;
+    final bool horizontal = layout == WriterPageLayout.twoUpPortrait;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          l10n?.jwPagesPreview ?? 'معاينة',
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppTheme.space4),
+        Container(
+          width: 46,
+          height: 60,
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerHighest,
+            border: Border.all(color: scheme.outline),
+          ),
+          child: horizontal
+              ? const Column(children: <Widget>[_HalfCell(), _HalfCell()])
+              : const Row(children: <Widget>[_HalfCell(), _HalfCell()]),
+        ),
+        const SizedBox(height: AppTheme.space4),
+        Text(
+          '${doc.editorPageSize.widthMm.toStringAsFixed(0)}x'
+          '${doc.editorPageSize.heightMm.toStringAsFixed(0)}mm',
+          style: theme.textTheme.labelSmall,
+        ),
+      ],
+    );
+  }
+}
+
+/// نصف صفحة داخل المعاينة — بعلامة تشير إلى اتجاه النصّ.
+class _HalfCell extends StatelessWidget {
+  const _HalfCell();
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+        ),
+        child: Center(
+          child: Text('ن', style: Theme.of(context).textTheme.labelSmall),
+        ),
+      ),
     );
   }
 }

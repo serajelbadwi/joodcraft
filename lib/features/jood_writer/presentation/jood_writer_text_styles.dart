@@ -68,6 +68,14 @@ abstract final class JoodWriterTextStyles {
       decoration: block.isUnderline ? TextDecoration.underline : null,
       backgroundColor: block.highlightColor,
       height: block.lineSpacing,
+      // **تباعد الحروف مُثبَّت صفر هنا** لأنّ كل نمطٍ يُدمج مع سياقه ويوارث ما
+      // لم يُحدَّد فيه: النصّ الثابت يرث `letterSpacing: 0.25` من `bodyMedium`
+      // عبر `DefaultTextStyle`، ومحرّر الحقول يرث `letterSpacing: 0.5` من
+      // `bodyLarge` عبر `InputDecorator`، والقياس بـ`TextPainter` لا يرث شيئاً.
+      // لولا تثبيته هنا لاحتسب كلٌّ من المسارين عرضاً مختلفاً للحرف الواحد
+      // (13.75 / 14.0 / 13.5 بحجم 13.5) فتختلف حدود التفاف الأسطر بين
+      // المحرّر والنصّ الثابت ويبدو النصّ **متحرّكاً** عند الوقوف عليه.
+      letterSpacing: 0,
     );
   }
 
