@@ -6,6 +6,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../assets/asset_image_cache.dart';
+import '../assets/assets_controller.dart';
+import '../assets/embedded_assets.dart';
+import '../assets/user_asset.dart';
 import '../editor/widgets/element_view.dart';
 import '../gender/arabic_gender.dart';
 import '../models/template_document.dart';
@@ -40,6 +44,12 @@ class OffscreenWidgetRenderer {
     debugPrint('📸 [OffscreenWidgetRenderer] Canvas: ${canvasW}x$canvasH, PixelRatio: $safePixelRatio');
 
     try {
+      // (١) تهيئة الصور قبل بناء الشجرة: تُفكّ وتُرَستر كل صورة الآن فتدخل
+      // `imageCache` قبل أول بناء، فتُرسم من الصفحة الأولى — وهي باردة دائماً
+      // عند أول تصدير — بدل أن تصل الصورة بعد التقاط اللقطة فيخرج
+      // الشعار/التوقيع غائباً.
+      await _prewarmImages(document);
+
       final ui.Image image = await _renderWidgetToImage(
         _DocumentPreview(
           document: document,
@@ -71,7 +81,14 @@ class OffscreenWidgetRenderer {
   }) async {
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
     final PipelineOwner pipelineOwner = PipelineOwner();
-    final BuildOwner buildOwner = BuildOwner(focusManager: FocusManager());
+    // (٢) `onBuildScheduled` يُبلّغنا أن عنصراً اكتسب صورة متأخرة وطلب إعادة
+    // بناء؛ بدونه يبقى العنصر متسخاً إلى الأبد ولا يُعاد رسمه — وهو السبب
+    // الجذري لغياب الصور من «الشهادة الأولى».
+    bool rebuildScheduled = false;
+    final BuildOwner buildOwner = BuildOwner(
+      focusManager: FocusManager(),
+      onBuildScheduled: () => rebuildScheduled = true,
+    );
 
     // Connect to the first available flutter view to trick the engine.
     final ui.FlutterView view = ui.PlatformDispatcher.instance.views.first;
@@ -118,21 +135,32 @@ class OffscreenWidgetRenderer {
       ),
     ).attachToRenderTree(buildOwner);
 
-    buildOwner.buildScope(rootElement);
-    buildOwner.finalizeTree();
+    void rebuildAndFlush() {
+      buildOwner.buildScope(rootElement);
+      buildOwner.finalizeTree();
+      pipelineOwner.flushLayout();
+      pipelineOwner.flushCompositingBits();
+      pipelineOwner.flushPaint();
+    }
 
-    pipelineOwner.flushLayout();
-    pipelineOwner.flushCompositingBits();
-    pipelineOwner.flushPaint();
+    // (٣) البناء الأول ثم حلقة سكون بديلة عن انتظار الـ100ms الأعمى: أي صورة
+    // (أو مكوّن آخر) تصل بعد البناء تستدعي `onBuildScheduled`، فنُعيد البناء
+    // والطلاء فوراً — حتى هدوءٍ تام متتالٍ وبحدٍّ أقصى يمنع التعليق.
+    rebuildAndFlush();
 
-    // Extra wait for frame rendering
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-
-    debugPrint('📸 [OffscreenWidgetRenderer] Waiting for microtasks & frame to settle...');
-
-    pipelineOwner.flushLayout();
-    pipelineOwner.flushCompositingBits();
-    pipelineOwner.flushPaint();
+    const int maxSettleRounds = 125; // ≈ ثانيتان كحدٍّ أقصى
+    const Duration settleStep = Duration(milliseconds: 16);
+    int quietRounds = 0;
+    for (int round = 0; round < maxSettleRounds && quietRounds < 2; round++) {
+      await Future<void>.delayed(settleStep);
+      if (!rebuildScheduled) {
+        quietRounds += 1;
+        continue;
+      }
+      rebuildScheduled = false;
+      quietRounds = 0;
+      rebuildAndFlush();
+    }
 
     debugPrint('📸 [OffscreenWidgetRenderer] Taking snapshot with toImage...');
     if (repaintBoundary.size.width <= 0 || repaintBoundary.size.height <= 0) {
@@ -143,6 +171,110 @@ class OffscreenWidgetRenderer {
     debugPrint('📸 [OffscreenWidgetRenderer] snapshot complete.');
     // Keep reference alive momentarily just in case
     return image;
+  }
+
+  /// تهيئة صور المستند قبل بناء الشجرة: تُحلّ كل صورة الآن في
+  /// `PaintingBinding.imageCache` فتُرسم من أول بناء.
+  ///
+  /// تُطابق قواعد [ElementView] حرفياً (نفس المصدر ونفس الموفّر بنفس المفتاح)
+  /// لكل من [ImageElement] وخانات [SignatureElement] — فلا يخرج التصدير بشعار
+  /// غائب في «الصفحة الأولى»، وهي الباردة دائماً عند أول تصدير.
+  static Future<void> _prewarmImages(TemplateDocument document) async {
+    final List<ImageProvider> providers = _documentImageProviders(document);
+    if (providers.isEmpty) return;
+    try {
+      await Future.wait(providers.map(_resolveFirstFrame))
+          .timeout(const Duration(seconds: 10));
+    } on TimeoutException {
+      // صورة تأخّرت سراً: لا نوقف التصدير — حلقة السكون تلتقطها إن جاءت.
+      debugPrint(
+        '⚠️ [OffscreenWidgetRenderer] Images did not pre-warm within 10s; '
+        'continuing with the settle loop.',
+      );
+    } on Object catch (error) {
+      // أي فشل غير متوقّع في التسخين لا يُسقط التصدير لوجود حلقة السكون.
+      debugPrint('⚠️ [OffscreenWidgetRenderer] Image pre-warm failed: $error');
+    }
+  }
+
+  /// موفّرات صور المستند — نسخة طبق الأصل من منطق عرض [ElementView].
+  ///
+  /// تُجمع كل صورة يمكن أن يبنيها العارض: صور [ImageElement] (أصل حيّ ←
+  /// Base64 مضمّن ← بيانات مضمّنة ← أصل ملفي) وصور خانات [SignatureElement].
+  static List<ImageProvider> _documentImageProviders(
+    TemplateDocument document,
+  ) {
+    final List<ImageProvider> providers = <ImageProvider>[];
+
+    void add(String path, ImageSourceKind kind, String? Function() inline) {
+      if (path.trim().isEmpty) return;
+      try {
+        switch (kind) {
+          case ImageSourceKind.userAsset:
+            final UserAsset? asset = AssetsController.instance.byId(path);
+            if (asset != null) {
+              providers.add(AssetImageCache.instance.providerForAsset(asset));
+            } else {
+              final String? data = inline();
+              if (data != null && data.trim().isNotEmpty) {
+                providers.add(
+                  AssetImageCache.instance.providerForBase64(data),
+                );
+              }
+            }
+          case ImageSourceKind.dataUri:
+            providers.add(AssetImageCache.instance.providerForBase64(path));
+          case ImageSourceKind.asset:
+            providers.add(AssetImage(path));
+          case ImageSourceKind.file:
+            break; // الملف المحلي يُعرض بطاقة تنبيه لا صورة.
+        }
+      } on Object catch (_) {
+        // بيانات تالفة: [ElementView] يعرض بطاقة تنبيه بدل الصورة — لا يجوز
+        // أن يُسقط التصدير، ولا نتسخّن موفّراً غير صالح.
+      }
+    }
+
+    for (final TemplateElement element in document.elements) {
+      if (element is ImageElement) {
+        add(
+          element.path,
+          element.sourceKind,
+          () => inlineImageBase64(element, document),
+        );
+      } else if (element is SignatureElement) {
+        for (final SignatureSlot slot in element.slots) {
+          if (!slot.hasImage) continue;
+          add(
+            slot.imagePath,
+            slot.imageSource,
+            () => inlineSlotBase64(slot, document),
+          );
+        }
+      }
+    }
+    return providers;
+  }
+
+  /// ينتظر أول إطار لصورة — أو فشلها — دون أن يُسقط التصدير.
+  ///
+  /// الصورة تبقى في `imageCache` بعد انتهاء الانتظار، فيجد [Element] الصورة
+  /// محلولة أثناء أول بناء وتُرسم متزامنة بدل أن تصل متأخرة بعد اللقطة.
+  static Future<void> _resolveFirstFrame(ImageProvider provider) {
+    final Completer<void> completer = Completer<void>();
+    final ImageStream stream = provider.resolve(ImageConfiguration.empty);
+    late final ImageStreamListener listener;
+    void settle() {
+      stream.removeListener(listener);
+      if (!completer.isCompleted) completer.complete();
+    }
+
+    listener = ImageStreamListener(
+      (ImageInfo image, bool synchronousCall) => settle(),
+      onError: (Object error, StackTrace? stackTrace) => settle(),
+    );
+    stream.addListener(listener);
+    return completer.future;
   }
 }
 
