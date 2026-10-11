@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../../../core/widgets/app_icon.dart';
+import '../../../../core/widgets/joodcraft_logo.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 /// شاشة «حول JoodCraft» — تعريف كامل بالمنصة: هويتها، نبذة عنها، مميزاتها،
@@ -181,7 +182,9 @@ class AboutScreen extends StatelessWidget {
     return Column(
       key: const ValueKey<String>('about-heading'),
       children: <Widget>[
-        const AppIcon(size: 72),
+        // الشعار الرسمي المحزوم (أيقونة البرنامج) لا الرسم البرمجي: يسقط
+        // تلقائياً إلى [AppIcon] المتجهي إن تعذّر قراءة الأصل فلا تفرغ الهوية.
+        const JoodCraftLogo(size: 120),
         const SizedBox(height: AppTheme.space12),
         Text(
           AppConstants.appName,
