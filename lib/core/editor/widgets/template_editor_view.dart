@@ -1246,20 +1246,22 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
     );
   }
 
-  /// توليد ملف PDF للمستند الحالي ومشاركته/حفظه فوراً من داخل المحرّر.
-  ///
-  /// **بلا أي شرط إيقاف بسبب الأصول**: كل عنصر صورة يُحلّ من مرجعه الحيّ أو من
-  /// نسخته المضمّنة (Base64) واحتياطاً من البايتات المعروضة على اللوحة؛ وإن
-  /// تعذّر ذلك يُرسم بقية المستند بلا شريط خطأ يحجب التصدير. أي فشل حقيقي في
-  /// توليد الملف يظهر كرسالة عربية.
   Future<void> _exportPdf() async {
     if (_isExporting) return;
+    // حوار «نوع التصدير» أولاً: يختار المستخدم المحرّك (نقطي مطابق للمحرّر أو
+    // متجهي نصّه قابل للنسخ) قبل أي توليد، فلا يُصدَّر بالافتراضي سراً.
+    final PdfExportType? type = await showDialog<PdfExportType>(
+      context: context,
+      builder: (BuildContext dialogContext) => const PdfExportTypeDialog(),
+    );
+    if (!mounted || type == null) return; // ألغى المستخدم الحوار.
     setState(() => _isExporting = true);
     try {
       final PdfGeneratorService service = await PdfGeneratorService.create();
       final PdfGenerationReport report = await service.generate(
         document: _controller.document,
         data: _controller.document.sampleData,
+        type: type,
       );
       
       final Uri? selectedPath = await FilePicker.saveFile(

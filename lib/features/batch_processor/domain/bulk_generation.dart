@@ -8,6 +8,7 @@ import '../../../core/errors/app_error_code.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/gender/arabic_gender.dart';
 import '../../../core/models/template_document.dart';
+import '../../../core/pdf/pdf_export_type.dart';
 import '../../../core/services/batch_output_service.dart';
 import '../../../core/services/pdf_generator_service.dart';
 import 'column_mapping.dart';
@@ -331,6 +332,7 @@ class BulkGenerationService {
     PdfDocumentMetadata? metadata,
     BulkOutputMode mode = BulkOutputMode.combined,
     BatchExportFormat format = BatchExportFormat.pdf,
+    PdfExportType exportType = PdfExportType.images,
     String? outputDirectory,
     BatchOutputService? output,
     void Function(int done, int total)? onProgress,
@@ -458,6 +460,7 @@ class BulkGenerationService {
         document: document,
         rows: effectiveRows,
         metadata: metadata,
+        type: exportType,
         onProgress: savesIndividual && onProgress != null
             ? (int done, int total) => onProgress(done, phaseTotal)
             : onProgress,
@@ -549,6 +552,7 @@ class BulkGenerationService {
               document: document,
               data: effectiveRows[i],
               metadata: metadata,
+              type: exportType,
             );
             final BulkRowResult row = generatedRows[i];
             // بصيغة PNG يُحوَّل كل ملف إلى صور صفحاته؛ وبصيغة PDF تبقى كما هي.

@@ -13,6 +13,7 @@ import '../../../../core/gender/arabic_gender.dart';
 import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/models/template_element.dart';
+import '../../../../core/pdf/pdf_export_type.dart';
 import '../../../../core/services/batch_output_backend.dart';
 import '../../../../core/services/batch_output_service.dart';
 import '../../../../core/templates/local_template_store.dart';
@@ -158,6 +159,9 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
   /// مسار الدعوات لا نخزّن صيغته هنا: له [InvitationsController.format]
   /// بخياراته الثلاثة (‏PNG / PDF / الاثنان معاً) فلا نكرّر مصدر حقّ.
   BatchExportFormat _exportFormat = BatchExportFormat.pdf;
+  // محرّك رسم PDF في التوليد الجماعي: نقطي (افتراضي، مطابق للمحرّر) أو متجهي
+  // (نصّه قابل للنسخ). لا يظهر إلا بصيغة PDF.
+  PdfExportType _pdfExportType = PdfExportType.images;
 
   /// محرّك الدعوات المضمَّن — يُنشأ أول مرة يختار فيها المستخدم «دعوة»
   /// ويُبقى أثناء تبديل الأنواع كي لا تضيع اختياراته (ملف الأسماء، القالب،
@@ -591,6 +595,7 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       outputDirectory: directory,
       mode: options.mode,
       format: _exportFormat,
+      exportType: _pdfExportType,
       output: _output,
     );
     if (!mounted) return;
@@ -848,8 +853,18 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
           // بخياراتها الثلاثة الأصلية فلا نُجرّدها إلى خيارين.
           if (invitationsMode)
             _invitationFormatButton()
-          else
+          else ...<Widget>[
             _documentFormatButton(),
+            // محرّك الرسم لا يظهر إلا مع صيغة PDF: بصيغة PNG تُحوَّل النتيجة
+            // إلى صور مهما كان المحرّك، فلا معنى لخيار الفيكتور هناك.
+            if (_exportFormat == BatchExportFormat.pdf) ...<Widget>[
+              const SizedBox(width: AppTheme.space16),
+              _barLabel(
+                context.l10n?.bpPdfEngineLabel ?? 'محرّك الرسم',
+              ),
+              _pdfEngineButton(),
+            ],
+          ],
         ],
       ),
     );
@@ -884,6 +899,34 @@ class _BatchProcessorScreenState extends State<BatchProcessorScreen> {
       onSelectionChanged: (Set<BatchExportFormat> selection) {
         if (selection.isEmpty) return;
         setState(() => _exportFormat = selection.first);
+      },
+    );
+  }
+
+  /// مفتاح محرّك الرسم في مسار الشهادات/العقود بصيغة PDF: ‏«صور» (النقطي
+  /// المطابق للمحرّر) أو «فيكتور» (نصّه حروف مضمّنة قابلة للنسخ والبحث).
+  Widget _pdfEngineButton() {
+    return SegmentedButton<PdfExportType>(
+      showSelectedIcon: false,
+      style: const ButtonStyle(visualDensity: VisualDensity.compact),
+      segments: <ButtonSegment<PdfExportType>>[
+        ButtonSegment<PdfExportType>(
+          value: PdfExportType.images,
+          label: Text(
+            context.l10n?.pdfExportTypeImages ?? 'صور',
+          ),
+        ),
+        ButtonSegment<PdfExportType>(
+          value: PdfExportType.vector,
+          label: Text(
+            context.l10n?.pdfExportTypeVector ?? 'فيكتور',
+          ),
+        ),
+      ],
+      selected: <PdfExportType>{_pdfExportType},
+      onSelectionChanged: (Set<PdfExportType> selection) {
+        if (selection.isEmpty) return;
+        setState(() => _pdfExportType = selection.first);
       },
     );
   }

@@ -8,6 +8,7 @@ import '../../../../core/errors/app_exception.dart';
 import '../../../../core/gender/arabic_gender.dart';
 import '../../../../core/models/template_document.dart';
 import '../../../../core/models/template_element.dart';
+import '../../../../core/pdf/pdf_export_type.dart';
 import '../../../../core/services/batch_output_service.dart';
 import '../../../../core/services/pdf_generator_service.dart';
 import '../../data/sheet_parse_isolate.dart';
@@ -801,6 +802,7 @@ class BatchProcessorController extends ChangeNotifier {
     String? outputDirectory,
     BulkOutputMode mode = BulkOutputMode.combined,
     BatchExportFormat format = BatchExportFormat.pdf,
+    PdfExportType exportType = PdfExportType.images,
     BatchOutputService? output,
   }) async {
     final TemplateDocument? document = _document;
@@ -837,6 +839,7 @@ class BatchProcessorController extends ChangeNotifier {
         fileName: outputFileName,
         mode: mode,
         format: format,
+        exportType: exportType,
         outputDirectory: outputDirectory,
         output: output,
         metadata: PdfDocumentMetadata(
