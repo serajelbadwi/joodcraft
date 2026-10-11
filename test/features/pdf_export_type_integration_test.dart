@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/models/template_document.dart';
-import 'package:joodcraft/core/models/template_element.dart';
 import 'package:joodcraft/core/pdf/pdf_export_type.dart';
 import 'package:joodcraft/core/services/pdf_generator_service.dart';
 import 'package:joodcraft/features/batch_processor/domain/bulk_generation.dart';
