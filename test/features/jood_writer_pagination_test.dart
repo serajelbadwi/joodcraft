@@ -117,6 +117,7 @@ void main() {
           contentHeight: 297 * WriterCanvas.pxPerMm - 50,
           measurer: TextPainterBlockMeasurer(
             contentWidth: 210 * WriterCanvas.pxPerMm - 50,
+            textScaler: TextScaler.noScaling,
           ),
         );
         expect(pages.length, 2);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/jood_writer/domain/jood_writer_document.dart';
 import 'package:joodcraft/features/jood_writer/presentation/screens/jood_writer_screen.dart';
+import 'package:joodcraft/features/jood_writer/presentation/widgets/writer_sidebar.dart';
 
 /// اختبارات وِدجت لشاشة «جود كاتب» بمظهرها الجديد: الشريط العلوي، اللوحة الجانبية، ومساحة العمل.
 void main() {
@@ -17,6 +18,35 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// يُمرّر اللوحة الجانبية حتى يظهر [finder] ثم يتحقّق من وجوده.
+  ///
+  /// اللوحة `ListView` طويل، و`ListView` لا يبني الأقسام الواقعة تحت الطيّة
+  /// إلا بقدر `cacheExtent` — فالبحث المباشر عن قسم سفلي يفشل وهو موجود.
+  /// التمرير يجعل القسم يُبنى فعلاً فيصير البحث ذا معنى.
+  Future<void> expectAfterScroll(
+    WidgetTester tester,
+    Finder finder, {
+    Finder? scrollable,
+  }) async {
+    await tester.scrollUntilVisible(
+      finder,
+      400,
+      // نطاق التمرير هو اللوحة الجانبية وحدها: في الشاشة أكثر من Scrollable
+      // (مساحة العمل نفسها قابلة للتمرير)، فاختيار الأول قد يكون خطأً.
+      scrollable:
+          scrollable ??
+          find
+              .descendant(
+                of: find.byType(WriterSidebar),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+      maxScrolls: 60,
+    );
+    await tester.pumpAndSettle();
+    expect(finder, findsOneWidget);
+  }
+
   testWidgets('يعرض الشريط العلوي، اللوحة الجانبية، ومساحة العمل الابتدائية', (
     WidgetTester tester,
   ) async {
@@ -28,7 +58,8 @@ void main() {
     // التحقق من وجود إعدادات في اللوحة الجانبية (Sidebar)
     expect(find.text('إعدادات الصفحة'), findsOneWidget);
     expect(find.text('حجم الورقة'), findsOneWidget);
-    expect(find.text('الهوامش (مم)'), findsOneWidget);
+    // «الهوامش» أسفل اللوحة: يُمرَّر إليها قبل البحث (ListView لا يبنيها).
+    await expectAfterScroll(tester, find.text('الهوامش (مم)'));
 
     // المستند الابتدائي فارغ يحوي كتلة واحدة
     expect(
@@ -163,12 +194,12 @@ void main() {
     ) async {
       await pumpScreen(tester);
 
-      // قسم التخصيص ظاهر في اللوحة الجانبية.
-      expect(find.text('أرقام الصفحات'), findsOneWidget);
-      expect(find.text('النمط'), findsOneWidget);
-      expect(find.text('المحاذاة'), findsOneWidget);
-      expect(find.text('الحجم'), findsOneWidget);
-      expect(find.text('اللون'), findsOneWidget);
+      // قسم التخصيص في اللوحة الجانبية — يُمرَّر إليه قبل البحث.
+      await expectAfterScroll(tester, find.text('أرقام الصفحات'));
+      await expectAfterScroll(tester, find.text('النمط'));
+      await expectAfterScroll(tester, find.text('المحاذاة'));
+      await expectAfterScroll(tester, find.text('الحجم'));
+      await expectAfterScroll(tester, find.text('اللون'));
 
       // تغيير النمط من «صفحة X من Y» إلى «X فقط».
       final Finder patternDropdown = find.byType(

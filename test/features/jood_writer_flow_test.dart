@@ -329,6 +329,7 @@ void main() {
       const String sample = 'كلمات كثيره جدا لعرض السطر الاول وباقي الاقسام';
       final TextPainterBlockMeasurer measurer = TextPainterBlockMeasurer(
         contentWidth: 200,
+        textScaler: TextScaler.noScaling,
       );
 
       final List<String> plain = measurer.linesOf(
@@ -350,6 +351,7 @@ void main() {
       const String sample = 'كلمات كثيره جدا لعرض السطر الاول وباقي الاقسام';
       final TextPainterBlockMeasurer measurer = TextPainterBlockMeasurer(
         contentWidth: 200,
+        textScaler: TextScaler.noScaling,
       );
 
       final List<String> plain = measurer.linesOf(

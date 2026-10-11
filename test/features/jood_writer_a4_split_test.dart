@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/print/imposition_calculator.dart';
 import 'package:joodcraft/core/print/writer_imposition.dart';
@@ -99,6 +100,7 @@ void main() {
 
       final TextPainterBlockMeasurer measurer = TextPainterBlockMeasurer(
         contentWidth: (a5Portrait.widthMm - 40) * pxPerMm,
+        textScaler: TextScaler.noScaling,
       );
 
       final List<JoodPage> pages = FlowPaginator.paginate(
