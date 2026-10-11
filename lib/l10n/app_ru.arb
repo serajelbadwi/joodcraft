@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "ru",
   "editorDone": "Готово",
   "appTagline": "Создавайте официальные сертификаты и договоры офлайн",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "Вектор",
   "pdfExportTypeVectorDesc": "Текст можно копировать — файл меньше",
   "pdfExportTypeVectorCopyable": "Текст можно копировать и искать",
+"bpPdfEngineLabel": "Движок рендера",
   "pdfExportTypeVectorBestFor": "Идеально для профессиональной печати",
-  "pdfExportTypeComingSoon": "Скоро",
-  "pdfExportTypeComingSoonMessage": "Векторный экспорт в разработке — скоро будет доступен.",
   "invCategoryTitle": "Приглашения и торжества",
   "invCategoryRamadan": "Рамадан",
   "invCategoryEid": "Ид",

@@ -2967,14 +2967,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get pdfExportTypeVectorCopyable => 'Metin kopyalanıp aranabilir';
 
   @override
+  String get bpPdfEngineLabel => 'Çizim motoru';
+
+  @override
   String get pdfExportTypeVectorBestFor => 'Profesyonel baskı için ideal';
-
-  @override
-  String get pdfExportTypeComingSoon => 'Yakında';
-
-  @override
-  String get pdfExportTypeComingSoonMessage =>
-      'Vektör dışa aktarma geliştirilme aşamasında — yakında.';
 
   @override
   String get invCategoryTitle => 'Davetler ve özel günler';

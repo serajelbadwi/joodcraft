@@ -2971,14 +2971,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get pdfExportTypeVectorCopyable => 'Teks dapat disalin dan dicari';
 
   @override
+  String get bpPdfEngineLabel => 'Mesin gambar';
+
+  @override
   String get pdfExportTypeVectorBestFor => 'Ideal untuk pencetakan profesional';
-
-  @override
-  String get pdfExportTypeComingSoon => 'Segera hadir';
-
-  @override
-  String get pdfExportTypeComingSoonMessage =>
-      'Ekspor vektor masih dikembangkan — segera hadir.';
 
   @override
   String get invCategoryTitle => 'Undangan dan acara';

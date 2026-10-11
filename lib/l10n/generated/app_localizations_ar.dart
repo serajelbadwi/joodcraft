@@ -2949,14 +2949,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pdfExportTypeVectorCopyable => 'نص قابل للنسخ والبحث';
 
   @override
+  String get bpPdfEngineLabel => 'محرّك الرسم';
+
+  @override
   String get pdfExportTypeVectorBestFor => 'مثالي للطباعة الاحترافية';
-
-  @override
-  String get pdfExportTypeComingSoon => 'قريباً';
-
-  @override
-  String get pdfExportTypeComingSoonMessage =>
-      'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.';
 
   @override
   String get invCategoryTitle => 'دعوات ومناسبات';

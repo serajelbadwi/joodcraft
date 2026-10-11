@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "en",
   "editorDone": "Done",
   "appTagline": "Generate official certificates and contracts offline",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "Vector",
   "pdfExportTypeVectorDesc": "Copyable text — smaller file",
   "pdfExportTypeVectorCopyable": "Text you can copy and search",
+"bpPdfEngineLabel": "Drawing engine",
   "pdfExportTypeVectorBestFor": "Ideal for professional printing",
-  "pdfExportTypeComingSoon": "Coming soon",
-  "pdfExportTypeComingSoonMessage": "Vector export is still in development — coming soon.",
   "invCategoryTitle": "Invitations & occasions",
   "invCategoryRamadan": "Ramadan",
   "invCategoryEid": "Eid",

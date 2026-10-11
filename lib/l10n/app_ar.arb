@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "ar",
   "editorDone": "تم",
   "appTagline": "منصة توليد الشهادات والعقود الرسمية",
@@ -1313,9 +1313,8 @@
   "pdfExportTypeVector": "فيكتور",
   "pdfExportTypeVectorDesc": "نص قابل للنسخ — حجم أصغر",
   "pdfExportTypeVectorCopyable": "نص قابل للنسخ والبحث",
+"bpPdfEngineLabel": "محرّك الرسم",
   "pdfExportTypeVectorBestFor": "مثالي للطباعة الاحترافية",
-  "pdfExportTypeComingSoon": "قريباً",
-  "pdfExportTypeComingSoonMessage": "تصدير الفيكتور قيد التطوير — سيتوفر قريباً.",
   "invCategoryTitle": "دعوات ومناسبات",
   "invCategoryRamadan": "رمضان",
   "invCategoryEid": "عيد",

@@ -2974,15 +2974,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pdfExportTypeVectorCopyable => 'Текст можно копировать и искать';
 
   @override
+  String get bpPdfEngineLabel => 'Движок рендера';
+
+  @override
   String get pdfExportTypeVectorBestFor =>
       'Идеально для профессиональной печати';
-
-  @override
-  String get pdfExportTypeComingSoon => 'Скоро';
-
-  @override
-  String get pdfExportTypeComingSoonMessage =>
-      'Векторный экспорт в разработке — скоро будет доступен.';
 
   @override
   String get invCategoryTitle => 'Приглашения и торжества';

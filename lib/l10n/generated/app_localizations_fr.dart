@@ -2994,15 +2994,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pdfExportTypeVectorCopyable => 'Texte copiable et recherchable';
 
   @override
+  String get bpPdfEngineLabel => 'Moteur de rendu';
+
+  @override
   String get pdfExportTypeVectorBestFor =>
       'Idéal pour l\'impression professionnelle';
-
-  @override
-  String get pdfExportTypeComingSoon => 'Bientôt disponible';
-
-  @override
-  String get pdfExportTypeComingSoonMessage =>
-      'L\'export vectoriel est en cours de développement — bientôt disponible.';
 
   @override
   String get invCategoryTitle => 'Invitations et occasions';

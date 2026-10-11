@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "tr",
   "editorDone": "Tamam",
   "appTagline": "Resmî sertifika ve sözleşmeleri çevrimdışı oluşturun",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "Vektör",
   "pdfExportTypeVectorDesc": "Kopyalanabilir metin — daha küçük dosya",
   "pdfExportTypeVectorCopyable": "Metin kopyalanıp aranabilir",
+"bpPdfEngineLabel": "Çizim motoru",
   "pdfExportTypeVectorBestFor": "Profesyonel baskı için ideal",
-  "pdfExportTypeComingSoon": "Yakında",
-  "pdfExportTypeComingSoonMessage": "Vektör dışa aktarma geliştirilme aşamasında — yakında.",
   "invCategoryTitle": "Davetler ve özel günler",
   "invCategoryRamadan": "Ramazan",
   "invCategoryEid": "Bayram",

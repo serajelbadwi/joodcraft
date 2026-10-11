@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "fr",
   "editorDone": "Terminé",
   "appTagline": "Générez des certificats et des contrats officiels hors ligne",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "Vecteur",
   "pdfExportTypeVectorDesc": "Texte copiable — fichier plus léger",
   "pdfExportTypeVectorCopyable": "Texte copiable et recherchable",
+"bpPdfEngineLabel": "Moteur de rendu",
   "pdfExportTypeVectorBestFor": "Idéal pour l'impression professionnelle",
-  "pdfExportTypeComingSoon": "Bientôt disponible",
-  "pdfExportTypeComingSoonMessage": "L'export vectoriel est en cours de développement — bientôt disponible.",
   "invCategoryTitle": "Invitations et occasions",
   "invCategoryRamadan": "Ramadan",
   "invCategoryEid": "Aïd",

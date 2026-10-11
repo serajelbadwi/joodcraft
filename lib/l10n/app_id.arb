@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "id",
   "editorDone": "Selesai",
   "appTagline": "Buat sertifikat dan kontrak resmi secara offline",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "Vektor",
   "pdfExportTypeVectorDesc": "Teks dapat disalin — ukuran lebih kecil",
   "pdfExportTypeVectorCopyable": "Teks dapat disalin dan dicari",
+"bpPdfEngineLabel": "Mesin gambar",
   "pdfExportTypeVectorBestFor": "Ideal untuk pencetakan profesional",
-  "pdfExportTypeComingSoon": "Segera hadir",
-  "pdfExportTypeComingSoonMessage": "Ekspor vektor masih dikembangkan — segera hadir.",
   "invCategoryTitle": "Undangan dan acara",
   "invCategoryRamadan": "Ramadan",
   "invCategoryEid": "Idulfitri",

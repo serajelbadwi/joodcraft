@@ -22,24 +22,24 @@ import 'jood_writer_text_styles.dart';
 /// | `TextScaler` | إلزامي تمريره الطبقة الرسومية من `MediaQuery.textScalerOf` |
 /// | `textDirection` | `TextDirection.rtl` — نفس ما تمرّره كل العارضات |
 /// | `textAlign` | [JoodWriterTextStyles.textAlign] |
-/// | `maxWidth` | [_lineWidthOf] — أضيق العرضين، وهو ما يلتفّ عنده المحرّر لكل الأسطر |
+/// | `maxWidth` | [widthOfFirstLine] للسطر الأول ثم [widthOfRemainingLines] لبقية الأسطر — نفس عرضَي المحرّر |
 ///
 /// ## ضمان عدم التجاوز
 ///
 /// العارض يرسم **كل سطر مقيساً مسبقاً** بـ`softWrap: false` و`overflow: clip`،
-/// فأي سطر يتجاوز عرضه المتاح **يُقطع بلا رجعة**. لذلك يُنجَز التخطيط هنا بأضيق
-/// عرض يمنحه العارض لأي سطر — وهو [widthOfFirstLine] (إزاحة السطر الأول ومقدمة
-/// القائمة تُضافان إلى إزاحة الفقرة العامة نفسها، ولا تنتقص من أي عرض). فمحصّلة
-/// الطرح هي **الحدّ الأدنى** المضمون:
+/// فأي سطر يتجاوز عرضه المتاح **يُقطع بلا رجعة**. لذلك يُقاس كل سطر عند **العرض
+/// الذي يمنحه له عارضه هو** — لا عند عرضٍ واحد أصغر — فلا يزيد سطرٌ عن حصّته
+/// ولا ينقص عندها:
 ///
 /// ```
-/// widthOfFirstLine      = contentWidth − indent − firstLineIndent − prefix
-/// widthOfRemainingLines = contentWidth − indent − prefix
+/// السطر الأول: widthOfFirstLine      = contentWidth − indent − firstLineIndent − prefix
+/// بقيّة الأسطر: widthOfRemainingLines = contentWidth − indent − prefix
 /// ```
 ///
-/// وبما أن `firstLineIndent ≥ 0` و`prefix ≥ 0`، فـ`widthOfFirstLine` أضيق دائماً
-/// (أو تساويه). التخطيط عندها يضمن أن **كل سطر مرسوم** يبقى داخل عرضه — بلا قطع
-/// وبلا فيض — لأن المرسوم يحصل على قدر من العرض لا يقلّ عمّا قِيس.
+/// وهذان هما بالضبط عرضا الالتفاف في محرّر الكتلة: `WidgetSpan` إزاحة السطر
+/// الأول يقع في تدفّق النصّ فيخصم من **سطره الأول فقط** (قِيس: سطرٌ ثانٍ يلتفّ
+/// عند العرض الكامل لا الضيّق)، و`RenderEditable` يخصم هامش المؤشّر 3px من
+/// حقله كاملاً فيعوّضه المحرّر بتوسيعه — فيصبح عرض الحقل = عرض المحتوى.
 class TextPainterBlockMeasurer implements BlockMeasurer {
   TextPainterBlockMeasurer({
     required this.contentWidth,
@@ -103,20 +103,18 @@ class TextPainterBlockMeasurer implements BlockMeasurer {
     return math.max(contentWidth - used, 8.0);
   }
 
-  /// العرض الذي يُنجَز به التخطيط **لكل الأسطر**: أضيق عرضٍ يمنحه العارض
-  /// لأي سطر.
-  ///
-  /// لماذا الأضيق لكل السطور لا الأضيق للأول والواسع لِما بعده؟ لأنّ
-  /// محرّر الكتلة يفعل الشيء نفسه: `WidgetSpan` إزاحة السطر الأول يقع في
-  /// تدفّق النصّ فيخصم عرضه من **كل** سطر لا من أوله فحسب (قِيس رؤوساً في
-  /// `RenderEditable`: السطر الثاني ضيّقٌ بمقدار الإزاحة بالضبط). لو قيس
-  /// النصّ الثابت عند عرضين لالتفّ االتفافاً آخر من الالتفاف المحرّري فتبدّل
-  /// شكل النصّ عند الوقوف عليه وعند مغادرته.
-  ///
-  /// والعرضان متساويان في الغالبة (`firstLineIndent == 0` بلا مقدّمة قائمة).
-  /// وكل سطرٍ مرسوم يُمنح عرضاً لا يقلّ عمّا قِيس عنده، فلا يُقطع ولا يفيض.
-  double _lineWidthOf(JoodWriterBlock block) =>
-      math.min(widthOfFirstLine(block), widthOfRemainingLines(block));
+  /// موضع نهاية السطر الأول في [text] كما يرسمه [painter] عند عرضه الضيّق،
+  /// **مُقلّداً منطق [_BlockLayout.of] نفسه**: مدى `getLineBoundary` الأول غير
+  /// الصفري. يُعيد `0` حين لا يُقسم النصّ (يبدأ بفاصل سطر، أو المدى صفري) —
+  /// فيقاس النصّ كاملاً عند العرض الضيّق كما كان يُقاس قبل ازدواج القياس.
+  static int _firstLineEnd(String text, TextPainter painter) {
+    if (text.codeUnitAt(0) == 0x0A) return 0;
+    final TextRange range = painter.getLineBoundary(
+      const TextPosition(offset: 0),
+    );
+    final int end = range.end.clamp(0, text.length);
+    return end > 0 ? end : 0;
+  }
 
   // ───────────────────────────────────────────────────────────────────────────
   //  تخزين القياس: لا `TextPainter.layout` إلا عند اختلاف التخطيط فعلاً
@@ -187,29 +185,73 @@ class TextPainterBlockMeasurer implements BlockMeasurer {
   /// ينفّذ القياس فعلاً: لوحة واحدة لكلّ من `linesOf` و`lineHeightOf`
   /// (كان كلٌّ منهما يبني لوحته ⇒ ضعف العمل في كل تمريرة)، ثم تُحرَّر
   /// مواردها الأصلية بعد استخراج النتيجة فلا تتسرّب مع كل ضغطة حرف.
-  /// ينفّذ القياس فعلاً: لوحة واحدة لكلّ من `linesOf` و`lineHeightOf`
-  /// (كان كلٌّ منهما يبني لوحته ⇒ ضعف العمل في كل تمريرة)، ثم تُحرَّر
-  /// مواردها الأصلية بعد استخراج النتيجة فلا تتسرّب مع كل ضغطة حرف.
   ///
-  /// **عند أضيق عرض** لا عند عرضين: محرّر الكتلة يلتفّ عند
-  /// [widthOfFirstLine] لكل أسطره — إزاحة السطر الأول `WidgetSpan` في تدفّق
-  /// النصّ تحتلّ عرضها من **كل** سطر لا من أوله فحسب (قِيس رؤوساً في
-  /// `RenderEditable`: سطرٌ ثانٍ ضيّقٌ بمقدار الإزاحة تماماً) — فالقياس عند
-  /// الأضيق هو وحده الذي يُطابق حدود أسطر المحرّر حرفاً حرفاً، ويمنع
-  /// تكافّاً ثانياً في النصّ الثابت عند الوقوف عليه.
+  /// **قياسٌ على مرحلتين** حين توجد إزاحة لأول سطر: السطر الأول عند
+  /// [widthOfFirstLine] ثم بقيّة الأسطر عند [widthOfRemainingLines]، هما
+  /// بالضبط عرضَا الالتفاف في محرّر الكتلة (إزاحة السطر الأول `WidgetSpan`
+  /// تخصّ سطره وحده — قِيس: السطر الثاني من كتلة مزاحة يلتفّ عند العرض
+  /// الكامل لا الضيّق). القياس بأضيق العرض **للأسطر كلّها** كان يجعل النصّ
+  /// الثابت يلتفّ التفافاً غير محرّري فيتغيّر شكل الكتلة كلّها عند الوقوف
+  /// عليها؛ والقياس بالعرضين يمنع ذلك حرفياً.
   _BlockLayout _measure(JoodWriterBlock block) {
-    final TextPainter painter = _painterOf(
-      block,
-      block.text.isEmpty ? ' ' : block.text,
-    )..layout(maxWidth: _lineWidthOf(block));
+    final String text = block.text;
+    if (text.isEmpty) {
+      final TextPainter blank = _painterOf(block, ' ')
+        ..layout(maxWidth: widthOfRemainingLines(block));
+      final double blankLineHeight = blank.preferredLineHeight;
+      blank.dispose();
+      return _BlockLayout.blank(blankLineHeight);
+    }
 
-    // يُقرأ قبل الإتلاف: `preferredLineHeight` خاصية محسوبة من الفقرة.
-    final double lineHeight = painter.preferredLineHeight;
-    final _BlockLayout layout = block.text.isEmpty
-        ? _BlockLayout.blank(lineHeight)
-        : _BlockLayout.of(painter, block.text, lineHeight);
-    painter.dispose();
-    return layout;
+    final double restWidth = widthOfRemainingLines(block);
+    final double firstWidth = widthOfFirstLine(block);
+
+    // الحال الغالبة: بلا إزاحة لأول سطر ⇒ لوحة واحدة عند العرض الكامل.
+    if (firstWidth >= restWidth) {
+      final TextPainter painter = _painterOf(block, text)
+        ..layout(maxWidth: restWidth);
+      final double lineHeight = painter.preferredLineHeight;
+      final _BlockLayout layout = _BlockLayout.of(painter, text, lineHeight);
+      painter.dispose();
+      return layout;
+    }
+
+    final TextPainter head = _painterOf(block, text)
+      ..layout(maxWidth: firstWidth);
+    final double lineHeight = head.preferredLineHeight;
+    final int split = _firstLineEnd(text, head);
+    if (split <= 0 || split >= text.length) {
+      // سطرٌ واحد لا يلتفّ عند العرض الضيّق (أو لا يُقسم): يكفي تخطيطه.
+      final _BlockLayout layout = _BlockLayout.of(head, text, lineHeight);
+      head.dispose();
+      return layout;
+    }
+
+    // السطر الأول: النصّ حتى نهاية المدى، بطرح الفاصل الصريح إن كان المدى
+    // يشمله — نفس ما تفعله [_BlockLayout.of] مع كل سطر.
+    String firstLine = text.substring(0, split);
+    if (firstLine.isNotEmpty &&
+        firstLine.codeUnitAt(firstLine.length - 1) == 0x0A) {
+      firstLine = firstLine.substring(0, firstLine.length - 1);
+    }
+    head.dispose();
+
+    // بقيّة الأسطر عند عرضها الكامل. فاصل السطر المتروك في أول النصّ المتبقّي
+    // يتخطّاه [_BlockLayout.of] تلقائياً.
+    final String tail = text.substring(split);
+    final TextPainter rest = _painterOf(block, tail)
+      ..layout(maxWidth: restWidth);
+    final List<String> restLines = _BlockLayout.of(
+      rest,
+      tail,
+      lineHeight,
+    ).lines;
+    rest.dispose();
+
+    return _BlockLayout(
+      List<String>.unmodifiable(<String>[firstLine, ...restLines]),
+      lineHeight,
+    );
   }
 
   /// لوحة قياس لنصّ [text] بنفس إعدادات [_measure] — بلا أي تجاوز في أسرة

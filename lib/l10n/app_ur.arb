@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "ur",
   "editorDone": "مکمل",
   "appTagline": "سرکاری سرٹیفکیٹ اور معاہدے آف لائن بنائیں",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "ویکٹر",
   "pdfExportTypeVectorDesc": "قابلِ کاپی متن — چھوٹی فائل",
   "pdfExportTypeVectorCopyable": "متن کاپی اور تلاش ہو سکتا ہے",
+"bpPdfEngineLabel": "ڈرائنگ انجن",
   "pdfExportTypeVectorBestFor": "پروفیشنل پرنٹنگ کے لیے مثالی",
-  "pdfExportTypeComingSoon": "جلد آ رہا ہے",
-  "pdfExportTypeComingSoonMessage": "ویکٹر ایکسپورٹ پر کام جاری ہے — جلدی آ رہا ہے۔",
   "invCategoryTitle": "دعوتیں اور تقریبے",
   "invCategoryRamadan": "رمضان",
   "invCategoryEid": "عید",

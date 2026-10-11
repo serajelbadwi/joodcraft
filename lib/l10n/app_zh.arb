@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "zh",
   "editorDone": "完成",
   "appTagline": "离线生成官方证书和合同",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "矢量",
   "pdfExportTypeVectorDesc": "可复制文字 — 文件更小",
   "pdfExportTypeVectorCopyable": "可复制和搜索文字",
+"bpPdfEngineLabel": "绘图引擎",
   "pdfExportTypeVectorBestFor": "专业印刷的理想选择",
-  "pdfExportTypeComingSoon": "即将推出",
-  "pdfExportTypeComingSoonMessage": "矢量导出正在开发中 — 即将推出。",
   "invCategoryTitle": "邀请函与请帖",
   "invCategoryRamadan": "斋月",
   "invCategoryEid": "开斋节",

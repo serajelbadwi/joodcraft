@@ -2881,13 +2881,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pdfExportTypeVectorCopyable => '可复制和搜索文字';
 
   @override
+  String get bpPdfEngineLabel => '绘图引擎';
+
+  @override
   String get pdfExportTypeVectorBestFor => '专业印刷的理想选择';
-
-  @override
-  String get pdfExportTypeComingSoon => '即将推出';
-
-  @override
-  String get pdfExportTypeComingSoonMessage => '矢量导出正在开发中 — 即将推出。';
 
   @override
   String get invCategoryTitle => '邀请函与请帖';

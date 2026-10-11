@@ -5520,23 +5520,17 @@ abstract class AppLocalizations {
   /// **'نص قابل للنسخ والبحث'**
   String get pdfExportTypeVectorCopyable;
 
+  /// No description provided for @bpPdfEngineLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'محرّك الرسم'**
+  String get bpPdfEngineLabel;
+
   /// No description provided for @pdfExportTypeVectorBestFor.
   ///
   /// In ar, this message translates to:
   /// **'مثالي للطباعة الاحترافية'**
   String get pdfExportTypeVectorBestFor;
-
-  /// No description provided for @pdfExportTypeComingSoon.
-  ///
-  /// In ar, this message translates to:
-  /// **'قريباً'**
-  String get pdfExportTypeComingSoon;
-
-  /// No description provided for @pdfExportTypeComingSoonMessage.
-  ///
-  /// In ar, this message translates to:
-  /// **'تصدير الفيكتور قيد التطوير — سيتوفر قريباً.'**
-  String get pdfExportTypeComingSoonMessage;
 
   /// No description provided for @invCategoryTitle.
   ///

@@ -1,4 +1,4 @@
-{
+﻿{
   "@@locale": "de",
   "editorDone": "Fertig",
   "appTagline": "Offizielle Zertifikate und Verträge offline erstellen",
@@ -901,9 +901,8 @@
   "pdfExportTypeVector": "Vektor",
   "pdfExportTypeVectorDesc": "Kopierbarer Text — kleinere Datei",
   "pdfExportTypeVectorCopyable": "Text lässt sich kopieren und durchsuchen",
+"bpPdfEngineLabel": "Zeichen-Engine",
   "pdfExportTypeVectorBestFor": "Ideal für den professionellen Druck",
-  "pdfExportTypeComingSoon": "Bald verfügbar",
-  "pdfExportTypeComingSoonMessage": "Der Vektor-Export ist in Entwicklung — bald verfügbar.",
   "invCategoryTitle": "Einladungen und Anlässe",
   "invCategoryRamadan": "Ramadan",
   "invCategoryEid": "Eid",
