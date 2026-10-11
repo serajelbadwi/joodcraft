@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../domain/flow_paginator.dart';
 import '../domain/jood_writer_block.dart';
 import 'jood_writer_text_styles.dart';
@@ -18,7 +19,7 @@ import 'jood_writer_text_styles.dart';
 ///
 /// | المعامل | المصدر المشترك |
 /// |---------|----------------|
-/// | `TextStyle` | [JoodWriterTextStyles.of] — مصدر واحد، بلا أي تجاوز في القياس |
+/// | `TextStyle` | [JoodWriterTextStyles.of] — مصدر واحد يحمل خطّ الرسم صريحاً (Cairo) |
 /// | `TextScaler` | إلزامي تمريره الطبقة الرسومية من `MediaQuery.textScalerOf` |
 /// | `textDirection` | `TextDirection.rtl` — نفس ما تمرّره كل العارضات |
 /// | `textAlign` | [JoodWriterTextStyles.textAlign] |
@@ -32,20 +33,27 @@ import 'jood_writer_text_styles.dart';
 /// ولا ينقص عندها:
 ///
 /// ```
-/// السطر الأول: widthOfFirstLine      = contentWidth − indent − firstLineIndent − prefix
-/// بقيّة الأسطر: widthOfRemainingLines = contentWidth − indent − prefix
+/// ت-text = contentWidth − caretMargin  (هامش المؤشّر 3px)
+/// السطر الأول: widthOfFirstLine      = ت-text − indent − firstLineIndent − prefix
+/// بقيّة الأسطر: widthOfRemainingLines = ت-text − indent − prefix
 /// ```
 ///
 /// وهذان هما بالضبط عرضا الالتفاف في محرّر الكتلة: `WidgetSpan` إزاحة السطر
 /// الأول يقع في تدفّق النصّ فيخصم من **سطره الأول فقط** (قِيس: سطرٌ ثانٍ يلتفّ
 /// عند العرض الكامل لا الضيّق)، و`RenderEditable` يخصم هامش المؤشّر 3px من
-/// حقله كاملاً فيعوّضه المحرّر بتوسيعه — فيصبح عرض الحقل = عرض المحتوى.
+/// كل سطرٍ يرسمه — فنخصمها نحن من القياس **ومن مربّع كل سطر في الرسم الثابت**
+/// بدل أن نمدّ حقل المحرّر (مدّه ينهار ارتفاعه: `RenderStack` لا يرث الارتفاع
+/// من أبناءه المُحدَّدين، فتؤول السلسلة إلى `IntrinsicHeight` بارتفاع صفر).
+/// بذلك يصير مربّع الالتفاف واحداً في المسارين وبأيّ محاذاة — لا يتحرّك
+/// السطر عند الوقوف على الكتلة ولا عند مغادرتها.
 class TextPainterBlockMeasurer implements BlockMeasurer {
   TextPainterBlockMeasurer({
     required this.contentWidth,
     this.scale = 1,
     required this.textScaler,
     this.textDirection = TextDirection.rtl,
+    this.fontFamily = AppAssets.cairoFont,
+    this.fontFamilyFallback = AppAssets.uiFontFallback,
   });
 
   final double contentWidth;
@@ -62,11 +70,44 @@ class TextPainterBlockMeasurer implements BlockMeasurer {
   final TextScaler textScaler;
   final TextDirection textDirection;
 
-  /// النمط المستخدَم في القياس — **بالقيمة نفسها** التي يمرّرها العارض إلى
-  /// `Text`/`TextField`. لا تجاوز لعائلة الخط هنا ولا لقائمة الاحتياط: أي حرف
-  /// يخصمه القياس دون الرسم (أو العكس) يُنتج أسطراً مختلفة.
-  TextStyle _styleOf(JoodWriterBlock block) =>
-      JoodWriterTextStyles.of(block, scale: scale);
+  /// عائلة الخطّ المستخدَمة في القياس — **نفس عائلة الرسم**.
+  ///
+  /// العارضات (`Text` / `TextField`) ترث `Cairo` من `DefaultTextStyle`
+  /// (`app_theme.dart:159`)، أمّا `TextPainter` فمنعزل عن الشجرة **فلا يرث**
+  /// — لولا تثبيته هنا لقيس بخط النظام (Segoe UI / Roboto) وتختلف عروض
+  /// المحارف ⇒ تختلف نقطة الالتفاف ⇒ **يتغيّر شكل الفقرة عند كل نقرة** (P1).
+  final String? fontFamily;
+
+  /// خطوط الاحتياطية — **نفس قائمة الرسم** (`AppAssets.uiFontFallback`).
+  ///
+  /// تُحمي من ظهور مربعات فارغة (□□□) عند محرف يغيب عن Cairo؛ ولأنّها
+  /// تؤثّر في اختيار التحليل البديل، فإن غيابها عن القياس يُعيد اهتزاز
+  /// الأسطر في اللغات التي لا يغطّيها Cairo كاملاً.
+  final List<String>? fontFamilyFallback;
+
+  /// النمط المستخدَم في القياس — **من المصدر نفسه** الذي يبني نمط العارض،
+  /// مع تثبيت عائلة الخط صراحةً.
+  ///
+  /// تعليقٌ قديم هنا كان يمنع تجاوز عائلة الخط مطلقاً بحجّة «أي حرف يخصمه
+  /// القياس دون الرسم يُنتج أسطراً مختلفة». والحجّة سليمة، لكن عكسُها هو
+  /// الخاطئ: تركها `null` يجعل القياس **يرفض ميراث الثيم** ولا يملك بديلاً،
+  /// فيقيس بخط النظام والعارض يرسم بـCairo — وهذا هو P1 بعينه.
+  ///
+  /// والحلّ ليس «تمرير الخط من كل موقع استدعاء» (خمسة مواقع، أحدها خارج
+  /// نطاق هذا الإصلاح)، بل **تثبيته في المصدر المشترك** [JoodWriterTextStyles.of]
+  /// الذي يقرأه القياس والرسم معاً. ما هنا تأكيدٌ إضافيّ لا تجاوز: إن بقي
+  /// `fontFamily` غير مُعيَّناً في النمط الأساسي لأي سبب، سقط على نفس القيمتين
+  /// الافتراضيتين اللتين يرثهما العارض — فلا يستطيع المساران أن يفترقا.
+  ///
+  /// و[block.fontFamily] يتصدّر دائماً: خط الكتلة الذي اختاره المستخدم هو
+  /// ما يُرسم به وما يُقاس به، فلا يفرض Cairo على نصّ بخطّ آخر.
+  TextStyle _styleOf(JoodWriterBlock block) {
+    final TextStyle base = JoodWriterTextStyles.of(block, scale: scale);
+    return base.copyWith(
+      fontFamily: base.fontFamily ?? fontFamily,
+      fontFamilyFallback: base.fontFamilyFallback ?? fontFamilyFallback,
+    );
+  }
 
   /// نسبة تكبير النص: مقدمة القائمة (• / 12.) تُرسم بخط مكبّر ⇒ عرضها
   /// المخصّص يتكبّر معها، فتُخصم بالحجم المرسوم لا بالمحسوب.
@@ -86,13 +127,21 @@ class TextPainterBlockMeasurer implements BlockMeasurer {
       JoodWriterTextStyles.listPrefixWidth(block, scale: scale) *
       _prefixRatio(block);
 
+  /// عرض منطقة الكتابة بعد هامش المؤشّر: `RenderEditable` يخصم
+  /// [JoodWriterTextStyles.caretMargin] من عرض كلّ سطرٍ يرسمه ليستديع
+  /// موضعاً للمؤشّر، فلو لم يُخصمها المسار الثابت لالتفّت أسطره عند عرضٍ
+  /// أوسع بـ3px ويقفز نصّها عند الوقوف عليه. بالخصم من هنا (ومن مربّع
+  /// كلّ سطر في الرسم الثابت) يصيران مربّعاً واحداً بالضبط.
+  double get _textWidth =>
+      math.max(contentWidth - JoodWriterTextStyles.caretMargin * scale, 8.0);
+
   /// العرض الذي يمنحه العارض **للسطر الأول** من الكتلة.
   double widthOfFirstLine(JoodWriterBlock block) {
     final double used =
         JoodWriterTextStyles.indentPx(block, scale: scale) +
         JoodWriterTextStyles.firstLineIndentPx(block, scale: scale) +
         prefixWidthOf(block);
-    return math.max(contentWidth - used, 8.0);
+    return math.max(_textWidth - used, 8.0);
   }
 
   /// العرض الذي يمنحه العارض **لبقيّة الأسطر** (بعد الأول).
@@ -100,7 +149,7 @@ class TextPainterBlockMeasurer implements BlockMeasurer {
     final double used =
         JoodWriterTextStyles.indentPx(block, scale: scale) +
         prefixWidthOf(block);
-    return math.max(contentWidth - used, 8.0);
+    return math.max(_textWidth - used, 8.0);
   }
 
   /// موضع نهاية السطر الأول في [text] كما يرسمه [painter] عند عرضه الضيّق،

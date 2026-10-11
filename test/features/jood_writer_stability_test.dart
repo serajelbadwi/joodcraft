@@ -37,6 +37,15 @@ void main() {
   /// عرض محتوى ثابت يحاكي ورقة A4 بهامش ‎2‎ سم من كل جانب.
   const double contentWidth = 21.0 * 96 / 25.4 - 2 * 2 * 96 / 25.4;
 
+  /// عرض النصّ الفعلي الذي يُقاس عنده: عرض المحتوى **ناقص هامش المؤشّر**.
+  ///
+  /// المحرّر (`RenderEditable`) يخصم `caretMargin` 3px من حقله كاملاً،
+  /// والعارض يعوّضه بتوسيع الحقل — فيصبح عرض الحقل = عرض المحتوى. والمُقاس
+  /// يخصمها هو الآخر ليقيس عند **نفس** العرض الذي يلتفّ عنده النصّ فعلاً.
+  /// راجع [JoodWriterTextStyles.caretMargin].
+  const double textWidth =
+      contentWidth - JoodWriterTextStyles.caretMargin;
+
   /// مقياس تكبير ثابت — نفس ما تستخدمه العارضات ضمناً من `MediaQuery`.
   const TextScaler scaler = TextScaler.noScaling;
 
@@ -231,7 +240,7 @@ void main() {
         // أدنى ‎8‎ بكسل عند العرض السالب (عرض سالب يُسقط `TextPainter`) —
         // فالمقارنة تُجرى على القيمة المُسندة نفسها.
         final double rendererFirst = math.max(
-          contentWidth -
+          textWidth -
               JoodWriterTextStyles.indentPx(block) -
               JoodWriterTextStyles.firstLineIndentPx(block) -
               JoodWriterTextStyles.listPrefixWidth(block),
@@ -255,7 +264,7 @@ void main() {
         const JoodWriterBlock(text: 'بند', kind: JoodWriterBlockKind.numbered, indentCm: 1),
       ]) {
         final double rendererRest = math.max(
-          contentWidth -
+          textWidth -
               JoodWriterTextStyles.indentPx(block) -
               JoodWriterTextStyles.listPrefixWidth(block),
           8.0,
@@ -300,7 +309,7 @@ void main() {
         expect(prefix, greaterThan(0));
 
         // القيمة نفسها هي ما يُخصم فعلاً من عرضَي السطر الأول والباقي:
-        final double expectedFirst = contentWidth -
+        final double expectedFirst = textWidth -
             JoodWriterTextStyles.indentPx(block) -
             JoodWriterTextStyles.firstLineIndentPx(block) -
             prefix;

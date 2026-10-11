@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../domain/jood_writer_block.dart';
 
 /// أنماط الخطوط لكتل «جود كاتب» — **مصدر واحد** يقرأه كلٌّ من القياس (التدفّق)
@@ -13,6 +14,24 @@ abstract final class JoodWriterTextStyles {
 
   /// لون الكتابة الافتراضي: أسود ناصع تماماً لكل الفقرات والعناوين.
   static const Color defaultTextColor = Colors.black;
+
+  /// **هامش المؤشّر**: المسافة التي يخصمها `RenderEditable` من عرض سطرّه
+  /// ليستديع موضعاً لرسم المؤشّر عند نهاية السطر —
+  /// `_kCaretGap (1.0) + cursorWidth (2.0) = 3px` (ولم تُغيَّر اللوحة
+  /// `cursorWidth` فهو افتراضي).
+  ///
+  /// أثره أنّ أسطر المحرّر كلّها تلتفّ عند `عرض الحقل − 3` ويقفز نصّها 3px
+  /// (‏0.79mm) يساراً عمّا يرسمه المسار الثابت عند حافة المحتوى — أي أنّ
+  /// النصّ «يتحرّك» عند الوقوف عليه.
+  ///
+  /// **الحشوة في مصدرٍ واحد، تخصم من المسار الثابت لا من المحرّر**: المحرّر
+  /// يبقى بعرض المحتوى كاملاً (لا نمدّه ولا نُزّيه) بينما يخصم كلّ من
+  /// [TextPainterBlockMeasurer.widthOfFirstLine] و
+  /// [TextPainterBlockMeasurer.widthOfRemainingLines] هذه القيمة، ويخصمها
+  /// الرسم الثابت من مربّع كلّ سطر (اللّوحات والمعاينة معاً). فمربّع
+  /// الالتفاف في المسارين واحد بالضبط — بأيّ محاذاة — وتتطابق الحافة
+  /// حرفياً ولا يتحرّك السطر عند الوقوف عليه أو مغادرته.
+  static const double caretMargin = 3.0;
 
   /// أحجام الخط الافتراضية لكل نوع كتلة.
   static const double _h1Size = 24;
@@ -34,8 +53,26 @@ abstract final class JoodWriterTextStyles {
     }
   }
 
-  /// نمط الكتلة. [scale] مضاعف حجم يُستخدم لتصغير الخطوط مع تصغير الورقة في
-  /// المعاينة (1 = الحجم الطبيعي للتحرير).
+  /// ## عائلة الخط (P1)
+  ///
+  /// هذا النمط **هو** مصدر الخط الوحيد للقياس والرسم معاً، ولذلك يحمله صريحاً
+  /// لا بالميراث:
+  ///
+  /// * **العارض** (`Text` / `TextField`) يرث `DefaultTextStyle` الذي يضع
+  ///   `ThemeData.fontFamily: AppAssets.cairoFont` + `fontFamilyFallback`
+  ///   (`app_theme.dart:159‑162`) — فإذا حمل النمط `fontFamily: null` بقي
+  ///   ميراثه سليماً لا بأس به.
+  /// * **المُقاس** `TextPainter` **مُنعزل عن الشجرة فلا يرث شيئاً**: `null`
+  ///   عنده تعني أن يسقط المحرّك على خطّه الافتراضي (Segoe UI على ويندوز،
+  ///   Roboto على أندرويد)، وعروض المحارف تختلف جذّاً عن Cairo ⇒ تختلف نقطة
+  ///   الالتفاف ⇒ يختلف عدد الأسطر ⇒ **يتغيّر شكل الفقرة عند كل نقرة**.
+  ///
+  /// فتثبيت القيمتين هنا يجعل خطّي القياس والرسم **متطابقين بالبناء** على كل
+  /// المسارات الخمسة (المُقاس، الكتلة الساكنة، المحرّر، صفحات العرض، الطباعة)
+  /// دون أن يلزم أي موقع استدعاء أن يمرّرهما — فلا يستطيع أحد أن ينسى أحدهما.
+  ///
+  /// خطّ cairoFont يغطي العربية واللاتينية؛ وأي محرف يغيب عنه يسقط على
+  /// [AppAssets.uiFontFallback] (محزومة داخل الحزمة، بلا شبكة وقت التشغيل).
   static TextStyle of(JoodWriterBlock block, {double scale = 1}) {
     TextStyle base;
     switch (block.kind) {
@@ -59,7 +96,10 @@ abstract final class JoodWriterTextStyles {
     }
 
     return base.copyWith(
-      fontFamily: block.fontFamily,
+      // خطّ الرسم والمُقاس واحد (P1): خط الكتلة المختار صراحةً إن وُجد، وإلا
+      // Cairo — نفس ما يرثه العارض من الثيم. راجع توثيق [of].
+      fontFamily: block.fontFamily ?? AppAssets.cairoFont,
+      fontFamilyFallback: AppAssets.uiFontFallback,
       fontSize: block.fontSize != null ? block.fontSize! * scale : null,
       // أسود ناصع افتراضياً؛ لون مخصّص فقط إذا اختاره المستخدم صراحةً.
       color: block.fontColor ?? defaultTextColor,
