@@ -144,6 +144,10 @@ int destinationIndexForPath(BuildContext context, String path) =>
     dashboardDestinations(context)
         .indexWhere((DashboardDestination item) => item.path == path);
 
+/// مسارات طبقة عليا تُفتح **فوق** مسار المستخدم الحالي بدل استبداله: خارج
+/// هيكل الفروع فلا موضع لها في [dashboardDestinations] ولا في فهرس الفروع.
+const Set<String> _overlayRoutes = <String>{AppRoutes.about};
+
 /// ينتقل إلى وجهة داخل هيكل اللوحة **دون إتلاف حالة الأقسام الأخرى**.
 ///
 /// يعتمد [StatefulNavigationShell.goBranch] حين يكون السياق داخل هيكل ذي فروع
@@ -157,6 +161,13 @@ void navigateToDestination(BuildContext context, String path) {
     unawaited(openNewDocumentDialog(context));
     return;
   }
+
+  // المسارات الخارجة عن الهيكل تُدفع لا تُستبدل (انظر [_overlayRoutes]).
+  if (_overlayRoutes.contains(path)) {
+    unawaited(context.push<void>(path));
+    return;
+  }
+
   final int index = destinationIndexForPath(context, path);
   final StatefulNavigationShellState? shell =
       StatefulNavigationShell.maybeOf(context);

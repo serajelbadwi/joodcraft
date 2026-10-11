@@ -15,6 +15,7 @@ import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/utils/ui_feedback.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../ocr/presentation/screens/ocr_screen.dart';
 import '../../../project_hub/presentation/providers/new_document_controller.dart';
 
 /// شريط القوائم العلوي للتطبيق — بطراز برامج سطح المكتب (Photoshop).
@@ -203,6 +204,12 @@ class AppMenuBar extends StatelessWidget {
         label: l10n?.destBatch ?? 'التوليد الجماعي',
         icon: Icons.table_view_outlined,
         onSelected: () => onNavigate(AppRoutes.batchProcessor),
+      ),
+      _item(
+        // يُفتح كحوار بلا وجهة إدراج — النصّ يُنسخ للحافظة أو يُقبل لاستخدامه.
+        label: l10n?.ocrTitle ?? 'استخراج نص من صورة',
+        icon: Icons.document_scanner_outlined,
+        onSelected: () => unawaited(showOcrScreen(context)),
       ),
       const PopupMenuDivider(),
       _item(

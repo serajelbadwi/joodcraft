@@ -3286,4 +3286,112 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get aboutCreditsText =>
       'JoodCraft کو Flutter اور Dart اور اوپن سورس لائبریریز کے ساتھ بنایا گیا ہے۔ ہر معاون کا شکریہ۔';
+
+  @override
+  String get navInvitationTemplates => 'دعوت نامے کے ٹیمپلیٹس';
+
+  @override
+  String get ocrTitle => 'تصویر سے متن نکالیں';
+
+  @override
+  String get ocrSubtitle => 'تصویر یا PDF درآمد کریں اور اس کا متن نکالیں';
+
+  @override
+  String get ocrImportImage => 'تصویر درآمد کریں';
+
+  @override
+  String get ocrImportPdf => 'PDF درآمد کریں';
+
+  @override
+  String get ocrExtractText => 'متن نکالیں';
+
+  @override
+  String get ocrProcessing => 'پرکاری جاری ہے...';
+
+  @override
+  String get ocrPreview => 'متن کا پیش منظر';
+
+  @override
+  String get ocrInsertInEditor => 'ایڈیٹر میں شامل کریں';
+
+  @override
+  String get ocrCopyToClipboard => 'نقل کریں';
+
+  @override
+  String get ocrRetry => 'دوبارہ کوشش کریں';
+
+  @override
+  String get ocrAccept => 'قبول کریں';
+
+  @override
+  String get ocrCancel => 'منسوخ';
+
+  @override
+  String get ocrLanguageLabel => 'زبان';
+
+  @override
+  String get ocrLanguageArabic => 'عربی';
+
+  @override
+  String get ocrLanguageEnglish => 'انگریزی';
+
+  @override
+  String get ocrLanguageBoth => 'عربی اور انگریزی';
+
+  @override
+  String get ocrAccuracyNote =>
+      'نکالنے کی درستگی 100% نہیں ہو سکتی — محفوظ کرنے سے پہلے متن کا جائزہ لیں۔';
+
+  @override
+  String get ocrNoTextFound => 'تصویر میں کوئی متن نہیں ملا۔';
+
+  @override
+  String get ocrInvalidImage => 'ناجائز تصویر۔';
+
+  @override
+  String get ocrError => 'متن نکالنا ممکن نہیں ہو سکا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get ocrEngineMissing =>
+      'Tesseract نہیں ملا — اسے تنصیب کریں پھر دوبارہ کوشش کریں۔';
+
+  @override
+  String get ocrLanguageDataMissing =>
+      'زبان کا ڈیٹا Tesseract کے ساتھ تنصیب نہیں ہے۔';
+
+  @override
+  String get ocrNoImage => 'پہلے تصویر یا PDF درآمد کریں۔';
+
+  @override
+  String get ocrCopyDone => 'متن کلپ بورڈ پر نقل ہو گیا۔';
+
+  @override
+  String get ocrConfidence => 'اعتماد';
+
+  @override
+  String get ocrPsmLabel => 'تقسیم';
+
+  @override
+  String get ocrPsmAuto => 'خودکار';
+
+  @override
+  String get ocrPsmBlock => 'ایک متن کا بلاک';
+
+  @override
+  String get ocrPsmLine => 'ایک سطر';
+
+  @override
+  String get ocrPsmSparse => 'بکھرا ہوا متن';
+
+  @override
+  String get ocrScaleLabel => 'زوم';
+
+  @override
+  String get ocrPdfPages => 'صفحات';
+
+  @override
+  String get ocrInsertInWriter => 'Jood Writer میں شامل کریں';
+
+  @override
+  String get ocrTessHint => 'اس آلے پر Tesseract تنصیب ہونا ضروری ہے۔';
 }

@@ -3190,4 +3190,109 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get aboutCreditsText => 'JoodCraft 使用 Flutter、Dart 及多个开源库构建。感谢每一位贡献者。';
+
+  @override
+  String get navInvitationTemplates => '请柬模板';
+
+  @override
+  String get ocrTitle => '从图片提取文字';
+
+  @override
+  String get ocrSubtitle => '导入图片或 PDF 并提取其中的文字';
+
+  @override
+  String get ocrImportImage => '导入图片';
+
+  @override
+  String get ocrImportPdf => '导入 PDF';
+
+  @override
+  String get ocrExtractText => '提取文字';
+
+  @override
+  String get ocrProcessing => '处理中...';
+
+  @override
+  String get ocrPreview => '文字预览';
+
+  @override
+  String get ocrInsertInEditor => '插入编辑器';
+
+  @override
+  String get ocrCopyToClipboard => '复制';
+
+  @override
+  String get ocrRetry => '重试';
+
+  @override
+  String get ocrAccept => '接受';
+
+  @override
+  String get ocrCancel => '取消';
+
+  @override
+  String get ocrLanguageLabel => '语言';
+
+  @override
+  String get ocrLanguageArabic => '阿拉伯语';
+
+  @override
+  String get ocrLanguageEnglish => '英语';
+
+  @override
+  String get ocrLanguageBoth => '阿拉伯语和英语';
+
+  @override
+  String get ocrAccuracyNote => '识别准确率可能不足 100%——保存前请检查文字内容。';
+
+  @override
+  String get ocrNoTextFound => '未在图片中找到文字。';
+
+  @override
+  String get ocrInvalidImage => '图片无效。';
+
+  @override
+  String get ocrError => '无法提取文字，请重试。';
+
+  @override
+  String get ocrEngineMissing => '未找到 Tesseract——请先安装后重试。';
+
+  @override
+  String get ocrLanguageDataMissing => '未随 Tesseract 安装语言数据。';
+
+  @override
+  String get ocrNoImage => '请先导入图片或 PDF。';
+
+  @override
+  String get ocrCopyDone => '文字已复制到剪贴板。';
+
+  @override
+  String get ocrConfidence => '置信度';
+
+  @override
+  String get ocrPsmLabel => '分段模式';
+
+  @override
+  String get ocrPsmAuto => '自动';
+
+  @override
+  String get ocrPsmBlock => '单个文本块';
+
+  @override
+  String get ocrPsmLine => '单行';
+
+  @override
+  String get ocrPsmSparse => '稀疏文本';
+
+  @override
+  String get ocrScaleLabel => '缩放';
+
+  @override
+  String get ocrPdfPages => '页数';
+
+  @override
+  String get ocrInsertInWriter => '插入 Jood Writer';
+
+  @override
+  String get ocrTessHint => '需要在本设备安装 Tesseract。';
 }

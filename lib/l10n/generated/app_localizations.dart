@@ -6119,6 +6119,216 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم بناء JoodCraft باستخدام Flutter و Dart، ومكتبات مفتوحة المصدر. شكراً لكل من ساهم.'**
   String get aboutCreditsText;
+
+  /// No description provided for @navInvitationTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'قوالب الدعوات'**
+  String get navInvitationTemplates;
+
+  /// No description provided for @ocrTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخراج نص من صورة'**
+  String get ocrTitle;
+
+  /// No description provided for @ocrSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استورد صورة أو PDF واستخرج النص منها'**
+  String get ocrSubtitle;
+
+  /// No description provided for @ocrImportImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'استيراد صورة'**
+  String get ocrImportImage;
+
+  /// No description provided for @ocrImportPdf.
+  ///
+  /// In ar, this message translates to:
+  /// **'استيراد PDF'**
+  String get ocrImportPdf;
+
+  /// No description provided for @ocrExtractText.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخراج النص'**
+  String get ocrExtractText;
+
+  /// No description provided for @ocrProcessing.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري المعالجة...'**
+  String get ocrProcessing;
+
+  /// No description provided for @ocrPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة النص'**
+  String get ocrPreview;
+
+  /// No description provided for @ocrInsertInEditor.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج في المحرر'**
+  String get ocrInsertInEditor;
+
+  /// No description provided for @ocrCopyToClipboard.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ'**
+  String get ocrCopyToClipboard;
+
+  /// No description provided for @ocrRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get ocrRetry;
+
+  /// No description provided for @ocrAccept.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبول'**
+  String get ocrAccept;
+
+  /// No description provided for @ocrCancel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء'**
+  String get ocrCancel;
+
+  /// No description provided for @ocrLanguageLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللغة'**
+  String get ocrLanguageLabel;
+
+  /// No description provided for @ocrLanguageArabic.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية'**
+  String get ocrLanguageArabic;
+
+  /// No description provided for @ocrLanguageEnglish.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإنجليزية'**
+  String get ocrLanguageEnglish;
+
+  /// No description provided for @ocrLanguageBoth.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية والإنجليزية'**
+  String get ocrLanguageBoth;
+
+  /// No description provided for @ocrAccuracyNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقة الاستخراج قد لا تكون 100% — راجع النص قبل الحفظ.'**
+  String get ocrAccuracyNote;
+
+  /// No description provided for @ocrNoTextFound.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُعثر على نص في الصورة.'**
+  String get ocrNoTextFound;
+
+  /// No description provided for @ocrInvalidImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة غير صالحة.'**
+  String get ocrInvalidImage;
+
+  /// No description provided for @ocrError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر استخراج النص. حاول مرة أخرى.'**
+  String get ocrError;
+
+  /// No description provided for @ocrEngineMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُعثر على Tesseract — ثبّته ثم أعد المحاولة.'**
+  String get ocrEngineMissing;
+
+  /// No description provided for @ocrLanguageDataMissing.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات اللغة غير مثبّتة مع Tesseract.'**
+  String get ocrLanguageDataMissing;
+
+  /// No description provided for @ocrNoImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر صورة أو PDF أولاً.'**
+  String get ocrNoImage;
+
+  /// No description provided for @ocrCopyDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'نُسخ النص إلى الحافظة.'**
+  String get ocrCopyDone;
+
+  /// No description provided for @ocrConfidence.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدقة'**
+  String get ocrConfidence;
+
+  /// No description provided for @ocrPsmLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'وضع التقطيع'**
+  String get ocrPsmLabel;
+
+  /// No description provided for @ocrPsmAuto.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلقائي'**
+  String get ocrPsmAuto;
+
+  /// No description provided for @ocrPsmBlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'كتلة نصّية واحدة'**
+  String get ocrPsmBlock;
+
+  /// No description provided for @ocrPsmLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطر واحد'**
+  String get ocrPsmLine;
+
+  /// No description provided for @ocrPsmSparse.
+  ///
+  /// In ar, this message translates to:
+  /// **'نص متفرّق'**
+  String get ocrPsmSparse;
+
+  /// No description provided for @ocrScaleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التكبير'**
+  String get ocrScaleLabel;
+
+  /// No description provided for @ocrPdfPages.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصفحات'**
+  String get ocrPdfPages;
+
+  /// No description provided for @ocrInsertInWriter.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج في Jood Writer'**
+  String get ocrInsertInWriter;
+
+  /// No description provided for @ocrTessHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يتطلّب تثبيت Tesseract على الجهاز.'**
+  String get ocrTessHint;
 }
 
 class _AppLocalizationsDelegate

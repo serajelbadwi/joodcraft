@@ -3323,4 +3323,114 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get aboutCreditsText =>
       'JoodCraft est construit avec Flutter et Dart, ainsi que des bibliothèques open source. Merci à tous ceux qui ont contribué.';
+
+  @override
+  String get navInvitationTemplates => 'Modèles d\'invitations';
+
+  @override
+  String get ocrTitle => 'Extraire le texte d\'une image';
+
+  @override
+  String get ocrSubtitle =>
+      'Importez une image ou un PDF et extrayez son texte';
+
+  @override
+  String get ocrImportImage => 'Importer une image';
+
+  @override
+  String get ocrImportPdf => 'Importer un PDF';
+
+  @override
+  String get ocrExtractText => 'Extraire le texte';
+
+  @override
+  String get ocrProcessing => 'Traitement en cours...';
+
+  @override
+  String get ocrPreview => 'Aperçu du texte';
+
+  @override
+  String get ocrInsertInEditor => 'Insérer dans l\'éditeur';
+
+  @override
+  String get ocrCopyToClipboard => 'Copier';
+
+  @override
+  String get ocrRetry => 'Réessayer';
+
+  @override
+  String get ocrAccept => 'Accepter';
+
+  @override
+  String get ocrCancel => 'Annuler';
+
+  @override
+  String get ocrLanguageLabel => 'Langue';
+
+  @override
+  String get ocrLanguageArabic => 'Arabe';
+
+  @override
+  String get ocrLanguageEnglish => 'Anglais';
+
+  @override
+  String get ocrLanguageBoth => 'Arabe et anglais';
+
+  @override
+  String get ocrAccuracyNote =>
+      'La précision de l\'extraction peut être inférieure à 100 % — relisez le texte avant d\'enregistrer.';
+
+  @override
+  String get ocrNoTextFound => 'Aucun texte trouvé dans l\'image.';
+
+  @override
+  String get ocrInvalidImage => 'Image non valide.';
+
+  @override
+  String get ocrError => 'Impossible d\'extraire le texte. Réessayez.';
+
+  @override
+  String get ocrEngineMissing =>
+      'Tesseract est introuvable — installez-le, puis réessayez.';
+
+  @override
+  String get ocrLanguageDataMissing =>
+      'Les données linguistiques ne sont pas installées avec Tesseract.';
+
+  @override
+  String get ocrNoImage => 'Importez d\'abord une image ou un PDF.';
+
+  @override
+  String get ocrCopyDone => 'Texte copié dans le presse-papiers.';
+
+  @override
+  String get ocrConfidence => 'Confiance';
+
+  @override
+  String get ocrPsmLabel => 'Segmentation';
+
+  @override
+  String get ocrPsmAuto => 'Automatique';
+
+  @override
+  String get ocrPsmBlock => 'Un seul bloc de texte';
+
+  @override
+  String get ocrPsmLine => 'Une seule ligne';
+
+  @override
+  String get ocrPsmSparse => 'Texte dispersé';
+
+  @override
+  String get ocrScaleLabel => 'Zoom';
+
+  @override
+  String get ocrPdfPages => 'Pages';
+
+  @override
+  String get ocrInsertInWriter => 'Insérer dans Jood Writer';
+
+  @override
+  String get ocrTessHint =>
+      'Nécessite l\'installation de Tesseract sur cet appareil.';
 }

@@ -16,6 +16,8 @@ import '../../../../core/templates/template_library_controller.dart';
 import '../../../../core/templates/template_library_entry.dart';
 import '../../../../core/l10n/app_l10n.dart';
 import '../../../../core/models/template_document.dart';
+import '../../../../core/templates/invitation_gallery.dart';
+import '../../../../core/templates/preset_catalog.dart';
 import '../../../../core/templates/template_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -48,6 +50,7 @@ class TemplateLibraryScreen extends StatefulWidget {
     this.localStore,
     this.controller,
     this.warmImageCache,
+    this.initialSection,
   });
 
   /// مستودع القوالب السحابية (يُحقن من الموجّه) — `null` إن لم يُربط Supabase.
@@ -65,6 +68,10 @@ class TemplateLibraryScreen extends StatefulWidget {
   final Future<void> Function(List<TemplateDocument> documents)?
       warmImageCache;
 
+  /// قسم يُفتح موسّعاً عند الدخول (`?section=invitations` من بند القائمة
+  /// «قوالب الدعوات») — بقيّة القيم تُفتح المكتبة كما هي.
+  final String? initialSection;
+
   @override
   State<TemplateLibraryScreen> createState() => _TemplateLibraryScreenState();
 }
@@ -74,6 +81,12 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
       TemplateLibraryController(
         widget.repository,
         localStore: widget.localStore,
+        // قوالب الدعوات تُضاف إلى الفهرس هنا فقط (لا في `PresetCatalog`)
+        // فتبقى معزولة: اختبارات فهرس القوالب و«المعرض» لا تتأثّر بها.
+        presets: <PresetTemplate>[
+          ...PresetCatalog.all,
+          ...InvitationTemplates.presets,
+        ],
       );
   final TextEditingController _search = TextEditingController();
 
@@ -98,7 +111,23 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   @override
   void initState() {
     super.initState();
+    // وسم المسار `?section=invitations` (بند «قوالب الدعوات» في «المكتبات ▾»)
+    // يفتح قسم الدعوات موسّعاً فور دخول المكتبة.
+    if (widget.initialSection == 'invitations') {
+      _expanded.add(_invitationsGroupKey);
+    }
     unawaited(_refreshAndWarm());
+  }
+
+  @override
+  void didUpdateWidget(covariant TemplateLibraryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // الانتقال من المكتبة إلى `/templates?section=invitations` يُبقي الشاشة
+    // (نفس المسار) — نفتح القسم عند تغيّر الوسم هنا لا في initState وحدها.
+    if (widget.initialSection != oldWidget.initialSection &&
+        widget.initialSection == 'invitations') {
+      _expanded.add(_invitationsGroupKey);
+    }
   }
 
   /// يحمّل القوالب ثم يسخّن ذاكرة صور معايناتها في الخلفية.
@@ -147,7 +176,9 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   void _setAllSections(bool expanded) {
     final Set<String> keys = <String>{
       for (final TemplateLibraryEntry entry in _visibleEntries())
-        _groupKeyOf(entry),
+        // قسم الدعوات مدموج (رمضان/عيد/زفاف تحت مفتاح واحد) — نبني المفتاح
+        // كما يراه القسم المُرسَم لا كما يظهر في التجميع.
+        _isInvitation(entry) ? _invitationsGroupKey : _groupKeyOf(entry),
     };
     setState(() {
       if (expanded) {
@@ -410,6 +441,15 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   /// «عقود وتعهّدات»).
   static const String _contractsGroupKey = 'contracts';
 
+  /// مفتاح قسم «قوالب الدعوات» (رمضان/عيد/زفاف مدموجة).
+  static const String _invitationsGroupKey = 'invitations';
+
+  /// هل هذا المدخل قالب دعوة؟ (يُفتح في «محرك الدعوات» لا محرّر الشهادات.)
+  bool _isInvitation(TemplateLibraryEntry entry) =>
+      entry.isPreset &&
+      entry.preset != null &&
+      InvitationTemplates.byId(entry.preset!.id) != null;
+
   String _groupKeyOf(TemplateLibraryEntry entry) {
     if (!entry.isPreset) return _savedGroupKey;
     final TemplateCollection? collection = entry.collection;
@@ -433,6 +473,26 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
     }
 
     final List<_LibraryGroup> groups = <_LibraryGroup>[];
+    // قسم «قوالب الدعوات»: مجموعات رمضان/عيد/زفاف الدلالية مدموجة في قسم
+    // واحد — محرك الدعوات هو المكان الذي تُفتح فيه هذه القوالب. (يسبق حلقة
+    // المجموعات الدلالية كي لا تُنشئ ثلاثة أقسام منفصلة.)
+    final List<TemplateLibraryEntry> invitations = <TemplateLibraryEntry>[
+      for (final String key in const <String>[
+        'collection:ramadan',
+        'collection:eid',
+        'collection:wedding',
+      ])
+        ...?buckets.remove(key),
+    ];
+    if (invitations.isNotEmpty) {
+      invitations.sort(_compare);
+      groups.add(_LibraryGroup(
+        key: _invitationsGroupKey,
+        label: context.l10n?.navInvitationTemplates ?? 'قوالب الدعوات',
+        icon: Icons.redeem_rounded,
+        entries: invitations,
+      ));
+    }
     for (final TemplateCollection collection in TemplateCollection.values) {
       if (collection.category == TemplateCategory.contract) continue;
       final List<TemplateLibraryEntry>? items =
@@ -516,9 +576,12 @@ class _TemplateLibraryScreenState extends State<TemplateLibraryScreen> {
   // ==========================================================================
 
   void _open(TemplateLibraryEntry entry) {
-    final String path = entry.category == TemplateCategory.contract
-        ? AppRoutes.contractBuilder
-        : AppRoutes.certificateBuilder;
+    // قوالب الدعوات تُفتح في «محرك الدعوات» (نفس المحرّر بلوحة اختيار جانبية).
+    final String path = _isInvitation(entry)
+        ? AppRoutes.invitations
+        : entry.category == TemplateCategory.contract
+            ? AppRoutes.contractBuilder
+            : AppRoutes.certificateBuilder;
     // القالب الجاهز يُفتح مسودةً (بلا معرّف سجل) ليُحفظ كقالب جديد، وبمحتوى
     // اللغة الحالية (أسماء وصيغ البلد) — أما قالب المستخدم فيبقى كما حرّره.
     context.go(

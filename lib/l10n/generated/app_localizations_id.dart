@@ -3297,4 +3297,112 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get aboutCreditsText =>
       'JoodCraft dibangun dengan Flutter dan Dart serta pustaka sumber terbuka. Terima kasih kepada semua yang berkontribusi.';
+
+  @override
+  String get navInvitationTemplates => 'Template undangan';
+
+  @override
+  String get ocrTitle => 'Ekstrak teks dari gambar';
+
+  @override
+  String get ocrSubtitle => 'Impor gambar atau PDF dan ekstrak teksnya';
+
+  @override
+  String get ocrImportImage => 'Impor gambar';
+
+  @override
+  String get ocrImportPdf => 'Impor PDF';
+
+  @override
+  String get ocrExtractText => 'Ekstrak teks';
+
+  @override
+  String get ocrProcessing => 'Memproses...';
+
+  @override
+  String get ocrPreview => 'Pratinjau teks';
+
+  @override
+  String get ocrInsertInEditor => 'Sisipkan ke editor';
+
+  @override
+  String get ocrCopyToClipboard => 'Salin';
+
+  @override
+  String get ocrRetry => 'Coba lagi';
+
+  @override
+  String get ocrAccept => 'Terima';
+
+  @override
+  String get ocrCancel => 'Batal';
+
+  @override
+  String get ocrLanguageLabel => 'Bahasa';
+
+  @override
+  String get ocrLanguageArabic => 'Arab';
+
+  @override
+  String get ocrLanguageEnglish => 'Inggris';
+
+  @override
+  String get ocrLanguageBoth => 'Arab dan Inggris';
+
+  @override
+  String get ocrAccuracyNote =>
+      'Akurasi ekstraksi mungkin tidak 100% — periksa teks sebelum menyimpan.';
+
+  @override
+  String get ocrNoTextFound => 'Tidak ditemukan teks pada gambar.';
+
+  @override
+  String get ocrInvalidImage => 'Gambar tidak valid.';
+
+  @override
+  String get ocrError => 'Gagal mengekstrak teks. Coba lagi.';
+
+  @override
+  String get ocrEngineMissing =>
+      'Tesseract tidak ditemukan — pasang lalu coba lagi.';
+
+  @override
+  String get ocrLanguageDataMissing =>
+      'Data bahasa tidak terpasang bersama Tesseract.';
+
+  @override
+  String get ocrNoImage => 'Impor gambar atau PDF terlebih dahulu.';
+
+  @override
+  String get ocrCopyDone => 'Teks disalin ke papan klip.';
+
+  @override
+  String get ocrConfidence => 'Keyakinan';
+
+  @override
+  String get ocrPsmLabel => 'Segmentasi';
+
+  @override
+  String get ocrPsmAuto => 'Otomatis';
+
+  @override
+  String get ocrPsmBlock => 'Satu blok teks';
+
+  @override
+  String get ocrPsmLine => 'Satu baris';
+
+  @override
+  String get ocrPsmSparse => 'Teks tersebar';
+
+  @override
+  String get ocrScaleLabel => 'Zoom';
+
+  @override
+  String get ocrPdfPages => 'Halaman';
+
+  @override
+  String get ocrInsertInWriter => 'Sisipkan ke Jood Writer';
+
+  @override
+  String get ocrTessHint => 'Memerlukan Tesseract terpasang di perangkat ini.';
 }

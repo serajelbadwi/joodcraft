@@ -128,6 +128,14 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
             label: context.l10n?.destTemplates ?? 'مكتبة القوالب',
             icon: Icons.collections_bookmark_rounded,
           ),
+          // قوالب الدعوات: يفتح المكتبة مباشرةً على قسم الدعوات (وسم
+          // `?section=invitations`) — مسار مميّز عن «مكتبة القوالب» فلا
+          // يتشابه قيم عناصر القائمة المنسدلة.
+          TopNavMenuEntry(
+            path: '${AppRoutes.templates}?section=invitations',
+            label: context.l10n?.navInvitationTemplates ?? 'قوالب الدعوات',
+            icon: Icons.redeem_rounded,
+          ),
           TopNavMenuEntry(
             path: AppRoutes.assets,
             label: context.l10n?.destAssets ?? 'الأصول والتوقيعات',

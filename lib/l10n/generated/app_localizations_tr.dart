@@ -3295,4 +3295,112 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get aboutCreditsText =>
       'JoodCraft, Flutter ve Dart ile açık kaynak kütüphaneler kullanılarak oluşturuldu. Katkıda bulunan herkese teşekkürler.';
+
+  @override
+  String get navInvitationTemplates => 'Davet şablonları';
+
+  @override
+  String get ocrTitle => 'Görselden metin çıkar';
+
+  @override
+  String get ocrSubtitle => 'Bir görsel veya PDF içe aktar ve metnini çıkar';
+
+  @override
+  String get ocrImportImage => 'Görsel içe aktar';
+
+  @override
+  String get ocrImportPdf => 'PDF içe aktar';
+
+  @override
+  String get ocrExtractText => 'Metni çıkar';
+
+  @override
+  String get ocrProcessing => 'İşleniyor...';
+
+  @override
+  String get ocrPreview => 'Metin önizlemesi';
+
+  @override
+  String get ocrInsertInEditor => 'Düzenleyiciye ekle';
+
+  @override
+  String get ocrCopyToClipboard => 'Kopyala';
+
+  @override
+  String get ocrRetry => 'Yeniden dene';
+
+  @override
+  String get ocrAccept => 'Kabul et';
+
+  @override
+  String get ocrCancel => 'İptal';
+
+  @override
+  String get ocrLanguageLabel => 'Dil';
+
+  @override
+  String get ocrLanguageArabic => 'Arapça';
+
+  @override
+  String get ocrLanguageEnglish => 'İngilizce';
+
+  @override
+  String get ocrLanguageBoth => 'Arapça ve İngilizce';
+
+  @override
+  String get ocrAccuracyNote =>
+      'Çıkarma doğruluğu %100 olmayabilir — kaydetmeden önce metni gözden geçirin.';
+
+  @override
+  String get ocrNoTextFound => 'Görselde metin bulunamadı.';
+
+  @override
+  String get ocrInvalidImage => 'Geçersiz görsel.';
+
+  @override
+  String get ocrError => 'Metin çıkarılamadı. Tekrar deneyin.';
+
+  @override
+  String get ocrEngineMissing =>
+      'Tesseract bulunamadı — yükleyip yeniden deneyin.';
+
+  @override
+  String get ocrLanguageDataMissing =>
+      'Dil verileri Tesseract ile birlikte kurulu değil.';
+
+  @override
+  String get ocrNoImage => 'Önce bir görsel veya PDF içe aktarın.';
+
+  @override
+  String get ocrCopyDone => 'Metin panoya kopyalandı.';
+
+  @override
+  String get ocrConfidence => 'Güven';
+
+  @override
+  String get ocrPsmLabel => 'Bölümleme';
+
+  @override
+  String get ocrPsmAuto => 'Otomatik';
+
+  @override
+  String get ocrPsmBlock => 'Tek metin bloğu';
+
+  @override
+  String get ocrPsmLine => 'Tek satır';
+
+  @override
+  String get ocrPsmSparse => 'Dağınık metin';
+
+  @override
+  String get ocrScaleLabel => 'Yakınlaştırma';
+
+  @override
+  String get ocrPdfPages => 'Sayfalar';
+
+  @override
+  String get ocrInsertInWriter => 'Jood Writer\'a ekle';
+
+  @override
+  String get ocrTessHint => 'Bu cihazda Tesseract\'ın kurulu olması gerekir.';
 }

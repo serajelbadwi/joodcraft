@@ -10,6 +10,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/templates/template_draft.dart';
 import '../../core/templates/template_record.dart';
 import '../../core/templates/template_repository.dart';
+import '../../core/templates/invitation_gallery.dart';
 import '../../features/assets_manager/presentation/screens/assets_manager_screen.dart';
 import '../../features/about/presentation/screens/about_screen.dart';
 import '../../features/brand/presentation/screens/brand_settings_screen.dart';
@@ -24,7 +25,7 @@ import '../../features/contract_builder/presentation/screens/contract_preview_sc
 import '../../features/contract_builder/presentation/screens/template_editor_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/dashboard/presentation/widgets/dashboard_shell.dart';
-import '../../features/invitations/presentation/screens/invitations_screen.dart';
+import '../../features/invitations/presentation/screens/invitations_editor_screen.dart';
 import '../../features/jood_writer/presentation/screens/jood_writer_screen.dart';
 import '../../features/project_hub/presentation/screens/new_project_screen.dart';
 import '../../features/templates/presentation/screens/template_library_screen.dart';
@@ -191,8 +192,12 @@ abstract final class AppRouter {
                 name: 'templates',
                 // المكتبة محلية 100%: تقرأ جدول المشاريع المحلي مباشرةً، فلا
                 // مستودع يُمرَّر (ومن يمرّره يرى كل مشروع مرتين).
+                // `?section=invitations` (من بند القائمة «قوالب الدعوات»)
+                // يفتح المكتبة موسّعة على قسم الدعوات.
                 builder: (BuildContext context, GoRouterState state) =>
-                    const TemplateLibraryScreen(),
+                    TemplateLibraryScreen(
+                  initialSection: state.uri.queryParameters['section'],
+                ),
               ),
             ]),
             _branch('assets', <RouteBase>[
@@ -239,8 +244,23 @@ abstract final class AppRouter {
               GoRoute(
                 path: AppRoutes.invitations,
                 name: 'invitations',
-                builder: (BuildContext context, GoRouterState state) =>
-                    const InvitationsScreen(),
+                builder: (BuildContext context, GoRouterState state) {
+                  // «محرك الدعوات» = نفس محرّر الشهادات والعقود بعرضه كاملاً
+                  // (لوحة الاختيار الجانبية أُزيلت: القوالب تُفتح من المكتبة).
+                  // `InvitationsScreen` (شاشة عرض النماذج القديمة) لم تُعد
+                  // تُستدعى من هذا المسار.
+                  final TemplateRecord? record = _recordFromExtra(state.extra);
+                  final TemplateDraft? draft = _draftFromExtra(state.extra);
+                  final InvitationTemplate? invitation =
+                      _invitationFromExtra(state.extra);
+                  return InvitationsEditorScreen(
+                    key: _sessionKey('invitations', record?.id, null),
+                    repository: templateRepository,
+                    record: record,
+                    draft: draft,
+                    invitation: invitation,
+                  );
+                },
               ),
             ]),
           ],
@@ -284,6 +304,10 @@ abstract final class AppRouter {
   /// يحوّل `extra` إلى قالب غير محفوظ (قادم من المكتبة الجاهزة).
   static TemplateDraft? _draftFromExtra(Object? extra) =>
       extra is TemplateDraft ? extra : null;
+
+  /// يحوّل `extra` إلى قالب دعوة مختار (قادم من لوحة المكتبة).
+  static InvitationTemplate? _invitationFromExtra(Object? extra) =>
+      extra is InvitationTemplate ? extra : null;
 }
 
 /// شاشة مسار غير معروف.

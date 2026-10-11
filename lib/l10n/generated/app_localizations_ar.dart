@@ -3274,4 +3274,111 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get aboutCreditsText =>
       'تم بناء JoodCraft باستخدام Flutter و Dart، ومكتبات مفتوحة المصدر. شكراً لكل من ساهم.';
+
+  @override
+  String get navInvitationTemplates => 'قوالب الدعوات';
+
+  @override
+  String get ocrTitle => 'استخراج نص من صورة';
+
+  @override
+  String get ocrSubtitle => 'استورد صورة أو PDF واستخرج النص منها';
+
+  @override
+  String get ocrImportImage => 'استيراد صورة';
+
+  @override
+  String get ocrImportPdf => 'استيراد PDF';
+
+  @override
+  String get ocrExtractText => 'استخراج النص';
+
+  @override
+  String get ocrProcessing => 'جاري المعالجة...';
+
+  @override
+  String get ocrPreview => 'معاينة النص';
+
+  @override
+  String get ocrInsertInEditor => 'إدراج في المحرر';
+
+  @override
+  String get ocrCopyToClipboard => 'نسخ';
+
+  @override
+  String get ocrRetry => 'إعادة المحاولة';
+
+  @override
+  String get ocrAccept => 'قبول';
+
+  @override
+  String get ocrCancel => 'إلغاء';
+
+  @override
+  String get ocrLanguageLabel => 'اللغة';
+
+  @override
+  String get ocrLanguageArabic => 'العربية';
+
+  @override
+  String get ocrLanguageEnglish => 'الإنجليزية';
+
+  @override
+  String get ocrLanguageBoth => 'العربية والإنجليزية';
+
+  @override
+  String get ocrAccuracyNote =>
+      'دقة الاستخراج قد لا تكون 100% — راجع النص قبل الحفظ.';
+
+  @override
+  String get ocrNoTextFound => 'لم يُعثر على نص في الصورة.';
+
+  @override
+  String get ocrInvalidImage => 'صورة غير صالحة.';
+
+  @override
+  String get ocrError => 'تعذّر استخراج النص. حاول مرة أخرى.';
+
+  @override
+  String get ocrEngineMissing =>
+      'لم يُعثر على Tesseract — ثبّته ثم أعد المحاولة.';
+
+  @override
+  String get ocrLanguageDataMissing => 'بيانات اللغة غير مثبّتة مع Tesseract.';
+
+  @override
+  String get ocrNoImage => 'اختر صورة أو PDF أولاً.';
+
+  @override
+  String get ocrCopyDone => 'نُسخ النص إلى الحافظة.';
+
+  @override
+  String get ocrConfidence => 'الدقة';
+
+  @override
+  String get ocrPsmLabel => 'وضع التقطيع';
+
+  @override
+  String get ocrPsmAuto => 'تلقائي';
+
+  @override
+  String get ocrPsmBlock => 'كتلة نصّية واحدة';
+
+  @override
+  String get ocrPsmLine => 'سطر واحد';
+
+  @override
+  String get ocrPsmSparse => 'نص متفرّق';
+
+  @override
+  String get ocrScaleLabel => 'التكبير';
+
+  @override
+  String get ocrPdfPages => 'الصفحات';
+
+  @override
+  String get ocrInsertInWriter => 'إدراج في Jood Writer';
+
+  @override
+  String get ocrTessHint => 'يتطلّب تثبيت Tesseract على الجهاز.';
 }

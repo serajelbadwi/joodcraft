@@ -48,6 +48,7 @@ import 'brand_presets_panel.dart';
 import 'dock_overflow_bar.dart';
 import 'dockable_toolbar.dart';
 import 'editor_controls.dart';
+import 'editor_ocr_button.dart';
 import 'layers_panel.dart';
 import 'property_toolbar.dart';
 import 'template_canvas.dart';
@@ -578,6 +579,20 @@ class _TemplateEditorViewState extends State<TemplateEditorView> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[_exportAction(context), _toolbarDivider(context)],
+        ),
+      ),
+      // **استخراج نص من صورة (OCR):** ودجة مستقلّة (`editor_ocr_button.dart`)
+      // تفتح الحوار وتنشئ عنصراً نصّياً بالنتيجة — لا تلمس منطق المحرّر.
+      // أولوية1 (الأدنى): تتلوّن أولاً إلى قائمة الفائض فلا تزاحم الشريط.
+      DockOverflowItem(
+        id: 'ocr',
+        priority: 1,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            EditorOcrButton(controller: _controller),
+            _toolbarDivider(context),
+          ],
         ),
       ),
       DockOverflowItem(
