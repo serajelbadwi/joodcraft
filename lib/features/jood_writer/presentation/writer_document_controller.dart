@@ -413,7 +413,12 @@ class WriterDocumentController extends ChangeNotifier {
       _controllers.add(_newTextController(index));
       _focusNodes.add(_newFocusNode(index));
     }
-    _activeBlockIndex = _activeBlockIndex.clamp(0, _doc.blocks.length - 1);
+    // مستند بلا كتلة: لا يوجد مدى صالح (`clamp(0, -1)` يرمي `ArgumentError`
+    // لأن الحدّ الأدنى يفوق الأقصى) فنثبّت المؤشّر عند الصفر؛ و[`activeBlock`]
+    // يحمي الوصول بمفرده حين تكون القائمة فارغة.
+    _activeBlockIndex = _doc.blocks.isEmpty
+        ? 0
+        : _activeBlockIndex.clamp(0, _doc.blocks.length - 1);
   }
 
   void _insertControllerAt(int index, String text) {

@@ -84,13 +84,18 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// سياق **داخل** شجرة المُوجِّه: لا يمكن استعمال سياق `MaterialApp` نفسه
+  /// لأنه فوق `GoRouter` فلا يجده [GoRouter.of]. أي ديدجت مُوجَّه كافٍ.
+  BuildContext routedContext(WidgetTester tester) =>
+      tester.element(find.byType(Scaffold).first);
+
   testWidgets('زر الرجوع يظهر في شاشة «حول» ويعود للشاشة السابقة', (
     WidgetTester tester,
   ) async {
     await pumpApp(tester);
 
     // التنقّل عبر الدالة نفسها التي تستدعيها قائمة «مساعدة» في الشريط العلوي.
-    navigateToDestination(tester.element(find.byType(MaterialApp)), AppRoutes.about);
+    navigateToDestination(routedContext(tester), AppRoutes.about);
     await tester.pumpAndSettle();
 
     expect(find.byType(AboutScreen), findsOneWidget);
@@ -111,7 +116,7 @@ void main() {
   ) async {
     await pumpApp(tester);
 
-    navigateToDestination(tester.element(find.byType(MaterialApp)), AppRoutes.about);
+    navigateToDestination(routedContext(tester), AppRoutes.about);
     await tester.pumpAndSettle();
 
     expect(find.byType(JoodCraftLogo), findsOneWidget);
