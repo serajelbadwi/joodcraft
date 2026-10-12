@@ -190,8 +190,14 @@ class OcrTextPostProcessor {
   ///
   /// النقطتان تُحفظان لأنهما في المتن العربي غالباً تأتيان **بعد** الشرف
   /// (`النبي ﷺ: قال…`) — فالمُرَجَّح أنّ المحرّك قرأهما لا أنّه ابتكرهما.
+  ///
+  /// **الأشكال الثلاثة المقيسة** للّبس، كلّها رمز `ﷺ` واحد يتفكّك:
+  /// `النبي:١`، `النبي 1:`، `النبي 1؛`. والرقم يقتصرّ على `١` لأنّ الرمز
+  /// يُقرأ واحداً لا غير؛ وشرط النقطة أو الفاصلة **واجب** — وإلّا التهمت
+  /// القاعدة ترقيماً صحيحاً (`النبي ١` في أعداد الأحاديث).
   static final RegExp _misreadHonorific = RegExp(
-    '(النبي|رسول الله|صلى الله عليه وسلم)(\\s*:\\s*)([٠-٩])',
+    '(النبي|رسول الله|صلى الله عليه وسلم)'
+    r'(\s*[:؛;]\s*[١1|]\s*[:؛;]?|\s*[١1|]\s*[:؛;])',
   );
 
   // --------------------------------------------------------------------------
@@ -288,8 +294,10 @@ class OcrTextPostProcessor {
     text = _fixRepeatedWaw(text); // 6) وو → و
     text = _fixFinalYa(text); // 7) ازدواج الياء: التقويى → التقويي
     text = _collapsePunctuation(text); // 8) !! → ! و .... → ...
+    text = _restoreMisreadOne(text); // 8ب) | → ١ (سياق عربي)
     text = _restoreIndicDigits(text); // 9) 18 → ١٨ (سياق عربي)
     text = _restoreHonorificGlyph(text); // 10) النبي:١‏ → النبي ﷺ
+    text = _spaceBeforeQuote(text); // 10ب) ‏:« ← : «
     text = _reattachNumberDash(text); // 11) ١ - → ١-
     text = _cleanReferenceBrackets(text); // 12) [ق: AVA] → [ق: ]
     text = _restoreOrnateBrackets(text); // 13) ‏﴿‏…‏﴾‎
@@ -532,6 +540,38 @@ class OcrTextPostProcessor {
   //  قواعد السياق العربي الإسلامي
   // ==========================================================================
 
+  /// **القاعدة 8ب** — إرجاع الرقم `١` حين يقرأه المحرّك **شَّرطة عمودية**.
+  ///
+  /// رمز `١` العربي رسمهُ يشبه `|` تماماً، فيقرأه المحرّك شَّرطة عمودية
+  /// (`|- أذى` حيث الصواب `١- أذى`). والقيدان يمنعان مساس جداولٍ أو فواصل:
+  ///
+  /// 1. السطر عربي الغالب.
+  /// 2. الشَّرطة **في موضع رقم**: ملاصقة لرقم أو لشَّرطة (`|- أذى`، `١|`،
+  ///    `-|`)، أو في **أوّل السطر** (`| أذى`) — وجدولٌ لا يبدأ عمودَه الأول
+  ///    بفاصل. فاصلٌ في وسط سطر تعداد (`الاسم | العنوان`) يقف بين مسافتين
+  ///    ولا يليه رقم، فلا يُطابَق ولا يُمسّ.
+  ///
+  /// والقيود معاً هي ما يمنع مساس جدولٍ أو سطرٍ لاتينيّ.
+  static String _restoreMisreadOne(String text) {
+    final List<String> out = <String>[];
+    for (final String line in text.split('\n')) {
+      if (!_isArabicDominant(line) || !_misreadOneBar.hasMatch(line)) {
+        out.add(line);
+        continue;
+      }
+      out.add(line.replaceAllMapped(_misreadOneBar, (Match m) => '١'));
+    }
+    return out.join('\n');
+  }
+
+  /// شَّرطة عمودية في موضع رقم: مسبوقة أو متبوعة برقم هندي أو شَّرطة،
+  /// أو واقفة في أوّل السطر.
+  static final RegExp _misreadOneBar = RegExp(
+    '(?<=[${_arabicIndicDigits.join()}\\-–—])\\|'
+    '|\\|(?=[${_arabicIndicDigits.join()}\\-–—])'
+    '|^\\s*\\|',
+  );
+
   /// **القاعدة 9** — تحويل الأرقام اللاتينية إلى هندية في النصّ العربي الغالب.
   ///
   /// `eng.traineddata` حين يُفتح مع `ara` يقرأ رقم `١٨` لاتينياً (`18`)،
@@ -579,16 +619,51 @@ class OcrTextPostProcessor {
     (Match match) => '${match.group(1)} ﷺ:',
   );
 
+  /// **القاعدة 10ب** — مسافة بعد النقطتين قبل علامة الاقتباس (`:«` ← `: «`).
+  ///
+  /// المحرّك يقرأ رمز `ﷺ` ثم النقطتين ثم يلصق علامة الاقتباس بالصمت
+  /// (`النبي ﷺ:«لا يدخل»`) لأنّ المسافة في الصورة ضيّقة. والنصّ العربي لا
+  /// يُكتب اقتباساً ملتصقاً بالفاصلة قبله أبداً، فالمسافة أصلٌ لا تحسين.
+  ///
+  /// الإدراج **مقيّد بعلامة اقتباس مفتوحة** لا أيّ رمز: `[ق:١٨]` فيها
+  /// نقطتان ثم رقم فلا تُمسّ، وكذلك `الإجابة: قال` فيها مسافة أصلاً.
+  static String _spaceBeforeQuote(String text) => text.replaceAllMapped(
+    _colonThenQuote,
+    (Match match) => '${match.group(1)} ${match.group(2)}',
+  );
+
+  /// فاصلة (نقطتان/فاصلة منقوطة/فاصلة عربية) ملتصقة بعلامة اقتباس مفتوحة.
+  static final RegExp _colonThenQuote = RegExp(
+    r'([:؛;])([«﴿(])',
+  );
+
   /// **القاعدة 11** — إلصاق الشَّرطة برقمها الهندي (`١ -` ← `١-`).
   ///
   /// اصطلاح الترقيم العربي أن تلصق الشَّرطة برقمها، والفراغ بينهما أثرُ
   /// قراءة (المحرّك يفصل بين «الرقم» و«الرمز» لأنهما نوعان عنده). والإلصاق
   /// يُعيد الشكل الاصطلاحي المتوقّع في كل مستند مرقّم عربي.
-  static String _reattachNumberDash(String text) =>
-      text.replaceAllMapped(_digitThenDash, (Match match) {
-        // الرقم والشَّرطة يبقيان، والفراغ بينهما وحده هو ما يُحذف.
-        return '${match.group(1)}${match.group(2)}';
-      });
+  static String _reattachNumberDash(String text) {
+    // الرقم والشَّرطة يبقيان، والفراغ بينهما وحده هو ما يُحذف.
+    String out = text.replaceAllMapped(_digitThenDash, (Match match) {
+      return '${match.group(1)}${match.group(2)}';
+    });
+    // الاتجاه المعكوس: `‎-١` حيث الصواب `١-`. المحرّك يضع الشَّرطة قبل
+    // الرقم حين يبدأ السطر بها، لأنّ علامة الاتجاه تقلب ترتيب العرض.
+    // والشرط «شَّرطة **ملاصقة** لرقم» يميّزها عن شَّرطة الترقيم (`السؤال -`
+    // أو `١-`) فلا تُقلَب.
+    return out.replaceAllMapped(_dashThenDigit, (Match match) {
+      return '${match.group(2)}${match.group(1)}';
+    });
+  }
+
+  /// شَّرطة متبوعة مباشرةً برقم هندي (بلا فراغ) — ترتيبٌ معكوس يُردّ.
+  ///
+  /// ⚠️ الأقواس `[...]` هنا **فئة أحرف** لا مجموعة: كتابتها `(...)` كانت
+  /// تعني تسلسل «٠ ثم ١ ثم ٢…» فلا يطابقها رقمٌ واحد أبداً، فكانت القاعدة
+  /// صامتة تماماً (اكتُشف بالقياس: `-١` ظلّت كما هي).
+  static final RegExp _dashThenDigit = RegExp(
+    '([\\-–—])([${_arabicIndicDigits.join()}])',
+  );
 
   /// **القاعدة 12** — تنقية ما بين قوسَي مرجع.
   ///
@@ -657,16 +732,33 @@ class OcrTextPostProcessor {
         out.add(line);
         continue;
       }
-      if (line.contains('(')) {
-        // أقواس لاتينية صريحة في السطر ⇒ الغموض قائم ولا يُخترَق ﴿: قد تكون
-        // علامة اقتباس حقيقية وقد تكون جزءاً من تعداد. الاحتمالان لا يُشتقّ
-        // منهما إلزام.
+      final RegExp? cue = _firstCueIn(line);
+      if (cue == null) {
         out.add(line);
         continue;
       }
 
-      final RegExp? cue = _firstCueIn(line);
-      if (cue == null) {
+      // (1) **زوج `(...)` متوازن وحيد** ⇒ المحرّك قرأ `﴿...﴾` قوساً لاتينياً.
+      //
+      // هذه الحالة هي الأكثر انتشاراً على الإطلاق: رمز `﴿` مركّب من محارف،
+      // فيفكّكه المحرّك إلى `(` و`)` مطابقَين — فيبدو الاقتباس صحيحاً وهو
+      // مفقود العلامتين. والدليل على أنّه اقتباس لا تعداد: علامة الاقتباس
+      // (`تعالى`) في السطر، **وزوج واحد** لا أكثر، **وبلا قوس مزخرف** بعده.
+      final String? converted = _convertBalancedParens(line);
+      if (converted != null) {
+        out.add(converted);
+        continue;
+      }
+
+      // (2) لا قوس مغلق إطلاقاً ⇒ لا شيء يُستعاد، وإلّا وُضعت ﴿ يتيمة
+      // بلا مقابل (مقيس: `قال رسول الله ﷺ: «…»` كان يخرج `رسول الله﴿ ﷺ:`).
+      if (!line.contains(')')) {
+        out.add(line);
+        continue;
+      }
+
+      // (3) أقواس لاتينية بلا توازن بيّن ⇒ الغموض قائم ولا يُخترَق ﴿.
+      if (line.contains('(')) {
         out.add(line);
         continue;
       }
@@ -686,6 +778,27 @@ class OcrTextPostProcessor {
     }
     return out.join('\n');
   }
+
+  /// يُحوّل زوج `(...)` المتوازن الوحيد إلى `﴿...﴾`، أو يُعيد `null` إن لم
+  /// يكن التحويل بيّناً.
+  ///
+  /// يُرفض الحالة حين:
+  /// - يحوي السطر قوساً مزخرفاً أصلاً (`﴾`) — إذن الزوج ليس بديلاً عنه.
+  /// - هناك **زوجان فأكثر** — لا يُعرف أيّهما الاقتباس.
+  static String? _convertBalancedParens(String line) {
+    if (line.contains('﴾')) return null;
+    final List<RegExpMatch> pairs = _balancedParen
+        .allMatches(line)
+        .toList(growable: false);
+    if (pairs.length != 1) return null;
+    final RegExpMatch pair = pairs.first;
+    final String inner = pair.group(1)!;
+    if (inner.trim().isEmpty) return null; // قوس فارغ لا معنى له
+    return '${line.substring(0, pair.start)}﴿$inner﴾${line.substring(pair.end)}';
+  }
+
+  /// زوج قوسَين لاتينيَين متوازنين لا يحويان قوساً آخر في داخلهما.
+  static final RegExp _balancedParen = RegExp(r'\(([^()]+)\)');
 
   /// أوّل عبارة اقتباس واردة في السطر — أولويةً بترتيب [_quoteCues].
   static RegExp? _firstCueIn(String line) {
