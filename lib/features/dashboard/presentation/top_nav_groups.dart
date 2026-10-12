@@ -168,4 +168,12 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
           ),
         ],
       ),
+      // 6) تطبيق فرح — مباشر بلا قائمة (نصوصه عربية أحادية اللغة، فلا
+      // مفتاح ترجمة له؛ يُضاف هنا في النهاية كي لا يزحزح أي فهرس).
+      TopNavGroup(
+        id: 'farah',
+        label: 'تطبيق فرح',
+        icon: Icons.celebration_rounded,
+        path: AppRoutes.farah,
+      ),
     ];

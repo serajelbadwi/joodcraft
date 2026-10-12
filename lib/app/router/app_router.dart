@@ -13,6 +13,8 @@ import '../../core/templates/template_repository.dart';
 import '../../core/templates/invitation_gallery.dart';
 import '../../features/assets_manager/presentation/screens/assets_manager_screen.dart';
 import '../../features/about/presentation/screens/about_screen.dart';
+import '../../features/farah/data/supabase_farah_repository.dart';
+import '../../features/farah/presentation/screens/farah_login_screen.dart';
 import '../../features/brand/presentation/screens/brand_settings_screen.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/auth/presentation/screens/admin_accounts_screen.dart';
@@ -287,7 +289,18 @@ abstract final class AppRouter {
               const AboutScreen(),
         ),
 
-        // ------------------------- لوحة تحكم القرى -------------------------
+        // ------------------------- تطبيق فرح -------------------------
+      // **خارج** هيكل الفروع مقصود (كصفحة «حول» ولوحة القرى): تُفتح فوق
+      // القسم الحالي فتبقى حالته حيّة، ولا تُزحزح إضافة هذا المسار فهارس
+      // الفروع القائمة. التنقّل داخلها يدوي (Navigator) بين شاشاتها.
+      GoRoute(
+        path: AppRoutes.farah,
+        name: 'farah',
+        builder: (BuildContext context, GoRouterState state) =>
+            FarahLoginScreen(repository: SupabaseFarahRepository()),
+      ),
+
+      // ------------------------- لوحة تحكم القرى -------------------------
         // **خارج** هيكل الفروع مقصود (كصفحة «حول»): تُفتح فوق القسم الحالي
         // فتبقى حالته حيّة، ولا تُزحزح إضافة هذا المسار فهارس الفروع القائمة —
         // ولها شاشات فرعية متداخلة بنفس المسار (قرية ← فيديوهات/أعضاء/إعلانات).
