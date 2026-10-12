@@ -47,10 +47,15 @@ void main() {
     test('يبقّي الأبعاد كما هي عند scale = 1.0 وبلا معالجة', () {
       final PreprocessedImage result = ImagePreprocessor.preprocess(
         coloredPng(width: 12, height: 7),
+        // كلّ العلامات صريحة: الافتراضيات تغيّرت بالقياس (`OcrSettings`)،
+        // وهذا الاختبار يقيس مسار «بلا معالجة» لا الافتراضيات.
         settings: const OcrSettings(
           scale: 1.0,
           grayscale: false,
           binarize: false,
+          denoise: false,
+          deskew: false,
+          contrast: false,
         ),
       );
       expect(result.width, 12);

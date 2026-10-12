@@ -284,4 +284,90 @@ void main() {
       );
     });
   });
+
+  group('الأشكال الثلاثة لرمز الشرف المفكّك', () {
+    test('النبي:١ ← النبي ﷺ:', () {
+      expect(
+        OcrTextPostProcessor.process('قال النبي:١ «لا يدخل»'),
+        contains('النبي ﷺ:'),
+      );
+    });
+
+    test('النبي 1: ← النبي ﷺ: (رقم لاتيني قبل النقطتين)', () {
+      // المحرّك يفكّك `ﷺ` أيضاً إلى رقم لاتيني ونقطتين بترتيب معكوس.
+      expect(
+        OcrTextPostProcessor.process('قال النبي 1: «لا يدخل»'),
+        contains('النبي ﷺ:'),
+      );
+    });
+
+    test('رسول الله 1؛ ← رسول الله ﷺ:', () {
+      expect(
+        OcrTextPostProcessor.process('قال رسول الله 1؛ «المسلم من سلم»'),
+        contains('رسول الله ﷺ:'),
+      );
+    });
+
+    test('ترقيم صريح بلا علامة لا يُبتلع', () {
+      // `النبي ٢` بلا نقطة ولا فاصلة: ترقيمُ أحاديث، لا رمز شرف.
+      const String raw = 'من الأحاديث: النبي ٢ في البخاري.';
+      expect(OcrTextPostProcessor.process(raw), isNot(contains('ﷺ')));
+    });
+  });
+
+  group('الاتجاه المعكوس: الشَّرطة قبل الرقم', () {
+    test('-١ يعود ١-', () {
+      expect(
+        OcrTextPostProcessor.process('-١ أذى الجار سبب الحرمان.'),
+        contains('١- أذى'),
+      );
+    });
+
+    test('شَّرطة الترقيم المتبوعة بكلمة لا تُقلَب', () {
+      const String raw = '- الكلمة الخبيثة سبب دخول النار.';
+      expect(OcrTextPostProcessor.process(raw), raw);
+    });
+  });
+
+  group('الرقم ١ يُقرأ شَّرطة عمودية', () {
+    test('| يعود ١ في سياق عربي', () {
+      expect(
+        OcrTextPostProcessor.process('| أذى الجار سبب الحرمان.'),
+        contains('١ أذى'),
+      );
+    });
+
+    test('سلسلة شرطات حدود جدول لا تُمسّ', () {
+      const String raw = 'الاسم | العنوان | المدينة';
+      expect(OcrTextPostProcessor.process(raw), contains('|'));
+    });
+  });
+
+  group('قاعدة 11 — زوج القوسين المتوازن', () {
+    test('زوج مطابق وحيد يُحوَّل إلى ‹﴿ ﴾›', () {
+      // الحالة الأكثر انتشاراً قياساً: المحرّك يفكّك `﴿ ﴾` إلى `(` و`)`
+      // مطابقَين فيبدو الاقتباس صحيحاً وهو مفقود العلامتين.
+      const String raw =
+          'الإجابة: قال تعالى: (ما يلفظ من قول إلا لديه رقيب عتيد) [ق: ١٨]';
+      final String cleaned = OcrTextPostProcessor.process(raw);
+
+      expect(cleaned, contains('﴿ما يلفظ'));
+      expect(cleaned, contains('عتيد﴾'));
+      expect(cleaned, isNot(contains('(')));
+    });
+
+    test('زوجان مطابقان ⇒ غموض ولا يُخترَق', () {
+      const String raw = 'قال تعالى: (الأول) و (الثاني)';
+      expect(OcrTextPostProcessor.process(raw), raw);
+    });
+
+    test('زوج مع قوس مزخرف موجود ⇒ لا يُختلق بديل', () {
+      // نفس احتراز الاختبار الأصلي: `﴾` موجودة أصلاً فالأزواج ليست بدلاً عنها.
+      const String raw = 'قال تعالى: (قد أفلح) ﴾';
+      final String cleaned = OcrTextPostProcessor.process(raw);
+
+      expect(cleaned, contains('('));
+      expect(cleaned, isNot(contains('﴿')));
+    });
+  });
 }
