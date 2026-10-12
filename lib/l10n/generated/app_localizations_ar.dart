@@ -3383,4 +3383,575 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ocrTessHint => 'يتطلّب تثبيت Tesseract على الجهاز.';
+
+  @override
+  String get jwRibbonHome => 'الرئيسية';
+
+  @override
+  String get jwRibbonSetup => 'التهيئة';
+
+  @override
+  String get jwRibbonDesign => 'التصميم';
+
+  @override
+  String get jwRibbonFile => 'الحفظ';
+
+  @override
+  String get jwRibbonReview => 'المراجعة';
+
+  @override
+  String get jwSectionFonts => 'الخطوط';
+
+  @override
+  String get jwFontFamily => 'عائلة الخط';
+
+  @override
+  String get jwFontSizeDown => 'تصغير الخط';
+
+  @override
+  String get jwFontSizeLabel => 'حجم الخط';
+
+  @override
+  String get jwFontSizeUp => 'تكبير الخط';
+
+  @override
+  String get jwBold => 'غامق';
+
+  @override
+  String get jwItalic => 'مائل';
+
+  @override
+  String get jwUnderline => 'تسطير';
+
+  @override
+  String get jwStrikethrough => 'شطب';
+
+  @override
+  String get jwTextColor => 'لون النص';
+
+  @override
+  String get jwNoColor => 'بلا لون';
+
+  @override
+  String get jwHighlightColor => 'تمييز النص';
+
+  @override
+  String get jwClearFormatting => 'مسح التنسيق';
+
+  @override
+  String get jwSectionAlignment => 'المحاذاة';
+
+  @override
+  String get jwAlignRight => 'محاذاة لليمين';
+
+  @override
+  String get jwAlignCenter => 'توسيط';
+
+  @override
+  String get jwAlignLeft => 'محاذاة لليسار';
+
+  @override
+  String get jwJustify => 'ضبط';
+
+  @override
+  String get jwLineSpacing => 'تباعد الأسطر';
+
+  @override
+  String get jwParagraphSpacing => 'تباعد الفقرات';
+
+  @override
+  String get jwSpacingNone => 'بلا تباعد';
+
+  @override
+  String get jwSpacingValue => 'تباعد';
+
+  @override
+  String get jwDirectionRtl => 'اتجاه من اليمين (RTL)';
+
+  @override
+  String get jwDirectionLtr => 'اتجاه من اليسار (LTR)';
+
+  @override
+  String get jwSectionLists => 'القوائم والمسافات';
+
+  @override
+  String get jwBulletList => 'قائمة نقطية';
+
+  @override
+  String get jwNumberedList => 'قائمة رقمية';
+
+  @override
+  String get jwIndentIncrease => 'زيادة الإزاحة';
+
+  @override
+  String get jwIndentDecrease => 'إنقاص الإزاحة';
+
+  @override
+  String get jwFirstLineIndentIncrease => 'زيادة إزاحة السطر الأول';
+
+  @override
+  String get jwFirstLineIndentDecrease => 'إنقاص إزاحة السطر الأول';
+
+  @override
+  String get jwHangingIndent => 'إزاحة معلّقة';
+
+  @override
+  String get jwSectionParagraph => 'الفقرة';
+
+  @override
+  String get jwParagraphDialog => 'نافذة الفقرة';
+
+  @override
+  String get jwFormatPainter => 'نسخ التنسيق';
+
+  @override
+  String get jwFormatPainterOnce => 'نسخ التنسيق — كتلة واحدة';
+
+  @override
+  String get jwFormatPainterLocked => 'نسخ التنسيق — مستمر (اضغط للإيقاف)';
+
+  @override
+  String get jwFormatPainterShort => 'تنسيق';
+
+  @override
+  String get jwSectionBlocks => 'الكتل';
+
+  @override
+  String get jwAddBlock => 'إضافة كتلة';
+
+  @override
+  String get jwDeleteBlock => 'حذف كتلة';
+
+  @override
+  String get jwPageBreak => 'فاصل صفحات (صفحة جديدة عند المؤشر)';
+
+  @override
+  String get jwSpreadView => 'عرض صفحتين متقابلتين (طي الكتاب)';
+
+  @override
+  String get jwParagraphDialogTitle => 'إعدادات الفقرة';
+
+  @override
+  String get jwAlignLabel => 'المحاذاة';
+
+  @override
+  String get jwIndentationLabel => 'الإزاحات (سم)';
+
+  @override
+  String get jwIndentGeneral => 'إزاحة الفقرة';
+
+  @override
+  String get jwIndentFirstLine => 'السطر الأول';
+
+  @override
+  String get jwSpacingLabel => 'التباعد';
+
+  @override
+  String get jwSpaceBefore => 'قبل (بكسل)';
+
+  @override
+  String get jwSpaceAfter => 'بعد (بكسل)';
+
+  @override
+  String get jwLineHeightLabel => 'ارتفاع السطر';
+
+  @override
+  String get jwCancel => 'إلغاء';
+
+  @override
+  String get jwOk => 'موافق';
+
+  @override
+  String get jwSectionPageSetup => 'إعداد الصفحة';
+
+  @override
+  String get jwPageSize => 'مقاس الصفحة';
+
+  @override
+  String get jwOrientation => 'اتجاه الصفحة';
+
+  @override
+  String get jwPortrait => 'طولي';
+
+  @override
+  String get jwLandscape => 'عرضي';
+
+  @override
+  String get jwPageMargins => 'هوامش الصفحة';
+
+  @override
+  String get jwMarginsNarrow => 'ضيقة';
+
+  @override
+  String get jwMarginsNormal => 'متوسطة';
+
+  @override
+  String get jwMarginsWide => 'واسعة';
+
+  @override
+  String get jwMarginsCustom => 'مخصصة…';
+
+  @override
+  String get jwSectionPageBackground => 'خلفية الصفحة';
+
+  @override
+  String get jwPageColor => 'لون الصفحة';
+
+  @override
+  String get jwPageColorClear => 'أبيض (افتراضي)';
+
+  @override
+  String get jwWatermark => 'علامة مائية';
+
+  @override
+  String get jwWatermarkShort => 'علامة';
+
+  @override
+  String get jwPageBorder => 'إطار الصفحة';
+
+  @override
+  String get jwSectionPageNumbering => 'ترقيم الصفحات';
+
+  @override
+  String get jwPageNumberEnable => 'إظهار أرقام الصفحات';
+
+  @override
+  String get jwPageNumberAlignLabel => 'محاذاة الرقم';
+
+  @override
+  String get jwPageNumberFormat => 'صيغة الرقم';
+
+  @override
+  String get jwPageNumberStartAt => 'يبدأ من';
+
+  @override
+  String get jwPageNumberDifferentFirst => 'تجاهل الصفحة الأولى (غلاف)';
+
+  @override
+  String get jwPageNumberRemove => 'إزالة أرقام الصفحات';
+
+  @override
+  String get jwCustomMarginsTitle => 'هوامش مخصصة (مليمتر)';
+
+  @override
+  String get jwMarginTop => 'أعلى';
+
+  @override
+  String get jwMarginBottom => 'أسفل';
+
+  @override
+  String get jwMarginRight => 'يمين';
+
+  @override
+  String get jwMarginLeft => 'يسار';
+
+  @override
+  String get jwWatermarkTitle => 'العلامة المائية';
+
+  @override
+  String get jwWatermarkHint => 'نصّ خلفي شفّاف (اتركه فارغاً للإزالة)';
+
+  @override
+  String get jwWatermarkClear => 'إزالة';
+
+  @override
+  String get jwSectionTemplates => 'القوالب';
+
+  @override
+  String get jwTemplateCategory => 'فئة القالب';
+
+  @override
+  String get jwTemplateAll => 'كل الفئات';
+
+  @override
+  String get jwTemplates => 'القوالب';
+
+  @override
+  String get jwSectionInsert => 'الإدراج';
+
+  @override
+  String get jwShapes => 'أشكال';
+
+  @override
+  String get jwInsertImage => 'إدراج صورة';
+
+  @override
+  String get jwInsertImageShort => 'صورة';
+
+  @override
+  String get jwInsertTable => 'إدراج جدول';
+
+  @override
+  String get jwInsertSymbol => 'إدراج رمز';
+
+  @override
+  String get jwSectionShapeFormat => 'تنسيق الأشكال';
+
+  @override
+  String get jwShapeFill => 'لون الحشو';
+
+  @override
+  String get jwShapeOutline => 'لون الحدّ';
+
+  @override
+  String get jwShapeStrokeWidth => 'سماكة الحدّ';
+
+  @override
+  String get jwShapeDefaultsHint => 'تُطبَّق عند الإدراج';
+
+  @override
+  String get jwActionFailed => 'تعذّر إتمام العملية';
+
+  @override
+  String get jwNewDocConfirm => 'مستند جديد';
+
+  @override
+  String get jwNewDocConfirmMessage =>
+      'لديك تغييرات غير محفوظة. هل تريد البدء بمستند جديد؟';
+
+  @override
+  String get jwNewDocument => 'مستند جديد';
+
+  @override
+  String get jwRecentFilesEmpty => 'لا مستندات محفوظة بعد';
+
+  @override
+  String get jwRecentFiles => 'المستندات الأخيرة';
+
+  @override
+  String get jwOpenDocument => 'فتح مستند';
+
+  @override
+  String get jwSaveAs => 'حفظ باسم';
+
+  @override
+  String get jwDocumentTitle => 'عنوان المستند';
+
+  @override
+  String get jwSaved => 'حُفظ المستند';
+
+  @override
+  String get jwSectionFile => 'الملف';
+
+  @override
+  String get jwNewShort => 'جديد';
+
+  @override
+  String get jwOpenShort => 'فتح';
+
+  @override
+  String get jwSave => 'حفظ (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => 'حفظ';
+
+  @override
+  String get jwSectionExport => 'التصدير';
+
+  @override
+  String get jwExportPdf => 'تصدير PDF';
+
+  @override
+  String get jwExportPng => 'تصدير PNG';
+
+  @override
+  String get jwExportDocx => 'تصدير DOCX';
+
+  @override
+  String get jwExportHtml => 'تصدير HTML';
+
+  @override
+  String get jwPrint => 'طباعة (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => 'طباعة';
+
+  @override
+  String get jwSectionUndo => 'التراجع';
+
+  @override
+  String get jwUndo => 'تراجع (Ctrl+Z)';
+
+  @override
+  String get jwRedo => 'إعادة (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => 'سجل التراجع';
+
+  @override
+  String get jwHistoryShort => 'السجل';
+
+  @override
+  String get jwSectionSettings => 'الإعدادات';
+
+  @override
+  String get jwDocumentProperties => 'خصائص المستند';
+
+  @override
+  String get jwPageSetup => 'إعداد الصفحة';
+
+  @override
+  String get jwLanguage => 'اللغة';
+
+  @override
+  String get jwAutoSave => 'الحفظ التلقائي';
+
+  @override
+  String get jwAutoSaveShort => 'تلقائي';
+
+  @override
+  String get jwLanguageArabic =>
+      'لغة المحرّر: العربية — واجهة الشريط تدعم عشر لغات حسب إعدادات التطبيق.';
+
+  @override
+  String get jwHistoryStep => 'خطوة';
+
+  @override
+  String get jwHistoryCurrent => 'الحالية';
+
+  @override
+  String get jwClose => 'إغلاق';
+
+  @override
+  String get jwSectionProofing => 'التدقيق';
+
+  @override
+  String get jwSpelling => 'التدقيق الإملائي (تكرار الكلمات)';
+
+  @override
+  String get jwSpellingShort => 'تدقيق';
+
+  @override
+  String get jwGrammar => 'القواعد (إحصاءات وتكرار)';
+
+  @override
+  String get jwWordCount => 'كلمة';
+
+  @override
+  String get jwCharacterCount => 'حرف';
+
+  @override
+  String get jwReadingTime => 'دقيقة قراءة';
+
+  @override
+  String get jwSectionFind => 'البحث';
+
+  @override
+  String get jwFind => 'بحث (Ctrl+F)';
+
+  @override
+  String get jwFindShort => 'بحث';
+
+  @override
+  String get jwReplace => 'استبدال (Ctrl+H)';
+
+  @override
+  String get jwGoTo => 'الانتقال إلى (Ctrl+G)';
+
+  @override
+  String get jwFindNext => 'البحث عن التالي';
+
+  @override
+  String get jwFindPrevious => 'البحث عن السابق';
+
+  @override
+  String get jwNoMatches => 'لا نتائج';
+
+  @override
+  String get jwSectionInsertReview => 'الإدراج';
+
+  @override
+  String get jwInsertDate => 'إدراج التاريخ';
+
+  @override
+  String get jwInsertTime => 'إدراج الوقت';
+
+  @override
+  String get jwInsertEquation => 'إدراج معادلة';
+
+  @override
+  String get jwInsertFootnote => 'إدراج حاشية';
+
+  @override
+  String get jwSectionComments => 'التعليقات';
+
+  @override
+  String get jwNewComment => 'تعليق جديد';
+
+  @override
+  String get jwNewCommentShort => 'تعليق';
+
+  @override
+  String get jwShowComments => 'إظهار التعليقات';
+
+  @override
+  String get jwDeleteComment => 'حذف تعليقات هذه الكتلة';
+
+  @override
+  String get jwCommentDeleted => 'حُذف التعليق';
+
+  @override
+  String get jwTrackChanges => 'سجل التغييرات (التراجع)';
+
+  @override
+  String get jwProofingTitle => 'التدقيق والإحصاء';
+
+  @override
+  String get jwStatsTitle => 'إحصاءات المستند';
+
+  @override
+  String get jwCharacterCountNoSpaces => 'حرف بلا مسافات';
+
+  @override
+  String get jwLinesCount => 'سطر';
+
+  @override
+  String get jwParagraphsCount => 'فقرة';
+
+  @override
+  String get jwRepeatedWords => 'تكرار كلمات متتالية';
+
+  @override
+  String get jwNoRepeatedWords => 'لا توجد كلمات مكرّرة — نصّ سليم.';
+
+  @override
+  String get jwFindPlaceholder => 'اكتب كلمة البحث…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return 'النتيجة $current من $total';
+  }
+
+  @override
+  String get jwFindTitle => 'بحث واستبدال';
+
+  @override
+  String get jwReplacePlaceholder => 'استبدل بـ…';
+
+  @override
+  String get jwReplaceButton => 'استبدال';
+
+  @override
+  String get jwReplacedBlocks => 'كُتل مبدَلة';
+
+  @override
+  String get jwReplaceAll => 'استبدال الكل';
+
+  @override
+  String get jwGoToBlockLabel => 'رقم الكتلة';
+
+  @override
+  String get jwCommentHint => 'نصّ التعليق على الكتلة النشطة';
+
+  @override
+  String get jwCommentsTitle => 'تعليقات المستند';
+
+  @override
+  String get jwCommentsEmpty => 'لا توجد تعليقات بعد.';
+
+  @override
+  String get jwCommentAtBlock => 'الكتلة';
+
+  @override
+  String get jwJumpToBlock => 'انتقال';
 }

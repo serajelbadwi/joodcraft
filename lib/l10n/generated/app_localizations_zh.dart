@@ -3298,4 +3298,573 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get ocrTessHint => '需要在本设备安装 Tesseract。';
+
+  @override
+  String get jwRibbonHome => '主页';
+
+  @override
+  String get jwRibbonSetup => '布局';
+
+  @override
+  String get jwRibbonDesign => '设计';
+
+  @override
+  String get jwRibbonFile => '文件';
+
+  @override
+  String get jwRibbonReview => '审阅';
+
+  @override
+  String get jwSectionFonts => '字体';
+
+  @override
+  String get jwFontFamily => '字体系列';
+
+  @override
+  String get jwFontSizeDown => '缩小字号';
+
+  @override
+  String get jwFontSizeLabel => '字号';
+
+  @override
+  String get jwFontSizeUp => '放大字号';
+
+  @override
+  String get jwBold => '加粗';
+
+  @override
+  String get jwItalic => '倾斜';
+
+  @override
+  String get jwUnderline => '下划线';
+
+  @override
+  String get jwStrikethrough => '删除线';
+
+  @override
+  String get jwTextColor => '字体颜色';
+
+  @override
+  String get jwNoColor => '无颜色';
+
+  @override
+  String get jwHighlightColor => '文本突出显示';
+
+  @override
+  String get jwClearFormatting => '清除格式';
+
+  @override
+  String get jwSectionAlignment => '对齐';
+
+  @override
+  String get jwAlignRight => '右对齐';
+
+  @override
+  String get jwAlignCenter => '居中';
+
+  @override
+  String get jwAlignLeft => '左对齐';
+
+  @override
+  String get jwJustify => '两端对齐';
+
+  @override
+  String get jwLineSpacing => '行距';
+
+  @override
+  String get jwParagraphSpacing => '段落间距';
+
+  @override
+  String get jwSpacingNone => '无';
+
+  @override
+  String get jwSpacingValue => '间距';
+
+  @override
+  String get jwDirectionRtl => '从右到左 (RTL)';
+
+  @override
+  String get jwDirectionLtr => '从左到右 (LTR)';
+
+  @override
+  String get jwSectionLists => '列表和间距';
+
+  @override
+  String get jwBulletList => '项目符号列表';
+
+  @override
+  String get jwNumberedList => '编号列表';
+
+  @override
+  String get jwIndentIncrease => '增加缩进';
+
+  @override
+  String get jwIndentDecrease => '减少缩进';
+
+  @override
+  String get jwFirstLineIndentIncrease => '增加首行缩进';
+
+  @override
+  String get jwFirstLineIndentDecrease => '减少首行缩进';
+
+  @override
+  String get jwHangingIndent => '悬挂缩进';
+
+  @override
+  String get jwSectionParagraph => '段落';
+
+  @override
+  String get jwParagraphDialog => '段落对话框';
+
+  @override
+  String get jwFormatPainter => '格式刷';
+
+  @override
+  String get jwFormatPainterOnce => '格式刷 — 单块';
+
+  @override
+  String get jwFormatPainterLocked => '格式刷 — 锁定 (点击停止)';
+
+  @override
+  String get jwFormatPainterShort => '格式';
+
+  @override
+  String get jwSectionBlocks => '块';
+
+  @override
+  String get jwAddBlock => '添加块';
+
+  @override
+  String get jwDeleteBlock => '删除块';
+
+  @override
+  String get jwPageBreak => '分页符 (光标处新页)';
+
+  @override
+  String get jwSpreadView => '双页视图';
+
+  @override
+  String get jwParagraphDialogTitle => '段落设置';
+
+  @override
+  String get jwAlignLabel => '对齐';
+
+  @override
+  String get jwIndentationLabel => '缩进 (厘米)';
+
+  @override
+  String get jwIndentGeneral => '段落缩进';
+
+  @override
+  String get jwIndentFirstLine => '首行';
+
+  @override
+  String get jwSpacingLabel => '间距';
+
+  @override
+  String get jwSpaceBefore => '之前 (像素)';
+
+  @override
+  String get jwSpaceAfter => '之后 (像素)';
+
+  @override
+  String get jwLineHeightLabel => '行高';
+
+  @override
+  String get jwCancel => '取消';
+
+  @override
+  String get jwOk => '确定';
+
+  @override
+  String get jwSectionPageSetup => '页面设置';
+
+  @override
+  String get jwPageSize => '页面大小';
+
+  @override
+  String get jwOrientation => '页面方向';
+
+  @override
+  String get jwPortrait => '纵向';
+
+  @override
+  String get jwLandscape => '横向';
+
+  @override
+  String get jwPageMargins => '页边距';
+
+  @override
+  String get jwMarginsNarrow => '窄';
+
+  @override
+  String get jwMarginsNormal => '普通';
+
+  @override
+  String get jwMarginsWide => '宽';
+
+  @override
+  String get jwMarginsCustom => '自定义…';
+
+  @override
+  String get jwSectionPageBackground => '页面背景';
+
+  @override
+  String get jwPageColor => '页面颜色';
+
+  @override
+  String get jwPageColorClear => '白色 (默认)';
+
+  @override
+  String get jwWatermark => '水印';
+
+  @override
+  String get jwWatermarkShort => '标记';
+
+  @override
+  String get jwPageBorder => '页面边框';
+
+  @override
+  String get jwSectionPageNumbering => '页码';
+
+  @override
+  String get jwPageNumberEnable => '显示页码';
+
+  @override
+  String get jwPageNumberAlignLabel => '页码对齐';
+
+  @override
+  String get jwPageNumberFormat => '页码格式';
+
+  @override
+  String get jwPageNumberStartAt => '起始于';
+
+  @override
+  String get jwPageNumberDifferentFirst => '首页不同 (封面)';
+
+  @override
+  String get jwPageNumberRemove => '删除页码';
+
+  @override
+  String get jwCustomMarginsTitle => '自定义边距 (毫米)';
+
+  @override
+  String get jwMarginTop => '上';
+
+  @override
+  String get jwMarginBottom => '下';
+
+  @override
+  String get jwMarginRight => '右';
+
+  @override
+  String get jwMarginLeft => '左';
+
+  @override
+  String get jwWatermarkTitle => '水印';
+
+  @override
+  String get jwWatermarkHint => '半透明背景文字 (留空以移除)';
+
+  @override
+  String get jwWatermarkClear => '移除';
+
+  @override
+  String get jwSectionTemplates => '模板';
+
+  @override
+  String get jwTemplateCategory => '模板类别';
+
+  @override
+  String get jwTemplateAll => '全部类别';
+
+  @override
+  String get jwTemplates => '模板';
+
+  @override
+  String get jwSectionInsert => '插入';
+
+  @override
+  String get jwShapes => '形状';
+
+  @override
+  String get jwInsertImage => '插入图片';
+
+  @override
+  String get jwInsertImageShort => '图片';
+
+  @override
+  String get jwInsertTable => '插入表格';
+
+  @override
+  String get jwInsertSymbol => '插入符号';
+
+  @override
+  String get jwSectionShapeFormat => '形状格式';
+
+  @override
+  String get jwShapeFill => '形状填充';
+
+  @override
+  String get jwShapeOutline => '形状轮廓';
+
+  @override
+  String get jwShapeStrokeWidth => '轮廓粗细';
+
+  @override
+  String get jwShapeDefaultsHint => '插入时应用';
+
+  @override
+  String get jwActionFailed => '操作失败';
+
+  @override
+  String get jwNewDocConfirm => '新建文档';
+
+  @override
+  String get jwNewDocConfirmMessage => '您有未保存的更改。要新建文档吗？';
+
+  @override
+  String get jwNewDocument => '新建文档';
+
+  @override
+  String get jwRecentFilesEmpty => '暂无已保存文档';
+
+  @override
+  String get jwRecentFiles => '最近文件';
+
+  @override
+  String get jwOpenDocument => '打开文档';
+
+  @override
+  String get jwSaveAs => '另存为';
+
+  @override
+  String get jwDocumentTitle => '文档标题';
+
+  @override
+  String get jwSaved => '文档已保存';
+
+  @override
+  String get jwSectionFile => '文件';
+
+  @override
+  String get jwNewShort => '新建';
+
+  @override
+  String get jwOpenShort => '打开';
+
+  @override
+  String get jwSave => '保存 (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => '保存';
+
+  @override
+  String get jwSectionExport => '导出';
+
+  @override
+  String get jwExportPdf => '导出 PDF';
+
+  @override
+  String get jwExportPng => '导出 PNG';
+
+  @override
+  String get jwExportDocx => '导出 DOCX';
+
+  @override
+  String get jwExportHtml => '导出 HTML';
+
+  @override
+  String get jwPrint => '打印 (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => '打印';
+
+  @override
+  String get jwSectionUndo => '撤销';
+
+  @override
+  String get jwUndo => '撤销 (Ctrl+Z)';
+
+  @override
+  String get jwRedo => '重做 (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => '撤销历史';
+
+  @override
+  String get jwHistoryShort => '历史';
+
+  @override
+  String get jwSectionSettings => '设置';
+
+  @override
+  String get jwDocumentProperties => '文档属性';
+
+  @override
+  String get jwPageSetup => '页面设置';
+
+  @override
+  String get jwLanguage => '语言';
+
+  @override
+  String get jwAutoSave => '自动保存';
+
+  @override
+  String get jwAutoSaveShort => '自动';
+
+  @override
+  String get jwLanguageArabic => '编辑器语言：阿拉伯语 — 功能区支持十种语言 (依应用设置)。';
+
+  @override
+  String get jwHistoryStep => '步骤';
+
+  @override
+  String get jwHistoryCurrent => '当前';
+
+  @override
+  String get jwClose => '关闭';
+
+  @override
+  String get jwSectionProofing => '校对';
+
+  @override
+  String get jwSpelling => '拼写 (重复词)';
+
+  @override
+  String get jwSpellingShort => '校对';
+
+  @override
+  String get jwGrammar => '语法 (统计与重复)';
+
+  @override
+  String get jwWordCount => '字数';
+
+  @override
+  String get jwCharacterCount => '字符数';
+
+  @override
+  String get jwReadingTime => '分钟阅读';
+
+  @override
+  String get jwSectionFind => '查找';
+
+  @override
+  String get jwFind => '查找 (Ctrl+F)';
+
+  @override
+  String get jwFindShort => '查找';
+
+  @override
+  String get jwReplace => '替换 (Ctrl+H)';
+
+  @override
+  String get jwGoTo => '转到 (Ctrl+G)';
+
+  @override
+  String get jwFindNext => '查找下一个';
+
+  @override
+  String get jwFindPrevious => '查找上一个';
+
+  @override
+  String get jwNoMatches => '无结果';
+
+  @override
+  String get jwSectionInsertReview => '插入';
+
+  @override
+  String get jwInsertDate => '插入日期';
+
+  @override
+  String get jwInsertTime => '插入时间';
+
+  @override
+  String get jwInsertEquation => '插入公式';
+
+  @override
+  String get jwInsertFootnote => '插入脚注';
+
+  @override
+  String get jwSectionComments => '评论';
+
+  @override
+  String get jwNewComment => '新建评论';
+
+  @override
+  String get jwNewCommentShort => '评论';
+
+  @override
+  String get jwShowComments => '显示评论';
+
+  @override
+  String get jwDeleteComment => '删除此块的评论';
+
+  @override
+  String get jwCommentDeleted => '评论已删除';
+
+  @override
+  String get jwTrackChanges => '修订记录 (历史)';
+
+  @override
+  String get jwProofingTitle => '校对与统计';
+
+  @override
+  String get jwStatsTitle => '文档统计';
+
+  @override
+  String get jwCharacterCountNoSpaces => '字符数 (不含空格)';
+
+  @override
+  String get jwLinesCount => '行数';
+
+  @override
+  String get jwParagraphsCount => '段落数';
+
+  @override
+  String get jwRepeatedWords => '连续重复词';
+
+  @override
+  String get jwNoRepeatedWords => '没有重复词 — 文本干净。';
+
+  @override
+  String get jwFindPlaceholder => '输入以搜索…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return '第 $current 项结果，共 $total';
+  }
+
+  @override
+  String get jwFindTitle => '查找和替换';
+
+  @override
+  String get jwReplacePlaceholder => '替换为…';
+
+  @override
+  String get jwReplaceButton => '替换';
+
+  @override
+  String get jwReplacedBlocks => '已替换块数';
+
+  @override
+  String get jwReplaceAll => '全部替换';
+
+  @override
+  String get jwGoToBlockLabel => '块编号';
+
+  @override
+  String get jwCommentHint => '当前块的评论内容';
+
+  @override
+  String get jwCommentsTitle => '文档评论';
+
+  @override
+  String get jwCommentsEmpty => '暂无评论。';
+
+  @override
+  String get jwCommentAtBlock => '块';
+
+  @override
+  String get jwJumpToBlock => '跳转';
 }

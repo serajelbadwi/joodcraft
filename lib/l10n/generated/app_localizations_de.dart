@@ -3437,4 +3437,578 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get ocrTessHint =>
       'Erfordert die Installation von Tesseract auf diesem Gerät.';
+
+  @override
+  String get jwRibbonHome => 'Startseite';
+
+  @override
+  String get jwRibbonSetup => 'Layout';
+
+  @override
+  String get jwRibbonDesign => 'Gestaltung';
+
+  @override
+  String get jwRibbonFile => 'Datei';
+
+  @override
+  String get jwRibbonReview => 'Überprüfung';
+
+  @override
+  String get jwSectionFonts => 'Schriftarten';
+
+  @override
+  String get jwFontFamily => 'Schriftfamilie';
+
+  @override
+  String get jwFontSizeDown => 'Schriftgröße verkleinern';
+
+  @override
+  String get jwFontSizeLabel => 'Schriftgröße';
+
+  @override
+  String get jwFontSizeUp => 'Schriftgröße vergrößern';
+
+  @override
+  String get jwBold => 'Fett';
+
+  @override
+  String get jwItalic => 'Kursiv';
+
+  @override
+  String get jwUnderline => 'Unterstrichen';
+
+  @override
+  String get jwStrikethrough => 'Durchgestrichen';
+
+  @override
+  String get jwTextColor => 'Textfarbe';
+
+  @override
+  String get jwNoColor => 'Keine Farbe';
+
+  @override
+  String get jwHighlightColor => 'Text hervorheben';
+
+  @override
+  String get jwClearFormatting => 'Formatierung löschen';
+
+  @override
+  String get jwSectionAlignment => 'Ausrichtung';
+
+  @override
+  String get jwAlignRight => 'Rechtsbündig';
+
+  @override
+  String get jwAlignCenter => 'Zentrieren';
+
+  @override
+  String get jwAlignLeft => 'Linksbündig';
+
+  @override
+  String get jwJustify => 'Blocksatz';
+
+  @override
+  String get jwLineSpacing => 'Zeilenabstand';
+
+  @override
+  String get jwParagraphSpacing => 'Absatzabstand';
+
+  @override
+  String get jwSpacingNone => 'Keine';
+
+  @override
+  String get jwSpacingValue => 'Abstand';
+
+  @override
+  String get jwDirectionRtl => 'Rechts nach links (RTL)';
+
+  @override
+  String get jwDirectionLtr => 'Links nach rechts (LTR)';
+
+  @override
+  String get jwSectionLists => 'Listen und Abstand';
+
+  @override
+  String get jwBulletList => 'Aufzählungszeichen';
+
+  @override
+  String get jwNumberedList => 'Nummerierte Liste';
+
+  @override
+  String get jwIndentIncrease => 'Einzug vergrößern';
+
+  @override
+  String get jwIndentDecrease => 'Einzug verkleinern';
+
+  @override
+  String get jwFirstLineIndentIncrease => 'Einzug 1. Zeile +';
+
+  @override
+  String get jwFirstLineIndentDecrease => 'Einzug 1. Zeile −';
+
+  @override
+  String get jwHangingIndent => 'Hängender Einzug';
+
+  @override
+  String get jwSectionParagraph => 'Absatz';
+
+  @override
+  String get jwParagraphDialog => 'Absatzdialog';
+
+  @override
+  String get jwFormatPainter => 'Formatkopierer';
+
+  @override
+  String get jwFormatPainterOnce => 'Formatkopierer — ein Block';
+
+  @override
+  String get jwFormatPainterLocked =>
+      'Formatkopierer — gesperrt (klicken zum Stoppen)';
+
+  @override
+  String get jwFormatPainterShort => 'Format';
+
+  @override
+  String get jwSectionBlocks => 'Blöcke';
+
+  @override
+  String get jwAddBlock => 'Block hinzufügen';
+
+  @override
+  String get jwDeleteBlock => 'Block löschen';
+
+  @override
+  String get jwPageBreak => 'Seitenumbruch (neue Seite am Cursor)';
+
+  @override
+  String get jwSpreadView => 'Doppelseite';
+
+  @override
+  String get jwParagraphDialogTitle => 'Absatz-Einstellungen';
+
+  @override
+  String get jwAlignLabel => 'Ausrichtung';
+
+  @override
+  String get jwIndentationLabel => 'Einzug (cm)';
+
+  @override
+  String get jwIndentGeneral => 'Absatz-Einzug';
+
+  @override
+  String get jwIndentFirstLine => 'Erste Zeile';
+
+  @override
+  String get jwSpacingLabel => 'Abstand';
+
+  @override
+  String get jwSpaceBefore => 'Vorher (px)';
+
+  @override
+  String get jwSpaceAfter => 'Nachher (px)';
+
+  @override
+  String get jwLineHeightLabel => 'Zeilenhöhe';
+
+  @override
+  String get jwCancel => 'Abbrechen';
+
+  @override
+  String get jwOk => 'OK';
+
+  @override
+  String get jwSectionPageSetup => 'Seiteneinrichtung';
+
+  @override
+  String get jwPageSize => 'Seitengröße';
+
+  @override
+  String get jwOrientation => 'Seitenausrichtung';
+
+  @override
+  String get jwPortrait => 'Hochformat';
+
+  @override
+  String get jwLandscape => 'Querformat';
+
+  @override
+  String get jwPageMargins => 'Seitenränder';
+
+  @override
+  String get jwMarginsNarrow => 'Schmal';
+
+  @override
+  String get jwMarginsNormal => 'Normal';
+
+  @override
+  String get jwMarginsWide => 'Weit';
+
+  @override
+  String get jwMarginsCustom => 'Benutzerdefiniert…';
+
+  @override
+  String get jwSectionPageBackground => 'Seitenhintergrund';
+
+  @override
+  String get jwPageColor => 'Seitenfarbe';
+
+  @override
+  String get jwPageColorClear => 'Weiß (Standard)';
+
+  @override
+  String get jwWatermark => 'Wasserzeichen';
+
+  @override
+  String get jwWatermarkShort => 'Zeichen';
+
+  @override
+  String get jwPageBorder => 'Seitenrahmen';
+
+  @override
+  String get jwSectionPageNumbering => 'Seitenzahlen';
+
+  @override
+  String get jwPageNumberEnable => 'Seitenzahlen anzeigen';
+
+  @override
+  String get jwPageNumberAlignLabel => 'Nummerausrichtung';
+
+  @override
+  String get jwPageNumberFormat => 'Zahlenformat';
+
+  @override
+  String get jwPageNumberStartAt => 'Beginnen bei';
+
+  @override
+  String get jwPageNumberDifferentFirst => 'Erste Seite anders';
+
+  @override
+  String get jwPageNumberRemove => 'Seitenzahlen entfernen';
+
+  @override
+  String get jwCustomMarginsTitle => 'Benutzerdefinierte Ränder (mm)';
+
+  @override
+  String get jwMarginTop => 'Oben';
+
+  @override
+  String get jwMarginBottom => 'Unten';
+
+  @override
+  String get jwMarginRight => 'Rechts';
+
+  @override
+  String get jwMarginLeft => 'Links';
+
+  @override
+  String get jwWatermarkTitle => 'Wasserzeichen';
+
+  @override
+  String get jwWatermarkHint =>
+      'Transparenter Hintergrundtext (leer zum Entfernen)';
+
+  @override
+  String get jwWatermarkClear => 'Entfernen';
+
+  @override
+  String get jwSectionTemplates => 'Vorlagen';
+
+  @override
+  String get jwTemplateCategory => 'Vorlagenkategorie';
+
+  @override
+  String get jwTemplateAll => 'Alle Kategorien';
+
+  @override
+  String get jwTemplates => 'Vorlagen';
+
+  @override
+  String get jwSectionInsert => 'Einfügen';
+
+  @override
+  String get jwShapes => 'Formen';
+
+  @override
+  String get jwInsertImage => 'Bild einfügen';
+
+  @override
+  String get jwInsertImageShort => 'Bild';
+
+  @override
+  String get jwInsertTable => 'Tabelle einfügen';
+
+  @override
+  String get jwInsertSymbol => 'Symbol einfügen';
+
+  @override
+  String get jwSectionShapeFormat => 'Format von Formen';
+
+  @override
+  String get jwShapeFill => 'Füllung';
+
+  @override
+  String get jwShapeOutline => 'Kontur';
+
+  @override
+  String get jwShapeStrokeWidth => 'Konturstärke';
+
+  @override
+  String get jwShapeDefaultsHint => 'Wird beim Einfügen angewendet';
+
+  @override
+  String get jwActionFailed => 'Aktion fehlgeschlagen';
+
+  @override
+  String get jwNewDocConfirm => 'Neues Dokument';
+
+  @override
+  String get jwNewDocConfirmMessage =>
+      'Sie haben ungespeicherte Änderungen. Neues Dokument beginnen?';
+
+  @override
+  String get jwNewDocument => 'Neues Dokument';
+
+  @override
+  String get jwRecentFilesEmpty => 'Noch keine gespeicherten Dokumente';
+
+  @override
+  String get jwRecentFiles => 'Zuletzt verwendet';
+
+  @override
+  String get jwOpenDocument => 'Dokument öffnen';
+
+  @override
+  String get jwSaveAs => 'Speichern unter';
+
+  @override
+  String get jwDocumentTitle => 'Dokumenttitel';
+
+  @override
+  String get jwSaved => 'Dokument gespeichert';
+
+  @override
+  String get jwSectionFile => 'Datei';
+
+  @override
+  String get jwNewShort => 'Neu';
+
+  @override
+  String get jwOpenShort => 'Öffnen';
+
+  @override
+  String get jwSave => 'Speichern (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => 'Speichern';
+
+  @override
+  String get jwSectionExport => 'Exportieren';
+
+  @override
+  String get jwExportPdf => 'Als PDF exportieren';
+
+  @override
+  String get jwExportPng => 'Als PNG exportieren';
+
+  @override
+  String get jwExportDocx => 'Als DOCX exportieren';
+
+  @override
+  String get jwExportHtml => 'Als HTML exportieren';
+
+  @override
+  String get jwPrint => 'Drucken (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => 'Drucken';
+
+  @override
+  String get jwSectionUndo => 'Widerrufen';
+
+  @override
+  String get jwUndo => 'Rückgängig (Ctrl+Z)';
+
+  @override
+  String get jwRedo => 'Wiederholen (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => 'Widerrufsverlauf';
+
+  @override
+  String get jwHistoryShort => 'Verlauf';
+
+  @override
+  String get jwSectionSettings => 'Einstellungen';
+
+  @override
+  String get jwDocumentProperties => 'Dokumenteigenschaften';
+
+  @override
+  String get jwPageSetup => 'Seiteneinrichtung';
+
+  @override
+  String get jwLanguage => 'Sprache';
+
+  @override
+  String get jwAutoSave => 'Automatisch speichern';
+
+  @override
+  String get jwAutoSaveShort => 'Automatisch';
+
+  @override
+  String get jwLanguageArabic =>
+      'Editor-Sprache: Arabisch — das Band unterstützt zehn Sprachen je Einstellung.';
+
+  @override
+  String get jwHistoryStep => 'Schritt';
+
+  @override
+  String get jwHistoryCurrent => 'Aktuell';
+
+  @override
+  String get jwClose => 'Schließen';
+
+  @override
+  String get jwSectionProofing => 'Prüfung';
+
+  @override
+  String get jwSpelling => 'Rechtschreibung (wiederholte Wörter)';
+
+  @override
+  String get jwSpellingShort => 'Prüfen';
+
+  @override
+  String get jwGrammar => 'Grammatik (Statistik & Wiederholung)';
+
+  @override
+  String get jwWordCount => 'Wörter';
+
+  @override
+  String get jwCharacterCount => 'Zeichen';
+
+  @override
+  String get jwReadingTime => 'Min. Lesezeit';
+
+  @override
+  String get jwSectionFind => 'Suchen';
+
+  @override
+  String get jwFind => 'Suchen (Ctrl+F)';
+
+  @override
+  String get jwFindShort => 'Suchen';
+
+  @override
+  String get jwReplace => 'Ersetzen (Ctrl+H)';
+
+  @override
+  String get jwGoTo => 'Gehe zu (Ctrl+G)';
+
+  @override
+  String get jwFindNext => 'Weitersuchen';
+
+  @override
+  String get jwFindPrevious => 'Vorheriges suchen';
+
+  @override
+  String get jwNoMatches => 'Keine Ergebnisse';
+
+  @override
+  String get jwSectionInsertReview => 'Einfügen';
+
+  @override
+  String get jwInsertDate => 'Datum einfügen';
+
+  @override
+  String get jwInsertTime => 'Uhrzeit einfügen';
+
+  @override
+  String get jwInsertEquation => 'Gleichung einfügen';
+
+  @override
+  String get jwInsertFootnote => 'Fußnote einfügen';
+
+  @override
+  String get jwSectionComments => 'Kommentare';
+
+  @override
+  String get jwNewComment => 'Neuer Kommentar';
+
+  @override
+  String get jwNewCommentShort => 'Kommentar';
+
+  @override
+  String get jwShowComments => 'Kommentare anzeigen';
+
+  @override
+  String get jwDeleteComment => 'Kommentare dieses Blocks löschen';
+
+  @override
+  String get jwCommentDeleted => 'Kommentar gelöscht';
+
+  @override
+  String get jwTrackChanges => 'Änderungen verfolgen (Verlauf)';
+
+  @override
+  String get jwProofingTitle => 'Prüfung & Statistik';
+
+  @override
+  String get jwStatsTitle => 'Dokumentstatistik';
+
+  @override
+  String get jwCharacterCountNoSpaces => 'Zeichen (ohne Leerzeichen)';
+
+  @override
+  String get jwLinesCount => 'Zeilen';
+
+  @override
+  String get jwParagraphsCount => 'Absätze';
+
+  @override
+  String get jwRepeatedWords => 'Wiederholte aufeinanderfolgende Wörter';
+
+  @override
+  String get jwNoRepeatedWords =>
+      'Keine wiederholten Wörter — Text ist sauber.';
+
+  @override
+  String get jwFindPlaceholder => 'Zum Suchen eingeben…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return 'Ergebnis $current von $total';
+  }
+
+  @override
+  String get jwFindTitle => 'Suchen und Ersetzen';
+
+  @override
+  String get jwReplacePlaceholder => 'Ersetzen durch…';
+
+  @override
+  String get jwReplaceButton => 'Ersetzen';
+
+  @override
+  String get jwReplacedBlocks => 'Blöcke ersetzt';
+
+  @override
+  String get jwReplaceAll => 'Alle ersetzen';
+
+  @override
+  String get jwGoToBlockLabel => 'Blocknummer';
+
+  @override
+  String get jwCommentHint => 'Kommentartext für den aktiven Block';
+
+  @override
+  String get jwCommentsTitle => 'Dokumentkommentare';
+
+  @override
+  String get jwCommentsEmpty => 'Noch keine Kommentare.';
+
+  @override
+  String get jwCommentAtBlock => 'Block';
+
+  @override
+  String get jwJumpToBlock => 'Gehe zu';
 }

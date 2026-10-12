@@ -3397,4 +3397,575 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get ocrTessHint => 'اس آلے پر Tesseract تنصیب ہونا ضروری ہے۔';
+
+  @override
+  String get jwRibbonHome => 'ہوم';
+
+  @override
+  String get jwRibbonSetup => 'ترتیب';
+
+  @override
+  String get jwRibbonDesign => 'ڈیزائن';
+
+  @override
+  String get jwRibbonFile => 'فائل';
+
+  @override
+  String get jwRibbonReview => 'جائزہ';
+
+  @override
+  String get jwSectionFonts => 'فونٹس';
+
+  @override
+  String get jwFontFamily => 'فونٹ فیملی';
+
+  @override
+  String get jwFontSizeDown => 'فونٹ سائز کم کریں';
+
+  @override
+  String get jwFontSizeLabel => 'فونٹ سائز';
+
+  @override
+  String get jwFontSizeUp => 'فونٹ سائز بڑھائیں';
+
+  @override
+  String get jwBold => 'بلڈ';
+
+  @override
+  String get jwItalic => 'ائلٹالک';
+
+  @override
+  String get jwUnderline => 'نیچے لکیر';
+
+  @override
+  String get jwStrikethrough => 'خط کشی';
+
+  @override
+  String get jwTextColor => 'متن کا رنگ';
+
+  @override
+  String get jwNoColor => 'بغیر رنگ';
+
+  @override
+  String get jwHighlightColor => 'ٹیکسٹ ہائی لائٹ';
+
+  @override
+  String get jwClearFormatting => 'فارمیٹنگ صاف کریں';
+
+  @override
+  String get jwSectionAlignment => 'ہم آہنگی';
+
+  @override
+  String get jwAlignRight => 'دائیں ہم آہنگ';
+
+  @override
+  String get jwAlignCenter => 'درمیان میں';
+
+  @override
+  String get jwAlignLeft => 'بائیں ہم آہنگ';
+
+  @override
+  String get jwJustify => 'توجیہ';
+
+  @override
+  String get jwLineSpacing => 'لائن اسپیسینگ';
+
+  @override
+  String get jwParagraphSpacing => 'یراگراف اسپیسینگ';
+
+  @override
+  String get jwSpacingNone => 'بغیر اسپیسینگ';
+
+  @override
+  String get jwSpacingValue => 'اسپیسینگ';
+
+  @override
+  String get jwDirectionRtl => 'دائیں سے بائیں (RTL)';
+
+  @override
+  String get jwDirectionLtr => 'بائیں سے دائیں (LTR)';
+
+  @override
+  String get jwSectionLists => 'فہرستیں اور اسپیسینگ';
+
+  @override
+  String get jwBulletList => 'بلٹ لسٹ';
+
+  @override
+  String get jwNumberedList => 'نمبر لسٹ';
+
+  @override
+  String get jwIndentIncrease => 'انڈینٹ بڑھائیں';
+
+  @override
+  String get jwIndentDecrease => 'انڈینٹ کم کریں';
+
+  @override
+  String get jwFirstLineIndentIncrease => 'پہلی لائن انڈینٹ +';
+
+  @override
+  String get jwFirstLineIndentDecrease => 'پہلی لائن انڈینٹ −';
+
+  @override
+  String get jwHangingIndent => 'آوینڈگ انڈینٹ';
+
+  @override
+  String get jwSectionParagraph => 'یراگراف';
+
+  @override
+  String get jwParagraphDialog => 'یراگراف ڈائیلاگ';
+
+  @override
+  String get jwFormatPainter => 'فارمیٹ پینٹر';
+
+  @override
+  String get jwFormatPainterOnce => 'فارمیٹ — ایک بلاک';
+
+  @override
+  String get jwFormatPainterLocked => 'فارمیٹ — لاک (روکنے کے لیے کلک کریں)';
+
+  @override
+  String get jwFormatPainterShort => 'فارمیٹ';
+
+  @override
+  String get jwSectionBlocks => 'بلاکس';
+
+  @override
+  String get jwAddBlock => 'بلاک شامل کریں';
+
+  @override
+  String get jwDeleteBlock => 'بلاک حذف کریں';
+
+  @override
+  String get jwPageBreak => 'صفحہ شکن (کرسر پر نیا صفحہ)';
+
+  @override
+  String get jwSpreadView => 'دو صفحہ';
+
+  @override
+  String get jwParagraphDialogTitle => 'یراگراف ترتیبات';
+
+  @override
+  String get jwAlignLabel => 'ہم آہنگی';
+
+  @override
+  String get jwIndentationLabel => 'انڈینٹ (سم)';
+
+  @override
+  String get jwIndentGeneral => 'یراگراف انڈینٹ';
+
+  @override
+  String get jwIndentFirstLine => 'پہلی لائن';
+
+  @override
+  String get jwSpacingLabel => 'اسپیسینگ';
+
+  @override
+  String get jwSpaceBefore => 'پہلے (پکسل)';
+
+  @override
+  String get jwSpaceAfter => 'بعد (پکسل)';
+
+  @override
+  String get jwLineHeightLabel => 'لائن کی ارتفاع';
+
+  @override
+  String get jwCancel => 'منسوخ';
+
+  @override
+  String get jwOk => 'ٹھیک';
+
+  @override
+  String get jwSectionPageSetup => 'صفحہ کی ترتیب';
+
+  @override
+  String get jwPageSize => 'صفحہ کا سائز';
+
+  @override
+  String get jwOrientation => 'صفحہ کی سمت';
+
+  @override
+  String get jwPortrait => 'عمودی';
+
+  @override
+  String get jwLandscape => 'افقی';
+
+  @override
+  String get jwPageMargins => 'صفحہ کے حاشیے';
+
+  @override
+  String get jwMarginsNarrow => 'باریک';
+
+  @override
+  String get jwMarginsNormal => 'عام';
+
+  @override
+  String get jwMarginsWide => 'چوڑے';
+
+  @override
+  String get jwMarginsCustom => 'حسب الطلب…';
+
+  @override
+  String get jwSectionPageBackground => 'صفحہ کا پس منظر';
+
+  @override
+  String get jwPageColor => 'صفحہ کا رنگ';
+
+  @override
+  String get jwPageColorClear => 'سفید (پہلے سے)';
+
+  @override
+  String get jwWatermark => 'واٹر مارک';
+
+  @override
+  String get jwWatermarkShort => 'نشان';
+
+  @override
+  String get jwPageBorder => 'صفحہ کا فریم';
+
+  @override
+  String get jwSectionPageNumbering => 'صفحہ نمبر';
+
+  @override
+  String get jwPageNumberEnable => 'صفحہ نمبر دکھائیں';
+
+  @override
+  String get jwPageNumberAlignLabel => 'نمبر کی ہم آہنگی';
+
+  @override
+  String get jwPageNumberFormat => 'نمبر کی صیغہ';
+
+  @override
+  String get jwPageNumberStartAt => 'شروع ہوں';
+
+  @override
+  String get jwPageNumberDifferentFirst => 'پہلا صفحہ الگ';
+
+  @override
+  String get jwPageNumberRemove => 'صفحہ نمبر ہٹائیں';
+
+  @override
+  String get jwCustomMarginsTitle => 'حسب الطلب حاشیے (ملی میٹر)';
+
+  @override
+  String get jwMarginTop => 'اوپر';
+
+  @override
+  String get jwMarginBottom => 'نیچے';
+
+  @override
+  String get jwMarginRight => 'دائیں';
+
+  @override
+  String get jwMarginLeft => 'بائیں';
+
+  @override
+  String get jwWatermarkTitle => 'واٹر مارک';
+
+  @override
+  String get jwWatermarkHint => 'شفاف پس منظر متن (ہٹانے کے لیے خالی)';
+
+  @override
+  String get jwWatermarkClear => 'ہٹائیں';
+
+  @override
+  String get jwSectionTemplates => 'ٹیمپلیٹس';
+
+  @override
+  String get jwTemplateCategory => 'ٹیمپلیٹ زمرہ';
+
+  @override
+  String get jwTemplateAll => 'تمام زمریں';
+
+  @override
+  String get jwTemplates => 'ٹیمپلیٹس';
+
+  @override
+  String get jwSectionInsert => 'درج';
+
+  @override
+  String get jwShapes => 'شکلیں';
+
+  @override
+  String get jwInsertImage => 'تصویر شامل کریں';
+
+  @override
+  String get jwInsertImageShort => 'تصویر';
+
+  @override
+  String get jwInsertTable => 'ٹیبل شامل کریں';
+
+  @override
+  String get jwInsertSymbol => 'رمز شامل کریں';
+
+  @override
+  String get jwSectionShapeFormat => 'شکلوں کی فارمیٹ';
+
+  @override
+  String get jwShapeFill => 'فل رنگ';
+
+  @override
+  String get jwShapeOutline => 'آؤٹ لائن رنگ';
+
+  @override
+  String get jwShapeStrokeWidth => 'آؤٹ لائن موٹائی';
+
+  @override
+  String get jwShapeDefaultsHint => 'درج پر لاگو ہوتا ہے';
+
+  @override
+  String get jwActionFailed => 'عملیات ناکام';
+
+  @override
+  String get jwNewDocConfirm => 'نیا دستاویز';
+
+  @override
+  String get jwNewDocConfirmMessage =>
+      'آپ کی غیر محفوظ تبدیلیاں ہیں. نیا دستاویز شروع کریں؟';
+
+  @override
+  String get jwNewDocument => 'نیا دستاویز';
+
+  @override
+  String get jwRecentFilesEmpty => 'ابھی کوئی دستاویز محفوظ نہیں';
+
+  @override
+  String get jwRecentFiles => 'حالیہ فائلیں';
+
+  @override
+  String get jwOpenDocument => 'دستاویز کھولیں';
+
+  @override
+  String get jwSaveAs => 'نام سے محفوظ کریں';
+
+  @override
+  String get jwDocumentTitle => 'دستاویز کا عنوان';
+
+  @override
+  String get jwSaved => 'دستاویز محفوظ';
+
+  @override
+  String get jwSectionFile => 'فائل';
+
+  @override
+  String get jwNewShort => 'نیا';
+
+  @override
+  String get jwOpenShort => 'کھولیں';
+
+  @override
+  String get jwSave => 'محفوظ کریں (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => 'محفوظ';
+
+  @override
+  String get jwSectionExport => 'برآمدی';
+
+  @override
+  String get jwExportPdf => 'PDF برآمد کریں';
+
+  @override
+  String get jwExportPng => 'PNG برآمد کریں';
+
+  @override
+  String get jwExportDocx => 'DOCX برآمد کریں';
+
+  @override
+  String get jwExportHtml => 'HTML برآمد کریں';
+
+  @override
+  String get jwPrint => 'پرنٹ (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => 'پرنٹ';
+
+  @override
+  String get jwSectionUndo => 'واپس';
+
+  @override
+  String get jwUndo => 'واپس (Ctrl+Z)';
+
+  @override
+  String get jwRedo => 'دوبارہ (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => 'واپسی کی تاریخ';
+
+  @override
+  String get jwHistoryShort => 'تاریخ';
+
+  @override
+  String get jwSectionSettings => 'ترتیبات';
+
+  @override
+  String get jwDocumentProperties => 'دستاویز کی خصوصیات';
+
+  @override
+  String get jwPageSetup => 'صفحہ کی ترتیب';
+
+  @override
+  String get jwLanguage => 'زبان';
+
+  @override
+  String get jwAutoSave => 'خودکار محفوظ';
+
+  @override
+  String get jwAutoSaveShort => 'خودکار';
+
+  @override
+  String get jwLanguageArabic =>
+      'محرر کی زبان: عربی — ربان ایپ سیٹنگز کے مطابق دس زبانیں سپورٹ کرتا ہے.';
+
+  @override
+  String get jwHistoryStep => 'مرحلہ';
+
+  @override
+  String get jwHistoryCurrent => 'موجودہ';
+
+  @override
+  String get jwClose => 'بند';
+
+  @override
+  String get jwSectionProofing => 'تصحیح';
+
+  @override
+  String get jwSpelling => 'املائی تصحیح (دوبارہ الفاظ)';
+
+  @override
+  String get jwSpellingShort => 'تصحیح';
+
+  @override
+  String get jwGrammar => 'نحويات (اعداد اور تکرار)';
+
+  @override
+  String get jwWordCount => 'الفاظ';
+
+  @override
+  String get jwCharacterCount => 'حروف';
+
+  @override
+  String get jwReadingTime => 'منٹ پڑھاؤ';
+
+  @override
+  String get jwSectionFind => 'تلاش';
+
+  @override
+  String get jwFind => 'تلاش (Ctrl+F)';
+
+  @override
+  String get jwFindShort => 'تلاش';
+
+  @override
+  String get jwReplace => 'تبدیل (Ctrl+H)';
+
+  @override
+  String get jwGoTo => 'جائیں (Ctrl+G)';
+
+  @override
+  String get jwFindNext => 'اگلا تلاش کریں';
+
+  @override
+  String get jwFindPrevious => 'پچھلا تلاش کریں';
+
+  @override
+  String get jwNoMatches => 'کوئی نتائج نہیں';
+
+  @override
+  String get jwSectionInsertReview => 'درج';
+
+  @override
+  String get jwInsertDate => 'تاریخ شامل کریں';
+
+  @override
+  String get jwInsertTime => 'وقت شامل کریں';
+
+  @override
+  String get jwInsertEquation => 'معادله شامل کریں';
+
+  @override
+  String get jwInsertFootnote => 'فوٹ نوٹ شامل کریں';
+
+  @override
+  String get jwSectionComments => 'تبصرے';
+
+  @override
+  String get jwNewComment => 'نیا تبصرہ';
+
+  @override
+  String get jwNewCommentShort => 'تبصرہ';
+
+  @override
+  String get jwShowComments => 'تبصرے دکھائیں';
+
+  @override
+  String get jwDeleteComment => 'اس بلاک کے تبصرے حذف کریں';
+
+  @override
+  String get jwCommentDeleted => 'تبصرہ حذف';
+
+  @override
+  String get jwTrackChanges => 'تبدیلیوں کی نگرانی (تاریخ)';
+
+  @override
+  String get jwProofingTitle => 'تصحیح اور اعداد';
+
+  @override
+  String get jwStatsTitle => 'دستاویز کے اعداد';
+
+  @override
+  String get jwCharacterCountNoSpaces => 'حروف (بغیر خالی جگہ)';
+
+  @override
+  String get jwLinesCount => 'سطریں';
+
+  @override
+  String get jwParagraphsCount => 'یراگراف';
+
+  @override
+  String get jwRepeatedWords => 'مسلسل تکرار ہونے والے الفاظ';
+
+  @override
+  String get jwNoRepeatedWords => 'کوئی لفظ دوبارہ نہیں — متن صاف ہے.';
+
+  @override
+  String get jwFindPlaceholder => 'تلاش کے لیے لکھیں…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return 'نتیجہ $current از $total';
+  }
+
+  @override
+  String get jwFindTitle => 'تلاش اور تبدیل';
+
+  @override
+  String get jwReplacePlaceholder => 'اس سے تبدیل کریں…';
+
+  @override
+  String get jwReplaceButton => 'تبدیل کریں';
+
+  @override
+  String get jwReplacedBlocks => 'بلاکس تبدیل';
+
+  @override
+  String get jwReplaceAll => 'سب تبدیل کریں';
+
+  @override
+  String get jwGoToBlockLabel => 'بلاک نمبر';
+
+  @override
+  String get jwCommentHint => 'فعال بلاک پر تبصرے کا متن';
+
+  @override
+  String get jwCommentsTitle => 'دستاویز کے تبصرے';
+
+  @override
+  String get jwCommentsEmpty => 'ابھی کوئی تبصرہ نہیں.';
+
+  @override
+  String get jwCommentAtBlock => 'بلاک';
+
+  @override
+  String get jwJumpToBlock => 'جائیں';
 }

@@ -3406,4 +3406,576 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get ocrTessHint => 'Bu cihazda Tesseract\'ın kurulu olması gerekir.';
+
+  @override
+  String get jwRibbonHome => 'Ana Sayfa';
+
+  @override
+  String get jwRibbonSetup => 'Düzen';
+
+  @override
+  String get jwRibbonDesign => 'Tasarım';
+
+  @override
+  String get jwRibbonFile => 'Dosya';
+
+  @override
+  String get jwRibbonReview => 'Gözden Geçirme';
+
+  @override
+  String get jwSectionFonts => 'Yazı Tipleri';
+
+  @override
+  String get jwFontFamily => 'Yazı tipi ailesi';
+
+  @override
+  String get jwFontSizeDown => 'Yazı tipini küçült';
+
+  @override
+  String get jwFontSizeLabel => 'Yazı tipi boyutu';
+
+  @override
+  String get jwFontSizeUp => 'Yazı tipini büyüt';
+
+  @override
+  String get jwBold => 'Kalın';
+
+  @override
+  String get jwItalic => 'İtalik';
+
+  @override
+  String get jwUnderline => 'Altı çizili';
+
+  @override
+  String get jwStrikethrough => 'Üstü çizili';
+
+  @override
+  String get jwTextColor => 'Metin rengi';
+
+  @override
+  String get jwNoColor => 'Renk yok';
+
+  @override
+  String get jwHighlightColor => 'Metin vurgusu';
+
+  @override
+  String get jwClearFormatting => 'Biçimlendirmeyi temizle';
+
+  @override
+  String get jwSectionAlignment => 'Hizalama';
+
+  @override
+  String get jwAlignRight => 'Sağa hizala';
+
+  @override
+  String get jwAlignCenter => 'Ortala';
+
+  @override
+  String get jwAlignLeft => 'Sola hizala';
+
+  @override
+  String get jwJustify => 'İki yana yasla';
+
+  @override
+  String get jwLineSpacing => 'Satır aralığı';
+
+  @override
+  String get jwParagraphSpacing => 'Paragraf aralığı';
+
+  @override
+  String get jwSpacingNone => 'Yok';
+
+  @override
+  String get jwSpacingValue => 'Aralık';
+
+  @override
+  String get jwDirectionRtl => 'Sağdan sola (RTL)';
+
+  @override
+  String get jwDirectionLtr => 'Soldan sağa (LTR)';
+
+  @override
+  String get jwSectionLists => 'Listeler ve aralık';
+
+  @override
+  String get jwBulletList => 'Madde işaretli liste';
+
+  @override
+  String get jwNumberedList => 'Numaralı liste';
+
+  @override
+  String get jwIndentIncrease => 'Girintiyi artır';
+
+  @override
+  String get jwIndentDecrease => 'Girintiyi azalt';
+
+  @override
+  String get jwFirstLineIndentIncrease => 'İlk satır girintisi +';
+
+  @override
+  String get jwFirstLineIndentDecrease => 'İlk satır girintisi −';
+
+  @override
+  String get jwHangingIndent => 'Asılı girinti';
+
+  @override
+  String get jwSectionParagraph => 'Paragraf';
+
+  @override
+  String get jwParagraphDialog => 'Paragraf penceresi';
+
+  @override
+  String get jwFormatPainter => 'Biçim boyacısı';
+
+  @override
+  String get jwFormatPainterOnce => 'Biçim — tek blok';
+
+  @override
+  String get jwFormatPainterLocked => 'Biçim — kilitli (durdurmak için tıkla)';
+
+  @override
+  String get jwFormatPainterShort => 'Biçim';
+
+  @override
+  String get jwSectionBlocks => 'Bloklar';
+
+  @override
+  String get jwAddBlock => 'Blok ekle';
+
+  @override
+  String get jwDeleteBlock => 'Blok sil';
+
+  @override
+  String get jwPageBreak => 'Sayfa sonu (imleçte yeni sayfa)';
+
+  @override
+  String get jwSpreadView => 'Çift sayfa';
+
+  @override
+  String get jwParagraphDialogTitle => 'Paragraf ayarları';
+
+  @override
+  String get jwAlignLabel => 'Hizalama';
+
+  @override
+  String get jwIndentationLabel => 'Girinti (cm)';
+
+  @override
+  String get jwIndentGeneral => 'Paragraf girintisi';
+
+  @override
+  String get jwIndentFirstLine => 'İlk satır';
+
+  @override
+  String get jwSpacingLabel => 'Aralık';
+
+  @override
+  String get jwSpaceBefore => 'Önce (px)';
+
+  @override
+  String get jwSpaceAfter => 'Sonra (px)';
+
+  @override
+  String get jwLineHeightLabel => 'Satır yüksekliği';
+
+  @override
+  String get jwCancel => 'İptal';
+
+  @override
+  String get jwOk => 'Tamam';
+
+  @override
+  String get jwSectionPageSetup => 'Sayfa düzeni';
+
+  @override
+  String get jwPageSize => 'Sayfa boyutu';
+
+  @override
+  String get jwOrientation => 'Sayfa yönü';
+
+  @override
+  String get jwPortrait => 'Dikey';
+
+  @override
+  String get jwLandscape => 'Yatay';
+
+  @override
+  String get jwPageMargins => 'Sayfa kenar boşlukları';
+
+  @override
+  String get jwMarginsNarrow => 'Dar';
+
+  @override
+  String get jwMarginsNormal => 'Normal';
+
+  @override
+  String get jwMarginsWide => 'Geniş';
+
+  @override
+  String get jwMarginsCustom => 'Özel…';
+
+  @override
+  String get jwSectionPageBackground => 'Sayfa arka planı';
+
+  @override
+  String get jwPageColor => 'Sayfa rengi';
+
+  @override
+  String get jwPageColorClear => 'Beyaz (varsayılan)';
+
+  @override
+  String get jwWatermark => 'Filigran';
+
+  @override
+  String get jwWatermarkShort => 'Filigran';
+
+  @override
+  String get jwPageBorder => 'Sayfa kenarlığı';
+
+  @override
+  String get jwSectionPageNumbering => 'Sayfa numaraları';
+
+  @override
+  String get jwPageNumberEnable => 'Sayfa numaralarını göster';
+
+  @override
+  String get jwPageNumberAlignLabel => 'Numara hizalama';
+
+  @override
+  String get jwPageNumberFormat => 'Numara biçimi';
+
+  @override
+  String get jwPageNumberStartAt => 'Şununla başla';
+
+  @override
+  String get jwPageNumberDifferentFirst => 'İlk sayfa farklı';
+
+  @override
+  String get jwPageNumberRemove => 'Sayfa numaralarını kaldır';
+
+  @override
+  String get jwCustomMarginsTitle => 'Özel kenar boşlukları (mm)';
+
+  @override
+  String get jwMarginTop => 'Üst';
+
+  @override
+  String get jwMarginBottom => 'Alt';
+
+  @override
+  String get jwMarginRight => 'Sağ';
+
+  @override
+  String get jwMarginLeft => 'Sol';
+
+  @override
+  String get jwWatermarkTitle => 'Filigran';
+
+  @override
+  String get jwWatermarkHint =>
+      'Yarı saydam arka plan metni (kaldırmak için boş)';
+
+  @override
+  String get jwWatermarkClear => 'Kaldır';
+
+  @override
+  String get jwSectionTemplates => 'Şablonlar';
+
+  @override
+  String get jwTemplateCategory => 'Şablon kategorisi';
+
+  @override
+  String get jwTemplateAll => 'Tüm kategoriler';
+
+  @override
+  String get jwTemplates => 'Şablonlar';
+
+  @override
+  String get jwSectionInsert => 'Ekle';
+
+  @override
+  String get jwShapes => 'Şekiller';
+
+  @override
+  String get jwInsertImage => 'Resim ekle';
+
+  @override
+  String get jwInsertImageShort => 'Resim';
+
+  @override
+  String get jwInsertTable => 'Tablo ekle';
+
+  @override
+  String get jwInsertSymbol => 'Sembol ekle';
+
+  @override
+  String get jwSectionShapeFormat => 'Şekil biçimi';
+
+  @override
+  String get jwShapeFill => 'Dolgu rengi';
+
+  @override
+  String get jwShapeOutline => 'Kontur rengi';
+
+  @override
+  String get jwShapeStrokeWidth => 'Kontur kalınlığı';
+
+  @override
+  String get jwShapeDefaultsHint => 'Eklemede uygulanır';
+
+  @override
+  String get jwActionFailed => 'İşlem başarısız';
+
+  @override
+  String get jwNewDocConfirm => 'Yeni belge';
+
+  @override
+  String get jwNewDocConfirmMessage =>
+      'Kaydedilmemiş değişiklikleriniz var. Yeni belge başlatılsın mı?';
+
+  @override
+  String get jwNewDocument => 'Yeni belge';
+
+  @override
+  String get jwRecentFilesEmpty => 'Henüz kayıtlı belge yok';
+
+  @override
+  String get jwRecentFiles => 'Son dosyalar';
+
+  @override
+  String get jwOpenDocument => 'Belge aç';
+
+  @override
+  String get jwSaveAs => 'Farklı kaydet';
+
+  @override
+  String get jwDocumentTitle => 'Belge başlığı';
+
+  @override
+  String get jwSaved => 'Belge kaydedildi';
+
+  @override
+  String get jwSectionFile => 'Dosya';
+
+  @override
+  String get jwNewShort => 'Yeni';
+
+  @override
+  String get jwOpenShort => 'Aç';
+
+  @override
+  String get jwSave => 'Kaydet (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => 'Kaydet';
+
+  @override
+  String get jwSectionExport => 'Dışa aktarma';
+
+  @override
+  String get jwExportPdf => 'PDF olarak dışa aktar';
+
+  @override
+  String get jwExportPng => 'PNG olarak dışa aktar';
+
+  @override
+  String get jwExportDocx => 'DOCX olarak dışa aktar';
+
+  @override
+  String get jwExportHtml => 'HTML olarak dışa aktar';
+
+  @override
+  String get jwPrint => 'Yazdır (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => 'Yazdır';
+
+  @override
+  String get jwSectionUndo => 'Geri al';
+
+  @override
+  String get jwUndo => 'Geri al (Ctrl+Z)';
+
+  @override
+  String get jwRedo => 'Yinele (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => 'Geri alma geçmişi';
+
+  @override
+  String get jwHistoryShort => 'Geçmiş';
+
+  @override
+  String get jwSectionSettings => 'Ayarlar';
+
+  @override
+  String get jwDocumentProperties => 'Belge özellikleri';
+
+  @override
+  String get jwPageSetup => 'Sayfa düzeni';
+
+  @override
+  String get jwLanguage => 'Dil';
+
+  @override
+  String get jwAutoSave => 'Otomatik kaydet';
+
+  @override
+  String get jwAutoSaveShort => 'Oto';
+
+  @override
+  String get jwLanguageArabic =>
+      'Editör dili: Arapça — şerit, uygulama ayarlarına göre on dil destekler.';
+
+  @override
+  String get jwHistoryStep => 'Adım';
+
+  @override
+  String get jwHistoryCurrent => 'Güncel';
+
+  @override
+  String get jwClose => 'Kapat';
+
+  @override
+  String get jwSectionProofing => 'Belge denetimi';
+
+  @override
+  String get jwSpelling => 'Yazım (yinelenen kelimeler)';
+
+  @override
+  String get jwSpellingShort => 'Denetim';
+
+  @override
+  String get jwGrammar => 'Dilbilgisi (istatistik ve tekrar)';
+
+  @override
+  String get jwWordCount => 'Kelime';
+
+  @override
+  String get jwCharacterCount => 'Karakter';
+
+  @override
+  String get jwReadingTime => 'dk okuma';
+
+  @override
+  String get jwSectionFind => 'Ara';
+
+  @override
+  String get jwFind => 'Ara (Ctrl+F)';
+
+  @override
+  String get jwFindShort => 'Ara';
+
+  @override
+  String get jwReplace => 'Değiştir (Ctrl+H)';
+
+  @override
+  String get jwGoTo => 'Git (Ctrl+G)';
+
+  @override
+  String get jwFindNext => 'Sonrakini bul';
+
+  @override
+  String get jwFindPrevious => 'Öncekini bul';
+
+  @override
+  String get jwNoMatches => 'Sonuç yok';
+
+  @override
+  String get jwSectionInsertReview => 'Ekle';
+
+  @override
+  String get jwInsertDate => 'Tarih ekle';
+
+  @override
+  String get jwInsertTime => 'Saat ekle';
+
+  @override
+  String get jwInsertEquation => 'Denklem ekle';
+
+  @override
+  String get jwInsertFootnote => 'Dipnot ekle';
+
+  @override
+  String get jwSectionComments => 'Yorumlar';
+
+  @override
+  String get jwNewComment => 'Yeni yorum';
+
+  @override
+  String get jwNewCommentShort => 'Yorum';
+
+  @override
+  String get jwShowComments => 'Yorumları göster';
+
+  @override
+  String get jwDeleteComment => 'Bu bloğun yorumlarını sil';
+
+  @override
+  String get jwCommentDeleted => 'Yorum silindi';
+
+  @override
+  String get jwTrackChanges => 'Değişiklikleri izle (geçmiş)';
+
+  @override
+  String get jwProofingTitle => 'Denetim ve istatistik';
+
+  @override
+  String get jwStatsTitle => 'Belge istatistikleri';
+
+  @override
+  String get jwCharacterCountNoSpaces => 'Karakter (boşluksuz)';
+
+  @override
+  String get jwLinesCount => 'Satırlar';
+
+  @override
+  String get jwParagraphsCount => 'Paragraflar';
+
+  @override
+  String get jwRepeatedWords => 'Art arda yinelenen kelimeler';
+
+  @override
+  String get jwNoRepeatedWords => 'Yinelenen kelime yok — metin temiz.';
+
+  @override
+  String get jwFindPlaceholder => 'Aramak için yazın…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return '$current. sonuç / $total';
+  }
+
+  @override
+  String get jwFindTitle => 'Ara ve değiştir';
+
+  @override
+  String get jwReplacePlaceholder => 'Şununla değiştir…';
+
+  @override
+  String get jwReplaceButton => 'Değiştir';
+
+  @override
+  String get jwReplacedBlocks => 'Blok değiştirildi';
+
+  @override
+  String get jwReplaceAll => 'Tümünü değiştir';
+
+  @override
+  String get jwGoToBlockLabel => 'Blok numarası';
+
+  @override
+  String get jwCommentHint => 'Etkin blok için yorum metni';
+
+  @override
+  String get jwCommentsTitle => 'Belge yorumları';
+
+  @override
+  String get jwCommentsEmpty => 'Henüz yorum yok.';
+
+  @override
+  String get jwCommentAtBlock => 'Blok';
+
+  @override
+  String get jwJumpToBlock => 'Git';
 }

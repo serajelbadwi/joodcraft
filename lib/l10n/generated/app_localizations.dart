@@ -6335,6 +6335,1140 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'يتطلّب تثبيت Tesseract على الجهاز.'**
   String get ocrTessHint;
+
+  /// No description provided for @jwRibbonHome.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرئيسية'**
+  String get jwRibbonHome;
+
+  /// No description provided for @jwRibbonSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'التهيئة'**
+  String get jwRibbonSetup;
+
+  /// No description provided for @jwRibbonDesign.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصميم'**
+  String get jwRibbonDesign;
+
+  /// No description provided for @jwRibbonFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحفظ'**
+  String get jwRibbonFile;
+
+  /// No description provided for @jwRibbonReview.
+  ///
+  /// In ar, this message translates to:
+  /// **'المراجعة'**
+  String get jwRibbonReview;
+
+  /// No description provided for @jwSectionFonts.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطوط'**
+  String get jwSectionFonts;
+
+  /// No description provided for @jwFontFamily.
+  ///
+  /// In ar, this message translates to:
+  /// **'عائلة الخط'**
+  String get jwFontFamily;
+
+  /// No description provided for @jwFontSizeDown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصغير الخط'**
+  String get jwFontSizeDown;
+
+  /// No description provided for @jwFontSizeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حجم الخط'**
+  String get jwFontSizeLabel;
+
+  /// No description provided for @jwFontSizeUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكبير الخط'**
+  String get jwFontSizeUp;
+
+  /// No description provided for @jwBold.
+  ///
+  /// In ar, this message translates to:
+  /// **'غامق'**
+  String get jwBold;
+
+  /// No description provided for @jwItalic.
+  ///
+  /// In ar, this message translates to:
+  /// **'مائل'**
+  String get jwItalic;
+
+  /// No description provided for @jwUnderline.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسطير'**
+  String get jwUnderline;
+
+  /// No description provided for @jwStrikethrough.
+  ///
+  /// In ar, this message translates to:
+  /// **'شطب'**
+  String get jwStrikethrough;
+
+  /// No description provided for @jwTextColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون النص'**
+  String get jwTextColor;
+
+  /// No description provided for @jwNoColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا لون'**
+  String get jwNoColor;
+
+  /// No description provided for @jwHighlightColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمييز النص'**
+  String get jwHighlightColor;
+
+  /// No description provided for @jwClearFormatting.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح التنسيق'**
+  String get jwClearFormatting;
+
+  /// No description provided for @jwSectionAlignment.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحاذاة'**
+  String get jwSectionAlignment;
+
+  /// No description provided for @jwAlignRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة لليمين'**
+  String get jwAlignRight;
+
+  /// No description provided for @jwAlignCenter.
+  ///
+  /// In ar, this message translates to:
+  /// **'توسيط'**
+  String get jwAlignCenter;
+
+  /// No description provided for @jwAlignLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة لليسار'**
+  String get jwAlignLeft;
+
+  /// No description provided for @jwJustify.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضبط'**
+  String get jwJustify;
+
+  /// No description provided for @jwLineSpacing.
+  ///
+  /// In ar, this message translates to:
+  /// **'تباعد الأسطر'**
+  String get jwLineSpacing;
+
+  /// No description provided for @jwParagraphSpacing.
+  ///
+  /// In ar, this message translates to:
+  /// **'تباعد الفقرات'**
+  String get jwParagraphSpacing;
+
+  /// No description provided for @jwSpacingNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلا تباعد'**
+  String get jwSpacingNone;
+
+  /// No description provided for @jwSpacingValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'تباعد'**
+  String get jwSpacingValue;
+
+  /// No description provided for @jwDirectionRtl.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه من اليمين (RTL)'**
+  String get jwDirectionRtl;
+
+  /// No description provided for @jwDirectionLtr.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه من اليسار (LTR)'**
+  String get jwDirectionLtr;
+
+  /// No description provided for @jwSectionLists.
+  ///
+  /// In ar, this message translates to:
+  /// **'القوائم والمسافات'**
+  String get jwSectionLists;
+
+  /// No description provided for @jwBulletList.
+  ///
+  /// In ar, this message translates to:
+  /// **'قائمة نقطية'**
+  String get jwBulletList;
+
+  /// No description provided for @jwNumberedList.
+  ///
+  /// In ar, this message translates to:
+  /// **'قائمة رقمية'**
+  String get jwNumberedList;
+
+  /// No description provided for @jwIndentIncrease.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة الإزاحة'**
+  String get jwIndentIncrease;
+
+  /// No description provided for @jwIndentDecrease.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنقاص الإزاحة'**
+  String get jwIndentDecrease;
+
+  /// No description provided for @jwFirstLineIndentIncrease.
+  ///
+  /// In ar, this message translates to:
+  /// **'زيادة إزاحة السطر الأول'**
+  String get jwFirstLineIndentIncrease;
+
+  /// No description provided for @jwFirstLineIndentDecrease.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنقاص إزاحة السطر الأول'**
+  String get jwFirstLineIndentDecrease;
+
+  /// No description provided for @jwHangingIndent.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاحة معلّقة'**
+  String get jwHangingIndent;
+
+  /// No description provided for @jwSectionParagraph.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفقرة'**
+  String get jwSectionParagraph;
+
+  /// No description provided for @jwParagraphDialog.
+  ///
+  /// In ar, this message translates to:
+  /// **'نافذة الفقرة'**
+  String get jwParagraphDialog;
+
+  /// No description provided for @jwFormatPainter.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ التنسيق'**
+  String get jwFormatPainter;
+
+  /// No description provided for @jwFormatPainterOnce.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ التنسيق — كتلة واحدة'**
+  String get jwFormatPainterOnce;
+
+  /// No description provided for @jwFormatPainterLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ التنسيق — مستمر (اضغط للإيقاف)'**
+  String get jwFormatPainterLocked;
+
+  /// No description provided for @jwFormatPainterShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنسيق'**
+  String get jwFormatPainterShort;
+
+  /// No description provided for @jwSectionBlocks.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكتل'**
+  String get jwSectionBlocks;
+
+  /// No description provided for @jwAddBlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة كتلة'**
+  String get jwAddBlock;
+
+  /// No description provided for @jwDeleteBlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف كتلة'**
+  String get jwDeleteBlock;
+
+  /// No description provided for @jwPageBreak.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاصل صفحات (صفحة جديدة عند المؤشر)'**
+  String get jwPageBreak;
+
+  /// No description provided for @jwSpreadView.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض صفحتين متقابلتين (طي الكتاب)'**
+  String get jwSpreadView;
+
+  /// No description provided for @jwParagraphDialogTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات الفقرة'**
+  String get jwParagraphDialogTitle;
+
+  /// No description provided for @jwAlignLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحاذاة'**
+  String get jwAlignLabel;
+
+  /// No description provided for @jwIndentationLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإزاحات (سم)'**
+  String get jwIndentationLabel;
+
+  /// No description provided for @jwIndentGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاحة الفقرة'**
+  String get jwIndentGeneral;
+
+  /// No description provided for @jwIndentFirstLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'السطر الأول'**
+  String get jwIndentFirstLine;
+
+  /// No description provided for @jwSpacingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'التباعد'**
+  String get jwSpacingLabel;
+
+  /// No description provided for @jwSpaceBefore.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبل (بكسل)'**
+  String get jwSpaceBefore;
+
+  /// No description provided for @jwSpaceAfter.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعد (بكسل)'**
+  String get jwSpaceAfter;
+
+  /// No description provided for @jwLineHeightLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ارتفاع السطر'**
+  String get jwLineHeightLabel;
+
+  /// No description provided for @jwCancel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء'**
+  String get jwCancel;
+
+  /// No description provided for @jwOk.
+  ///
+  /// In ar, this message translates to:
+  /// **'موافق'**
+  String get jwOk;
+
+  /// No description provided for @jwSectionPageSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد الصفحة'**
+  String get jwSectionPageSetup;
+
+  /// No description provided for @jwPageSize.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاس الصفحة'**
+  String get jwPageSize;
+
+  /// No description provided for @jwOrientation.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجاه الصفحة'**
+  String get jwOrientation;
+
+  /// No description provided for @jwPortrait.
+  ///
+  /// In ar, this message translates to:
+  /// **'طولي'**
+  String get jwPortrait;
+
+  /// No description provided for @jwLandscape.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرضي'**
+  String get jwLandscape;
+
+  /// No description provided for @jwPageMargins.
+  ///
+  /// In ar, this message translates to:
+  /// **'هوامش الصفحة'**
+  String get jwPageMargins;
+
+  /// No description provided for @jwMarginsNarrow.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيقة'**
+  String get jwMarginsNarrow;
+
+  /// No description provided for @jwMarginsNormal.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسطة'**
+  String get jwMarginsNormal;
+
+  /// No description provided for @jwMarginsWide.
+  ///
+  /// In ar, this message translates to:
+  /// **'واسعة'**
+  String get jwMarginsWide;
+
+  /// No description provided for @jwMarginsCustom.
+  ///
+  /// In ar, this message translates to:
+  /// **'مخصصة…'**
+  String get jwMarginsCustom;
+
+  /// No description provided for @jwSectionPageBackground.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلفية الصفحة'**
+  String get jwSectionPageBackground;
+
+  /// No description provided for @jwPageColor.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الصفحة'**
+  String get jwPageColor;
+
+  /// No description provided for @jwPageColorClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبيض (افتراضي)'**
+  String get jwPageColorClear;
+
+  /// No description provided for @jwWatermark.
+  ///
+  /// In ar, this message translates to:
+  /// **'علامة مائية'**
+  String get jwWatermark;
+
+  /// No description provided for @jwWatermarkShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'علامة'**
+  String get jwWatermarkShort;
+
+  /// No description provided for @jwPageBorder.
+  ///
+  /// In ar, this message translates to:
+  /// **'إطار الصفحة'**
+  String get jwPageBorder;
+
+  /// No description provided for @jwSectionPageNumbering.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترقيم الصفحات'**
+  String get jwSectionPageNumbering;
+
+  /// No description provided for @jwPageNumberEnable.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار أرقام الصفحات'**
+  String get jwPageNumberEnable;
+
+  /// No description provided for @jwPageNumberAlignLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاذاة الرقم'**
+  String get jwPageNumberAlignLabel;
+
+  /// No description provided for @jwPageNumberFormat.
+  ///
+  /// In ar, this message translates to:
+  /// **'صيغة الرقم'**
+  String get jwPageNumberFormat;
+
+  /// No description provided for @jwPageNumberStartAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'يبدأ من'**
+  String get jwPageNumberStartAt;
+
+  /// No description provided for @jwPageNumberDifferentFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاهل الصفحة الأولى (غلاف)'**
+  String get jwPageNumberDifferentFirst;
+
+  /// No description provided for @jwPageNumberRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة أرقام الصفحات'**
+  String get jwPageNumberRemove;
+
+  /// No description provided for @jwCustomMarginsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هوامش مخصصة (مليمتر)'**
+  String get jwCustomMarginsTitle;
+
+  /// No description provided for @jwMarginTop.
+  ///
+  /// In ar, this message translates to:
+  /// **'أعلى'**
+  String get jwMarginTop;
+
+  /// No description provided for @jwMarginBottom.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسفل'**
+  String get jwMarginBottom;
+
+  /// No description provided for @jwMarginRight.
+  ///
+  /// In ar, this message translates to:
+  /// **'يمين'**
+  String get jwMarginRight;
+
+  /// No description provided for @jwMarginLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'يسار'**
+  String get jwMarginLeft;
+
+  /// No description provided for @jwWatermarkTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'العلامة المائية'**
+  String get jwWatermarkTitle;
+
+  /// No description provided for @jwWatermarkHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصّ خلفي شفّاف (اتركه فارغاً للإزالة)'**
+  String get jwWatermarkHint;
+
+  /// No description provided for @jwWatermarkClear.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة'**
+  String get jwWatermarkClear;
+
+  /// No description provided for @jwSectionTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'القوالب'**
+  String get jwSectionTemplates;
+
+  /// No description provided for @jwTemplateCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'فئة القالب'**
+  String get jwTemplateCategory;
+
+  /// No description provided for @jwTemplateAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل الفئات'**
+  String get jwTemplateAll;
+
+  /// No description provided for @jwTemplates.
+  ///
+  /// In ar, this message translates to:
+  /// **'القوالب'**
+  String get jwTemplates;
+
+  /// No description provided for @jwSectionInsert.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإدراج'**
+  String get jwSectionInsert;
+
+  /// No description provided for @jwShapes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أشكال'**
+  String get jwShapes;
+
+  /// No description provided for @jwInsertImage.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج صورة'**
+  String get jwInsertImage;
+
+  /// No description provided for @jwInsertImageShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة'**
+  String get jwInsertImageShort;
+
+  /// No description provided for @jwInsertTable.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج جدول'**
+  String get jwInsertTable;
+
+  /// No description provided for @jwInsertSymbol.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج رمز'**
+  String get jwInsertSymbol;
+
+  /// No description provided for @jwSectionShapeFormat.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنسيق الأشكال'**
+  String get jwSectionShapeFormat;
+
+  /// No description provided for @jwShapeFill.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الحشو'**
+  String get jwShapeFill;
+
+  /// No description provided for @jwShapeOutline.
+  ///
+  /// In ar, this message translates to:
+  /// **'لون الحدّ'**
+  String get jwShapeOutline;
+
+  /// No description provided for @jwShapeStrokeWidth.
+  ///
+  /// In ar, this message translates to:
+  /// **'سماكة الحدّ'**
+  String get jwShapeStrokeWidth;
+
+  /// No description provided for @jwShapeDefaultsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُطبَّق عند الإدراج'**
+  String get jwShapeDefaultsHint;
+
+  /// No description provided for @jwActionFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إتمام العملية'**
+  String get jwActionFailed;
+
+  /// No description provided for @jwNewDocConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستند جديد'**
+  String get jwNewDocConfirm;
+
+  /// No description provided for @jwNewDocConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك تغييرات غير محفوظة. هل تريد البدء بمستند جديد؟'**
+  String get jwNewDocConfirmMessage;
+
+  /// No description provided for @jwNewDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستند جديد'**
+  String get jwNewDocument;
+
+  /// No description provided for @jwRecentFilesEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا مستندات محفوظة بعد'**
+  String get jwRecentFilesEmpty;
+
+  /// No description provided for @jwRecentFiles.
+  ///
+  /// In ar, this message translates to:
+  /// **'المستندات الأخيرة'**
+  String get jwRecentFiles;
+
+  /// No description provided for @jwOpenDocument.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح مستند'**
+  String get jwOpenDocument;
+
+  /// No description provided for @jwSaveAs.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ باسم'**
+  String get jwSaveAs;
+
+  /// No description provided for @jwDocumentTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان المستند'**
+  String get jwDocumentTitle;
+
+  /// No description provided for @jwSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُفظ المستند'**
+  String get jwSaved;
+
+  /// No description provided for @jwSectionFile.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف'**
+  String get jwSectionFile;
+
+  /// No description provided for @jwNewShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'جديد'**
+  String get jwNewShort;
+
+  /// No description provided for @jwOpenShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح'**
+  String get jwOpenShort;
+
+  /// No description provided for @jwSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ (Ctrl+S)'**
+  String get jwSave;
+
+  /// No description provided for @jwSaveShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get jwSaveShort;
+
+  /// No description provided for @jwSectionExport.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصدير'**
+  String get jwSectionExport;
+
+  /// No description provided for @jwExportPdf.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PDF'**
+  String get jwExportPdf;
+
+  /// No description provided for @jwExportPng.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير PNG'**
+  String get jwExportPng;
+
+  /// No description provided for @jwExportDocx.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير DOCX'**
+  String get jwExportDocx;
+
+  /// No description provided for @jwExportHtml.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصدير HTML'**
+  String get jwExportHtml;
+
+  /// No description provided for @jwPrint.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة (Ctrl+P)'**
+  String get jwPrint;
+
+  /// No description provided for @jwPrintShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة'**
+  String get jwPrintShort;
+
+  /// No description provided for @jwSectionUndo.
+  ///
+  /// In ar, this message translates to:
+  /// **'التراجع'**
+  String get jwSectionUndo;
+
+  /// No description provided for @jwUndo.
+  ///
+  /// In ar, this message translates to:
+  /// **'تراجع (Ctrl+Z)'**
+  String get jwUndo;
+
+  /// No description provided for @jwRedo.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة (Ctrl+Y)'**
+  String get jwRedo;
+
+  /// No description provided for @jwUndoHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التراجع'**
+  String get jwUndoHistory;
+
+  /// No description provided for @jwHistoryShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'السجل'**
+  String get jwHistoryShort;
+
+  /// No description provided for @jwSectionSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإعدادات'**
+  String get jwSectionSettings;
+
+  /// No description provided for @jwDocumentProperties.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصائص المستند'**
+  String get jwDocumentProperties;
+
+  /// No description provided for @jwPageSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد الصفحة'**
+  String get jwPageSetup;
+
+  /// No description provided for @jwLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللغة'**
+  String get jwLanguage;
+
+  /// No description provided for @jwAutoSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحفظ التلقائي'**
+  String get jwAutoSave;
+
+  /// No description provided for @jwAutoSaveShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلقائي'**
+  String get jwAutoSaveShort;
+
+  /// No description provided for @jwLanguageArabic.
+  ///
+  /// In ar, this message translates to:
+  /// **'لغة المحرّر: العربية — واجهة الشريط تدعم عشر لغات حسب إعدادات التطبيق.'**
+  String get jwLanguageArabic;
+
+  /// No description provided for @jwHistoryStep.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطوة'**
+  String get jwHistoryStep;
+
+  /// No description provided for @jwHistoryCurrent.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالية'**
+  String get jwHistoryCurrent;
+
+  /// No description provided for @jwClose.
+  ///
+  /// In ar, this message translates to:
+  /// **'إغلاق'**
+  String get jwClose;
+
+  /// No description provided for @jwSectionProofing.
+  ///
+  /// In ar, this message translates to:
+  /// **'التدقيق'**
+  String get jwSectionProofing;
+
+  /// No description provided for @jwSpelling.
+  ///
+  /// In ar, this message translates to:
+  /// **'التدقيق الإملائي (تكرار الكلمات)'**
+  String get jwSpelling;
+
+  /// No description provided for @jwSpellingShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدقيق'**
+  String get jwSpellingShort;
+
+  /// No description provided for @jwGrammar.
+  ///
+  /// In ar, this message translates to:
+  /// **'القواعد (إحصاءات وتكرار)'**
+  String get jwGrammar;
+
+  /// No description provided for @jwWordCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة'**
+  String get jwWordCount;
+
+  /// No description provided for @jwCharacterCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'حرف'**
+  String get jwCharacterCount;
+
+  /// No description provided for @jwReadingTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'دقيقة قراءة'**
+  String get jwReadingTime;
+
+  /// No description provided for @jwSectionFind.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث'**
+  String get jwSectionFind;
+
+  /// No description provided for @jwFind.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث (Ctrl+F)'**
+  String get jwFind;
+
+  /// No description provided for @jwFindShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث'**
+  String get jwFindShort;
+
+  /// No description provided for @jwReplace.
+  ///
+  /// In ar, this message translates to:
+  /// **'استبدال (Ctrl+H)'**
+  String get jwReplace;
+
+  /// No description provided for @jwGoTo.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانتقال إلى (Ctrl+G)'**
+  String get jwGoTo;
+
+  /// No description provided for @jwFindNext.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث عن التالي'**
+  String get jwFindNext;
+
+  /// No description provided for @jwFindPrevious.
+  ///
+  /// In ar, this message translates to:
+  /// **'البحث عن السابق'**
+  String get jwFindPrevious;
+
+  /// No description provided for @jwNoMatches.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا نتائج'**
+  String get jwNoMatches;
+
+  /// No description provided for @jwSectionInsertReview.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإدراج'**
+  String get jwSectionInsertReview;
+
+  /// No description provided for @jwInsertDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج التاريخ'**
+  String get jwInsertDate;
+
+  /// No description provided for @jwInsertTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج الوقت'**
+  String get jwInsertTime;
+
+  /// No description provided for @jwInsertEquation.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج معادلة'**
+  String get jwInsertEquation;
+
+  /// No description provided for @jwInsertFootnote.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدراج حاشية'**
+  String get jwInsertFootnote;
+
+  /// No description provided for @jwSectionComments.
+  ///
+  /// In ar, this message translates to:
+  /// **'التعليقات'**
+  String get jwSectionComments;
+
+  /// No description provided for @jwNewComment.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعليق جديد'**
+  String get jwNewComment;
+
+  /// No description provided for @jwNewCommentShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعليق'**
+  String get jwNewCommentShort;
+
+  /// No description provided for @jwShowComments.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار التعليقات'**
+  String get jwShowComments;
+
+  /// No description provided for @jwDeleteComment.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف تعليقات هذه الكتلة'**
+  String get jwDeleteComment;
+
+  /// No description provided for @jwCommentDeleted.
+  ///
+  /// In ar, this message translates to:
+  /// **'حُذف التعليق'**
+  String get jwCommentDeleted;
+
+  /// No description provided for @jwTrackChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التغييرات (التراجع)'**
+  String get jwTrackChanges;
+
+  /// No description provided for @jwProofingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التدقيق والإحصاء'**
+  String get jwProofingTitle;
+
+  /// No description provided for @jwStatsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إحصاءات المستند'**
+  String get jwStatsTitle;
+
+  /// No description provided for @jwCharacterCountNoSpaces.
+  ///
+  /// In ar, this message translates to:
+  /// **'حرف بلا مسافات'**
+  String get jwCharacterCountNoSpaces;
+
+  /// No description provided for @jwLinesCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'سطر'**
+  String get jwLinesCount;
+
+  /// No description provided for @jwParagraphsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'فقرة'**
+  String get jwParagraphsCount;
+
+  /// No description provided for @jwRepeatedWords.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار كلمات متتالية'**
+  String get jwRepeatedWords;
+
+  /// No description provided for @jwNoRepeatedWords.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد كلمات مكرّرة — نصّ سليم.'**
+  String get jwNoRepeatedWords;
+
+  /// No description provided for @jwFindPlaceholder.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب كلمة البحث…'**
+  String get jwFindPlaceholder;
+
+  /// No description provided for @jwMatchesCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'النتيجة {current} من {total}'**
+  String jwMatchesCount(Object current, Object total);
+
+  /// No description provided for @jwFindTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث واستبدال'**
+  String get jwFindTitle;
+
+  /// No description provided for @jwReplacePlaceholder.
+  ///
+  /// In ar, this message translates to:
+  /// **'استبدل بـ…'**
+  String get jwReplacePlaceholder;
+
+  /// No description provided for @jwReplaceButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'استبدال'**
+  String get jwReplaceButton;
+
+  /// No description provided for @jwReplacedBlocks.
+  ///
+  /// In ar, this message translates to:
+  /// **'كُتل مبدَلة'**
+  String get jwReplacedBlocks;
+
+  /// No description provided for @jwReplaceAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'استبدال الكل'**
+  String get jwReplaceAll;
+
+  /// No description provided for @jwGoToBlockLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الكتلة'**
+  String get jwGoToBlockLabel;
+
+  /// No description provided for @jwCommentHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصّ التعليق على الكتلة النشطة'**
+  String get jwCommentHint;
+
+  /// No description provided for @jwCommentsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعليقات المستند'**
+  String get jwCommentsTitle;
+
+  /// No description provided for @jwCommentsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تعليقات بعد.'**
+  String get jwCommentsEmpty;
+
+  /// No description provided for @jwCommentAtBlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكتلة'**
+  String get jwCommentAtBlock;
+
+  /// No description provided for @jwJumpToBlock.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتقال'**
+  String get jwJumpToBlock;
 }
 
 class _AppLocalizationsDelegate

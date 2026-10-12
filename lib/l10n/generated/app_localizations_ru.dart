@@ -3416,4 +3416,576 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get ocrTessHint =>
       'Требуется установленный Tesseract на этом устройстве.';
+
+  @override
+  String get jwRibbonHome => 'Главная';
+
+  @override
+  String get jwRibbonSetup => 'Вёрстка';
+
+  @override
+  String get jwRibbonDesign => 'Дизайн';
+
+  @override
+  String get jwRibbonFile => 'Файл';
+
+  @override
+  String get jwRibbonReview => 'Рецензия';
+
+  @override
+  String get jwSectionFonts => 'Шрифты';
+
+  @override
+  String get jwFontFamily => 'Гарнитура';
+
+  @override
+  String get jwFontSizeDown => 'Уменьшить размер';
+
+  @override
+  String get jwFontSizeLabel => 'Размер шрифта';
+
+  @override
+  String get jwFontSizeUp => 'Увеличить размер';
+
+  @override
+  String get jwBold => 'Полужирный';
+
+  @override
+  String get jwItalic => 'Курсив';
+
+  @override
+  String get jwUnderline => 'Подчёркнутый';
+
+  @override
+  String get jwStrikethrough => 'Зачёркнутый';
+
+  @override
+  String get jwTextColor => 'Цвет текста';
+
+  @override
+  String get jwNoColor => 'Без цвета';
+
+  @override
+  String get jwHighlightColor => 'Выделение текста';
+
+  @override
+  String get jwClearFormatting => 'Очистить формат';
+
+  @override
+  String get jwSectionAlignment => 'Выравнивание';
+
+  @override
+  String get jwAlignRight => 'По правому краю';
+
+  @override
+  String get jwAlignCenter => 'По центру';
+
+  @override
+  String get jwAlignLeft => 'По левому краю';
+
+  @override
+  String get jwJustify => 'По ширине';
+
+  @override
+  String get jwLineSpacing => 'Межстрочный интервал';
+
+  @override
+  String get jwParagraphSpacing => 'Интервал между абзацами';
+
+  @override
+  String get jwSpacingNone => 'Нет';
+
+  @override
+  String get jwSpacingValue => 'Интервал';
+
+  @override
+  String get jwDirectionRtl => 'Справа налево (RTL)';
+
+  @override
+  String get jwDirectionLtr => 'Слева направо (LTR)';
+
+  @override
+  String get jwSectionLists => 'Списки и интервалы';
+
+  @override
+  String get jwBulletList => 'Маркированный список';
+
+  @override
+  String get jwNumberedList => 'Нумерованный список';
+
+  @override
+  String get jwIndentIncrease => 'Увеличить отступ';
+
+  @override
+  String get jwIndentDecrease => 'Уменьшить отступ';
+
+  @override
+  String get jwFirstLineIndentIncrease => 'Отступ 1-й строки +';
+
+  @override
+  String get jwFirstLineIndentDecrease => 'Отступ 1-й строки −';
+
+  @override
+  String get jwHangingIndent => 'Висячий отступ';
+
+  @override
+  String get jwSectionParagraph => 'Абзац';
+
+  @override
+  String get jwParagraphDialog => 'Диалог абзаца';
+
+  @override
+  String get jwFormatPainter => 'Копировать формат';
+
+  @override
+  String get jwFormatPainterOnce => 'Копировать формат — один блок';
+
+  @override
+  String get jwFormatPainterLocked =>
+      'Копировать формат — блокировано (нажмите для остановки)';
+
+  @override
+  String get jwFormatPainterShort => 'Формат';
+
+  @override
+  String get jwSectionBlocks => 'Блоки';
+
+  @override
+  String get jwAddBlock => 'Добавить блок';
+
+  @override
+  String get jwDeleteBlock => 'Удалить блок';
+
+  @override
+  String get jwPageBreak => 'Разрыв страницы (новая страница)';
+
+  @override
+  String get jwSpreadView => 'Двустраничный разворот';
+
+  @override
+  String get jwParagraphDialogTitle => 'Настройки абзаца';
+
+  @override
+  String get jwAlignLabel => 'Выравнивание';
+
+  @override
+  String get jwIndentationLabel => 'Отступ (см)';
+
+  @override
+  String get jwIndentGeneral => 'Отступ абзаца';
+
+  @override
+  String get jwIndentFirstLine => 'Первая строка';
+
+  @override
+  String get jwSpacingLabel => 'Интервал';
+
+  @override
+  String get jwSpaceBefore => 'Перед (пкс)';
+
+  @override
+  String get jwSpaceAfter => 'После (пкс)';
+
+  @override
+  String get jwLineHeightLabel => 'Высота строки';
+
+  @override
+  String get jwCancel => 'Отмена';
+
+  @override
+  String get jwOk => 'ОК';
+
+  @override
+  String get jwSectionPageSetup => 'Настройка страницы';
+
+  @override
+  String get jwPageSize => 'Размер страницы';
+
+  @override
+  String get jwOrientation => 'Ориентация страницы';
+
+  @override
+  String get jwPortrait => 'Книжная';
+
+  @override
+  String get jwLandscape => 'Альбомная';
+
+  @override
+  String get jwPageMargins => 'Поля страницы';
+
+  @override
+  String get jwMarginsNarrow => 'Узкие';
+
+  @override
+  String get jwMarginsNormal => 'Обычные';
+
+  @override
+  String get jwMarginsWide => 'Широкие';
+
+  @override
+  String get jwMarginsCustom => 'Пользовательские…';
+
+  @override
+  String get jwSectionPageBackground => 'Фон страницы';
+
+  @override
+  String get jwPageColor => 'Цвет страницы';
+
+  @override
+  String get jwPageColorClear => 'Белый (по умолчанию)';
+
+  @override
+  String get jwWatermark => 'Водяной знак';
+
+  @override
+  String get jwWatermarkShort => 'Знак';
+
+  @override
+  String get jwPageBorder => 'Рамка страницы';
+
+  @override
+  String get jwSectionPageNumbering => 'Нумерация страниц';
+
+  @override
+  String get jwPageNumberEnable => 'Показать номера страниц';
+
+  @override
+  String get jwPageNumberAlignLabel => 'Выравнивание номера';
+
+  @override
+  String get jwPageNumberFormat => 'Формат номера';
+
+  @override
+  String get jwPageNumberStartAt => 'Начинать с';
+
+  @override
+  String get jwPageNumberDifferentFirst => 'Первая страница иначе';
+
+  @override
+  String get jwPageNumberRemove => 'Удалить номера страниц';
+
+  @override
+  String get jwCustomMarginsTitle => 'Пользовательские поля (мм)';
+
+  @override
+  String get jwMarginTop => 'Верх';
+
+  @override
+  String get jwMarginBottom => 'Низ';
+
+  @override
+  String get jwMarginRight => 'Правый';
+
+  @override
+  String get jwMarginLeft => 'Левый';
+
+  @override
+  String get jwWatermarkTitle => 'Водяной знак';
+
+  @override
+  String get jwWatermarkHint => 'Полупрозрачный текст (пустите, чтобы убрать)';
+
+  @override
+  String get jwWatermarkClear => 'Удалить';
+
+  @override
+  String get jwSectionTemplates => 'Шаблоны';
+
+  @override
+  String get jwTemplateCategory => 'Категория шаблонов';
+
+  @override
+  String get jwTemplateAll => 'Все категории';
+
+  @override
+  String get jwTemplates => 'Шаблоны';
+
+  @override
+  String get jwSectionInsert => 'Вставка';
+
+  @override
+  String get jwShapes => 'Фигуры';
+
+  @override
+  String get jwInsertImage => 'Вставить изображение';
+
+  @override
+  String get jwInsertImageShort => 'Изображение';
+
+  @override
+  String get jwInsertTable => 'Вставить таблицу';
+
+  @override
+  String get jwInsertSymbol => 'Вставить символ';
+
+  @override
+  String get jwSectionShapeFormat => 'Формат фигур';
+
+  @override
+  String get jwShapeFill => 'Заливка';
+
+  @override
+  String get jwShapeOutline => 'Контур';
+
+  @override
+  String get jwShapeStrokeWidth => 'Толщина контура';
+
+  @override
+  String get jwShapeDefaultsHint => 'Применяется при вставке';
+
+  @override
+  String get jwActionFailed => 'Действие не удалось';
+
+  @override
+  String get jwNewDocConfirm => 'Новый документ';
+
+  @override
+  String get jwNewDocConfirmMessage =>
+      'Есть несохранённые изменения. Начать новый документ?';
+
+  @override
+  String get jwNewDocument => 'Новый документ';
+
+  @override
+  String get jwRecentFilesEmpty => 'Пока нет сохранённых документов';
+
+  @override
+  String get jwRecentFiles => 'Недавние файлы';
+
+  @override
+  String get jwOpenDocument => 'Открыть документ';
+
+  @override
+  String get jwSaveAs => 'Сохранить как';
+
+  @override
+  String get jwDocumentTitle => 'Название документа';
+
+  @override
+  String get jwSaved => 'Документ сохранён';
+
+  @override
+  String get jwSectionFile => 'Файл';
+
+  @override
+  String get jwNewShort => 'Новый';
+
+  @override
+  String get jwOpenShort => 'Открыть';
+
+  @override
+  String get jwSave => 'Сохранить (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => 'Сохранить';
+
+  @override
+  String get jwSectionExport => 'Экспорт';
+
+  @override
+  String get jwExportPdf => 'Экспорт в PDF';
+
+  @override
+  String get jwExportPng => 'Экспорт в PNG';
+
+  @override
+  String get jwExportDocx => 'Экспорт в DOCX';
+
+  @override
+  String get jwExportHtml => 'Экспорт в HTML';
+
+  @override
+  String get jwPrint => 'Печать (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => 'Печать';
+
+  @override
+  String get jwSectionUndo => 'Отменить';
+
+  @override
+  String get jwUndo => 'Отменить (Ctrl+Z)';
+
+  @override
+  String get jwRedo => 'Повторить (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => 'История отмен';
+
+  @override
+  String get jwHistoryShort => 'История';
+
+  @override
+  String get jwSectionSettings => 'Настройки';
+
+  @override
+  String get jwDocumentProperties => 'Свойства документа';
+
+  @override
+  String get jwPageSetup => 'Настройка страницы';
+
+  @override
+  String get jwLanguage => 'Язык';
+
+  @override
+  String get jwAutoSave => 'Автосохранение';
+
+  @override
+  String get jwAutoSaveShort => 'Авто';
+
+  @override
+  String get jwLanguageArabic =>
+      'Язык редактора: арабский — лента поддерживает десять языков в настройках.';
+
+  @override
+  String get jwHistoryStep => 'Шаг';
+
+  @override
+  String get jwHistoryCurrent => 'Текущая';
+
+  @override
+  String get jwClose => 'Закрыть';
+
+  @override
+  String get jwSectionProofing => 'Проверка';
+
+  @override
+  String get jwSpelling => 'Орфография (повторяющиеся слова)';
+
+  @override
+  String get jwSpellingShort => 'Проверка';
+
+  @override
+  String get jwGrammar => 'Грамматика (статистика и повторы)';
+
+  @override
+  String get jwWordCount => 'Слова';
+
+  @override
+  String get jwCharacterCount => 'Символы';
+
+  @override
+  String get jwReadingTime => 'мин чтения';
+
+  @override
+  String get jwSectionFind => 'Поиск';
+
+  @override
+  String get jwFind => 'Найти (Ctrl+F)';
+
+  @override
+  String get jwFindShort => 'Найти';
+
+  @override
+  String get jwReplace => 'Заменить (Ctrl+H)';
+
+  @override
+  String get jwGoTo => 'Перейти (Ctrl+G)';
+
+  @override
+  String get jwFindNext => 'Найти дальше';
+
+  @override
+  String get jwFindPrevious => 'Найти предыдущее';
+
+  @override
+  String get jwNoMatches => 'Ничего не найдено';
+
+  @override
+  String get jwSectionInsertReview => 'Вставка';
+
+  @override
+  String get jwInsertDate => 'Вставить дату';
+
+  @override
+  String get jwInsertTime => 'Вставить время';
+
+  @override
+  String get jwInsertEquation => 'Вставить формулу';
+
+  @override
+  String get jwInsertFootnote => 'Вставить сноску';
+
+  @override
+  String get jwSectionComments => 'Комментарии';
+
+  @override
+  String get jwNewComment => 'Новый комментарий';
+
+  @override
+  String get jwNewCommentShort => 'Комментарий';
+
+  @override
+  String get jwShowComments => 'Показать комментарии';
+
+  @override
+  String get jwDeleteComment => 'Удалить комментарии блока';
+
+  @override
+  String get jwCommentDeleted => 'Комментарий удалён';
+
+  @override
+  String get jwTrackChanges => 'История изменений';
+
+  @override
+  String get jwProofingTitle => 'Проверка и статистика';
+
+  @override
+  String get jwStatsTitle => 'Статистика документа';
+
+  @override
+  String get jwCharacterCountNoSpaces => 'Символы (без пробелов)';
+
+  @override
+  String get jwLinesCount => 'Строки';
+
+  @override
+  String get jwParagraphsCount => 'Абзацы';
+
+  @override
+  String get jwRepeatedWords => 'Повторяющиеся слова';
+
+  @override
+  String get jwNoRepeatedWords => 'Нет повторов — текст чист.';
+
+  @override
+  String get jwFindPlaceholder => 'Введите запрос…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return 'Результат $current из $total';
+  }
+
+  @override
+  String get jwFindTitle => 'Найти и заменить';
+
+  @override
+  String get jwReplacePlaceholder => 'Заменить на…';
+
+  @override
+  String get jwReplaceButton => 'Заменить';
+
+  @override
+  String get jwReplacedBlocks => 'Блоков заменено';
+
+  @override
+  String get jwReplaceAll => 'Заменить все';
+
+  @override
+  String get jwGoToBlockLabel => 'Номер блока';
+
+  @override
+  String get jwCommentHint => 'Текст комментария к активному блоку';
+
+  @override
+  String get jwCommentsTitle => 'Комментарии документа';
+
+  @override
+  String get jwCommentsEmpty => 'Пока нет комментариев.';
+
+  @override
+  String get jwCommentAtBlock => 'Блок';
+
+  @override
+  String get jwJumpToBlock => 'Перейти';
 }

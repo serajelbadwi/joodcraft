@@ -3408,4 +3408,576 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get ocrTessHint => 'Memerlukan Tesseract terpasang di perangkat ini.';
+
+  @override
+  String get jwRibbonHome => 'Beranda';
+
+  @override
+  String get jwRibbonSetup => 'Tata Letak';
+
+  @override
+  String get jwRibbonDesign => 'Desain';
+
+  @override
+  String get jwRibbonFile => 'Berkas';
+
+  @override
+  String get jwRibbonReview => 'Tinjauan';
+
+  @override
+  String get jwSectionFonts => 'Font';
+
+  @override
+  String get jwFontFamily => 'Keluarga font';
+
+  @override
+  String get jwFontSizeDown => 'Perkecil ukuran font';
+
+  @override
+  String get jwFontSizeLabel => 'Ukuran font';
+
+  @override
+  String get jwFontSizeUp => 'Perbesar ukuran font';
+
+  @override
+  String get jwBold => 'Tebal';
+
+  @override
+  String get jwItalic => 'Miring';
+
+  @override
+  String get jwUnderline => 'Garis bawah';
+
+  @override
+  String get jwStrikethrough => 'Coret';
+
+  @override
+  String get jwTextColor => 'Warna teks';
+
+  @override
+  String get jwNoColor => 'Tanpa warna';
+
+  @override
+  String get jwHighlightColor => 'Sorotan teks';
+
+  @override
+  String get jwClearFormatting => 'Hapus format';
+
+  @override
+  String get jwSectionAlignment => 'Perataan';
+
+  @override
+  String get jwAlignRight => 'Rata kanan';
+
+  @override
+  String get jwAlignCenter => 'Rata tengah';
+
+  @override
+  String get jwAlignLeft => 'Rata kiri';
+
+  @override
+  String get jwJustify => 'Rata dua sisi';
+
+  @override
+  String get jwLineSpacing => 'Jarak baris';
+
+  @override
+  String get jwParagraphSpacing => 'Jarak paragraf';
+
+  @override
+  String get jwSpacingNone => 'Tanpa';
+
+  @override
+  String get jwSpacingValue => 'Jarak';
+
+  @override
+  String get jwDirectionRtl => 'Kanan ke kiri (RTL)';
+
+  @override
+  String get jwDirectionLtr => 'Kiri ke kanan (LTR)';
+
+  @override
+  String get jwSectionLists => 'Daftar dan jarak';
+
+  @override
+  String get jwBulletList => 'Daftar berpoin';
+
+  @override
+  String get jwNumberedList => 'Daftar bernomor';
+
+  @override
+  String get jwIndentIncrease => 'Tambah indentasi';
+
+  @override
+  String get jwIndentDecrease => 'Kurangi indentasi';
+
+  @override
+  String get jwFirstLineIndentIncrease => 'Tambah indentasi baris pertama';
+
+  @override
+  String get jwFirstLineIndentDecrease => 'Kurangi indentasi baris pertama';
+
+  @override
+  String get jwHangingIndent => 'Indentasi gantung';
+
+  @override
+  String get jwSectionParagraph => 'Paragraf';
+
+  @override
+  String get jwParagraphDialog => 'Dialog paragraf';
+
+  @override
+  String get jwFormatPainter => 'Format pelat';
+
+  @override
+  String get jwFormatPainterOnce => 'Format — satu blok';
+
+  @override
+  String get jwFormatPainterLocked => 'Format — terkunci (klik untuk berhenti)';
+
+  @override
+  String get jwFormatPainterShort => 'Format';
+
+  @override
+  String get jwSectionBlocks => 'Blok';
+
+  @override
+  String get jwAddBlock => 'Tambah blok';
+
+  @override
+  String get jwDeleteBlock => 'Hapus blok';
+
+  @override
+  String get jwPageBreak => 'Pemisah halaman (halaman baru)';
+
+  @override
+  String get jwSpreadView => 'Tampilan dua halaman';
+
+  @override
+  String get jwParagraphDialogTitle => 'Pengaturan paragraf';
+
+  @override
+  String get jwAlignLabel => 'Perataan';
+
+  @override
+  String get jwIndentationLabel => 'Indentasi (cm)';
+
+  @override
+  String get jwIndentGeneral => 'Indentasi paragraf';
+
+  @override
+  String get jwIndentFirstLine => 'Baris pertama';
+
+  @override
+  String get jwSpacingLabel => 'Jarak';
+
+  @override
+  String get jwSpaceBefore => 'Sebelum (px)';
+
+  @override
+  String get jwSpaceAfter => 'Setelah (px)';
+
+  @override
+  String get jwLineHeightLabel => 'Tinggi baris';
+
+  @override
+  String get jwCancel => 'Batal';
+
+  @override
+  String get jwOk => 'Ya';
+
+  @override
+  String get jwSectionPageSetup => 'Pengaturan halaman';
+
+  @override
+  String get jwPageSize => 'Ukuran halaman';
+
+  @override
+  String get jwOrientation => 'Orientasi halaman';
+
+  @override
+  String get jwPortrait => 'Potret';
+
+  @override
+  String get jwLandscape => 'Lanskap';
+
+  @override
+  String get jwPageMargins => 'Margin halaman';
+
+  @override
+  String get jwMarginsNarrow => 'Sempit';
+
+  @override
+  String get jwMarginsNormal => 'Normal';
+
+  @override
+  String get jwMarginsWide => 'Lebar';
+
+  @override
+  String get jwMarginsCustom => 'Kustom…';
+
+  @override
+  String get jwSectionPageBackground => 'Latar belakang halaman';
+
+  @override
+  String get jwPageColor => 'Warna halaman';
+
+  @override
+  String get jwPageColorClear => 'Putih (default)';
+
+  @override
+  String get jwWatermark => 'Tanda air';
+
+  @override
+  String get jwWatermarkShort => 'Tanda';
+
+  @override
+  String get jwPageBorder => 'Batas halaman';
+
+  @override
+  String get jwSectionPageNumbering => 'Nomor halaman';
+
+  @override
+  String get jwPageNumberEnable => 'Tampilkan nomor halaman';
+
+  @override
+  String get jwPageNumberAlignLabel => 'Perataan nomor';
+
+  @override
+  String get jwPageNumberFormat => 'Format nomor';
+
+  @override
+  String get jwPageNumberStartAt => 'Mulai dari';
+
+  @override
+  String get jwPageNumberDifferentFirst => 'Halaman pertama berbeda';
+
+  @override
+  String get jwPageNumberRemove => 'Hapus nomor halaman';
+
+  @override
+  String get jwCustomMarginsTitle => 'Margin kustom (mm)';
+
+  @override
+  String get jwMarginTop => 'Atas';
+
+  @override
+  String get jwMarginBottom => 'Bawah';
+
+  @override
+  String get jwMarginRight => 'Kanan';
+
+  @override
+  String get jwMarginLeft => 'Kiri';
+
+  @override
+  String get jwWatermarkTitle => 'Tanda air';
+
+  @override
+  String get jwWatermarkHint =>
+      'Teks latar transparan (kosongkan untuk menghapus)';
+
+  @override
+  String get jwWatermarkClear => 'Hapus';
+
+  @override
+  String get jwSectionTemplates => 'Templat';
+
+  @override
+  String get jwTemplateCategory => 'Kategori templat';
+
+  @override
+  String get jwTemplateAll => 'Semua kategori';
+
+  @override
+  String get jwTemplates => 'Templat';
+
+  @override
+  String get jwSectionInsert => 'Sisipkan';
+
+  @override
+  String get jwShapes => 'Bentuk';
+
+  @override
+  String get jwInsertImage => 'Sisipkan gambar';
+
+  @override
+  String get jwInsertImageShort => 'Gambar';
+
+  @override
+  String get jwInsertTable => 'Sisipkan tabel';
+
+  @override
+  String get jwInsertSymbol => 'Sisipkan simbol';
+
+  @override
+  String get jwSectionShapeFormat => 'Format bentuk';
+
+  @override
+  String get jwShapeFill => 'Isian';
+
+  @override
+  String get jwShapeOutline => 'Garis luar';
+
+  @override
+  String get jwShapeStrokeWidth => 'Ketebalan garis';
+
+  @override
+  String get jwShapeDefaultsHint => 'Diterapkan saat menyisipkan';
+
+  @override
+  String get jwActionFailed => 'Aksi gagal';
+
+  @override
+  String get jwNewDocConfirm => 'Dokumen baru';
+
+  @override
+  String get jwNewDocConfirmMessage =>
+      'Anda memiliki perubahan yang belum disimpan. Mulai dokumen baru?';
+
+  @override
+  String get jwNewDocument => 'Dokumen baru';
+
+  @override
+  String get jwRecentFilesEmpty => 'Belum ada dokumen tersimpan';
+
+  @override
+  String get jwRecentFiles => 'Berkas terbaru';
+
+  @override
+  String get jwOpenDocument => 'Buka dokumen';
+
+  @override
+  String get jwSaveAs => 'Simpan sebagai';
+
+  @override
+  String get jwDocumentTitle => 'Judul dokumen';
+
+  @override
+  String get jwSaved => 'Dokumen tersimpan';
+
+  @override
+  String get jwSectionFile => 'Berkas';
+
+  @override
+  String get jwNewShort => 'Baru';
+
+  @override
+  String get jwOpenShort => 'Buka';
+
+  @override
+  String get jwSave => 'Simpan (Ctrl+S)';
+
+  @override
+  String get jwSaveShort => 'Simpan';
+
+  @override
+  String get jwSectionExport => 'Ekspor';
+
+  @override
+  String get jwExportPdf => 'Ekspor ke PDF';
+
+  @override
+  String get jwExportPng => 'Ekspor ke PNG';
+
+  @override
+  String get jwExportDocx => 'Ekspor ke DOCX';
+
+  @override
+  String get jwExportHtml => 'Ekspor ke HTML';
+
+  @override
+  String get jwPrint => 'Cetak (Ctrl+P)';
+
+  @override
+  String get jwPrintShort => 'Cetak';
+
+  @override
+  String get jwSectionUndo => 'Urungkan';
+
+  @override
+  String get jwUndo => 'Urungkan (Ctrl+Z)';
+
+  @override
+  String get jwRedo => 'Ulangi (Ctrl+Y)';
+
+  @override
+  String get jwUndoHistory => 'Histori urungkan';
+
+  @override
+  String get jwHistoryShort => 'Histori';
+
+  @override
+  String get jwSectionSettings => 'Pengaturan';
+
+  @override
+  String get jwDocumentProperties => 'Properti dokumen';
+
+  @override
+  String get jwPageSetup => 'Pengaturan halaman';
+
+  @override
+  String get jwLanguage => 'Bahasa';
+
+  @override
+  String get jwAutoSave => 'Simpan otomatis';
+
+  @override
+  String get jwAutoSaveShort => 'Otomatis';
+
+  @override
+  String get jwLanguageArabic =>
+      'Bahasa editor: Arab — pita mendukung sepuluh bahasa sesuai pengaturan aplikasi.';
+
+  @override
+  String get jwHistoryStep => 'Langkah';
+
+  @override
+  String get jwHistoryCurrent => 'Saat ini';
+
+  @override
+  String get jwClose => 'Tutup';
+
+  @override
+  String get jwSectionProofing => 'Pemeriksaan';
+
+  @override
+  String get jwSpelling => 'Ejaan (kata berulang)';
+
+  @override
+  String get jwSpellingShort => 'Periksa';
+
+  @override
+  String get jwGrammar => 'Tata bahasa (statistik & pengulanan)';
+
+  @override
+  String get jwWordCount => 'Kata';
+
+  @override
+  String get jwCharacterCount => 'Karakter';
+
+  @override
+  String get jwReadingTime => 'mnt baca';
+
+  @override
+  String get jwSectionFind => 'Cari';
+
+  @override
+  String get jwFind => 'Cari (Ctrl+F)';
+
+  @override
+  String get jwFindShort => 'Cari';
+
+  @override
+  String get jwReplace => 'Ganti (Ctrl+H)';
+
+  @override
+  String get jwGoTo => 'Pergi ke (Ctrl+G)';
+
+  @override
+  String get jwFindNext => 'Cari berikutnya';
+
+  @override
+  String get jwFindPrevious => 'Cari sebelumnya';
+
+  @override
+  String get jwNoMatches => 'Tidak ada hasil';
+
+  @override
+  String get jwSectionInsertReview => 'Sisipkan';
+
+  @override
+  String get jwInsertDate => 'Sisipkan tanggal';
+
+  @override
+  String get jwInsertTime => 'Sisipkan waktu';
+
+  @override
+  String get jwInsertEquation => 'Sisipkan persamaan';
+
+  @override
+  String get jwInsertFootnote => 'Sisipkan catatan kaki';
+
+  @override
+  String get jwSectionComments => 'Komentar';
+
+  @override
+  String get jwNewComment => 'Komentar baru';
+
+  @override
+  String get jwNewCommentShort => 'Komentar';
+
+  @override
+  String get jwShowComments => 'Tampilkan komentar';
+
+  @override
+  String get jwDeleteComment => 'Hapus komentar blok ini';
+
+  @override
+  String get jwCommentDeleted => 'Komentar dihapus';
+
+  @override
+  String get jwTrackChanges => 'Lacak perubahan (riwayat)';
+
+  @override
+  String get jwProofingTitle => 'Pemeriksaan & statistik';
+
+  @override
+  String get jwStatsTitle => 'Statistik dokumen';
+
+  @override
+  String get jwCharacterCountNoSpaces => 'Karakter (tanpa spasi)';
+
+  @override
+  String get jwLinesCount => 'Baris';
+
+  @override
+  String get jwParagraphsCount => 'Paragraf';
+
+  @override
+  String get jwRepeatedWords => 'Kata berurutan berulang';
+
+  @override
+  String get jwNoRepeatedWords => 'Tidak ada kata berulang — teks bersih.';
+
+  @override
+  String get jwFindPlaceholder => 'Ketik untuk mencari…';
+
+  @override
+  String jwMatchesCount(Object current, Object total) {
+    return 'Hasil $current dari $total';
+  }
+
+  @override
+  String get jwFindTitle => 'Cari dan ganti';
+
+  @override
+  String get jwReplacePlaceholder => 'Ganti dengan…';
+
+  @override
+  String get jwReplaceButton => 'Ganti';
+
+  @override
+  String get jwReplacedBlocks => 'Blok diganti';
+
+  @override
+  String get jwReplaceAll => 'Ganti semua';
+
+  @override
+  String get jwGoToBlockLabel => 'Nomor blok';
+
+  @override
+  String get jwCommentHint => 'Teks komentar untuk blok aktif';
+
+  @override
+  String get jwCommentsTitle => 'Komentar dokumen';
+
+  @override
+  String get jwCommentsEmpty => 'Belum ada komentar.';
+
+  @override
+  String get jwCommentAtBlock => 'Blok';
+
+  @override
+  String get jwJumpToBlock => 'Lompat ke';
 }
