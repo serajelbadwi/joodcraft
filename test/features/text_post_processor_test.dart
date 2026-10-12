@@ -1,5 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/ocr/data/text_post_processor.dart';
+import 'package:joodcraft/features/ocr/domain/ocr_result.dart';
+import 'package:joodcraft/features/ocr/presentation/providers/ocr_controller.dart';
+
+import '../support/ocr_engine_stub.dart';
 
 /// اختبارات المعالج اللاحق لنصّ OCR.
 ///
@@ -105,14 +111,20 @@ void main() {
       expect(OcrTextPostProcessor.process('فهو .... رائع'), 'فهو ... رائع');
     });
 
-    test('يحوّل ى الآخيرة إلى ي ويستثني الكلمات الصحيحة', () {
-      // كلمة ينتهي كتابتها بـ`ي` أصابتها قراءة خاطئة.
+    test('يصحّح ازدواج الياء الأخير ويستثني الكلمات الصحيحة', () {
+      // ازدواج الياء أثر قراءة مضاعف — يُصحَّح.
       expect(OcrTextPostProcessor.process('التقويى'), 'التقويي');
-      // كلمات صحيحة بـ`ى` لا تُمسّ.
+      // كلمات صحيحة تنتهي بـ`ى` لا تُمسّ إطلاقاً.
       expect(OcrTextPostProcessor.process('على المنبر'), 'على المنبر');
+      expect(OcrTextPostProcessor.process('الأولى'), 'الأولى');
       expect(OcrTextPostProcessor.process('مصطفى'), 'مصطفى');
       expect(OcrTextPostProcessor.process('موسى'), 'موسى');
       expect(OcrTextPostProcessor.process('وعلى'), 'وعلى');
+      // «الصفحة الأولى» سليمة بـ`ى` — قاعدة عامة كانت أفسدتها.
+      expect(
+        OcrTextPostProcessor.process('الصفحة الأولى نص'),
+        'الصفحة الأولى نص',
+      );
     });
 
     test('يزيل الرسم المتكرّر والمحارف غير المرئية', () {
@@ -170,6 +182,67 @@ void main() {
       const String raw = 'الصفحة الأولى by نص\n\nالصفحة الثانية so نص';
       final String cleaned = OcrTextPostProcessor.process(raw);
       expect(cleaned, 'الصفحة الأولى نص\n\nالصفحة الثانية نص');
+    });
+  });
+
+  // ==========================================================================
+  //  و) التكامل مع متحكّم الشاشة
+  // ==========================================================================
+
+  group('و) التكامل: المعالج يعمل بعد كل استخراج', () {
+    OcrResult dirtyResult() => const OcrResult(
+      text: 'هذا by نص so مستخرج',
+      confidence: 0.6,
+      wordBoxes: <WordBox>[],
+      language: 'ara+eng',
+      elapsedMs: 100,
+      imageWidth: 10,
+      imageHeight: 10,
+    );
+
+    OcrResult cleanResult() => const OcrResult(
+      text: 'بسم الله الرحمن الرحيم',
+      confidence: 0.6,
+      wordBoxes: <WordBox>[],
+      language: 'ara',
+      elapsedMs: 100,
+      imageWidth: 10,
+      imageHeight: 10,
+    );
+
+    Future<OcrController> controllerFor(OcrResult result) async {
+      final OcrController controller = OcrController(
+        engine: FakeOcrEngine(result: result),
+      );
+      addTearDown(controller.dispose);
+      await controller.loadImageBytes(
+        Uint8List.fromList(<int>[1, 2, 3]),
+        name: 'test.png',
+      );
+      await controller.extract();
+      return controller;
+    }
+
+    test('يعرض النصّ المصحّح لا الخام بعد الاستخراج', () async {
+      final OcrController controller = await controllerFor(dirtyResult());
+      expect(controller.editedText, 'هذا نص مستخرج');
+      expect(controller.result!.text, 'هذا نص مستخرج');
+      expect(controller.cleanupApplied, isTrue);
+    });
+
+    test('يحفظ الخام للمقارنة ويرجع إليه عند الطلب', () async {
+      final OcrController controller = await controllerFor(dirtyResult());
+      expect(controller.rawText, 'هذا by نص so مستخرج');
+      controller.restoreRawText();
+      expect(controller.editedText, 'هذا by نص so مستخرج');
+      controller.revertToExtracted();
+      expect(controller.editedText, 'هذا نص مستخرج');
+    });
+
+    test('لا يعلّم التنظيف حين يكون النصّ سليماً', () async {
+      final OcrController controller = await controllerFor(cleanResult());
+      expect(controller.cleanupApplied, isFalse);
+      expect(controller.editedText, controller.rawText);
     });
   });
 }
