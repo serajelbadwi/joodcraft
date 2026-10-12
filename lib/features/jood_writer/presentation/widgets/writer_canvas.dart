@@ -48,8 +48,16 @@ class WriterCanvas extends StatefulWidget {
   /// حتى يبقى النص واضحاً وقابلاً للقراءة أثناء التحديد.
   static final Color selectionBlue = Colors.blue.withValues(alpha: 0.2);
 
-  /// مسافة الفاصل بين صفحتَي القائمة (ببكسل).
-  static const double pageGap = 24;
+  /// مسافة الفاصل بين صفحتَي القائمة (ببكسل) — **ثابتة على شاشة الجهاز
+  /// مهما كان التكبير**: تُقاس في وحدات الشاشة لا الورقة، فتبقى ‎15px‎
+  /// (ضمن نطاق 10-20 المطلوب) عند ‎0.7×‎ كما عند ‎2×‎.
+  ///
+  /// السرّ أن فتحة الصفحة (الـ`SizedBox` في [pageCard]) تُضرب في `zoomLevel`
+  /// هي أيضاً: طلاء `Transform.scale` لا يمسّ التخطيط، فلو بقيت الفتحة
+  /// بمقاسها الأول لَزِم الطلاء الصفحة التالية عند التكبير (تداخل يصل ‎−1098px`
+  /// عند ‎2×‎) أو خلّى فراغاً رمادياً عميقاً عند التصغير (‎+361px` عند
+  /// ‎0.7×‎) — والقياس قبل الإصلاح أثبت كلا الحالتين.
+  static const double pageGap = 15.0;
 
   /// الحشو العلوي لقائمة الصفحات.
   static const double listTopPadding = 40;
@@ -470,9 +478,16 @@ class _WriterCanvasState extends State<WriterCanvas> {
         // بطاقة صفحة واحدة بمقاسها الورقي الحقيقي: تُخطَّط A4 تماماً
         // ثم تُطلَى بالمعامل — تُستعمل في الوضع المفرد وطي الكتاب.
         Widget pageCard(int index) {
+          // الفتحة تشارك الطلاء مقياس التكبير: `Transform.scale` يُكبّر
+          // الرسم ولا يمسّ التخطيط، فتضييق الفتحة عن الطلاء هو وحده ما
+          // يجعل المسافة بين الصفحات تتغيّر مع التكبير. بهذا يصير ارتفاع
+          // الصفّ ‎slot = A4 × fit × zoom‎ ويطابق حساب التمرير في
+          // `_scrollToBlockPage` حرفياً (كان الحساب يتضمّن التكبير والفتحة
+          // لا — فيقفز التمرير مبلغ صفحة كاملة عند التكبير).
+          final double zoom = controller.zoomLevel;
           return SizedBox(
-            width: pageWidth * fit,
-            height: pageHeight * fit,
+            width: pageWidth * fit * zoom,
+            height: pageHeight * fit * zoom,
             child: OverflowBox(
               minWidth: pageWidth,
               maxWidth: pageWidth,
@@ -534,26 +549,41 @@ class _WriterCanvasState extends State<WriterCanvas> {
               final int rightIndex = index * 2;
               final int leftIndex = rightIndex + 1;
               return Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // «جود كاتب» عربيّ-first: الصفحة الفردية يمين والزوجية
-                  // إلى يسارها كالكتاب المطبوع، بلا اعتماد على اتجاه
-                  // الواجهة المحيطة (كما تُرسم الأسطر بـrtl صراحةً).
-                  textDirection: TextDirection.rtl,
-                  children: [
-                    pageCard(rightIndex),
-                    const SizedBox(width: WriterCanvas.pageGap),
-                    if (leftIndex < pages.length)
-                      pageCard(leftIndex)
-                    else
-                      // عدد الصفحات فردي: فراغ بمقدار الورقة يحفظ
-                      // توازن الصفّ المتقابل.
-                      SizedBox(
-                        width: pageWidth * fit,
-                        height: pageHeight * fit,
-                      ),
-                  ],
+                // عند تكبير ‎> 1×` يصير عرض الصفّ أوسع من الشاشة (الفتحة
+                // تتّبع الطلاء الآن)؛ `ConstraintsTransformBox` يلغي قيود
+                // العرض على الصفّ فيُخطَّط بطاقته الطبيعية **بلا إعلان
+                // RenderFlex عن فيض**، ويُقصّ `Clip.hardEdge` الزائد على
+                // حواف الشاشة — سلوك الوضع المفرد نفسه (الصفّ يتجاوز
+                // حدوده هناك بصمت لأن transform لا يمسّ التخطيط).
+                // وشأنه خير من `OverflowBox` هنا: هذا الأخير يُحمّل صندوقه
+                // `constraints.biggest` وارتفاع القائمة بلا سقف ⇒ خطأ
+                // «infinite size» عند كل تكبير.
+                child: ConstraintsTransformBox(
+                  constraintsTransform: ConstraintsTransformBox.unconstrained,
+                  clipBehavior: Clip.hardEdge,
+                  alignment: Alignment.topCenter,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // «جود كاتب» عربيّ-first: الصفحة الفردية يمين والزوجية
+                    // إلى يسارها كالكتاب المطبوع، بلا اعتماد على اتجاه
+                    // الواجهة المحيطة (كما تُرسم الأسطر بـrtl صراحةً).
+                    textDirection: TextDirection.rtl,
+                    children: [
+                      pageCard(rightIndex),
+                      const SizedBox(width: WriterCanvas.pageGap),
+                      if (leftIndex < pages.length)
+                        pageCard(leftIndex)
+                      else
+                        // عدد الصفحات فردي: فراغ بمقدار الورقة يحفظ
+                        // توازن الصفّ المتقابل — بمقاسها المُكبَّر أيضاً
+                        // (نفس فتحة pageCard) كي لا ينزاح الصفّ.
+                        SizedBox(
+                          width: pageWidth * fit * controller.zoomLevel,
+                          height: pageHeight * fit * controller.zoomLevel,
+                        ),
+                    ],
+                  ),
                 ),
               );
             },
