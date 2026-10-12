@@ -132,29 +132,6 @@ class _JoodReachSplashScreenState extends State<JoodReachSplashScreen>
     super.initState();
     // الانتقال عند اكتمال الخروج تماماً (‎5.0s‎).
     _timer = Timer(_total, _goToLogin);
-    // TODO(tmp-diag): تشخيص الويب — يُحذف بعد الفحص.
-    debugPrint('SPLASH: initState');
-    int frames = 0;
-    void countFrame(Duration _) {
-      frames++;
-      if (mounted) {
-        SchedulerBinding.instance.addPostFrameCallback(countFrame);
-      }
-    }
-
-    SchedulerBinding.instance.addPostFrameCallback(countFrame);
-    Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      final SchedulerBinding sb = SchedulerBinding.instance;
-      debugPrint(
-        'SPLASH: value=${_controller.value} frames=$frames '
-        'scheduled=${sb.hasScheduledFrame} enabled=${sb.framesEnabled} '
-        'phase=${sb.schedulerPhase} lifecycle=${sb.lifecycleState}',
-      );
-    });
   }
 
   /// الانتقال: `pushReplacement` لا `push` — فلا يستطيع زرّ الرجوع إعادة
