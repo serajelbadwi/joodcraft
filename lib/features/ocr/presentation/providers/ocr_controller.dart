@@ -16,6 +16,7 @@ import 'package:printing/printing.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/tesseract_engine.dart';
+import '../../data/text_post_processor.dart';
 import '../../domain/ocr_engine.dart';
 import '../../domain/ocr_engine_status.dart';
 import '../../domain/ocr_result.dart';
@@ -74,6 +75,8 @@ class OcrController extends ChangeNotifier {
   Uint8List? _imageBytes;
   String? _sourceName;
   String _editedText = '';
+  String _rawText = '';
+  bool _cleanupApplied = false;
   int _pdfPageCount = 0;
   bool _disposed = false;
 
@@ -87,6 +90,14 @@ class OcrController extends ChangeNotifier {
 
   /// النصّ الذي يراه المستخدم ويعدّله — هذا ما يُدرَج في المحرّر لا ناتج المحرّك.
   String get editedText => _editedText;
+
+  /// النصّ **الخام** كما أعاده المحرّك قبل المعالج اللاحق — يُعرض عند الطلب
+  /// للمقارنة (زر «عرض النص الأصلي»).
+  String get rawText => _rawText;
+
+  /// هل صحّح المعالج اللاحق النصّ (حذف رموز وهمية أو تصحيح عربي)؟
+  /// يُستخدم لعرض ملاحظة `ocrCleanupNote`.
+  bool get cleanupApplied => _cleanupApplied;
 
   /// عدد صور PDF المقطّعة إن كان المصدر PDF (0 = صورة واحدة).
   int get pdfPageCount => _pdfPageCount;
@@ -206,6 +217,8 @@ class OcrController extends ChangeNotifier {
       _sourceName = name;
       _result = null;
       _editedText = '';
+      _rawText = '';
+      _cleanupApplied = false;
       _error = null;
       _setState(OcrViewState.imageReady);
       return true;
@@ -229,6 +242,8 @@ class OcrController extends ChangeNotifier {
     _pdfPageCount = 0;
     _result = null;
     _editedText = '';
+    _rawText = '';
+    _cleanupApplied = false;
     _error = null;
     _setState(OcrViewState.imageReady);
     return true;
@@ -274,18 +289,28 @@ class OcrController extends ChangeNotifier {
         last = pageResult;
       }
 
-      final String combined = texts.join('\n\n').trim();
-      if (combined.isEmpty) {
+      final String raw = texts.join('\n\n').trim();
+      if (raw.isEmpty) {
+        _setState(OcrViewState.error, OcrError.noText);
+        return;
+      }
+      // المعالج اللاحق: يحذف الرموز اللاتينية الوهمية (`by`، `so`، `Land`…)
+      // ويصحّح الأخطاء العربية الشائعة. الناتج هو ما يُعرض للمستخدم، والخام
+      // يبقى محفوظاً للمقارنة عبر `restoreRawText`.
+      final String cleaned = OcrTextPostProcessor.process(raw);
+      if (cleaned.isEmpty) {
         _setState(OcrViewState.error, OcrError.noText);
         return;
       }
       _result = last?.copyWith(
-        text: combined,
+        text: cleaned,
         recognizedWords: words,
         elapsedMs: elapsed,
         confidence: confidenceCount == 0 ? 0 : confidenceSum / confidenceCount,
       );
-      _editedText = combined;
+      _rawText = raw;
+      _cleanupApplied = OcrTextPostProcessor.changed(raw, cleaned);
+      _editedText = cleaned;
       _setState(OcrViewState.done);
     } on OcrEngineUnavailableException catch (exception) {
       _engineStatus = exception.status;
@@ -351,12 +376,21 @@ class OcrController extends ChangeNotifier {
     _notify();
   }
 
+  /// يعرض النصّ **الخام** كما أعاده المحرّك (قبل المعالج اللاحق) — للمقارنة.
+  void restoreRawText() {
+    if (_rawText.isEmpty) return;
+    _editedText = _rawText;
+    _notify();
+  }
+
   /// يمسح كل شيء ويعيد الشاشة إلى حالتها الأولى.
   void clear() {
     _imageBytes = null;
     _sourceName = null;
     _result = null;
     _editedText = '';
+    _rawText = '';
+    _cleanupApplied = false;
     _error = null;
     _pdfPageCount = 0;
     _pendingPages = const <Uint8List>[];

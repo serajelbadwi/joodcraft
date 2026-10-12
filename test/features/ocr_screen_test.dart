@@ -313,7 +313,9 @@ void main() {
         (WidgetTester tester) async {
       final OcrController controller =
           await pumpOcr(tester, engine: FakeOcrEngine());
-      expect(controller.settings.language, OcrLanguage.both);
+      // الافتراضي الجديد: عربي فقط — القياس أظهر أنّ فتح `eng` مع `ara`
+      // يُنتج مرشّحات لاتينية لأشكال عربية (انظر `report/ocr_improvement.md`).
+      expect(controller.settings.language, OcrLanguage.arabic);
 
       await tester.tap(byKey('ocr_language_dropdown'));
       await tester.pumpAndSettle();

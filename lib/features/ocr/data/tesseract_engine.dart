@@ -69,6 +69,16 @@ class TesseractEngine extends OcrEngine {
 
   static const String _binaryName = 'tesseract.exe';
 
+  /// الدقّة المفترضة التي يُبلَّغ بها Tesseract عن الصورة المُعالَجة.
+  ///
+  /// **لماذا تُبلَّغ صراحةً؟** لأنّ موديولات المحرّك المسؤولة عن تقدير السطر
+  /// (`textord_`) تبني تقديراتها على دقّة الصورة. وعندما نُكبّر الصورة ×1.5
+  /// ونعيد ترميزها PNG **تُفقَد بيانات EXIF كلّها بلا استثناء** — فيفترض
+  /// المحرّك ‎70dpi‎ ويظنّ النصّ أعلى بستّ مرّات من حقيقته، فتقفز حدّة تقدير
+  /// خطّ السطر وتلتفّ الكلمات عند غير مواضعها. القياس يُنقل في
+  /// `report/ocr_improvement.md`.
+  static const int assumedDpi = 300;
+
   String? _cachedExecutable;
   String? _cachedTessDataDir;
 
@@ -160,7 +170,18 @@ class TesseractEngine extends OcrEngine {
       _cachedTessDataDir = fromEnv;
       return _cachedTessDataDir;
     }
-    final String beside = _join(_dirname(executable), 'tessdata');
+    final String base = _dirname(executable);
+    // 1) `tessdata_best` إن وُجد — نماذج أكبر وأدقّ (LSTM مدرَّب بعناية).
+    //    تثبيت UB-Mannheim الافتراضي لا يُنشئه، لكن من يُنزّله يدوياً يجني
+    //    فرقاً في العربية تحديداً.
+    final String best = _join(base, 'tessdata_best');
+    if (Directory(best).existsSync()) {
+      _cachedTessDataDir = best;
+      return _cachedTessDataDir;
+    }
+    // 2) `tessdata` العادي — وهو في التثبيت الافتراضي يحمل نماذج `best`
+    //    أصلاً (ara.traineddata ≈ 1.4 MB لا 0.8 MB)، فلا خسارة على عدم وجوده.
+    final String beside = _join(base, 'tessdata');
     if (Directory(beside).existsSync()) {
       _cachedTessDataDir = beside;
       return _cachedTessDataDir;
@@ -214,6 +235,13 @@ class TesseractEngine extends OcrEngine {
       await File(imagePath).writeAsBytes(prepared.bytes, flush: true);
 
       // 2) عملية Tesseract — مخرجات نص + TSV (كلمات وثقتها).
+      //
+      // `--oem 1`: محرّك LSTM وحده. الافتراضي (0) يجرب المحرّك القديم أولاً
+      // على بعض النسخ، وسلوكه غير حتمي بين نسخة وأخرى — والتثبيت صراحةً
+      // يضمن نفس النتيجة على كل جهاز.
+      //
+      // `user_defined_dpi`: انظر [assumedDpi] — الصورة المُكبَّرة تفقد EXIF
+      // فيفترض المحرّك 70dpi وتنحرف تقديرات السطر.
       final List<String> arguments = <String>[
         imagePath,
         outputBase,
@@ -223,8 +251,12 @@ class TesseractEngine extends OcrEngine {
         settings.language.tesseractCode,
         '--psm',
         '${settings.psm.value}',
+        '--oem',
+        '1',
         '-c',
         'preserve_interword_spaces=1',
+        '-c',
+        'user_defined_dpi=$assumedDpi',
         '-c',
         'tessedit_create_tsv=1',
       ];

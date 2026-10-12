@@ -47,13 +47,21 @@ enum OcrPsm {
 }
 
 /// إعدادات استخراج واحدة.
+///
+/// **القيم الافتراضية هي ناتج قياس لا اجتهاد:** راجع
+/// `report/ocr_improvement.md`. الافتراضي القديم (لغة `ara+eng`، PSM 6، بلا
+/// عتبة) أعطى على نصّ عربي إسلامي نتائج يملك فيها النصّ اللاتيني الوهمي
+/// (`ABN`، `gle`، `BI`) محلّ كلمات عربية. القياس يقول: اللغة العربية وحدها
+/// حينها أدقّ، لأنّ نموذج `eng` يُنتج مرشّحات لاتينية لِأشكال عربية.
 class OcrSettings {
   const OcrSettings({
-    this.language = OcrLanguage.both,
-    this.psm = OcrPsm.singleBlock,
+    this.language = OcrLanguage.arabic,
+    this.psm = OcrPsm.auto,
     this.scale = 1.5,
     this.grayscale = true,
-    this.binarize = false,
+    this.binarize = true,
+    this.denoise = true,
+    this.deskew = true,
   });
 
   /// اللغة المطلوبة (الافتراضي: عربي + إنجليزي).
@@ -70,12 +78,36 @@ class OcrSettings {
   final bool grayscale;
 
   /// عتبة Otsu (أبيض/أسود صافي) — يرفع الدقة على الورق المصوّر ويضرّ
-  /// بالصور ذات التدرّجات، ف Trich optional وليس افتراضياً.
+  /// بالصور ذات التدرّجات، فTrich optional افتراضياً.
+  ///
+  /// ⚠️ **قياسياً: مُفعَّل افتراضياً.** على نصّ عربي مطبوع نظيف رفع العتبة
+  /// الدقة وأزاحت جذوراً للكلمات الوهمية (`ABN` ← بقعة رمادية). أمّا الصور
+  /// الفوتوغرافيّة الغائرة في التدرّج فيمكن إيقافها بضغطة.
   final bool binarize;
+
+  /// إزالة الضوضاء ذات النقطة الواحدة (تنظيف قبل العتبة).
+  ///
+  /// 🌟 **آمنة افتراضياً:** مرشّح متوسّط على البكسلات المنفردة لا يمسّ حواف
+  /// الحروف — لكنه يُزيل بقع الغبار ونقاط الماسح التي تُقرأ أحرفاً زائفة.
+  final bool denoise;
+
+  /// تصحيح الميل بالملف الإسقاطي (projection profile).
+  ///
+  /// 📐 **لا يمسّ الصورة المستقيمة:** يُطبَّق فقط إن تجاوز الميل المقيس
+  /// حدّ [_deskewThreshold]، وإلا يعود `0` فلا دوران ولا فقدان دقة.
+  final bool deskew;
 
   /// حدود آمنة للتكبير في الواجهة.
   static const double minScale = 1.0;
   static const double maxScale = 3.0;
+
+  /// حدّ إثارة تصحيح الميل (درجات). الميلان الطبيعي للمسح الضوئي أقلّ من
+  /// ذلك وعادةً يكون داخل احتمال أخطاء القياس نفسه — والتدوير عندها يُضيف
+  /// ضبابية بلا فائدة.
+  static const double deskewThreshold = 0.4;
+
+  /// أقصى ميل يُصحَّح (درجات) — ما زاد يُعتبر صورةً قُطعت أو مُدارة عمداً.
+  static const double maxDeskewDegrees = 12.0;
 
   OcrSettings copyWith({
     OcrLanguage? language,
@@ -83,6 +115,8 @@ class OcrSettings {
     double? scale,
     bool? grayscale,
     bool? binarize,
+    bool? denoise,
+    bool? deskew,
   }) {
     return OcrSettings(
       language: language ?? this.language,
@@ -90,9 +124,12 @@ class OcrSettings {
       scale: scale ?? this.scale,
       grayscale: grayscale ?? this.grayscale,
       binarize: binarize ?? this.binarize,
+      denoise: denoise ?? this.denoise,
+      deskew: deskew ?? this.deskew,
     );
   }
 
   /// هل المعالجة قبلية مطلوبة فعلاً؟ (بلا معالجة = نسخ البايتات كما هي).
-  bool get needsPreprocessing => scale != 1.0 || grayscale || binarize;
+  bool get needsPreprocessing =>
+      scale != 1.0 || grayscale || binarize || denoise || deskew;
 }

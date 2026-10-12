@@ -505,6 +505,36 @@ class _ActionsPane extends StatelessWidget {
                 ),
               ),
             ),
+          // تنظيف تلقائي: يظهر فقط إن صحّح المعالج اللاحق النصّ فعلاً.
+          if (controller.cleanupApplied)
+            Padding(
+              key: const Key('ocr_cleanup_note'),
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.auto_fix_high_outlined,
+                    size: 16,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      l10n?.ocrCleanupNote ??
+                          'تم تصحيح النص تلقائياً — راجعه قبل الحفظ.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    key: const Key('ocr_show_raw_button'),
+                    onPressed: controller.restoreRawText,
+                    child: Text(l10n?.ocrShowRaw ?? 'عرض النص الأصلي'),
+                  ),
+                ],
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.only(bottom: 6),
             child: Text(

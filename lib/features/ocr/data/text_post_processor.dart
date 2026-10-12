@@ -3,16 +3,32 @@
 /// **المشكلة:** Tesseract يقرأ مستنداً عربياً فيه كلمات لاتينية فيُنتج رموزاً
 /// لاتينية **وهمية** لا معنى لها (`by`, `so`, `ne`, `dal`, `cai`, `Land`…) —
 /// هي أخطاء قراءة لحروف عربية، لا إنجليزية حقيقية. ويُنتج أيضاً أخطاء عربية
-/// شائعة (`الالرحمن`، `وو`، مسافات مزدوجة، `....`، `ى` في آخر الكلمة).
+/// شائعة (`الالرحمن`، `وو`، مسافات مزدوجة، `....`، ازدواج الياء `التقويى`).
 ///
 /// **المبدأ الحاكم:** لا نحذف إلا ما ثبت أنه وهمي، ونُبقي كل ما يحمل معنى:
 ///
 /// | يُحذف | يُحفظ |
 /// |---|---|
-/// | لاتيني **ملتصق** بحروف عربية (`بby`) | جملة إنجليزية (كلمتان لاتينيتان متتاليتان فأكثر) |
-/// | كلمة لاتينية **منفردة وسط نص عربي** غير معروفة | اختصار كلّه أحرف كبيرة (`API`, `PDF`, `URL`, `US`) |
+/// | لاتيني **ملتصق** بحروف عربي (`بby`) | جملة إنجليزية فيها مفردة تفهم (`CEO and Founder`) |
+/// | كلمة/مجموعة لاتينية **وسط نص عربي** لا تفهم | اختصار كلّه أحرف كبيرة (`API`, `PDF`, `URL`, `US`) |
 /// | الرموز المُبلَّغ عنها (`by`,`so`,`ne`,`dal`,`cai`,`land`) | كلمة إنجليزية معروفة (`hello`, `world`, `internet`…) |
-/// | — | روابط وبريد (`example.com`, `user@host`) |
+/// | رمز داخل قوس مرجع (`[ق: AVA]` ← `[ق: ]`) | روابط وبريد (`example.com`, `user@host`) |
+///
+/// ## القواعد (ثلاث عشرة)
+///
+/// 1.  المحارف غير المرئية وTatweel
+/// 2.  لاتيني ملتصق بالعربي
+/// 3.  رموز وهمية وسط نصّ عربي (**بما فيها مجموعات كاملة لا تفهم**)
+/// 4.  صلعم → ﷺ
+/// 5.  الال → ال
+/// 6.  وو → و
+/// 7.  ازدواج الياء: التقويى → التقويي
+/// 8.  !! → !  و .... → ...
+/// 9.  الأرقام: `18` ← `١٨` في سياق عربي غالب
+/// 10. قوس المرجع: `[ق: AVA]` ← `[ق: ]`
+/// 11. الأقواس المزخرفة: `تعالى: …)` ← `تعالى: ﴿…﴾`
+/// 12. المسافات
+/// 13. حذف الفراغ في الطرفين
 ///
 /// **حدود هذا المعالج:** تحسين تلقائيّ **لا بديل** عن المراجعة البشرية —
 /// لذلك يبقى النصّ قابلاً للتحرير، وتُعرض ملاحظة `ocrCleanupNote` عند تغيّره.
@@ -29,9 +45,16 @@ class OcrTextPostProcessor {
   static const String _arabic = r'؀-ۿݐ-ݿ';
 
   /// المحارف غير المرئية التي يزيدها الاستخراج أحياناً
-  /// (Zero-Width Space/Joiner، BOM، Soft Hyphen، Word Joiner).
+  /// (Zero-Width Space/Joiner، BOM، Soft Hyphen، Word Joiner،
+  /// وكذلك **علامات الاتجاه** LRM/RLM).
+  ///
+  /// ⚠️ **لماذا أضيفت LRM/RLM؟** القياس بيّن أنّهما يظهران **داخل** الأرقام
+  /// في المخرَج العربي (`١‏-`، `[ق: ١/ا].‏`) فيُحسبان حرفين في كل رقم.
+  /// وهما علامتا تنسيق لا تحملان معنى — وسكربت القياس في المشروع
+  /// (`run_tesseract.py`) يُسقطهما أصلاً في `_TASHKEEL`، فإبقاؤهما هنا
+  /// يجعل النصّ المعروض أسوأ من النصّ المقيس.
   static final RegExp _invisible = RegExp(
-    '[\u200B\u200C\u200D\uFEFF\u00AD\u2060]',
+    '[\u200B\u200C\u200D\uFEFF\u00AD\u2060\u200E\u200F]',
   );
 
   /// الرسم المتكرّر (Tatweel) — ضجيج بصري خالص لا معنى له.
@@ -44,15 +67,27 @@ class OcrTextPostProcessor {
   /// نصّ عربي في سطر ما (شرط الحذف كله: لا نلمس سطراً لاتينياً خالصاً).
   static final RegExp _hasArabic = RegExp('[$_arabic]');
 
-  /// كل سلسلة حروف عربية (تُستخدم في تصحيح `ى`).
-  static final RegExp _arabicWord = RegExp('[$_arabic]+');
-
   /// كلمة لاتينية «نواة»: تبدأ بحرف ولا تحوي `@` أو `.` (فيبقى البريد والروابط
   /// خارج كل معالجة — لا يمكن أن تُحذف).
   static final RegExp _latinCore = RegExp(r"^[A-Za-z][A-Za-z0-9'\-]*$");
 
-  /// اختصار كلّه أحرف كبيرة (2–6): `API`, `PDF`, `URL`, `US`, `UK`, `OCR`.
-  static final RegExp _acronym = RegExp(r'^[A-Z]{2,6}$');
+  /// اختصارات حقيقية شائعة في المستندات — هي وحدها تُعفى من الحذف.
+  ///
+  /// ⚠️ **لماذا قائمة لا تعبيرٌ نمطي؟** كان الاعتماد على `^[A-Z]{2,6}$` يعتبر
+  /// **كل** زمرة حروف كبيرة اختصاراً — فينجو `ABN` و`BI` و`AVA` وهي قراءات
+  /// مشوّهة لأرقامٍ هندية ولم تُخترع كاختصارات أبداً، ويزيد الأمر أنّها كانت
+  /// تجعل جاراتها «ذات معنى» فتُحفَظ معها. القائمة الصريحة تُنقذ `API`/`PDF`
+  /// وتُلقي البقيّة.
+  static const Set<String> _knownAcronyms = <String>{
+    // أنظمة ووظائف
+    'API', 'PDF', 'PNG', 'JPG', 'OCR', 'CSS', 'HTML', 'SQL', 'USB', 'SIM',
+    // دول وجهات
+    'US', 'UK', 'UAE', 'KSA', 'EU', 'UN', 'HQ', 'PIN', 'VAT',
+    // أدوار ومسمّيات
+    'HR', 'PR', 'R&D', 'CEO', 'CFO', 'CTO', 'MBA', 'PhD', 'GPA',
+    // أرقام ووحدات شائعة
+    'TV', 'PC', 'AM', 'PM', 'ID', 'SMS', 'GSM', 'ICT', 'WC', 'AC', 'DC',
+  };
 
   /// لاتيني **ملتصق** بحرف عربي من جهة أو من الجهتين.
   /// لتفادي `lookbehind` (غير مدعومة في `RegExp` بـDart) نلتقط الطرفين معاً.
@@ -69,8 +104,9 @@ class OcrTextPostProcessor {
   /// شريط النقاط (2 فأكثر) — يُعامَل بحسب طوله حفاظاً على القاطع `...`.
   static final RegExp _dotRun = RegExp(r'\.{2,}');
 
-  /// مسافة قبل علامة ترقيم (خطأ شائع: `نص ، آخر`).
-  static final RegExp _spaceBeforePunct = RegExp(' +([،؟!؛:,.)])');
+  /// مسافة قبل علامة ترقيم (خطأ شائع: `نص ، آخر`) — عدا النقطة، فمسافة
+  /// قبل القاطع `...` صحيحة.
+  static final RegExp _spaceBeforePunct = RegExp(' +([،؟!؛:,)])');
 
   /// مسافات متتالية → مسافة واحدة.
   static final RegExp _multiSpace = RegExp(' {2,}');
@@ -131,25 +167,8 @@ class OcrTextPostProcessor {
     'bachelor', 'master', 'doctorate', 'grade', 'honors', 'gpa',
   };
 
-  /// كلمات عربية تُكتب صحيحة بـ`ى` في آخرها — لا تُحوَّل إلى `ي`.
-  /// تُفحص بعد نزع السوابق (`والعلى` → `على`).
-  static const Set<String> _finalYaKeep = <String>{
-    // حروف وحروف وصل
-    'على', 'الى', 'إلى', 'حتى', 'متى', 'ذى', 'لدى',
-    // أسماء مشهورة تنتهي بـ`ى` صحيحة
-    'موسى', 'عيسى', 'مصطفى', 'هدى', 'فدى', 'سعى', 'ولى', 'بقى',
-    // «حىّ» (السكن) صحيحة بـ`ى` — والقراءة لا تفرّق، فنُبقيها.
-    'حى',
-  };
-
-  /// سوابق الحروف تُنزع قبل فحص آخر الكلمة (بترتيب الطول).
-  static const List<String> _prefixes = <String>['وال', 'بال', 'كال', 'فال'];
-
-  /// حروف المفردة تُنزع أيضاً (`وموسى` → `موسى`).
-  static const String _singlePrefixes = 'وفبلك';
-
   /// صيغ الشرف المشوّهة التي ينتجها Tesseract عن `ﷺ` و`ﷻ`.
-  static const Map<String, String> _honorifics = <String, String>{
+  static const Map<String, String> _honorifics = <String,String>{
     'صلعم': 'ﷺ',
     'صلغم': 'ﷺ',
     'صلأعم': 'ﷺ',
@@ -159,14 +178,97 @@ class OcrTextPostProcessor {
     'جلجللاله': 'ﷻ',
   };
 
+  /// موضع الشرف المُنقَّط: اسم النبي (أو عبارة الصلاة عليه) ثم نقطتان
+  /// ثم رقم عربي واحد.
+  ///
+  /// **المشكلة المقيسة:** `ﷺ` رمزٌ واحدٌ ذو محارف متصلة مركّبة، والمحرّك
+  /// يقرأه غالباً **نقطتين ورقماً** (`النبي:١‏`) لأنه يفكّك التركيب.
+  /// وهو أثر منتشر لا حالة شاذّة، فيُرجَع إلى رمزه الصحيح.
+  ///
+  /// النقطتان تُحفظان لأنهما في المتن العربي غالباً تأتيان **بعد** الشرف
+  /// (`النبي ﷺ: قال…`) — فالمُرَجَّح أنّ المحرّك قرأهما لا أنّه ابتكرهما.
+  static final RegExp _misreadHonorific = RegExp(
+    '(النبي|رسول الله|صلى الله عليه وسلم)(\\s*:\\s*)([٠-٩])',
+  );
+
+  // --------------------------------------------------------------------------
+  //  السياق العربي الإسلامي
+  // --------------------------------------------------------------------------
+
+  /// أرقام لاتينية وهندية للمقابلة (0..9) — الفهرس = القيمة.
+  static const List<String> _arabicIndicDigits = <String>[
+    '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩',
+  ];
+
+  /// رقم عربي واحد يلي مباشرةً (بلا فراغ) رقم عربي أو كلمة.
+  static final RegExp _latinNumber = RegExp(r'[0-9]+');
+
+  /// رقم هندي متبوع بفراغ ثم شَّرطة — يُلصَق بلا فراغ.
+  ///
+  /// اصطلاح الترقيم العربي أن الشَّرطة تلصق برقمها (`١-`)، وأي فراغ بينهما
+  /// أثر قراءة لا أصل في المتن. ولذلك يُعاد اللصق تلقائياً — وهذا هو الشكل
+  /// المتوقّع في كل مستند مرقّم عربي.
+  ///
+  /// فئة الأحرف تُبنى من قائمة الأرقام الهندية أعلاه (`join()` ←
+  /// `٠١٢٣٤٥٦٧٨٩`) فلا تُعرَّف اثنتان على الاسم نفسه.
+  static final RegExp _digitThenDash =
+      RegExp('([${_arabicIndicDigits.join()}]) +([\\-–—])');
+
+  /// عبارات تُنبئ بوقوع اقتباس قرآني أو حديثي.  ///
+  /// على أثرها تُستعاد الأقواس المزخرفة `﴿ ﴾`: المحرّك يقرأ `﴾` قوساً
+  /// لاتينياً `)` فيبقى الاقتباس **مفتوحاً** بلا مغلق.
+  static const List<String> _quoteCues = <String>[
+    'تعالى',
+    'سبحانه',
+    'جل جلاله',
+    'صلى الله عليه',
+    'رسول الله',
+  ];
+
+  /// نصّ عربي الغالب: حروفه العربية أكثر من لاتينيّه.
+  ///
+  /// شرط كل قواعد التطبيع الرقمي والأقواس: لا تُمسّ سطراً إنجليزياً خالصاً
+  /// ولا مختلطاً يتساوى فيه الطرفان (تعداد إحصائي فيه لاتيني حقيقي).
+  static bool _isArabicDominant(String line) {
+    int arabic = 0;
+    int latin = 0;
+    for (final int rune in line.runes) {
+      if (_arabicLetter.hasMatch(String.fromCharCode(rune))) {
+        arabic++;
+      } else if (_latinLetter.hasMatch(String.fromCharCode(rune))) {
+        latin++;
+      }
+    }
+    return arabic > 0 && arabic > latin;
+  }
+
+  /// حرف عربي مفرد (بما فيه التشكيل) — للعدّ فقط.
+  static final RegExp _arabicLetter = RegExp('[$_arabic]');
+
+  /// حرف لاتيني مفرد — للعدّ فقط.
+  static final RegExp _latinLetter = RegExp(r'[A-Za-z]');
+
+  /// محرف قبل موضع رقم لاتيني بشرطين، أو آخرهما.
+  static bool _touchesSeparator(String line, int start, int end) {
+    if (start > 0) {
+      final String before = line[start - 1];
+      if (before == '/' || before == '-') return true;
+    }
+    if (end < line.length) {
+      final String after = line[end];
+      if (after == '/' || after == '-') return true;
+    }
+    return false;
+  }
+
   // ==========================================================================
   //  الواجهة
   // ==========================================================================
 
   /// ينظّف نصّ OCR ويُعيد النصّ المصحّح.
   ///
-  /// تُطبَّق القواعد العشر بالترتيب آمن: إزالة الضجيج ← فصل اللاتيني عن
-  /// العربي ← التصحيحات العربية ← المسافات. النصّ الفارغ يُعاد كما هو.
+  /// تُطبَّق القواعد بالترتيب آمن: إزالة الضجيج ← فصل اللاتيني عن العربي
+  /// ← التصحيحات الإسلامية والرقمية ← المسافات. النصّ الفارغ يُعاد كما هو.
   static String process(String raw) {
     if (raw.isEmpty) return raw;
 
@@ -177,10 +279,15 @@ class OcrTextPostProcessor {
     text = _normalizeHonorifics(text); // 4) صلعم → ﷺ
     text = _collapseArabicPrefixes(text); // 5) الال → ال
     text = _fixRepeatedWaw(text); // 6) وو → و
-    text = _fixFinalYa(text); // 7) ى → ي (مع استثناءات)
+    text = _fixFinalYa(text); // 7) ازدواج الياء: التقويى → التقويي
     text = _collapsePunctuation(text); // 8) !! → ! و .... → ...
-    text = _normalizeWhitespace(text); // 9) المسافات
-    return text.trim(); // 10) بلا مسافات في الطرفين
+    text = _restoreIndicDigits(text); // 9) 18 → ١٨ (سياق عربي)
+    text = _restoreHonorificGlyph(text); // 10) النبي:١‏ → النبي ﷺ
+    text = _reattachNumberDash(text); // 11) ١ - → ١-
+    text = _cleanReferenceBrackets(text); // 12) [ق: AVA] → [ق: ]
+    text = _restoreOrnateBrackets(text); // 13) ‏﴿‏…‏﴾‎
+    text = _normalizeWhitespace(text); // 14) المسافات
+    return text.trim(); // 15) بلا مسافات في الطرفين
   }
 
   /// هل غيّر المعالج النصّ؟ (يُستخدم لعرض ملاحظة التنظيف في الواجهة).
@@ -217,6 +324,12 @@ class OcrTextPostProcessor {
   /// 2. ليست **رمزاً** كلّه أحرف كبيرة (`API`/`US`) ولا **معروفة**
   ///    (`hello`, `world`, `internet`).
   /// 3. ليست ضمن **جملة إنجليزية** (كلمتان لاتينيتان متتاليتان فأكثر).
+  ///
+  /// ⚠️ **الباب الثالث صُحّح:** كان يمُرّر **أيّ** كلمتين لاتينيتين متتاليتين
+  /// بلا فحص — فنجا من الحذف زوج كلمات وهميتين خالصتين مثل `gle BI` و`AVA`.
+  /// الصواب عكسه: الجملة الإنجليزية تُعرَف بأنّ فيها **مفردةً على الأقل**
+  /// كلمة معروفة أو اختصاراً أو رمزاً قصيراً معروفاً. وما خلا ذلك — أي مجموعة
+  /// كلّها مجهولة وسط عربي — قراءة مشوّهة لحروف عربية فتُحذف كاملةً.
   static String _removeIsolatedFakeLatin(String text) {
     final List<String> out = <String>[];
     for (final String line in text.split('\n')) {
@@ -239,8 +352,15 @@ class OcrTextPostProcessor {
         while (j + 1 < tokens.length && _isLatinCore(_coreOf(tokens[j + 1]))) {
           j++;
         }
-        // جملة إنجليزية (كلمتان فأكثر) ← تبقى كاملاً.
+        // جملة إنجليزية: كلمتان فأكثر **ومعهما مفردة تفهم** ← تبقى كاملة.
         if (j > i) {
+          if (!_runCarriesMeaning(tokens, i, j)) {
+            for (int k = i; k <= j; k++) {
+              // نحذف ما ليس له معنى فقط؛ البقية (معروفة/مختصرة) تبقى ويحذفها
+              // الباب الأخير إن بقيت منفردة وسط عربي.
+              if (_isFakeLatin(_coreOf(tokens[k]), tokens, k)) drop[k] = true;
+            }
+          }
           i = j + 1;
           continue;
         }
@@ -257,6 +377,25 @@ class OcrTextPostProcessor {
     return out.join('\n');
   }
 
+  /// هل في هذه المجموعة اللاتينية مفردة تفهم اللغة معناها؟
+  ///
+  /// هو شرط بقاء الجملة الإنجليزية وسط النصّ العربي: `CEO and Founder` فيها
+  /// `and` فتفهم وتبقى، أمّا `gle BI` و`AVA` فكلّ كلماتها مجهولة ⇒ قراءات
+  /// مشوّهة لحروف عربية فتُحذف.
+  static bool _runCarriesMeaning(List<String> tokens, int from, int to) {
+    for (int k = from; k <= to; k++) {
+      final String core = _coreOf(tokens[k]);
+      final String lower = core.toLowerCase();
+      if (_isRealAcronym(core)) return true; // API, PDF
+      if (_keepShort.contains(lower)) return true; // no, ok, org
+      if (_knownEnglish.contains(lower)) return true; // hello, world
+    }
+    return false;
+  }
+
+  /// هل هو اختصار حقيقي معروف (لا مجموعة حروف كبيرة تشبهه)؟
+  static bool _isRealAcronym(String core) => _knownAcronyms.contains(core);
+
   /// هل هذه الكلمة اللاتينية المنفردة رمز وهمي؟
   static bool _isFakeLatin(String core, List<String> tokens, int index) {
     if (core.isEmpty) return false;
@@ -269,11 +408,13 @@ class OcrTextPostProcessor {
     if (_alwaysFake.contains(lower)) return true;
 
     // الباب الثالث: ما يحمل معنى يبقى.
-    if (_acronym.hasMatch(core)) return false; // API, PDF, URL, US
+    if (_isRealAcronym(core)) return false; // API, PDF, US
     if (_keepShort.contains(lower)) return false; // no, ok, org, pro
     if (_knownEnglish.contains(lower)) return false; // hello, world, ...
 
-    // غير معروفة وسط عربي ⇒ رمز وهمي (طويلة كانت أم قصيرة).
+    // غير معروفة وسط عربي ⇒ رمز وهمي (طويلة كانت أم قصيرة). وهنا تطول
+    // زُمر الحروف الكبيرة (`ABN`, `BI`, `AVA`) فتُحذف كذلك: قراءات مشوّهة
+    // لأرقام هندية ولم تُخترع كاختصارات. راجع [_knownAcronyms].
     return true;
   }
 
@@ -331,34 +472,21 @@ class OcrTextPostProcessor {
     (Match match) => match.group(0)![0],
   );
 
-  /// **القاعدة 7** — تصحيح `ى` في آخر الكلمة إلى `ي`.
+  /// **القاعدة 7** — تصحيح ازدواج الياء في آخر الكلمة
+  /// (`التقويى` → `التقويي`).
   ///
-  /// في العربية لا تنتهي الكلمة بـ`ى` إلا كلمات معدودة (`على`، `حتى`،
-  /// `موسى`…)؛ فأي `ى` أخرى أثر قراءة. الاستثناءات تُفحص بعد نزع السوابق.
+  /// **لماذا هذه الضيّقة لا القاعدة العامة (`ى` أخيرة → `ي`)?** القاعدة
+  /// العامة **تفسد** كلمات كثيرة صحيحة تنتهي بـ`ى`: `على`، `الأولى`،
+  /// `الدنيا`، `مصطفى`، `موسى`، `عيسى`… وحصرناها في الحالة التي لا شكّ فيها:
+  /// **ازدواج الياء** (`يى`) أثر قراءة مضاعف، فلا كلمة عربية سليمة تنتهي
+  /// بـ`يى`. وكلمة تنتهي بـ`ى` بلا ياء قبلها تبقى كما هي.
   static String _fixFinalYa(String text) => text.replaceAllMapped(
-    _arabicWord,
+    RegExp('[$_arabic]*يى'),
     (Match match) {
       final String word = match.group(0)!;
-      if (!word.endsWith('ى')) return word;
-      if (_finalYaKeep.contains(_bare(word))) return word;
       return '${word.substring(0, word.length - 1)}ي';
     },
   );
-
-  /// نزع السوابق للcompare مع قائمة الاستثناءات (`والعلى` → `على`).
-  static String _bare(String word) {
-    String bare = word.replaceAll(RegExp('^[أإآٱ]'), '');
-    for (final String prefix in _prefixes) {
-      if (bare.length > 2 && bare.startsWith(prefix)) {
-        bare = bare.substring(prefix.length);
-        break;
-      }
-    }
-    if (bare.length > 2 && _singlePrefixes.contains(bare[0])) {
-      bare = bare.substring(1);
-    }
-    return bare;
-  }
 
   /// **القاعدة 8** — دمج علامات الترقيم المكرّرة (`!!` → `!`، `،،` → `،`).
   /// القاطع `...` محفوظ لأنه علامة مشروعة؛ وما زاد عليها يعود `...`.
@@ -378,9 +506,191 @@ class OcrTextPostProcessor {
 
   /// **القاعدة 9** — المسافات: واحدة بين الكلمات، بلا مسافة قبل الترقيم،
   /// وبلا أكثر من سطرين متتاليين.
+  ///
+  /// `replaceAllMapped` لا `replaceAll(r'$1')`: `String.replaceAll` في Dart
+  /// يضع نصّ الاستبدال **حرفيّاً** فلا تُحلّ `$1` مجموعة.
   static String _normalizeWhitespace(String text) => text
-      .replaceAll(_spaceBeforePunct, r'$1')
+      .replaceAllMapped(
+        _spaceBeforePunct,
+        (Match match) => match.group(1)!,
+      )
       .replaceAll(_multiSpace, ' ')
       .replaceAll(RegExp(' +\n'), '\n')
       .replaceAll(RegExp('\n{3,}'), '\n\n');
+
+  // ==========================================================================
+  //  قواعد السياق العربي الإسلامي
+  // ==========================================================================
+
+  /// **القاعدة 9** — تحويل الأرقام اللاتينية إلى هندية في النصّ العربي الغالب.
+  ///
+  /// `eng.traineddata` حين يُفتح مع `ara` يقرأ رقم `١٨` لاتينياً (`18`)،
+  /// فتبدو الحواشي والمراجع أجنبية في متن عربي. والتحويل **مقيّد** بثلاثة
+  /// شروط كي لا يُفسد تاريخاً ولا ترقيباً:
+  ///
+  /// 1. السطر عربي الغالب (حروفه العربية أكثر من لاتينيّه).
+  /// 2. الرقم ليس من أربع خانات — تلك سنة (`2014`).
+  /// 3. الرقم غير متّصل بفاصل `/` أو `-` — ذلك تاريخ (`2014/04`) أو نطاق
+  ///    (`10-12`) أو بند مرقّم (`1- نص`)، وتحويله يفسد المعنى.
+  static String _restoreIndicDigits(String text) {
+    final List<String> out = <String>[];
+    for (final String line in text.split('\n')) {
+      if (!_isArabicDominant(line) || !_latinNumber.hasMatch(line)) {
+        out.add(line);
+        continue;
+      }
+      out.add(
+        line.replaceAllMapped(_latinNumber, (Match match) {
+          final String digits = match.group(0)!;
+          final int start = match.start;
+          final int end = match.end;
+          if (digits.length == 4) return digits; // سنة
+          if (_touchesSeparator(line, start, end)) return digits; // تاريخ/نطاق
+          return digits.replaceAllMapped(
+            _latinDigitChar,
+            (Match d) => _arabicIndicDigits[int.parse(d.group(0)!)],
+          );
+        }),
+      );
+    }
+    return out.join('\n');
+  }
+
+  /// رقم لاتيني مفرد (خانة واحدة) — وحدة بناء التحويل.
+  static final RegExp _latinDigitChar = RegExp(r'[0-9]');
+
+  /// **القاعدة 10** — إرجاع رمز الشرف حين يقرأه المحرّك نقطتين ورقماً.
+  ///
+  /// راجع [_misreadHonorific]: الرمز `ﷺ` مركّب من محارف متصلة، فيفكّكه
+  /// المحرّك إلى `:١`. والإرجاع هنا **ليس تخميناً** — فالسياق (اسم النبي)
+  /// والبنية (نقطتان + رقم واحد) كلاهما أثرٌ مرئي في النصّ.
+  static String _restoreHonorificGlyph(String text) => text.replaceAllMapped(
+    _misreadHonorific,
+    (Match match) => '${match.group(1)} ﷺ:',
+  );
+
+  /// **القاعدة 11** — إلصاق الشَّرطة برقمها الهندي (`١ -` ← `١-`).
+  ///
+  /// اصطلاح الترقيم العربي أن تلصق الشَّرطة برقمها، والفراغ بينهما أثرُ
+  /// قراءة (المحرّك يفصل بين «الرقم» و«الرمز» لأنهما نوعان عنده). والإلصاق
+  /// يُعيد الشكل الاصطلاحي المتوقّع في كل مستند مرقّم عربي.
+  static String _reattachNumberDash(String text) =>
+      text.replaceAllMapped(_digitThenDash, (Match match) {
+        // الرقم والشَّرطة يبقيان، والفراغ بينهما وحده هو ما يُحذف.
+        return '${match.group(1)}${match.group(2)}';
+      });
+
+  /// **القاعدة 12** — تنقية ما بين قوسَي مرجع.
+  ///
+  /// المراجع الإسلامية تُكتب `[ق: ١٨]` و`[البقرة: ٢٥٥]`، ومحرّك الاستخراج
+  /// يُخرج الرقم رمزاً لاتينياً (`AVA`, `BI`) لأنّ رقم `١٨` يُشبه حروفاً
+  /// لاتينية. والقوس الفارغ `[ق: ]` أوضح للمراجعة البشرية من رمز لا معنى
+  /// له — والمستخدم يملأ الرقم بنظره.
+  ///
+  /// يُعالج القوس المفتوح في آخر السطر أيضاً (`[ق: AVA` بلا `]`).
+  static String _cleanReferenceBrackets(String text) {
+    final List<String> out = <String>[];
+    for (final String line in text.split('\n')) {
+      if (!_hasArabic.hasMatch(line)) {
+        out.add(line);
+        continue;
+      }
+      // قوس مغلق: نُبقي داخلَه العربي والعلامات فقط.
+      final RegExp closed = RegExp(r'\[([^\]\n]*)\]');
+      // قوس مفتوح في آخر السطر.
+      final RegExp openEnd = RegExp(r'\[([^\]\n]*)$');
+      String cleaned = line.replaceAllMapped(closed, (Match m) {
+        return '[${_keepOnlyMeaningfulInBracket(m.group(1)!)}]';
+      });
+      cleaned = cleaned.replaceAllMapped(openEnd, (Match m) {
+        return '[${_keepOnlyMeaningfulInBracket(m.group(1)!)}]';
+      });
+      out.add(cleaned);
+    }
+    return out.join('\n');
+  }
+
+  /// يُخلي متن القوس من الرموز اللاتينية، ويُبقي العربي والأرقام والفواصل.
+  static String _keepOnlyMeaningfulInBracket(String inner) {
+    final List<String> tokens = inner.split(' ');
+    final List<String> kept = <String>[];
+    for (final String token in tokens) {
+      final String core = _coreOf(token);
+      if (core.isNotEmpty && _isLatinCore(core)) continue; // رمز وهمي
+      kept.add(token);
+    }
+    // مسافة زائدة قبل النقطتين (`ق:` بعد إزالة رمز) — تُضمّ.
+    final String joined = kept.join(' ').replaceAll(_multiSpace, ' ').trim();
+    return joined.isEmpty ? '' : joined;
+  }
+
+  /// **القاعدة 11** — استعادة الأقواس المزخرفة `﴿ ﴾` حول الاقتباس الشرعي.
+  ///
+  /// المحرّك يقرأ `﴾` قوساً لاتينياً `)` ، فيبقى الاقتباس **مفتوحاً** بلا
+  /// مغلق — وهو خطأ قراءة صارخ في النصّ القرآني. والعلامة التي تُنبئ به:
+  /// عبارةٌ مثل `قال تعالى:` أو `قال رسول الله ﷺ` داخل السطر.
+  ///
+  /// الاستعادة مقصورة على ما له أثر مرئي:
+  /// - يُدرَج `﴿` بعد العبارة (وبعد النقطتين إن وُجدتا).
+  /// - يُحوَّل قوس `)` **غير المطابق** في السطر إلى `﴾`.
+  /// ولا يُبتكر قوس من عدم — فما لا أثر له لا يُخمَّن.
+  static String _restoreOrnateBrackets(String text) {
+    final List<String> out = <String>[];
+    for (final String line in text.split('\n')) {
+      if (!_hasArabic.hasMatch(line) || !_hasQuoteCue(line)) {
+        // لا عربي أو لا علامة اقتباس — لا مساس.
+        out.add(line);
+        continue;
+      }
+      if (line.contains('﴿')) {
+        // المفتوح موجود أصلاً فلا يُضاعَف.
+        out.add(line);
+        continue;
+      }
+      if (line.contains('(')) {
+        // أقواس لاتينية صريحة في السطر ⇒ الغموض قائم ولا يُخترَق ﴿: قد تكون
+        // علامة اقتباس حقيقية وقد تكون جزءاً من تعداد. الاحتمالان لا يُشتقّ
+        // منهما إلزام.
+        out.add(line);
+        continue;
+      }
+
+      final RegExp? cue = _firstCueIn(line);
+      if (cue == null) {
+        out.add(line);
+        continue;
+      }
+
+      // ﴿ ملصوق بالنصّ نفسه — لا مسافة بعده (المسافة تُقرأ جزءاً من الكلمة).
+      final String inserted = line.replaceFirstMapped(cue, (Match m) {
+        final String whole = m.group(0)!;
+        return '$whole﴿';
+      });
+
+      // ﴾ مكان `)` غير المطابق (لا `(` قبله في السطر).
+      final String closed = inserted.contains('﴾')
+          ? inserted
+          : inserted.replaceFirst(')', '﴾');
+
+      out.add(closed);
+    }
+    return out.join('\n');
+  }
+
+  /// أوّل عبارة اقتباس واردة في السطر — أولويةً بترتيب [_quoteCues].
+  static RegExp? _firstCueIn(String line) {
+    for (final String phrase in _quoteCues) {
+      final RegExp candidate = RegExp('$phrase(\\s*:\\s*)?');
+      if (candidate.hasMatch(line)) return candidate;
+    }
+    return null;
+  }
+
+  /// هل في السطر عبارة تُنبئ باقتباس شرعي؟
+  static bool _hasQuoteCue(String line) {
+    for (final String cue in _quoteCues) {
+      if (line.contains(cue)) return true;
+    }
+    return false;
+  }
 }
