@@ -658,11 +658,59 @@ void main() {
       expect(fake.ads, hasLength(1));
       expect(
         fake.ads.single.imageUrl,
-        'https://drive.google.com/thumbnail?id=1AbC_dEf9ijkLnOp&sz=w1000',
+        'https://lh3.googleusercontent.com/d/1AbC_dEf9ijkLnOp=w1000',
         reason: 'صفحة العرض تُحوَّل لصيغة مباشرة قبل الحفظ',
       );
       // المصغّرة في القائمة تعتمد الرابط الجديد (لا أيقونة الصورة المكسورة).
       expect(find.byIcon(Icons.campaign_outlined), findsNothing);
+    });
+
+    testWidgets('الإعلانات: رابط مجلد يُمنع قبل الحفظ برسالة توضيحية', (
+      WidgetTester tester,
+    ) async {
+      final _FakeAdminRepository fake = _FakeAdminRepository(
+        ads: <VillageAd>[],
+      );
+      await _pump(
+        tester,
+        VillageAdsAdminScreen(repository: fake, village: _village()),
+      );
+
+      await tester.tap(find.byKey(const ValueKey<String>('add-ad')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('ad-title')),
+        'إعلان المخبز',
+      );
+      // رابط مجلد بدل صورة — كما يحدث حين تُنسخ سلسلة المجلد كاملاً.
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('ad-image-url')),
+        'https://drive.google.com/drive/folders/1yF_otCk4Q7kOnUpngnAYtO-sWdIz9t5E',
+      );
+      await tester.tap(find.byKey(const ValueKey<String>('ad-submit')));
+      await tester.pumpAndSettle();
+
+      expect(
+        fake.ads,
+        isEmpty,
+        reason: 'مجلد ليس صورة — الحفظ يُمنع لا أن يُخزَّن رابط HTML ميت',
+      );
+      expect(find.text(VillageAdminText.adImageFolderLink), findsOneWidget);
+
+      // تصحيح الرابط إلى ملف صورة يُطلق الحفظ ويُطبّعه آلياً.
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('ad-image-url')),
+        'https://drive.google.com/file/d/1AbC_dEf9ijkLnOp/view?usp=sharing',
+      );
+      await tester.tap(find.byKey(const ValueKey<String>('ad-submit')));
+      await tester.pumpAndSettle();
+      await _drainSnackbar(tester);
+
+      expect(fake.ads, hasLength(1));
+      expect(
+        fake.ads.single.imageUrl,
+        'https://lh3.googleusercontent.com/d/1AbC_dEf9ijkLnOp=w1000',
+      );
     });
   });
 

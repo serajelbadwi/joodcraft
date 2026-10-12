@@ -225,6 +225,10 @@ abstract final class VillageAdminText {
   static const String adImageUrlHint =
       'رابط Google Drive أو رابط صورة مباشر — يُطبَّع آلياً عند الحفظ';
 
+  /// رفض حفظ الإعلان حين يُلصق رابط **مجلد** بدل الصورة نفسها.
+  static const String adImageFolderLink =
+      'هذا رابط مجلد لا صورة — افتح الصورة نفسها ثم «مشاركة ← نسخ الرابط» والصقه هنا';
+
   static const String adPhoneLabel = 'رقم الهاتف (اختياري)';
 
   static const String adUrlLabel = 'رابط التواصل (اختياري)';

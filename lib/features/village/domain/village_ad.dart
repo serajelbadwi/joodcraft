@@ -27,8 +27,9 @@ class VillageAd {
 
   /// بناء من صف PostgREST — قراءة **متسامحة**: حقل ناقص لا يُسقط القائمة.
   ///
-  /// رابط صورة Google Drive يُطبَّع هنا إلى صيغة مباشرة (`thumbnail…`)، فتُعرض
-  /// الصورة سواء أُدخل الرابط قديماً بصفحة العرض أو حُفظ حديثاً مُطبَّعاً.
+  /// رابط صورة Google Drive يُطبَّع هنا إلى صيغة مباشرة (`lh3…=w1000`)، فتُعرض
+  /// الصورة سواء أُدخل الرابط قديماً بصفحة العرض أو صيغة المُصغّرة القديمة أو
+  /// حُفظ حديثاً مُطبَّعاً — بلا تنظيف يدوي للقاعدة.
   factory VillageAd.fromRow(Map<String, dynamic> row) {
     final String imageUrl = '${row['image_url'] ?? ''}'.trim();
     final String phone = '${row['contact_phone'] ?? ''}'.trim();

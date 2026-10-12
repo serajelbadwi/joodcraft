@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/village/data/village_repository.dart';
 import 'package:joodcraft/features/village/domain/national_id.dart';
 import 'package:joodcraft/features/village/domain/village.dart';
+import 'package:joodcraft/features/village/domain/village_ad.dart';
 import 'package:joodcraft/features/village/domain/village_validators.dart';
 import 'package:joodcraft/features/village/domain/village_video.dart';
 import 'package:joodcraft/features/village/presentation/screens/village_delete_data_screen.dart';
@@ -55,6 +56,10 @@ class _FakeDeleteRepository implements VillageRepository {
   @override
   Future<List<VillageVideo>> fetchVideos({required String villageCode}) async =>
       const <VillageVideo>[];
+
+  @override
+  Future<List<VillageAd>> fetchAds({required String villageCode}) async =>
+      const <VillageAd>[];
 }
 
 /// رقم قومي صالح (1990/05/12 — الدقهلية) وتليفون مصري شائع الصيغة.

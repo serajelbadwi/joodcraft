@@ -104,6 +104,21 @@ abstract final class VillageText {
   static const String videosEmbedUnavailable =
       'تعذّر تضمين هذا الفيديو — افتحه على يوتيوب';
 
+  // ----------------------------- إعلانات القرية -----------------------------
+  static const String adsTitle = 'إعلانات القرية';
+
+  static const String adsSubtitle =
+      'أخبار ومعلومات من مسؤولي القرية — سارية الآن';
+
+  /// زر الاتصال برقم المعلن في بطاقة الإعلان.
+  static const String adsCall = 'اتصل بالمعلن';
+
+  /// زر فتح رابط التواصل في بطاقة الإعلان.
+  static const String adsOpenLink = 'رابط الإعلان';
+
+  /// بطاقة بديلة حين تعذّر تحميل صورة الإعلان (رابط غير متاح…).
+  static const String adsImageUnavailable = 'صورة الإعلان غير متاحة';
+
   // ----------------------------- خطوة الكود -----------------------------
   static const String codeTitle = 'ادخل كود القرية';
 

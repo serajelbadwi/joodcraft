@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/village/data/village_repository.dart';
 import 'package:joodcraft/features/village/domain/national_id.dart';
 import 'package:joodcraft/features/village/domain/village.dart';
+import 'package:joodcraft/features/village/domain/village_ad.dart';
 import 'package:joodcraft/features/village/domain/village_legal.dart';
 import 'package:joodcraft/features/village/domain/village_validators.dart';
 import 'package:joodcraft/features/village/domain/village_video.dart';
@@ -20,6 +21,8 @@ class _FakeVillageRepository implements VillageRepository {
     this.failRegisterWith,
     this.videos = const <VillageVideo>[],
     this.failVideos = false,
+    this.ads = const <VillageAd>[],
+    this.failAds = false,
   });
 
   /// هل الخدمة مُهيّأة؟
@@ -37,11 +40,20 @@ class _FakeVillageRepository implements VillageRepository {
   /// هل يُرمى جلب الفيديوهات استثناءً (جدول غير منشأ/شبكة…)؟
   final bool failVideos;
 
+  /// إعلانات القرية المعادة عند كل جلب ناجح.
+  final List<VillageAd> ads;
+
+  /// هل يُرمى جلب الإعلانات استثناءً (جدول غير منشأ/شبكة…)؟
+  final bool failAds;
+
   /// سجلّ ما وصل إلى المستودع — للتحقق من التطبيع قبل الحفظ.
   final List<String> registered = <String>[];
 
   /// سجلّ الأكواد التي جُلبت فيديوهاتها — للتحقق من إعادة الجلب بتبدّل الكود.
   final List<String> videoRequests = <String>[];
+
+  /// سجلّ الأكواد التي جُلبت إعلاناتها — للتحقّق من مصاحبة الفيديو جيباً.
+  final List<String> adRequests = <String>[];
 
   /// سجلّ طلبات الحذف — للتحقق من تطبيع الرقم القومي والتليفون قبل الإرسال.
   final List<String> deleted = <String>[];
@@ -99,6 +111,18 @@ class _FakeVillageRepository implements VillageRepository {
       );
     }
     return videos;
+  }
+
+  @override
+  Future<List<VillageAd>> fetchAds({required String villageCode}) async {
+    adRequests.add(villageCode);
+    if (failAds) {
+      throw const VillageException(
+        VillageErrorKind.unknown,
+        VillageText.genericError,
+      );
+    }
+    return ads;
   }
 }
 
@@ -789,6 +813,146 @@ void main() {
       await _enterCodeAndSubmit(tester, 'maa-2026');
 
       expect(repo.videoRequests, <String>[VillageText.villageCode]);
+    });
+  });
+
+  group('إعلانات القرية', () {
+    /// إعلان صالح برابط Drive حقيقي (صفحة عرض) — يُطبَّع عند القراءة.
+    VillageAd driveAd({String id = 'ad1'}) =>
+        VillageAd.fromRow(<String, dynamic>{
+          'id': id,
+          'village_id': 'v-1',
+          'title': 'إعلان المخبز',
+          'image_url':
+              'https://drive.google.com/file/d/1AbC_dEf9ijkLnOp/view?usp=sharing',
+          'contact_phone': '01012345678',
+          'is_active': true,
+        });
+
+    testWidgets('إعلان برابط Google Drive يظهر بصورة مباشرة وبعنوانه',
+        (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+        ads: <VillageAd>[driveAd()],
+      );
+      await _pumpScreen(tester, repo);
+
+      expect(
+        find.byKey(const ValueKey<String>('village-ads-section')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('village-ad-ad1')),
+        findsOneWidget,
+      );
+      expect(find.text('إعلان المخبز'), findsOneWidget);
+
+      final Image image = tester.widget<Image>(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('village-ad-ad1')),
+          matching: find.byType(Image),
+        ),
+      );
+      final NetworkImage provider = image.image as NetworkImage;
+      expect(
+        provider.url,
+        'https://lh3.googleusercontent.com/d/1AbC_dEf9ijkLnOp=w1000',
+        reason: 'صفحة العرض Drive تُحوَّل إلى صيغة مباشرة قبل الوصول للصورة',
+      );
+    });
+
+    testWidgets('إعلان بلا صورة يظهر بعنوانه وزر الاتصال', (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+        ads: <VillageAd>[
+          VillageAd.fromRow(<String, dynamic>{
+            'id': 'ad2',
+            'village_id': 'v-1',
+            'title': 'إعلان بلا صورة',
+            'contact_phone': '01112345678',
+            'is_active': true,
+          }),
+        ],
+      );
+      await _pumpScreen(tester, repo);
+
+      expect(
+        find.byKey(const ValueKey<String>('village-ad-ad2')),
+        findsOneWidget,
+      );
+      expect(find.text('إعلان بلا صورة'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('village-ad-call-ad2')),
+        findsOneWidget,
+      );
+      // بلا صورة لا صورة تُحمَّل أصلاً.
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('village-ad-ad2')),
+          matching: find.byType(Image),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('بلا إعلانات لا يُبنى القسم ولا يبقى فراغ مكانه', (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+      );
+      await _pumpScreen(tester, repo);
+
+      expect(
+        find.byKey(const ValueKey<String>('village-ads-section')),
+        findsNothing,
+      );
+      expect(
+        repo.adRequests,
+        <String>[VillageText.villageCode],
+        reason: 'جلب صامت واحد عند فتح الصفحة — يرافق جلب الفيديو',
+      );
+    });
+
+    testWidgets('فشل جلب الإعلانات يُخفي القسم ولا يعطّل الصفحة', (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+        failAds: true,
+      );
+      await _pumpScreen(tester, repo);
+
+      expect(
+        find.byKey(const ValueKey<String>('village-ads-section')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('village-code-gate')),
+        findsOneWidget,
+      );
+
+      // التسجيل يبقى يعمل كأن شيئاً لم يكن.
+      await _enterCodeAndSubmit(tester, 'MAA-2026');
+      expect(find.byKey(const ValueKey<String>('village-form')), findsOneWidget);
+    });
+
+    testWidgets('القسم يظهر بعد الفيديوهات وقبل نموذج التسجيل', (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+        videos: <VillageVideo>[_video('eee55555555', 'فيديو القرية')],
+        ads: <VillageAd>[driveAd()],
+      );
+      await _pumpScreen(tester, repo);
+
+      final double videos = tester
+          .getTopLeft(find.text(VillageText.videosTitle))
+          .dy;
+      final double ads = tester
+          .getTopLeft(find.text(VillageText.adsTitle))
+          .dy;
+      final double form = tester
+          .getTopLeft(find.byKey(const ValueKey<String>('village-code-gate')))
+          .dy;
+
+      expect(ads, greaterThan(videos), reason: 'الفيديو أولاً');
+      expect(ads, lessThan(form), reason: 'الإعلان محتوى لا نموذج');
     });
   });
 

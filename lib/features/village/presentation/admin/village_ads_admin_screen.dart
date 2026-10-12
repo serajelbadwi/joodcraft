@@ -337,6 +337,13 @@ class _AdDialogState extends State<_AdDialog> {
       setState(() => _error = VillageAdminText.adTitleRequired);
       return;
     }
+    // رابط مجلد ليس صورة — نمنع الحفظ برسالة توضيحية بدل تخزين رابط ميت
+    // يفشل عرضه في الصفحة (لا يُفحص إلا حين لا صورة مُختارة).
+    if (_pickedBytes == null &&
+        isGoogleDriveFolderUrl(_imageUrlController.text)) {
+      setState(() => _error = VillageAdminText.adImageFolderLink);
+      return;
+    }
     setState(() {
       _saving = true;
       _error = null;

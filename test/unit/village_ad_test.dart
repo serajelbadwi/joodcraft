@@ -66,8 +66,24 @@ void main() {
 
       expect(
         ad.imageUrl,
-        'https://drive.google.com/thumbnail?id=1AbC_dEf9ijkLnOp&sz=w1000',
+        'https://lh3.googleusercontent.com/d/1AbC_dEf9ijkLnOp=w1000',
         reason: 'صفوف قديمة بصفحة العرض تُصلح قراءةً بلا تنظيف يدوي',
+      );
+    });
+
+    test('صيغة المُصغّرة القديمة thumbnail?= تُرقَّع عند القراءة', () {
+      final VillageAd ad = VillageAd.fromRow(<String, dynamic>{
+        'id': 'ad-4b',
+        'village_id': 'v-1',
+        'title': 'إعلان بمُصغّرة قديمة',
+        'image_url':
+            'https://drive.google.com/thumbnail?id=1AbC_dEf9ijkLnOp&sz=w1000',
+      });
+
+      expect(
+        ad.imageUrl,
+        'https://lh3.googleusercontent.com/d/1AbC_dEf9ijkLnOp=w1000',
+        reason: 'المُصغّرة القديمة تحول بلا CORS على الويب — تُرقَّع مباشرة',
       );
     });
 

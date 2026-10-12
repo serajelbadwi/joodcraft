@@ -18,6 +18,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/services/supabase_service.dart';
 import '../domain/village.dart';
+import '../domain/village_ad.dart';
 import '../domain/village_code.dart';
 import '../domain/village_validators.dart';
 import '../domain/village_video.dart';
@@ -43,6 +44,15 @@ class SupabaseVillageRepository implements VillageRepository {
 
   /// جدول الفيديوهات — قراءته عامة (سياسة `videos_select_public`).
   static const String videosTable = 'videos';
+
+  /// جدول الإعلانات المحلية — قراءته عامة للنشط فقط (سياسة
+  /// `ads_select_public` بشرطة `is_active`، ومنحة `select` لدور `anon`).
+  static const String adsTable = 'local_ads';
+
+  /// أعمدة الإعلانات المطلوبة — لا نسحب عموداً لا يُعرض.
+  static const String _adColumns =
+      'id, village_id, title, image_url, contact_phone, contact_url, '
+      'starts_at, ends_at, is_active';
 
   /// أعمدة الفيديوهات الأساسية — تُطلب حين يغيب عمود `aspect_ratio` (قبل
   /// تشغيل سطر `alter table` في `supabase_village.sql`).
@@ -152,6 +162,36 @@ class SupabaseVillageRepository implements VillageRepository {
         if (video.isPublished) videos.add(video);
       }
       return videos;
+    } catch (error) {
+      throw error is VillageException ? error : _map(error);
+    }
+  }
+
+  @override
+  Future<List<VillageAd>> fetchAds({required String villageCode}) async {
+    _ensureAvailable();
+    try {
+      // (أ) معرّف القرية — الجدول مفهرس بـ village_id لا بالكود.
+      final String? villageId = await _lookupVillageId(villageCode);
+      if (villageId == null) return const <VillageAd>[];
+
+      // (ب) قراءة مباشرة من الجدول (سياسة القراءة العامة للنشط) — لا دالة ولا
+      //     دور، و`is_active` يُطلب من السيرفر فلا تنتقل بيانات موقوفة أصلاً.
+      final List<Map<String, dynamic>> rows = await _supabase
+          .from(adsTable)
+          .select(_adColumns)
+          .eq('village_id', villageId)
+          .eq('is_active', true)
+          .order('created_at', ascending: false);
+
+      final List<VillageAd> ads = <VillageAd>[];
+      for (final Map<String, dynamic> row in rows) {
+        // fromRow يطبّع روابط Google Drive إلى صيغة صورة مباشرة تلقائياً.
+        final VillageAd ad = VillageAd.fromRow(row);
+        // نافذة السريان تُحسم في الواجهة (مجدول/منهي لا يظهر) كما في الفيديو.
+        if (ad.isLiveNow) ads.add(ad);
+      }
+      return ads;
     } catch (error) {
       throw error is VillageException ? error : _map(error);
     }

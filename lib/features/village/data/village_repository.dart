@@ -5,6 +5,7 @@
 library;
 
 import '../domain/village.dart';
+import '../domain/village_ad.dart';
 import '../domain/village_video.dart';
 
 /// أنواع فشل عمليات القرية — تُحدَّد في طبقة البيانات وتُعرض في الواجهة.
@@ -70,4 +71,12 @@ abstract interface class VillageRepository {
   /// الكود غير معروف أو لم يُنشر فيديو بعد، وتُرمي [VillageException] عند فشل
   /// الشبكة. قسم الفيديوهات زينة: أي فشل يعني عدم ظهوره لا عطلاً في الصفحة.
   Future<List<VillageVideo>> fetchVideos({required String villageCode});
+
+  /// إعلانات القرية **السارية الآن** (الأحدث أولاً) — قد تعود قائمة فارغة إن
+  /// لم يكن هناك إعلان مفعَّل أو انتهت نافذته، وتُرمي [VillageException] عند
+  /// فشل الشبكة. القسم زينة كما قسم الفيديوهات: الفشل يعني عدم الظهور فقط.
+  ///
+  /// روابط الصور من Google Drive تُطبَّع إلى صيغة صورة مباشرة داخل النموذج
+  /// نفسه (`VillageAd.fromRow`) فلا تعرف هذه الطبقة شيئاً عن درايف.
+  Future<List<VillageAd>> fetchAds({required String villageCode});
 }

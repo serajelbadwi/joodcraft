@@ -14,10 +14,12 @@ import 'package:flutter/material.dart';
 import '../../data/village_repository.dart';
 import '../../domain/national_id.dart';
 import '../../domain/village.dart';
+import '../../domain/village_ad.dart';
 import '../../domain/village_validators.dart';
 import '../../domain/village_video.dart';
 import '../village_theme.dart';
 import '../widgets/village_about_card.dart';
+import '../widgets/village_ads_section.dart';
 import '../widgets/village_code_gate.dart';
 import '../widgets/village_footer.dart';
 import '../widgets/village_header.dart';
@@ -84,12 +86,23 @@ class _VillageRegistrationScreenState extends State<VillageRegistrationScreen> {
   /// رقم آخر طلب — يبطل نتيجة الجلب القديم إن تبدّل الكود أثناء الرحلة.
   int _videosRequest = 0;
 
+  /// إعلانات القرية المعروضة — خاليةً قبل أول جلب ناجح أو عند فشله.
+  List<VillageAd> _ads = const <VillageAd>[];
+
+  /// الكود الذي جُلبت إعلاناته بنجاح (يمنع إعادة جلب بلا داعٍ).
+  String _adsCode = '';
+
+  /// رقم آخر طلب إعلانات — يبطل نتيجة الجلب القديم إن تبدّل الكود.
+  int _adsRequest = 0;
+
   @override
   void initState() {
     super.initState();
-    // الفيديوهات قسم زينة مستقل عن التسجيل: تبدأ الصفحة بجلب فيديو قريتها
-    // (البذرة)، ولا تنتظر إدخال الكود — فإن فشل الجلب بقي القسم مخفياً وحده.
+    // الفيديوهات والإعلانات أقسام زينة مستقلة عن التسجيل: تبدأ الصفحة
+    // بجلب محتوى قريتها (البذرة)، ولا تنتظر إدخال الكود — فإن فشل الجلب
+    // بقي القسم مخفياً وحده.
     _loadVideos(widget.initialVillageCode);
+    _loadAds(widget.initialVillageCode);
   }
 
   @override
@@ -120,6 +133,25 @@ class _VillageRegistrationScreenState extends State<VillageRegistrationScreen> {
     } catch (_) {
       // أي فشل (جدول غير منشأ/شبكة/صلاحيات) يعني عدم ظهور القسم فقط:
       // الصفحة كلها سليمة، ويُسمح بإعادة المحاولة عند الكود التالي.
+    }
+  }
+
+  // ==========================================================================
+  //  إعلانات القرية — جلب صامت لا يعطّل الصفحة أبداً
+  // ==========================================================================
+  Future<void> _loadAds(String villageCode) async {
+    if (!widget.repository.isAvailable) return;
+    if (villageCode.isEmpty || villageCode == _adsCode) return;
+
+    final int request = ++_adsRequest;
+    try {
+      final List<VillageAd> ads =
+          await widget.repository.fetchAds(villageCode: villageCode);
+      if (!mounted || request != _adsRequest) return;
+      _adsCode = villageCode;
+      setState(() => _ads = ads);
+    } catch (_) {
+      // نفس مبدأ الفيديوهات: أي فشل يعني عدم ظهور القسم فقط — لا تعطيل.
     }
   }
 
@@ -167,6 +199,7 @@ class _VillageRegistrationScreenState extends State<VillageRegistrationScreen> {
       });
       // كود مختلف عن كود الصفحة ⇒ فيديوهات القرية الجديدة تحلّ محلّ القديمة.
       _loadVideos(village.code);
+      _loadAds(village.code);
     } on VillageException catch (error) {
       debugPrint(
         '[village] lookup VillageException: kind=${error.kind.name} '
@@ -328,6 +361,13 @@ class _VillageRegistrationScreenState extends State<VillageRegistrationScreen> {
                       if (_videos.isNotEmpty) ...<Widget>[
                         const SizedBox(height: VillageMetrics.space24),
                         VillageVideosSection(videos: _videos),
+                      ],
+                      // الإعلانات تحت الفيديوهات وقبل النموذج — فهما أخبار
+                      // القرية التي يفتحها الأهالي. القسم يظهر وحده حين تعود
+                      // إعلانات سارية — لا فراغ ولا بطاقة فارغة قبل أول جلب.
+                      if (_ads.isNotEmpty) ...<Widget>[
+                        const SizedBox(height: VillageMetrics.space24),
+                        VillageAdsSection(ads: _ads),
                       ],
                       const SizedBox(height: VillageMetrics.space24),
                       _buildRegistrationSection(),
