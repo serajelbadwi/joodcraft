@@ -28,6 +28,7 @@ import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/dashboard/presentation/widgets/dashboard_shell.dart';
 import '../../features/invitations/presentation/screens/invitations_editor_screen.dart';
 import '../../features/jood_writer/presentation/screens/jood_writer_screen.dart';
+import '../../features/owner_admin/presentation/owner_admin_gate_screen.dart';
 import '../../features/project_hub/presentation/screens/new_project_screen.dart';
 import '../../features/templates/presentation/screens/template_library_screen.dart';
 import '../../features/village/data/supabase_village_admin_repository.dart';
@@ -374,6 +375,17 @@ abstract final class AppRouter {
               ],
             ),
           ],
+        ),
+
+        // ------------------------- إدارة المالك -------------------------
+        // **خارج** هيكل الفروع مقصود (كصفحة «حول» ولوحة القرى): تُفتح فوق
+        // القسم الحالي فتبقى حالته حيّة، وبوابتها تتحقق من `platform_admins`
+        // قبل فتح لوحة إدارة القرى والتراخيص.
+        GoRoute(
+          path: AppRoutes.ownerAdmin,
+          name: 'owner-admin',
+          builder: (BuildContext context, GoRouterState state) =>
+              const OwnerAdminGateScreen(),
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) =>

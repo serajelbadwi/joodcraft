@@ -148,7 +148,7 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
           ),
         ],
       ),
-      // 5) الإدارة — إدارة المديرين المحليين + لوحة تحكم القرى.
+      // 5) الإدارة — إدارة المديرين المحليين + لوحة تحكم القرى + إدارة المالك.
       TopNavGroup(
         id: 'admin',
         label: context.l10n?.navAdmin ?? 'الإدارة',
@@ -165,6 +165,14 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
             path: AppRoutes.villageAdmin,
             label: 'لوحة تحكم القرى',
             icon: Icons.villa_rounded,
+          ),
+          // إدارة المالك: أداة صاحب المنصّة — نصّ عربي ثابت كنصّ «لوحة تحكم
+          // القرى» (خارج دورة الترجمة)، والبوابة داخل الشاشة تتحقق من
+          // `platform_admins` قبل فتح اللوحة.
+          TopNavMenuEntry(
+            path: AppRoutes.ownerAdmin,
+            label: 'إدارة المالك',
+            icon: Icons.manage_accounts_rounded,
           ),
         ],
       ),

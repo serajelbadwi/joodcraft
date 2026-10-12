@@ -1404,3 +1404,208 @@ grant execute on function public.farah_activate(text, text)      to anon, authen
 -- select public.farah_can_send(<member-uuid>, <receiver-uuid>, 10);
 
 -- ✅ نهاية تأسيس قاعدة بيانات صفحة القرية.
+
+
+-- ============================================================================
+-- 20) لوحة تحكم المالك (owner_admin) — إدارة القرى والتراخيص من داخل JoodCraft
+-- ----------------------------------------------------------------------------
+-- صاحب المنصّة وحده (صفّه في `platform_admins`) يقرأ ويُنشئ ويعدّل ويحذف.
+-- كل دالة هنا `security definer` وتبدأ بفحص `is_platform_admin()` فتبقى
+-- الحماية في القاعدة نفسها وإن سقطت أي سياسة RLS. معاملات الدوال بالبادئة
+-- `p_` كبقية دوال الملف، ومنطقها المقابل: (name_ar, name_en, gov, center,
+-- postal, plus_code) و(village_id, name, phone, months).
+-- ============================================================================
+
+-- 20.1 أعمدة لوحة المالك على القرى: الاسم اللاتيني والمحافظة والمركز.
+alter table public.villages
+  add column if not exists name_en     text,
+  add column if not exists governorate text,
+  add column if not exists center      text;
+
+comment on column public.villages.name_en     is 'الاسم اللاتيني — أساس بادئة الكود المولَّد';
+comment on column public.villages.governorate is 'المحافظة — تُملأ من لوحة تحكم المالك';
+comment on column public.villages.center      is 'المركز/القسم — تُملأ من لوحة تحكم المالك';
+
+-- 20.2 بيانات المشترك على تراخيص فرح: مُصدر + مشترك + مدة.
+alter table public.farah_licenses
+  add column if not exists subscriber_name  text,
+  add column if not exists subscriber_phone text,
+  add column if not exists issued_by       uuid default auth.uid(),
+  add column if not exists months           int;
+
+comment on column public.farah_licenses.subscriber_name  is 'اسم صاحب المكتب المشترِك — من لوحة تحكم المالك';
+comment on column public.farah_licenses.subscriber_phone is 'تليفون صاحب المكتب — من لوحة تحكم المالك';
+comment on column public.farah_licenses.issued_by        is 'مَن أصدر الترخيص (حساب المالك)';
+comment on column public.farah_licenses.months           is 'مدة الترخيص بالأشهر (1 أو 3 أو 12)';
+
+-- 20.3 توسيع صيغة الكود: الصيغة القديمة `AAA-YYYY` (ولا تزال تمرّ لبقية
+--     الشاشات) + صيغة لوحة المالك `بادئة-بريد-Plus مختصر` مثل
+--     MAA-31951-25GF (أو MAA-2026-26MA عند غياب المدخلين الاختياريين).
+alter table public.villages drop constraint if exists villages_code_format;
+alter table public.villages add constraint villages_code_format check (
+  code ~ '^[A-Z]{3}-[0-9]{4}$'
+  or code ~ '^[A-Z]{2,3}-[0-9]{4,6}-[A-Z0-9]{4,6}$'
+);
+
+-- 20.4 قراءة التراخيص للمالك وحده: الجدول مُغلق بـ`revoke` في القسم 17،
+--     فنعيد المنح مقروءاً هنا + سياسة RLS تُبقي الصفوف عند المالك.
+grant select on public.farah_licenses to authenticated;
+drop policy if exists "licenses_select_platform" on public.farah_licenses;
+create policy "licenses_select_platform"
+  on public.farah_licenses for select to authenticated
+  using (public.is_platform_admin());
+
+-- 20.5 توليد كود قرية وإنشاؤها في خطوة واحدة — يعيد الكود المولَّد.
+--     البادئة من أولى حروف الاسم اللاتيني (padRight X إلى 3)، والبريد أرقام
+--     فقط (بديله السنة الحالية)، وPlus Code مختصر الجزء القبلي لعلامة `+`
+--     (مثل 25GF من 25GF+PQ) وبديله سنتان + حرفان من الاسم. التكرار بين قريتين
+--     يُحلّ بإضافة رقم محاولة إلى آخر جزء حتى 99.
+create or replace function public.owner_generate_village_code(
+  p_name_ar   text,
+  p_name_en   text,
+  p_gov       text,
+  p_center    text,
+  p_postal    text default null,
+  p_plus_code text default null
+) returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_prefix text;
+  v_postal text;
+  v_plus   text;
+  v_base   text;
+  v_code   text;
+  v_try    int := 0;
+begin
+  if not public.is_platform_admin() then
+    raise exception 'غير مصرَّح: هذه الدالة لصاحب المنصّة فقط';
+  end if;
+  if coalesce(btrim(p_name_ar), '') = '' then
+    raise exception 'اسم القرية مطلوب';
+  end if;
+
+  -- البادئة: حروف الاسم اللاتيني كبيرة، تُقصّ إلى 3 وتُملأ بـX.
+  v_prefix := substr(
+    rpad(upper(regexp_replace(coalesce(p_name_en, ''), '[^A-Za-z]', '', 'g')), 3, 'X'),
+    1, 3
+  );
+
+  -- الرمز البريدي: أرقام فقط؛ إن قصّر عن 4 فبديل السنة الحالية.
+  v_postal := regexp_replace(coalesce(p_postal, ''), '[^0-9]', '', 'g');
+  if length(v_postal) < 4 then
+    v_postal := to_char(current_date, 'YYYY');
+  end if;
+  v_postal := substr(v_postal, 1, 6);
+
+  -- Plus Code مختصر: الجزء القبلي لعلامة +؛ إن غاب أو قصر فسنتان + حرفان.
+  v_plus := upper(regexp_replace(coalesce(p_plus_code, ''), '[^0-9A-Za-z+]', '', 'g'));
+  if position('+' in v_plus) > 0 then
+    v_plus := split_part(v_plus, '+', 1);
+  end if;
+  v_plus := substr(v_plus, 1, 4);
+  if length(v_plus) < 4 then
+    v_plus := substr(
+      to_char(current_date, 'YY')
+        || upper(regexp_replace(coalesce(p_name_en, ''), '[^A-Za-z]', '', 'g')),
+      1, 4
+    );
+  end if;
+  v_plus := rpad(v_plus, 4, 'Q');
+
+  v_base := v_prefix || '-' || v_postal || '-' || v_plus;
+  v_code := v_base;
+  while exists (select 1 from public.villages v where v.code = v_code) loop
+    v_try := v_try + 1;
+    if v_try > 99 then
+      raise exception 'تعذّر توليد كود فريد — جرّب رمزاً بريدياً أو Plus Code آخر';
+    end if;
+    v_code := v_base || v_try::text;
+  end loop;
+
+  insert into public.villages (name, name_en, code, governorate, center)
+  values (
+    btrim(p_name_ar),
+    nullif(btrim(p_name_en), ''),
+    v_code,
+    nullif(btrim(p_gov), ''),
+    nullif(btrim(p_center), '')
+  );
+
+  return v_code;
+end;
+$$;
+
+comment on function public.owner_generate_village_code(text, text, text, text, text, text) is
+  'لوحة المالك: توليد كود قرية (بادئة + بريد + Plus مختصر) وإنشاؤها — يعيد الكود المولَّد';
+
+-- 20.6 إصدار ترخيص «صاحب الفرح» بصيغة FRH-<بادئة القرية>-<تسلسل 3 أرقام>
+--     مثل FRH-MAA-001 — والتسلسل يتقدّم تلقائياً عند التكرار حتى 999.
+create or replace function public.owner_create_license(
+  p_village_id uuid,
+  p_name       text,
+  p_phone      text,
+  p_months     int
+) returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_village_code text;
+  v_prefix       text;
+  v_seq          int := 1;
+  v_code         text;
+begin
+  if not public.is_platform_admin() then
+    raise exception 'غير مصرَّح: هذه الدالة لصاحب المنصّة فقط';
+  end if;
+  if coalesce(btrim(p_name), '') = '' then
+    raise exception 'اسم صاحب المكتب مطلوب';
+  end if;
+  if p_months not in (1, 3, 12) then
+    raise exception 'المدة المسموحة: شهر أو 3 شهور أو سنة';
+  end if;
+
+  select v.code into v_village_code from public.villages v where v.id = p_village_id;
+  if v_village_code is null then
+    raise exception 'القرية غير موجودة';
+  end if;
+
+  v_prefix := split_part(v_village_code, '-', 1);
+  loop
+    v_code := 'FRH-' || v_prefix || '-' || lpad(v_seq::text, 3, '0');
+    exit when not exists (select 1 from public.farah_licenses l where l.code = v_code);
+    v_seq := v_seq + 1;
+    if v_seq > 999 then
+      raise exception 'امتُلئت تسلسلات بادئة ' || v_prefix;
+    end if;
+  end loop;
+
+  insert into public.farah_licenses
+    (village_id, code, subscriber_name, subscriber_phone, issued_by, months, expires_at)
+  values (
+    p_village_id,
+    v_code,
+    nullif(btrim(p_name), ''),
+    nullif(btrim(p_phone), ''),
+    auth.uid(),
+    p_months,
+    now() + make_interval(months => p_months)
+  );
+
+  return v_code;
+end;
+$$;
+
+comment on function public.owner_create_license(uuid, text, text, int) is
+  'لوحة المالك: إصدار ترخيص صاحب الفرح FRH-<بادئة>-<تسلسل> بمدة 1/3/12 شهراً — يعيد الكود';
+
+grant execute on function public.owner_generate_village_code(text, text, text, text, text, text)
+  to authenticated;
+grant execute on function public.owner_create_license(uuid, text, text, int)
+  to authenticated;
+
+-- ✅ نهاية إضافات لوحة تحكم المالك.
