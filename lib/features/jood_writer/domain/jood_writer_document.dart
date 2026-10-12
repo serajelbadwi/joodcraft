@@ -278,6 +278,7 @@ class JoodWriterPageSize {
       label: '${page.label}1/2',
     );
   }
+
   /// كل الأحجام المدعومة.
   static const List<JoodWriterPageSize> all = <JoodWriterPageSize>[
     a4,

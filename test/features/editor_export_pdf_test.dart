@@ -79,6 +79,30 @@ void main() {
     expect(find.text('تصدير PDF'), findsOneWidget);
   });
 
+  testWidgets('التصدير يعرض حوار «نوع التصدير» قبل أي توليد',
+      (WidgetTester tester) async {
+    await pumpEditor(tester, doc: document(withMissingAsset: false));
+
+    final Finder export = find.byKey(const ValueKey<String>('editor-export-pdf'));
+    await tester.ensureVisible(export);
+    await tester.tap(export);
+    await tester.pumpAndSettle();
+
+    // حوار الاختيار يظهر قبل التوليد — ولا يُصدَّر بالافتراضي سراً.
+    expect(
+      find.byKey(const ValueKey<String>('pdf-export-type-dialog')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('pdf-export-option-images')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('pdf-export-option-vector')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('التصدير لا يُحجب بسبب أصل محذوف ولا يظهر شريط الخطأ',
       (WidgetTester tester) async {
     await pumpEditor(tester, doc: document());

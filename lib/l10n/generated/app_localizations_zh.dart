@@ -3195,6 +3195,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ocrTitle => '从图片提取文字';
 
   @override
+  String get ocrShowRaw => '显示原始文本';
+
+  @override
   String get ocrSubtitle => '导入图片或 PDF 并提取其中的文字';
 
   @override
@@ -3223,6 +3226,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get ocrAccept => '接受';
+
+  @override
+  String get ocrCleanupNote => '文本已自动修正 —— 请在保存前检查。';
 
   @override
   String get ocrCancel => '取消';

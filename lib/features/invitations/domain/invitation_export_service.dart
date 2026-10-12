@@ -7,6 +7,7 @@ import 'package:printing/printing.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/dynamic_fields.dart';
 import '../../../../core/models/template_document.dart';
+import '../../../../core/pdf/pdf_export_type.dart';
 import '../../../../core/services/pdf_generator_service.dart';
 import 'invitation_name_file.dart';
 
@@ -31,6 +32,38 @@ enum InvitationExportFormat {
       if (format.jsonValue == needle) return format;
     }
     return InvitationExportFormat.png;
+  }
+}
+
+/// محرّك رسم ملف الـ PDF.
+///
+/// يُستعمل في مسار الدعوات فقط: ‏[images] نقطةٌ تُطابق المحرر بصرياً 100%
+/// (وهو الافتراضي منذ كانت الصيغة الوحيدة)، و[vector] أوامر مسار فتخرج
+/// الحروف نصّاً حقيقياً قابلاً للنسخ والبحث بحجم أصغر.
+///
+/// سُجِّلت التسميات عبر مفاتيح l10n (لا نصّ صلب) تبعاً لنمط [InvitationExportFormat]
+/// نفسه، فتُترجم مع بقية الواجهة.
+enum InvitationPdfEngine {
+  images('images', 'invPdfEngineImages'),
+  vector('vector', 'invPdfEngineVector');
+
+  const InvitationPdfEngine(this.jsonValue, this.labelKey);
+
+  final String jsonValue;
+  final String labelKey;
+
+  /// المحرّك المقابل في طبقة الخدمة.
+  PdfExportType get exportType => switch (this) {
+        InvitationPdfEngine.images => PdfExportType.images,
+        InvitationPdfEngine.vector => PdfExportType.vector,
+      };
+
+  static InvitationPdfEngine fromJson(String? value) {
+    final String needle = (value ?? '').trim().toLowerCase();
+    for (final InvitationPdfEngine engine in values) {
+      if (engine.jsonValue == needle) return engine;
+    }
+    return InvitationPdfEngine.images;
   }
 }
 
@@ -129,6 +162,7 @@ class InvitationExportService {
     required int emptyCount,
     bool makeZip = false,
     bool makeCsv = false,
+    InvitationPdfEngine engine = InvitationPdfEngine.images,
     void Function(int done, int total)? onProgress,
     Future<void> Function()? waitWhilePaused,
     bool Function()? isCancelled,
@@ -154,6 +188,7 @@ class InvitationExportService {
         final PdfGenerationReport report = await _generator.generate(
           document: document,
           data: <String, String>{DynamicFields.nameKey: plan.name},
+          type: engine.exportType,
         );
 
         if (format.wantsPdf) {

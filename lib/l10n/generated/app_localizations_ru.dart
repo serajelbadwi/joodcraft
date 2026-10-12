@@ -3307,6 +3307,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ocrTitle => 'Извлечь текст из изображения';
 
   @override
+  String get ocrShowRaw => 'Показать исходный текст';
+
+  @override
   String get ocrSubtitle =>
       'Импортируйте изображение или PDF и извлеките текст';
 
@@ -3336,6 +3339,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get ocrAccept => 'Принять';
+
+  @override
+  String get ocrCleanupNote =>
+      'Текст был автоматически исправлен — проверьте его перед сохранением.';
 
   @override
   String get ocrCancel => 'Отмена';

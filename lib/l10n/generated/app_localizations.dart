@@ -6126,6 +6126,12 @@ abstract class AppLocalizations {
   /// **'استخراج نص من صورة'**
   String get ocrTitle;
 
+  /// No description provided for @ocrShowRaw.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض النص الأصلي'**
+  String get ocrShowRaw;
+
   /// No description provided for @ocrSubtitle.
   ///
   /// In ar, this message translates to:
@@ -6185,6 +6191,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'قبول'**
   String get ocrAccept;
+
+  /// No description provided for @ocrCleanupNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تصحيح النص تلقائياً — راجعه قبل الحفظ.'**
+  String get ocrCleanupNote;
 
   /// No description provided for @ocrCancel.
   ///

@@ -38,6 +38,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   intl: any
   supabase_flutter: ^2.17.2
+  # واجهات المتصفح الأصلية (DOM) — تستخدمها صفحة القرية في نقطة الدخول
+  # المستقلة `lib/main_village.dart` لتضمين خريطة جوجل كإطار `iframe` حقيقي
+  # داخل شجرة الواجهة (HtmlElementView). لا تُستورد إلا في ملفات الويب.
+  web: ^1.1.1
   provider: ^6.1.5+1
   pdf: ^3.12.0
   printing: ^5.14.3

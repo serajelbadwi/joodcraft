@@ -3328,6 +3328,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ocrTitle => 'Text aus Bild extrahieren';
 
   @override
+  String get ocrShowRaw => 'Originaltext anzeigen';
+
+  @override
   String get ocrSubtitle => 'Bild oder PDF importieren und Text extrahieren';
 
   @override
@@ -3356,6 +3359,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ocrAccept => 'Übernehmen';
+
+  @override
+  String get ocrCleanupNote =>
+      'Der Text wurde automatisch bereinigt — prüfen Sie ihn vor dem Speichern.';
 
   @override
   String get ocrCancel => 'Abbrechen';

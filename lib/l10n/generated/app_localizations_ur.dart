@@ -45,7 +45,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorNewTemplate => 'نیا ٹیمپلیٹ';
 
   @override
-  String get editorNewConfirm => 'نیا ٹیمپلیٹ ڈیفالٹ ڈیزائن سے شروع ہوگا؛ غیر محفوظ تبدیلیاں انڈو ہسٹری میں رہیں گی۔ جاری رکھیں؟';
+  String get editorNewConfirm =>
+      'نیا ٹیمپلیٹ ڈیفالٹ ڈیزائن سے شروع ہوگا؛ غیر محفوظ تبدیلیاں انڈو ہسٹری میں رہیں گی۔ جاری رکھیں؟';
 
   @override
   String get actionBackToDashboard => 'ڈیش بورڈ پر واپس جائیں';
@@ -102,10 +103,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get configMissingKeysTitle => 'کنکشن کیز نہیں ملیں';
 
   @override
-  String get configMissingKeysBody => 'ایپ آغاز پر تین ذرائع میں کیز تلاش کرتی ہے: --dart-define فلیگ، پھر ڈسک پر env.json فائل (روٹ یا assets/env/) اور پھر ایپ میں شامل کاپی — کوئی نہیں ملی۔ فائل بنائیں، ایک بار بھریں اور بغیر فلیگ چلائیں:';
+  String get configMissingKeysBody =>
+      'ایپ آغاز پر تین ذرائع میں کیز تلاش کرتی ہے: --dart-define فلیگ، پھر ڈسک پر env.json فائل (روٹ یا assets/env/) اور پھر ایپ میں شامل کاپی — کوئی نہیں ملی۔ فائل بنائیں، ایک بار بھریں اور بغیر فلیگ چلائیں:';
 
   @override
-  String get configEnvNote => 'بنڈل assets/env/ کو اثاثہ قرار دیتا ہے، اس لیے فائل کی عدم موجودگی صاف بلڈ کو نہیں توڑتی۔ env.example.json سے بنائیں یا چلائیں: dart run tool/ensure_env.dart — صرف anon/public کلید درکار ہے؛ service_role ایپ میں کبھی استعمال نہیں ہوتی۔';
+  String get configEnvNote =>
+      'بنڈل assets/env/ کو اثاثہ قرار دیتا ہے، اس لیے فائل کی عدم موجودگی صاف بلڈ کو نہیں توڑتی۔ env.example.json سے بنائیں یا چلائیں: dart run tool/ensure_env.dart — صرف anon/public کلید درکار ہے؛ service_role ایپ میں کبھی استعمال نہیں ہوتی۔';
 
   @override
   String get routeNotFoundTitle => 'صفحہ نہیں ملا';
@@ -120,7 +123,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorNudgeStep => 'حرکت کا مرحلہ';
 
   @override
-  String get editorNudgeStepHint => 'کینوس کے تیر بھی Shift = 10px حرکت دیتے ہیں۔';
+  String get editorNudgeStepHint =>
+      'کینوس کے تیر بھی Shift = 10px حرکت دیتے ہیں۔';
 
   @override
   String get editorNudgeUp => 'اوپر حرکت';
@@ -138,7 +142,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorScale => 'پیمانہ';
 
   @override
-  String get editorScaleHint => 'عنصر کے مرکز کے گرد نسبتی پیمانہ (باریک مرحلے کے لیے بٹنوں پر وہیل)۔';
+  String get editorScaleHint =>
+      'عنصر کے مرکز کے گرد نسبتی پیمانہ (باریک مرحلے کے لیے بٹنوں پر وہیل)۔';
 
   @override
   String get editorScaleUp => 'بڑا کریں';
@@ -240,7 +245,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorSignatureOrder => 'خانوں کی ترتیب';
 
   @override
-  String get editorSignatureOrderHint => 'عربی دستاویزات میں پہلا خانہ بالکل دائیں جانب ہوتا ہے۔';
+  String get editorSignatureOrderHint =>
+      'عربی دستاویزات میں پہلا خانہ بالکل دائیں جانب ہوتا ہے۔';
 
   @override
   String get editorSignatureFirstRight => 'پہلی دائیں';
@@ -318,7 +324,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorSignatureRemoveImage => 'دستخط کی تصویر ہٹائیں';
 
   @override
-  String get editorSignaturePickImageTitle => 'میرے اثاثہ کتب خانے سے دستخط کی تصویر منتخب کریں';
+  String get editorSignaturePickImageTitle =>
+      'میرے اثاثہ کتب خانے سے دستخط کی تصویر منتخب کریں';
 
   @override
   String get editorSignatureSlot => 'خانہ';
@@ -327,7 +334,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorSignatureRoleField => 'عہدہ (مثلاً جنرل منیجر)';
 
   @override
-  String get editorSignatureNameField => 'دستخط کرنے والے کا نام (متحرک خانہ قبول کرتا ہے)';
+  String get editorSignatureNameField =>
+      'دستخط کرنے والے کا نام (متحرک خانہ قبول کرتا ہے)';
 
   @override
   String get editorFromMyLibrary => 'میرے اثاثہ کتب خانے سے';
@@ -336,10 +344,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get paletteSignatureBlock => 'دستخط';
 
   @override
-  String get editorInsertFromLibraryTooltip => 'اپلوڈ شدہ فریم یا لوگو براہِ راست داخل کریں';
+  String get editorInsertFromLibraryTooltip =>
+      'اپلوڈ شدہ فریم یا لوگو براہِ راست داخل کریں';
 
   @override
-  String get unsupportedElementVersionNote => 'یہ عنصر ایڈیٹر کے نئے ورژن سے ہے — ویسے ہی محفوظ رہتا ہے اور یہاں تبدیل نہیں ہو سکتا۔';
+  String get unsupportedElementVersionNote =>
+      'یہ عنصر ایڈیٹر کے نئے ورژن سے ہے — ویسے ہی محفوظ رہتا ہے اور یہاں تبدیل نہیں ہو سکتا۔';
 
   @override
   String editorSelectedCount(Object count) {
@@ -368,7 +378,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorDeleteSelected => 'منتخب حذف کریں';
 
   @override
-  String get editorGroupDragHint => 'گروپ کو ماؤس سے کھینچیں، باریک حرکت کے لیے تیر استعمال کریں (Shift = 10px)، اور انتخاب میں تبدیلی کے لیے Ctrl + کلک کریں۔';
+  String get editorGroupDragHint =>
+      'گروپ کو ماؤس سے کھینچیں، باریک حرکت کے لیے تیر استعمال کریں (Shift = 10px)، اور انتخاب میں تبدیلی کے لیے Ctrl + کلک کریں۔';
 
   @override
   String get destBrand => 'شناخت اور پروفائل';
@@ -461,7 +472,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get brandClear => 'شناخت صاف کریں';
 
   @override
-  String get brandClearConfirm => 'محفوظ تمام شناخت حذف ہو جائے گی۔ جاری رکھیں؟';
+  String get brandClearConfirm =>
+      'محفوظ تمام شناخت حذف ہو جائے گی۔ جاری رکھیں؟';
 
   @override
   String get brandSaved => 'شناخت محفوظ ہو گئی۔';
@@ -704,7 +716,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorJustifyMode => 'سیدھ کا طریقہ';
 
   @override
-  String get editorJustifyHint => 'کشیدہ PDF فائل میں لاگو ہوتا ہے (پیش نظارہ خالی جگہوں کی سیدھ دکھاتا ہے)';
+  String get editorJustifyHint =>
+      'کشیدہ PDF فائل میں لاگو ہوتا ہے (پیش نظارہ خالی جگہوں کی سیدھ دکھاتا ہے)';
 
   @override
   String get editorJustifySpaces => 'خالی جگہیں';
@@ -755,7 +768,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorFitFill => 'پھیلائیں';
 
   @override
-  String get assetPickerEmptyHint => 'آپ نے ابھی کوئی اثاثہ اپلوڈ نہیں کیا۔ یہاں اور پرنٹ میں استعمال کے لیے لوگو، دستخط یا مہر اپلوڈ کریں۔';
+  String get assetPickerEmptyHint =>
+      'آپ نے ابھی کوئی اثاثہ اپلوڈ نہیں کیا۔ یہاں اور پرنٹ میں استعمال کے لیے لوگو، دستخط یا مہر اپلوڈ کریں۔';
 
   @override
   String get assetPickerNoneOption => 'کوئی نہیں (دوسرا ماخذ)';
@@ -819,7 +833,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorFieldKeyHint => 'خانے کی کلید (مثلاً نام، تاریخ، حوالہ)';
 
   @override
-  String get editorCustomKeyHint => 'حسب ضرورت کلید درج کریں (بغیر بریکٹ — خودکار شامل ہو جائے گی)';
+  String get editorCustomKeyHint =>
+      'حسب ضرورت کلید درج کریں (بغیر بریکٹ — خودکار شامل ہو جائے گی)';
 
   @override
   String get editorCancel => 'منسوخ کریں';
@@ -885,7 +900,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get evAssetMissingLabel => 'غائب اثاثہ';
 
   @override
-  String get evReselectAssetDetail => 'فریم/اثاثہ کتب خانے سے دوبارہ منتخب کریں';
+  String get evReselectAssetDetail =>
+      'فریم/اثاثہ کتب خانے سے دوبارہ منتخب کریں';
 
   @override
   String get evInvalidImageLabel => 'غلط تصویر';
@@ -914,7 +930,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get alpFilterAll => 'سب';
 
   @override
-  String get alpEmptyHint => 'مطلوبہ اقسام کے اپلوڈ شدہ اثاثے نہیں۔ «اثاثے اور دستخط» کے حصے سے فریم یا لوگو اپلوڈ کریں، پھر دوبارہ کوشش کریں۔';
+  String get alpEmptyHint =>
+      'مطلوبہ اقسام کے اپلوڈ شدہ اثاثے نہیں۔ «اثاثے اور دستخط» کے حصے سے فریم یا لوگو اپلوڈ کریں، پھر دوبارہ کوشش کریں۔';
 
   @override
   String alpNoFilteredAssets(Object type) {
@@ -925,13 +942,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authWelcomeBack => 'JoodCraft میں خوش آمدید۔';
 
   @override
-  String get authResetLinkSent => 'ری سیٹ لنک بھیج دیا گیا ہے۔ اپنا ای میل چیک کریں۔';
+  String get authResetLinkSent =>
+      'ری سیٹ لنک بھیج دیا گیا ہے۔ اپنا ای میل چیک کریں۔';
 
   @override
   String get authLogin => 'سائن ان';
 
   @override
-  String get authLoginSubtitle => 'ڈیش بورڈ پر جانے کے لیے اپنا ای میل اور پاس ورڈ۔';
+  String get authLoginSubtitle =>
+      'ڈیش بورڈ پر جانے کے لیے اپنا ای میل اور پاس ورڈ۔';
 
   @override
   String get authNoAccount => 'کیا آپ کا اکاؤنٹ نہیں ہے؟';
@@ -940,7 +959,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authCreateAccountLink => 'نیا اکاؤنٹ بنائیں';
 
   @override
-  String get authConfirmEmailThenLogin => 'آپ کا اکاؤنٹ بن گیا۔ پہلے اپنا ای میل کی تصدیق کریں، پھر سائن ان کریں۔';
+  String get authConfirmEmailThenLogin =>
+      'آپ کا اکاؤنٹ بن گیا۔ پہلے اپنا ای میل کی تصدیق کریں، پھر سائن ان کریں۔';
 
   @override
   String get authEmail => 'ای میل';
@@ -958,22 +978,26 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authResetPassword => 'پاس ورڈ ری سیٹ کریں';
 
   @override
-  String get authResetPasswordHint => 'اپنا ای میل درج کریں اور ہم آپ کو پاس ورڈ ری سیٹ لنک بھیجیں گے۔';
+  String get authResetPasswordHint =>
+      'اپنا ای میل درج کریں اور ہم آپ کو پاس ورڈ ری سیٹ لنک بھیجیں گے۔';
 
   @override
   String get authSendLink => 'لنک بھیجیں';
 
   @override
-  String get authConfirmEmailMessage => 'آپ کا اکاؤنٹ بن گیا۔ تصدیق کے لیے اپنا ای میل چیک کریں، پھر سائن ان کریں۔';
+  String get authConfirmEmailMessage =>
+      'آپ کا اکاؤنٹ بن گیا۔ تصدیق کے لیے اپنا ای میل چیک کریں، پھر سائن ان کریں۔';
 
   @override
-  String get authAccountCreatedWelcome => 'آپ کا اکاؤنٹ بن گیا۔ JoodCraft میں خوش آمدید۔';
+  String get authAccountCreatedWelcome =>
+      'آپ کا اکاؤنٹ بن گیا۔ JoodCraft میں خوش آمدید۔';
 
   @override
   String get authCreateAccount => 'اکاؤنٹ بنائیں';
 
   @override
-  String get authRegisterSubtitle => 'آپ کا اکاؤنٹ آپ کے ٹیمپلیٹس اور اثاثے (لوگو، دستخط، مہر) تمام منصوبوں میں دوبارہ استعمال کے لیے محفوظ کرتا ہے۔';
+  String get authRegisterSubtitle =>
+      'آپ کا اکاؤنٹ آپ کے ٹیمپلیٹس اور اثاثے (لوگو، دستخط، مہر) تمام منصوبوں میں دوبارہ استعمال کے لیے محفوظ کرتا ہے۔';
 
   @override
   String get authHaveAccount => 'پہلے سے اکاؤنٹ ہے؟';
@@ -994,7 +1018,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authOrgNameHint => 'مثلاً: جود خیراتی انجمن';
 
   @override
-  String get authOrgHelper => 'سرٹیفکیٹس اور معاہدوں پر خودکار طور پر چھپتا ہے۔';
+  String get authOrgHelper =>
+      'سرٹیفکیٹس اور معاہدوں پر خودکار طور پر چھپتا ہے۔';
 
   @override
   String get authOrgNameShort => 'ادارے کا نام';
@@ -1014,16 +1039,20 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authCreateAccountButton => 'اکاؤنٹ بنائیں';
 
   @override
-  String get authFeatureLocalExcel => 'Excel فائلوں کی مکمل مقامی پروسیسنگ — آپ کا ڈیٹا آپ کے آلے سے باہر نہیں جاتا';
+  String get authFeatureLocalExcel =>
+      'Excel فائلوں کی مکمل مقامی پروسیسنگ — آپ کا ڈیٹا آپ کے آلے سے باہر نہیں جاتا';
 
   @override
-  String get authFeaturePdf => 'اعلیٰ معیار کے عربی فونٹس کے ساتھ PDF پیداوار اور مکمل RTL سپورٹ';
+  String get authFeaturePdf =>
+      'اعلیٰ معیار کے عربی فونٹس کے ساتھ PDF پیداوار اور مکمل RTL سپورٹ';
 
   @override
-  String get authFeatureTemplates => 'آپ کے ٹیمپلیٹس آپ کے اکاؤنٹ میں محفوظ اور دوبارہ استعمال کے لیے تیار ہیں';
+  String get authFeatureTemplates =>
+      'آپ کے ٹیمپلیٹس آپ کے اکاؤنٹ میں محفوظ اور دوبارہ استعمال کے لیے تیار ہیں';
 
   @override
-  String get authTagline => 'آپ کے سرکاری سرٹیفکیٹ اور معاہدے… اعتماد کے ساتھ چھپتے ہیں۔';
+  String get authTagline =>
+      'آپ کے سرکاری سرٹیفکیٹ اور معاہدے… اعتماد کے ساتھ چھپتے ہیں۔';
 
   @override
   String authVersion(Object name, Object version) {
@@ -1049,7 +1078,8 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get dashOrgMissing => 'آپ نے ابھی اپنے ادارے کا نام مقرر نہیں کیا — یہ سرٹیفکیٹس اور معاہدوں پر خودکار چھپے گا۔';
+  String get dashOrgMissing =>
+      'آپ نے ابھی اپنے ادارے کا نام مقرر نہیں کیا — یہ سرٹیفکیٹس اور معاہدوں پر خودکار چھپے گا۔';
 
   @override
   String get dashOpenModule => 'ماڈیول کھولیں';
@@ -1064,25 +1094,29 @@ class AppLocalizationsUr extends AppLocalizations {
   String get destCertificates => 'سرٹیفکیٹ انجن';
 
   @override
-  String get destCertificatesDesc => 'قابلِ ترمیم ٹیمپلیٹ سے افقی (Landscape) سرٹیفکیٹ ڈیزائن کریں۔';
+  String get destCertificatesDesc =>
+      'قابلِ ترمیم ٹیمپلیٹ سے افقی (Landscape) سرٹیفکیٹ ڈیزائن کریں۔';
 
   @override
   String get destContracts => 'معاہدہ انجن';
 
   @override
-  String get destContractsDesc => 'متحرک خانوں کے ساتھ عمودی (Portrait) معاہدے تحریر کریں۔';
+  String get destContractsDesc =>
+      'متحرک خانوں کے ساتھ عمودی (Portrait) معاہدے تحریر کریں۔';
 
   @override
   String get destBatch => 'اجتماعی پیداوار';
 
   @override
-  String get destBatchDesc => 'Excel فائل مقامی طور پر پڑھیں اور سینکڑوں سرٹیفکیٹ ایک ساتھ بنائیں۔';
+  String get destBatchDesc =>
+      'Excel فائل مقامی طور پر پڑھیں اور سینکڑوں سرٹیفکیٹ ایک ساتھ بنائیں۔';
 
   @override
   String get destTemplates => 'ٹیمپلیٹ کتب خانہ';
 
   @override
-  String get destTemplatesDesc => 'اپنے محفوظ شدہ ٹیمپلیٹس کا انتظام، درجہ بندی اور دوبارہ استعمال کریں۔';
+  String get destTemplatesDesc =>
+      'اپنے محفوظ شدہ ٹیمپلیٹس کا انتظام، درجہ بندی اور دوبارہ استعمال کریں۔';
 
   @override
   String get destAssets => 'اثاثے اور دستخط';
@@ -1121,7 +1155,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tplSortLabel => 'ترتیب';
 
   @override
-  String get tplSubtitle => 'پیشہ ورانہ تیار ٹیمپلیٹس + آپ کے محفوظ شدہ — تلاش، فلٹر، کھولیں اور درآمد، مکمل آف لائن۔';
+  String get tplSubtitle =>
+      'پیشہ ورانہ تیار ٹیمپلیٹس + آپ کے محفوظ شدہ — تلاش، فلٹر، کھولیں اور درآمد، مکمل آف لائن۔';
 
   @override
   String get tplRefreshTooltip => 'فہرست تازہ کریں';
@@ -1133,7 +1168,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tplNoResultsTitle => 'کوئی مماثل نتیجہ نہیں';
 
   @override
-  String get tplNoResultsMessage => 'دوسری تلاش کی اصطلاح آزمائیں یا فلٹر ری سیٹ کریں۔';
+  String get tplNoResultsMessage =>
+      'دوسری تلاش کی اصطلاح آزمائیں یا فلٹر ری سیٹ کریں۔';
 
   @override
   String tplAddedToLocal(Object title) {
@@ -1141,7 +1177,8 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get tplCloudRequiresConnection => 'ٹیمپلیٹس کو کلاؤڈ میں محفوظ کرنے کے لیے Supabase پروجیکٹ سے رابطہ درکار ہے۔ اسے مقامی طور پر محفوظ کریں۔';
+  String get tplCloudRequiresConnection =>
+      'ٹیمپلیٹس کو کلاؤڈ میں محفوظ کرنے کے لیے Supabase پروجیکٹ سے رابطہ درکار ہے۔ اسے مقامی طور پر محفوظ کریں۔';
 
   @override
   String tplSavedToCloud(Object title) {
@@ -1165,7 +1202,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tplNowPrivate => 'ٹیمپلیٹ اب نجی ہے۔';
 
   @override
-  String get tplNowPublic => 'ٹیمپلیٹ اب عام ہے (دوسروں کے لیے صرف پڑھنے کے لیے)۔';
+  String get tplNowPublic =>
+      'ٹیمپلیٹ اب عام ہے (دوسروں کے لیے صرف پڑھنے کے لیے)۔';
 
   @override
   String tplConfirmCloudDelete(Object title) {
@@ -1259,7 +1297,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tplNoDate => 'تاریخ نہیں';
 
   @override
-  String get amSubtitle => 'اپنا لوگو، مہر اور دستخط ایک بار اپلوڈ کریں، پھر کسی بھی ٹیمپلیٹ میں درج کریں — آپ کے آلے پر محفوظ اور آف لائن دوبارہ استعمال ہوتے ہیں۔';
+  String get amSubtitle =>
+      'اپنا لوگو، مہر اور دستخط ایک بار اپلوڈ کریں، پھر کسی بھی ٹیمپلیٹ میں درج کریں — آپ کے آلے پر محفوظ اور آف لائن دوبارہ استعمال ہوتے ہیں۔';
 
   @override
   String get amSearchHint => 'اثاثوں میں تلاش کریں…';
@@ -1277,7 +1316,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get amEmptyTitle => 'ابھی کوئی اثاثہ نہیں';
 
   @override
-  String get amEmptyMessage => 'اپنے ادارے کا لوگو، دستخط یا مہر اپلوڈ کریں، پھر تصویر کی خصوصیات کی پٹی سے کسی بھی ٹیمپلیٹ میں درج کریں۔';
+  String get amEmptyMessage =>
+      'اپنے ادارے کا لوگو، دستخط یا مہر اپلوڈ کریں، پھر تصویر کی خصوصیات کی پٹی سے کسی بھی ٹیمپلیٹ میں درج کریں۔';
 
   @override
   String get amNoResultsMessage => 'دوسرا نام آزمائیں یا فلٹر ری سیٹ کریں۔';
@@ -1450,7 +1490,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tevSaveUnavailable => 'محفوظ کرنا دستیاب نہیں';
 
   @override
-  String get tevSaveNeedsSupabase => 'محفوظ کرنے کے لیے Supabase پروجیکٹ سے رابطہ درکار ہے۔ ٹیمپلیٹس محفوظ کرنے کے لیے ایپ کو اپنی کلیدوں (env.json) کے ساتھ چلائیں۔';
+  String get tevSaveNeedsSupabase =>
+      'محفوظ کرنے کے لیے Supabase پروجیکٹ سے رابطہ درکار ہے۔ ٹیمپلیٹس محفوظ کرنے کے لیے ایپ کو اپنی کلیدوں (env.json) کے ساتھ چلائیں۔';
 
   @override
   String tevMissingAssets(Object list) {
@@ -1458,7 +1499,8 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get tevTemplateLibraryNeedsSupabase => 'ٹیمپلیٹ کتب خانہ Supabase پروجیکٹ سے رابطہ درکار کرتا ہے۔';
+  String get tevTemplateLibraryNeedsSupabase =>
+      'ٹیمپلیٹ کتب خانہ Supabase پروجیکٹ سے رابطہ درکار کرتا ہے۔';
 
   @override
   String tevOpenedTemplate(Object title) {
@@ -1475,7 +1517,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tevSavedTemplates => 'میرے محفوظ شدہ ٹیمپلیٹس';
 
   @override
-  String get tevNoSavedTemplates => 'ابھی کوئی محفوظ ٹیمپلیٹ نہیں۔ «ٹیمپلیٹ محفوظ کریں» بٹن سے ایک محفوظ کریں۔';
+  String get tevNoSavedTemplates =>
+      'ابھی کوئی محفوظ ٹیمپلیٹ نہیں۔ «ٹیمپلیٹ محفوظ کریں» بٹن سے ایک محفوظ کریں۔';
 
   @override
   String get ecIncrease => 'بڑھائیں';
@@ -1513,7 +1556,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cfpManageTooltip => 'اپلوڈ شدہ فونٹس کا انتظام';
 
   @override
-  String get cfpNotice => 'اپلوڈ شدہ فونٹس صرف آپ کے آلے پر محفوظ ہوتے ہیں اور یہاں اور پرنٹ میں فوراً استعمال ہوتے ہیں — بغیر انٹرنیٹ۔';
+  String get cfpNotice =>
+      'اپلوڈ شدہ فونٹس صرف آپ کے آلے پر محفوظ ہوتے ہیں اور یہاں اور پرنٹ میں فوراً استعمال ہوتے ہیں — بغیر انٹرنیٹ۔';
 
   @override
   String get cfpMyFonts => 'میرے حسب ضرورت فونٹس';
@@ -1564,7 +1608,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cfpLibraryTitle => 'میرے حسب ضرورت فونٹس کا کتب خانہ';
 
   @override
-  String get cfpLibraryNotice => 'تمام فونٹس صرف آپ کے آلے پر محفوظ ہیں۔ انتباہ: کسی ٹیمپلیٹ کا استعمال کرنے والا فونٹ حذف کرنا اُس ٹیمپلیٹ کو ناکامی کے بجائے بلٹ اِن فونٹ پر واپس لے جاتا ہے۔';
+  String get cfpLibraryNotice =>
+      'تمام فونٹس صرف آپ کے آلے پر محفوظ ہیں۔ انتباہ: کسی ٹیمپلیٹ کا استعمال کرنے والا فونٹ حذف کرنا اُس ٹیمپلیٹ کو ناکامی کے بجائے بلٹ اِن فونٹ پر واپس لے جاتا ہے۔';
 
   @override
   String get cfpEmpty => 'ابھی کوئی اپلوڈ شدہ فونٹ نہیں۔';
@@ -1579,7 +1624,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cfpUploadNew => 'نیا فونٹ اپلوڈ کریں';
 
   @override
-  String get ptpPrepError => 'پیش نظارہ تیار نہیں ہو سکا۔ ٹیمپلیٹ فائل چیک کریں۔';
+  String get ptpPrepError =>
+      'پیش نظارہ تیار نہیں ہو سکا۔ ٹیمپلیٹ فائل چیک کریں۔';
 
   @override
   String ptpElapsedSize(Object ms, Object kb) {
@@ -1596,7 +1642,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get ptpPreparingTitle => 'انجن تیار ہو رہا ہے…';
 
   @override
-  String get ptpPreparingMessage => 'بنڈل شدہ فونٹس لوڈ ہو رہے ہیں اور فائل کا پہلا ورژن بنایا جا رہا ہے۔';
+  String get ptpPreparingMessage =>
+      'بنڈل شدہ فونٹس لوڈ ہو رہے ہیں اور فائل کا پہلا ورژن بنایا جا رہا ہے۔';
 
   @override
   String get ptpShowFailedTitle => 'پیش نظارہ دکھایا نہیں جا سکا';
@@ -1619,7 +1666,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpTitle => 'Excel سے اجتماعی پیداوار';
 
   @override
-  String get bpSubtitle => 'ایک .xlsx یا .csv فائل درآمد کریں، اس کے کالموں کو ٹیمپلیٹ خانوں سے منسلک کریں، پھر ہر ریکارڈ کے لیے ایک صفحے والا PDF بنائیں — سب آپ کے آلے پر، آف لائن۔';
+  String get bpSubtitle =>
+      'ایک .xlsx یا .csv فائل درآمد کریں، اس کے کالموں کو ٹیمپلیٹ خانوں سے منسلک کریں، پھر ہر ریکارڈ کے لیے ایک صفحے والا PDF بنائیں — سب آپ کے آلے پر، آف لائن۔';
 
   @override
   String get bpStepTemplate => '1) ٹیمپلیٹ';
@@ -1636,7 +1684,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpLoadingTemplates => 'آپ کے ٹیمپلیٹس لوڈ ہو رہے ہیں…';
 
   @override
-  String get bpNoTemplates => 'ابھی کوئی محفوظ ٹیمپلیٹ نہیں — ایڈیٹر میں بنائیں یا ٹیمپلیٹ کتب خانے سے درآمد کریں۔';
+  String get bpNoTemplates =>
+      'ابھی کوئی محفوظ ٹیمپلیٹ نہیں — ایڈیٹر میں بنائیں یا ٹیمپلیٹ کتب خانے سے درآمد کریں۔';
 
   @override
   String get bpTemplateFromMine => 'میرے ٹیمپلیٹس سے ٹیمپلیٹ';
@@ -1731,13 +1780,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpMapFieldTitle => 'اس عنصر کو متحرک خانہ تفویض کریں';
 
   @override
-  String get bpMapFieldBody => 'صرف اس عنصر کا متن ایک خانے سے بدلے گا؛ کوئی اور عنصر متاثر نہیں ہوگا۔';
+  String get bpMapFieldBody =>
+      'صرف اس عنصر کا متن ایک خانے سے بدلے گا؛ کوئی اور عنصر متاثر نہیں ہوگا۔';
 
   @override
   String get bpUndoConvert => 'تبدیلی واپس کر دی گئی۔';
 
   @override
-  String get bpUndoConvertSaved => 'تبدیلی واپس کر دی گئی اور متن ٹیمپلیٹ میں بحال ہو گیا۔';
+  String get bpUndoConvertSaved =>
+      'تبدیلی واپس کر دی گئی اور متن ٹیمپلیٹ میں بحال ہو گیا۔';
 
   @override
   String bpRestoreError(Object error) {
@@ -1761,7 +1812,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpStepMapping => '3) کالموں کو خانوں سے منسلک کریں';
 
   @override
-  String get bpChooseFileFirst => 'نقشہ جدول دکھانے کے لیے پہلے فائل منتخب کریں۔';
+  String get bpChooseFileFirst =>
+      'نقشہ جدول دکھانے کے لیے پہلے فائل منتخب کریں۔';
 
   @override
   String get bpNoDynamicFields => 'موجودہ ٹیمپلیٹ میں کوئی متحرک خانہ نہیں۔';
@@ -1772,10 +1824,12 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get bpAutoMapHint => 'فائل منتخب کرنے کے بعد ذہین خودکار نقشہ تجویز ہوگا؛ آپ ہر کالم میں ترمیم کر سکتے ہیں۔';
+  String get bpAutoMapHint =>
+      'فائل منتخب کرنے کے بعد ذہین خودکار نقشہ تجویز ہوگا؛ آپ ہر کالم میں ترمیم کر سکتے ہیں۔';
 
   @override
-  String get bpNoFieldsHelp => 'منتخب ٹیمپلیٹ میں کوئی متحرک خانہ نہیں، اس لیے فائل کالموں سے منسلک کرنے کو کچھ نہیں۔ ٹیمپلیٹ ایڈیٹر میں کھولیں، نام کی جگہ میں «متحرک خانہ» درج کریں، محفوظ کریں، پھر دوبارہ کوشش کریں۔';
+  String get bpNoFieldsHelp =>
+      'منتخب ٹیمپلیٹ میں کوئی متحرک خانہ نہیں، اس لیے فائل کالموں سے منسلک کرنے کو کچھ نہیں۔ ٹیمپلیٹ ایڈیٹر میں کھولیں، نام کی جگہ میں «متحرک خانہ» درج کریں، محفوظ کریں، پھر دوبارہ کوشش کریں۔';
 
   @override
   String get bpAutoMap => 'خودکار نقشہ';
@@ -1784,7 +1838,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpClearMapping => 'نقشہ صاف کریں';
 
   @override
-  String get bpNameFieldWarning => 'اس ٹیمپلیٹ میں متحرک نام کا خانہ نہیں — نام کے کالم کو تاریخ یا حوالہ خانے سے نہ منسلک کریں، ورنہ نام غلط جگہ چھپ سکتا ہے۔ کالم فہرست سے نام کی کلید منتخب کریں، یا ایڈیٹر میں مستقل نام کے متن کو متحرک خانے میں بدلیں۔';
+  String get bpNameFieldWarning =>
+      'اس ٹیمپلیٹ میں متحرک نام کا خانہ نہیں — نام کے کالم کو تاریخ یا حوالہ خانے سے نہ منسلک کریں، ورنہ نام غلط جگہ چھپ سکتا ہے۔ کالم فہرست سے نام کی کلید منتخب کریں، یا ایڈیٹر میں مستقل نام کے متن کو متحرک خانے میں بدلیں۔';
 
   @override
   String bpStaticNameHints(Object preview) {
@@ -1830,16 +1885,20 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get bpGenerateHint => 'ایک PDF فائل، ہر بنائے گئے ریکارڈ کے لیے ایک صفحہ۔';
+  String get bpGenerateHint =>
+      'ایک PDF فائل، ہر بنائے گئے ریکارڈ کے لیے ایک صفحہ۔';
 
   @override
-  String get bpGeneratePickFile => 'پیداوار فعال کرنے کے لیے پہلے ڈیٹا فائل منتخب کریں۔';
+  String get bpGeneratePickFile =>
+      'پیداوار فعال کرنے کے لیے پہلے ڈیٹا فائل منتخب کریں۔';
 
   @override
-  String get bpMappingInvalid => 'نقشہ غلط ہے — ایک ہی خانہ دو کالموں سے منسلک ہے۔';
+  String get bpMappingInvalid =>
+      'نقشہ غلط ہے — ایک ہی خانہ دو کالموں سے منسلک ہے۔';
 
   @override
-  String get bpMapAtLeastOne => 'پیداوار فعال کرنے کے لیے کم از کم ایک کالم ٹیمپلیٹ خانے سے منسلک کریں۔';
+  String get bpMapAtLeastOne =>
+      'پیداوار فعال کرنے کے لیے کم از کم ایک کالم ٹیمپلیٹ خانے سے منسلک کریں۔';
 
   @override
   String get bpGenerateCertificates => 'سرٹیفکیٹس بنائیں';
@@ -1889,13 +1948,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpPreviewHere => 'پیش نظارہ یہاں ظاہر ہوتا ہے';
 
   @override
-  String get bpPreviewHint => 'ڈیٹا فائل منتخب کریں، نقشہ درست کریں، پھر «سرٹیفکیٹس بنائیں» دبائیں — بنائی گئی فائل کا پہلا صفحہ یہاں نظر آئے گا۔';
+  String get bpPreviewHint =>
+      'ڈیٹا فائل منتخب کریں، نقشہ درست کریں، پھر «سرٹیفکیٹس بنائیں» دبائیں — بنائی گئی فائل کا پہلا صفحہ یہاں نظر آئے گا۔';
 
   @override
   String get bpAssignByTapTitle => 'خانوں کو ٹیپ کر کے تفویض کریں';
 
   @override
-  String get bpAssignByTapBody => 'ٹیمپلیٹ میں کسی بھی متن کو ٹیپ کریں تاکہ خود اسے متحرک خانے سے منسلک کریں۔ کوئی اور عنصر متاثر نہیں — نہ تاریخ، نہ منیجر کا نام، نہ کوئی مستقل متن۔';
+  String get bpAssignByTapBody =>
+      'ٹیمپلیٹ میں کسی بھی متن کو ٹیپ کریں تاکہ خود اسے متحرک خانے سے منسلک کریں۔ کوئی اور عنصر متاثر نہیں — نہ تاریخ، نہ منیجر کا نام، نہ کوئی مستقل متن۔';
 
   @override
   String get bpNoTexts => 'اس ٹیمپلیٹ میں کوئی متن نہیں۔';
@@ -1934,7 +1995,8 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get bpChooseTemplateFirst => 'پیداوار سے پہلے ٹیمپلیٹ (سرٹیفکیٹ یا معاہدہ) منتخب کریں۔';
+  String get bpChooseTemplateFirst =>
+      'پیداوار سے پہلے ٹیمپلیٹ (سرٹیفکیٹ یا معاہدہ) منتخب کریں۔';
 
   @override
   String bpBatchTitle(Object kind) {
@@ -1947,10 +2009,12 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get bpWarnNoDynamicFields => 'اس ٹیمپلیٹ میں متحرک خانہ نہیں — ریکارڈز کے درمیان ڈیٹا تبدیل نہیں ہوگا۔ ایڈیٹر پٹی سے «ٹرینی نام» کا خانہ شامل کریں، پھر ٹیمپلیٹ محفوظ کریں۔';
+  String get bpWarnNoDynamicFields =>
+      'اس ٹیمپلیٹ میں متحرک خانہ نہیں — ریکارڈز کے درمیان ڈیٹا تبدیل نہیں ہوگا۔ ایڈیٹر پٹی سے «ٹرینی نام» کا خانہ شامل کریں، پھر ٹیمپلیٹ محفوظ کریں۔';
 
   @override
-  String get bpWarnNoNameField => 'اس ٹیمپلیٹ میں متحرک نام کا خانہ نہیں — نام کا کالم تاریخ یا حوالہ خانے سے منسلک ہو کر نام غلط جگہ چھپ سکتا ہے۔ مستقل نام کے متن کو خانے میں بدلیں یا ٹیمپلیٹ دوبارہ ڈیزائن کریں۔';
+  String get bpWarnNoNameField =>
+      'اس ٹیمپلیٹ میں متحرک نام کا خانہ نہیں — نام کا کالم تاریخ یا حوالہ خانے سے منسلک ہو کر نام غلط جگہ چھپ سکتا ہے۔ مستقل نام کے متن کو خانے میں بدلیں یا ٹیمپلیٹ دوبارہ ڈیزائن کریں۔';
 
   @override
   String bpAssignedTemp(Object token) {
@@ -2097,7 +2161,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorBooleanExclude => 'استثناء';
 
   @override
-  String get editorBooleanHint => 'ملحق شدہ راستہ ایک ہی بولین نتیجہ ہے (اندرونی حدود کے بغیر) اور کسی بھی وقت الگ کیا جا سکتا ہے۔';
+  String get editorBooleanHint =>
+      'ملحق شدہ راستہ ایک ہی بولین نتیجہ ہے (اندرونی حدود کے بغیر) اور کسی بھی وقت الگ کیا جا سکتا ہے۔';
 
   @override
   String get editorDockTools => 'ٹول پینل';
@@ -2178,13 +2243,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get editorGenderSnippet => 'مشروط جملہ شامل کریں';
 
   @override
-  String get editorGenderSnippetHint => 'ایک جملہ شامل کرتا ہے جو وصول کنندہ کی جنس کے مطابق خود بدلتا ہے۔';
+  String get editorGenderSnippetHint =>
+      'ایک جملہ شامل کرتا ہے جو وصول کنندہ کی جنس کے مطابق خود بدلتا ہے۔';
 
   @override
   String get bpGenderReviewTitle => 'جنس کا جائزہ (مذکر/مؤنث)';
 
   @override
-  String get bpGenderReviewSubtitle => 'جنس نام یا ”جنس“ کالم سے معلوم ہوتی ہے — چھاپنے سے پہلے غیر معمولی کیس درست کریں۔';
+  String get bpGenderReviewSubtitle =>
+      'جنس نام یا ”جنس“ کالم سے معلوم ہوتی ہے — چھاپنے سے پہلے غیر معمولی کیس درست کریں۔';
 
   @override
   String get bpGenderRow => 'قطار';
@@ -2217,7 +2284,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get bpOutputTitle => 'سرٹیفکیٹ محفوظ کرنے کی جگہ';
 
   @override
-  String get bpOutputHint => 'تیار کردہ PDF محفوظ کرنے کے لیے فولڈر منتخب کریں، یا طے شدہ مقام سے شروع کریں۔';
+  String get bpOutputHint =>
+      'تیار کردہ PDF محفوظ کرنے کے لیے فولڈر منتخب کریں، یا طے شدہ مقام سے شروع کریں۔';
 
   @override
   String get bpOutputPickFolder => 'فولڈر منتخب کریں…';
@@ -2262,7 +2330,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hubTitle => 'نیا پروجیکٹ';
 
   @override
-  String get hubSubtitle => 'تیار سائز منتخب کریں یا اپنا مقرر کریں — کینوس بالکل درست سائز اور تناسب کے ساتھ کھلے گا۔';
+  String get hubSubtitle =>
+      'تیار سائز منتخب کریں یا اپنا مقرر کریں — کینوس بالکل درست سائز اور تناسب کے ساتھ کھلے گا۔';
 
   @override
   String get hubKindSingle => 'ایک ورق کی مطبوعات اور دستاویزات';
@@ -2271,10 +2340,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hubKindMulti => 'کثیر الصفحات کتابیں اور مطبوعات';
 
   @override
-  String get hubKindSingleHint => 'ایک ورق: سرٹیفکیٹ، معاہدے، کارڈ، نشست نمبر، مبارکبادی کارڈ۔';
+  String get hubKindSingleHint =>
+      'ایک ورق: سرٹیفکیٹ، معاہدے، کارڈ، نشست نمبر، مبارکبادی کارڈ۔';
 
   @override
-  String get hubKindMultiHint => 'کثیر الصفحات: کتاب، رسالہ، کتابچہ، رپورٹ، کیٹلاگ۔';
+  String get hubKindMultiHint =>
+      'کثیر الصفحات: کتاب، رسالہ، کتابچہ، رپورٹ، کیٹلاگ۔';
 
   @override
   String get hubGroupCertificates => 'سرٹیفکیٹ اور معاہدے';
@@ -2301,7 +2372,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hubCreate => 'بنائیں';
 
   @override
-  String get hubCustomCardBody => 'اپنے پیمانے کسی بھی اکائی میں درج کریں اور اپنے سائز کے کینوس سے آغاز کریں۔';
+  String get hubCustomCardBody =>
+      'اپنے پیمانے کسی بھی اکائی میں درج کریں اور اپنے سائز کے کینوس سے آغاز کریں۔';
 
   @override
   String get hubCustomName => 'پروجیکٹ کا نام';
@@ -2331,13 +2403,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get destNewProject => 'نیا پروجیکٹ';
 
   @override
-  String get destNewProjectDesc => 'تیار یا اپنی مرضی کا سائز منتخب کریں اور فوراً ڈیزائن شروع کریں۔';
+  String get destNewProjectDesc =>
+      'تیار یا اپنی مرضی کا سائز منتخب کریں اور فوراً ڈیزائن شروع کریں۔';
 
   @override
   String get ptpImpositionToggle => 'پرنٹ ترتیب';
 
   @override
-  String get ptpImpositionNoFit => 'ورق اس آئٹم کے لیے بہت چھوٹا ہے — حاشیے کم کریں یا بڑا ورق منتخب کریں۔';
+  String get ptpImpositionNoFit =>
+      'ورق اس آئٹم کے لیے بہت چھوٹا ہے — حاشیے کم کریں یا بڑا ورق منتخب کریں۔';
 
   @override
   String get editorEffectsTitle => 'اثرات اور رنگ کی ایڈجسٹمنٹ';
@@ -2394,7 +2468,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hubDetailsTitle => 'سائز کی تفصیلات';
 
   @override
-  String get hubDetailsHint => 'پیش فرض تفصیلات بھری ہوئی — گرڈ سے سائز چنیں یا پیمائش تبدیل کریں۔';
+  String get hubDetailsHint =>
+      'پیش فرض تفصیلات بھری ہوئی — گرڈ سے سائز چنیں یا پیمائش تبدیل کریں۔';
 
   @override
   String get hubFilterAll => 'سب';
@@ -2409,7 +2484,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hubFilterGreeting => 'مبارکبادیں اور اسکرینیں';
 
   @override
-  String get hubRecentEmpty => 'ابھی کوئی حالیہ سائز نہیں — آپ کا بنایا ہوا کوئی بھی پروجیکٹ یہاں آئے گا۔';
+  String get hubRecentEmpty =>
+      'ابھی کوئی حالیہ سائز نہیں — آپ کا بنایا ہوا کوئی بھی پروجیکٹ یہاں آئے گا۔';
 
   @override
   String get hubDocTitle => 'پروجیکٹ کا نام';
@@ -2526,13 +2602,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashLocalMode => 'مقامی';
 
   @override
-  String get dashLocalStorage => 'اس ڈیوائس پر مقامی طور پر محفوظ — کوئی پروجیکٹ سرور پر اپلوڈ نہیں ہوتا۔';
+  String get dashLocalStorage =>
+      'اس ڈیوائس پر مقامی طور پر محفوظ — کوئی پروجیکٹ سرور پر اپلوڈ نہیں ہوتا۔';
 
   @override
   String get dashRecentProjects => 'حالیہ پروجیکٹس';
 
   @override
-  String get dashRecentEmpty => 'اس ڈیوائس پر ابھی کوئی محفوظ پروجیکٹ نہیں — نیا دستاویز بنائیں، یہاں فوراً نظر آئے گا۔';
+  String get dashRecentEmpty =>
+      'اس ڈیوائس پر ابھی کوئی محفوظ پروجیکٹ نہیں — نیا دستاویز بنائیں، یہاں فوراً نظر آئے گا۔';
 
   @override
   String get dashRecentOpen => 'پروجیکٹ کھولیں';
@@ -2583,7 +2661,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get joodRecoveryTitle => 'غیر محفوظ مسودہ';
 
   @override
-  String get joodRecoveryMessage => 'پچھلی نشست سے ایک غیر محفوظ مسودہ موجود ہے۔ کیا آپ اسے بحال کرنا چاہتے ہیں؟';
+  String get joodRecoveryMessage =>
+      'پچھلی نشست سے ایک غیر محفوظ مسودہ موجود ہے۔ کیا آپ اسے بحال کرنا چاہتے ہیں؟';
 
   @override
   String get joodRecoveryRestore => 'بحال کریں';
@@ -2646,10 +2725,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admSwitchTitle => 'تیز اکاؤنٹ تبدیلی';
 
   @override
-  String get admSwitchPrompt => 'اس ڈیوائس پر کسی ذیلی ایڈمن کا مقامی صارف نام منتخب کریں اور اس کا مقامی پاس ورڈ درج کریں تاکہ فوراً اس کے سیشن میں جا سکیں — کھلے پروجیکٹ ڈرافٹ پہلے محفوظ ہو جاتے ہیں اور ماسٹر لائسنس متاثر نہیں ہوتا۔';
+  String get admSwitchPrompt =>
+      'اس ڈیوائس پر کسی ذیلی ایڈمن کا مقامی صارف نام منتخب کریں اور اس کا مقامی پاس ورڈ درج کریں تاکہ فوراً اس کے سیشن میں جا سکیں — کھلے پروجیکٹ ڈرافٹ پہلے محفوظ ہو جاتے ہیں اور ماسٹر لائسنس متاثر نہیں ہوتا۔';
 
   @override
-  String get admSwitchNoOthers => 'اس ڈیوائس پر کوئی دوسرا ذیلی ایڈمن نہیں۔ پہلے ایڈمن اسکرین سے نیا ایڈمن شامل کریں۔';
+  String get admSwitchNoOthers =>
+      'اس ڈیوائس پر کوئی دوسرا ذیلی ایڈمن نہیں۔ پہلے ایڈمن اسکرین سے نیا ایڈمن شامل کریں۔';
 
   @override
   String get admSwitchPick => 'مقامی صارف نام';
@@ -2658,7 +2739,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admSwitchPassword => 'منتخب اکاؤنٹ کا مقامی پاس ورڈ';
 
   @override
-  String get admSwitchPickPassword => 'صارف نام منتخب کریں اور پاس ورڈ درج کریں۔';
+  String get admSwitchPickPassword =>
+      'صارف نام منتخب کریں اور پاس ورڈ درج کریں۔';
 
   @override
   String get admSwitchWrongPassword => 'پاس ورڈ غلط ہے۔';
@@ -2694,7 +2776,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get destJoodWriter => 'جود رائٹر';
 
   @override
-  String get destJoodWriterDesc => 'خودکار صفحہ بندی کے ساتھ متن دستاویزات اور رپورٹس۔';
+  String get destJoodWriterDesc =>
+      'خودکار صفحہ بندی کے ساتھ متن دستاویزات اور رپورٹس۔';
 
   @override
   String get admCreatedAt => 'بنایا گیا';
@@ -2741,13 +2824,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admTransferInfoTitle => 'منتقلی کیسے کام کرتی ہے؟';
 
   @override
-  String get admTransferInfo1 => 'اکاؤنٹ کا جدول (پاس ورڈ ہیش کے ساتھ، کبھی پاس ورڈ کے ساتھ نہیں) آپ کی منتخب کردہ پاس فریز سے خفیہ کردہ فائل کے اندر برآمد کیا جاتا ہے۔';
+  String get admTransferInfo1 =>
+      'اکاؤنٹ کا جدول (پاس ورڈ ہیش کے ساتھ، کبھی پاس ورڈ کے ساتھ نہیں) آپ کی منتخب کردہ پاس فریز سے خفیہ کردہ فائل کے اندر برآمد کیا جاتا ہے۔';
 
   @override
-  String get admTransferInfo2 => 'فائل یا کوڈ دوسرے آلے پر منتقل کریں اور وہاں اسی پاس فریز کے ساتھ درآمد کریں، اور اکاؤنٹس وہی اجازتوں کے ساتھ کام کریں گے۔';
+  String get admTransferInfo2 =>
+      'فائل یا کوڈ دوسرے آلے پر منتقل کریں اور وہاں اسی پاس فریز کے ساتھ درآمد کریں، اور اکاؤنٹس وہی اجازتوں کے ساتھ کام کریں گے۔';
 
   @override
-  String get admTransferInfo3 => 'کسی سرور کو کچھ نہیں بھیجا جاتا: منتقلی مقامی آلات کے درمیان مکمل طور پر دستی ہے۔';
+  String get admTransferInfo3 =>
+      'کسی سرور کو کچھ نہیں بھیجا جاتا: منتقلی مقامی آلات کے درمیان مکمل طور پر دستی ہے۔';
 
   @override
   String get admExport => 'اکاؤنٹس برآمد کریں';
@@ -2759,7 +2845,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admPassphraseConfirm => 'پاس فریز کی تصدیق کریں';
 
   @override
-  String get admExportRisk => 'میں سمجھتا ہوں کہ اس کوڈ اور اس کے پاس فریز کے حامل کوئی بھی شخص ان اکاؤنٹس سے سائن ان کر سکتا ہے، اس لیے میں اسے احتیاط سے شیئر کروں گا۔';
+  String get admExportRisk =>
+      'میں سمجھتا ہوں کہ اس کوڈ اور اس کے پاس فریز کے حامل کوئی بھی شخص ان اکاؤنٹس سے سائن ان کر سکتا ہے، اس لیے میں اسے احتیاط سے شیئر کروں گا۔';
 
   @override
   String get admExportGenerate => 'خفیہ کوڈ بنائیں';
@@ -2768,19 +2855,22 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admExportFile => 'مخصوص فائل میں محفوظ کریں';
 
   @override
-  String get admExportDone => 'خفیہ کوڈ بن گیا۔ اسے کاپی کریں یا فائل میں محفوظ کریں۔';
+  String get admExportDone =>
+      'خفیہ کوڈ بن گیا۔ اسے کاپی کریں یا فائل میں محفوظ کریں۔';
 
   @override
   String get admExportFileSaved => 'اکاؤنٹس کی خفیہ فائل محفوظ ہو گئی۔';
 
   @override
-  String get admPassphraseTooShort => 'پاس فریز کے لیے کم از کم 6 حروف استعمال کریں۔';
+  String get admPassphraseTooShort =>
+      'پاس فریز کے لیے کم از کم 6 حروف استعمال کریں۔';
 
   @override
   String get admPassphraseMismatch => 'پاس فریز مماثل نہیں ہیں۔';
 
   @override
-  String get admAcceptRiskRequired => 'پہلے تصدیق کریں کہ آپ کوڈ شیئر کرنے کے خطرے کو سمجھتے ہیں۔';
+  String get admAcceptRiskRequired =>
+      'پہلے تصدیق کریں کہ آپ کوڈ شیئر کرنے کے خطرے کو سمجھتے ہیں۔';
 
   @override
   String admFileError(Object error) {
@@ -2823,7 +2913,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admAuditClear => 'لاگ صاف کریں';
 
   @override
-  String get admAuditEmpty => 'ابھی کوئی برآمد نہیں۔ آپ جو بھی سرٹیفکیٹ یا معاہدہ برآمد کریں گے وہ اس کی تاریخ اور جاری کرنے والے منتظم کے ساتھ یہاں درج ہوگا۔';
+  String get admAuditEmpty =>
+      'ابھی کوئی برآمد نہیں۔ آپ جو بھی سرٹیفکیٹ یا معاہدہ برآمد کریں گے وہ اس کی تاریخ اور جاری کرنے والے منتظم کے ساتھ یہاں درج ہوگا۔';
 
   @override
   String get admAuditBy => 'از';
@@ -2832,7 +2923,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admAuditPages => 'صفحات';
 
   @override
-  String get admAuditClearConfirm => 'پورا برآمد لاگ اس آلے سے حذف کر دیا جائے گا۔ اسے واپس نہیں کیا جا سکتا۔';
+  String get admAuditClearConfirm =>
+      'پورا برآمد لاگ اس آلے سے حذف کر دیا جائے گا۔ اسے واپس نہیں کیا جا سکتا۔';
 
   @override
   String get admAuditCleared => 'لاگ صاف ہو گیا۔';
@@ -2841,7 +2933,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get admUnavailableTitle => 'انتظام فی الحال دستیاب نہیں';
 
   @override
-  String get admUnavailableBody => 'منتظم کا انتظام اس وقت کام کرتا ہے جب ایپ مقامی اکاؤنٹ (LocalAuthRepository) کے ساتھ چلتی ہے، تاکہ اکاؤنٹس اس آلے سے پڑھے جائیں۔';
+  String get admUnavailableBody =>
+      'منتظم کا انتظام اس وقت کام کرتا ہے جب ایپ مقامی اکاؤنٹ (LocalAuthRepository) کے ساتھ چلتی ہے، تاکہ اکاؤنٹس اس آلے سے پڑھے جائیں۔';
 
   @override
   String get pdfExportTypeTitle => 'ایکسپورٹ کی قسم';
@@ -3006,19 +3099,22 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tplCertClassicTitle => 'کلاسیکی نیلی سرۃ';
 
   @override
-  String get tplCertClassicDesc => 'دوہرے سنہری فریم اور مزین کارنر ستاروں کے ساتھ کلاسیکی نیلی سرۃ۔';
+  String get tplCertClassicDesc =>
+      'دوہرے سنہری فریم اور مزین کارنر ستاروں کے ساتھ کلاسیکی نیلی سرۃ۔';
 
   @override
   String get tplCertMinimalTitle => 'کم از کم نیلی سرۃ';
 
   @override
-  String get tplCertMinimalDesc => 'ایک سنہری لائن اور وسیع خالی جگہ کے ساتھ صاف ستھرای کم از کم نیلی ڈیزائن۔';
+  String get tplCertMinimalDesc =>
+      'ایک سنہری لائن اور وسیع خالی جگہ کے ساتھ صاف ستھرای کم از کم نیلی ڈیزائن۔';
 
   @override
   String get tplCertIslamicTitle => 'اسلامی زینت سرۃ';
 
   @override
-  String get tplCertIslamicDesc => 'سنہری کناروں، اسلامی ہندسی زینت اور امیری خط کے ساتھ نیلی سرۃ۔';
+  String get tplCertIslamicDesc =>
+      'سنہری کناروں، اسلامی ہندسی زینت اور امیری خط کے ساتھ نیلی سرۃ۔';
 
   @override
   String get tplCertBandTitle => 'سنہری پٹیوں والی سرۃ';
@@ -3030,13 +3126,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tplCertDiagonalTitle => 'متحرک قطری سرۃ';
 
   @override
-  String get tplCertDiagonalDesc => 'ترچھی سنہری ہندسی شکلوں کے ساتھ حرکت کا احساس دینے والی نیلی سرۃ۔';
+  String get tplCertDiagonalDesc =>
+      'ترچھی سنہری ہندسی شکلوں کے ساتھ حرکت کا احساس دینے والی نیلی سرۃ۔';
 
   @override
   String get tplCertSquareTitle => 'خوشنما مربع سرۃ';
 
   @override
-  String get tplCertSquareDesc => 'ہم آہنگ مربع سنہری فریم اور اوپر دائرہ مہر کے ساتھ نیلی سرۃ۔';
+  String get tplCertSquareDesc =>
+      'ہم آہنگ مربع سنہری فریم اور اوپر دائرہ مہر کے ساتھ نیلی سرۃ۔';
 
   @override
   String get navInvitationsEngine => 'دعوت نامہ انجن';
@@ -3056,31 +3154,39 @@ class AppLocalizationsUr extends AppLocalizations {
   String get aboutSummaryTitle => 'تعارف';
 
   @override
-  String get aboutSummaryBody => 'جودکرافٹ ایک ڈیسک ٹاپ اور ویب ایپ ہے جو مکملاً آپ کے ڈیوائس پر چلتی ہے: ایکسل فائلیں پڑھتی ہے اور اندر شامل عربی فونٹس کے ساتھ سرٹیفیکیٹ اور معاہدے PDF بناتی ہے۔ تمام پروجیکٹس، ٹیمپلیٹس اور اثاثہ مقامی ڈیٹا بیس میں رہتے ہیں — کچھ بھی سرور پر اپ لوڈ نہیں ہوتا۔';
+  String get aboutSummaryBody =>
+      'جودکرافٹ ایک ڈیسک ٹاپ اور ویب ایپ ہے جو مکملاً آپ کے ڈیوائس پر چلتی ہے: ایکسل فائلیں پڑھتی ہے اور اندر شامل عربی فونٹس کے ساتھ سرٹیفیکیٹ اور معاہدے PDF بناتی ہے۔ تمام پروجیکٹس، ٹیمپلیٹس اور اثاثہ مقامی ڈیٹا بیس میں رہتے ہیں — کچھ بھی سرور پر اپ لوڈ نہیں ہوتا۔';
 
   @override
   String get aboutFeaturesTitle => 'اہم خصوصیات';
 
   @override
-  String get aboutFeatureOffline => 'مکمل آف لائن: انٹرنیٹ کی ضرورت نہیں، کوئی ڈیٹا اپ لوڈ نہیں';
+  String get aboutFeatureOffline =>
+      'مکمل آف لائن: انٹرنیٹ کی ضرورت نہیں، کوئی ڈیٹا اپ لوڈ نہیں';
 
   @override
-  String get aboutFeatureArabicFonts => 'عربی فونٹس شامل ہیں، محاذ آراء اور RTL درست';
+  String get aboutFeatureArabicFonts =>
+      'عربی فونٹس شامل ہیں، محاذ آراء اور RTL درست';
 
   @override
-  String get aboutFeatureExcel => 'ایکسل اور CSV پڑھتی ہے اور کالموں کو فیلڈز سے خودکار جوڑتی ہے';
+  String get aboutFeatureExcel =>
+      'ایکسل اور CSV پڑھتی ہے اور کالموں کو فیلڈز سے خودکار جوڑتی ہے';
 
   @override
-  String get aboutFeatureBatch => 'ایک ساتھ سینکڑوں سرٹیفیکیٹ — ایک مشترک فائل یا ہر شخص کے لیے الگ';
+  String get aboutFeatureBatch =>
+      'ایک ساتھ سینکڑوں سرٹیفیکیٹ — ایک مشترک فائل یا ہر شخص کے لیے الگ';
 
   @override
-  String get aboutFeatureVisualEditor => 'ڈریگ اینڈ ڈراپ مرئی ایڈیٹر، ملٹی سلیکشن، انڈو اور ری ڈو کے ساتھ';
+  String get aboutFeatureVisualEditor =>
+      'ڈریگ اینڈ ڈراپ مرئی ایڈیٹر، ملٹی سلیکشن، انڈو اور ری ڈو کے ساتھ';
 
   @override
-  String get aboutFeatureInvitations => 'رمضان، عید اور شادی کے لیے تیار دعوتیں — پرنٹ اور سوشل میڈیا سائز میں';
+  String get aboutFeatureInvitations =>
+      'رمضان، عید اور شادی کے لیے تیار دعوتیں — پرنٹ اور سوشل میڈیا سائز میں';
 
   @override
-  String get aboutFeatureExports => 'PDF، PNG اور شیئر کی جانے والی جود پروجیکٹس ایکسپورٹ';
+  String get aboutFeatureExports =>
+      'PDF، PNG اور شیئر کی جانے والی جود پروجیکٹس ایکسپورٹ';
 
   @override
   String get aboutDeveloperTitle => 'ڈیولپر';
@@ -3101,13 +3207,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get aboutFeedback => 'رائے بھیجیں';
 
   @override
-  String get aboutFeedbackCopied => 'ای میل کاپی ہو گئی — آپ کی رائے کا خیرمقدم ہے';
+  String get aboutFeedbackCopied =>
+      'ای میل کاپی ہو گئی — آپ کی رائے کا خیرمقدم ہے';
 
   @override
   String get aboutCreditsTitle => 'شکریہ';
 
   @override
-  String get aboutCreditsBody => 'یہ ایپ Flutter اور اوپن سورس لائبریریز سے بنائی گئی ہے — Flutter کمیونٹی اور ان لائبریریز کے تمام معاونین کا شکریہ۔';
+  String get aboutCreditsBody =>
+      'یہ ایپ Flutter اور اوپن سورس لائبریریز سے بنائی گئی ہے — Flutter کمیونٹی اور ان لائبریریز کے تمام معاونین کا شکریہ۔';
 
   @override
   String get jwPagesSettings => 'صفحہ کی ترتیبات';
@@ -3116,7 +3224,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get jwPagesMultiple => 'متعدد صفحات';
 
   @override
-  String get jwPagesMultipleHint => 'ایک شیٹ پر دو صفحات چھپنے کے لیے شیٹ کو نصف کریں';
+  String get jwPagesMultipleHint =>
+      'ایک شیٹ پر دو صفحات چھپنے کے لیے شیٹ کو نصف کریں';
 
   @override
   String get jwPagesSingle => 'عام (ایک صفحہ)';
@@ -3134,7 +3243,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get aboutLinksTitle => 'روابط';
 
   @override
-  String get aboutDescription => 'JoodCraft ایک مکمل عربی پلیٹ فارم ہے جو پیشہ ورانہ معیار کے ساتھ سرٹیفکیٹ، معاہدے اور دعوت نامے پیدا کرتی ہے۔ ایک ہی سانچا بصری طور پر ڈیزائن کریں، پھر اسے Excel فائل سے جوڑیں تاکہ درست Arabی خطوط اور درست سمت کے ساتھ سینکڑوں دستاویزات بنیں — انٹرنیٹ کے بغیر اور کسی سرور کے بغیر۔';
+  String get aboutDescription =>
+      'JoodCraft ایک مکمل عربی پلیٹ فارم ہے جو پیشہ ورانہ معیار کے ساتھ سرٹیفکیٹ، معاہدے اور دعوت نامے پیدا کرتی ہے۔ ایک ہی سانچا بصری طور پر ڈیزائن کریں، پھر اسے Excel فائل سے جوڑیں تاکہ درست Arabی خطوط اور درست سمت کے ساتھ سینکڑوں دستاویزات بنیں — انٹرنیٹ کے بغیر اور کسی سرور کے بغیر۔';
 
   @override
   String get aboutFeatures => 'خصوصیات';
@@ -3170,13 +3280,17 @@ class AppLocalizationsUr extends AppLocalizations {
   String get aboutCredits => 'شکریہ';
 
   @override
-  String get aboutCreditsText => 'JoodCraft کو Flutter اور Dart اور اوپن سورس لائبریریز کے ساتھ بنایا گیا ہے۔ ہر معاون کا شکریہ۔';
+  String get aboutCreditsText =>
+      'JoodCraft کو Flutter اور Dart اور اوپن سورس لائبریریز کے ساتھ بنایا گیا ہے۔ ہر معاون کا شکریہ۔';
 
   @override
   String get navInvitationTemplates => 'دعوت نامے کے ٹیمپلیٹس';
 
   @override
   String get ocrTitle => 'تصویر سے متن نکالیں';
+
+  @override
+  String get ocrShowRaw => 'اصل متن دیکھیں';
 
   @override
   String get ocrSubtitle => 'تصویر یا PDF درآمد کریں اور اس کا متن نکالیں';
@@ -3209,6 +3323,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get ocrAccept => 'قبول کریں';
 
   @override
+  String get ocrCleanupNote =>
+      'متن خودکار طور پر درست کیا گیا — محفوظ کرنے سے پہلے اسے دیکھیں۔';
+
+  @override
   String get ocrCancel => 'منسوخ';
 
   @override
@@ -3224,7 +3342,8 @@ class AppLocalizationsUr extends AppLocalizations {
   String get ocrLanguageBoth => 'عربی اور انگریزی';
 
   @override
-  String get ocrAccuracyNote => 'نکالنے کی درستگی 100% نہیں ہو سکتی — محفوظ کرنے سے پہلے متن کا جائزہ لیں۔';
+  String get ocrAccuracyNote =>
+      'نکالنے کی درستگی 100% نہیں ہو سکتی — محفوظ کرنے سے پہلے متن کا جائزہ لیں۔';
 
   @override
   String get ocrNoTextFound => 'تصویر میں کوئی متن نہیں ملا۔';
@@ -3236,10 +3355,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get ocrError => 'متن نکالنا ممکن نہیں ہو سکا۔ دوبارہ کوشش کریں۔';
 
   @override
-  String get ocrEngineMissing => 'Tesseract نہیں ملا — اسے تنصیب کریں پھر دوبارہ کوشش کریں۔';
+  String get ocrEngineMissing =>
+      'Tesseract نہیں ملا — اسے تنصیب کریں پھر دوبارہ کوشش کریں۔';
 
   @override
-  String get ocrLanguageDataMissing => 'زبان کا ڈیٹا Tesseract کے ساتھ تنصیب نہیں ہے۔';
+  String get ocrLanguageDataMissing =>
+      'زبان کا ڈیٹا Tesseract کے ساتھ تنصیب نہیں ہے۔';
 
   @override
   String get ocrNoImage => 'پہلے تصویر یا PDF درآمد کریں۔';

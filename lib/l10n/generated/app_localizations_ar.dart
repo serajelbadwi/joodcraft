@@ -3278,6 +3278,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get ocrTitle => 'استخراج نص من صورة';
 
   @override
+  String get ocrShowRaw => 'عرض النص الأصلي';
+
+  @override
   String get ocrSubtitle => 'استورد صورة أو PDF واستخرج النص منها';
 
   @override
@@ -3306,6 +3309,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ocrAccept => 'قبول';
+
+  @override
+  String get ocrCleanupNote => 'تم تصحيح النص تلقائياً — راجعه قبل الحفظ.';
 
   @override
   String get ocrCancel => 'إلغاء';

@@ -3299,6 +3299,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get ocrTitle => 'Görselden metin çıkar';
 
   @override
+  String get ocrShowRaw => 'Orijinal metni göster';
+
+  @override
   String get ocrSubtitle => 'Bir görsel veya PDF içe aktar ve metnini çıkar';
 
   @override
@@ -3327,6 +3330,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get ocrAccept => 'Kabul et';
+
+  @override
+  String get ocrCleanupNote =>
+      'Metin otomatik olarak düzeltildi — kaydetmeden önce gözden geçirin.';
 
   @override
   String get ocrCancel => 'İptal';

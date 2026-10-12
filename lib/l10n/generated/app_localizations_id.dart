@@ -3301,6 +3301,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get ocrTitle => 'Ekstrak teks dari gambar';
 
   @override
+  String get ocrShowRaw => 'Tampilkan teks asli';
+
+  @override
   String get ocrSubtitle => 'Impor gambar atau PDF dan ekstrak teksnya';
 
   @override
@@ -3329,6 +3332,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get ocrAccept => 'Terima';
+
+  @override
+  String get ocrCleanupNote =>
+      'Teks telah dibersihkan secara otomatis — tinjau sebelum menyimpan.';
 
   @override
   String get ocrCancel => 'Batal';
