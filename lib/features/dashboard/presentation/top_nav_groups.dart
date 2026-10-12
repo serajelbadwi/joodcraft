@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/router/app_routes.dart';
 import '../../../core/l10n/app_l10n.dart';
+import '../../farah/domain/farah_text.dart';
 
 /// بند داخل قائمة منسدلة من الشريط العلوي.
 class TopNavMenuEntry {
@@ -176,11 +177,11 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
           ),
         ],
       ),
-      // 6) تطبيق فرح — مباشر بلا قائمة (نصوصه عربية أحادية اللغة، فلا
+      // 6) تطبيق Jood Reach — مباشر بلا قائمة (نصوصه عربية أحادية اللغة، فلا
       // مفتاح ترجمة له؛ يُضاف هنا في النهاية كي لا يزحزح أي فهرس).
       TopNavGroup(
         id: 'farah',
-        label: 'تطبيق فرح',
+        label: FarahText.joodReachName,
         icon: Icons.celebration_rounded,
         path: AppRoutes.farah,
       ),
