@@ -818,7 +818,576 @@ grant execute on function public.admin_overview()    to authenticated;
 
 
 -- ============================================================================
--- 18) تحقّق سريع (اختياري — يُعرض في SQL Editor)
+-- 18) تطبيق «فرح» — تواصل أهل القرية (نفس المشروع ونفس الجداول)
+-- ----------------------------------------------------------------------------
+-- الفكرة: كل عضو في `members` يدخل برقم تليفونه **بلا OTP** (كما صُمِّمت صفحة
+-- القرية)، فيُستخرج على السيرفر اسمه الكامل ومعرّفه ومعرّف قريته، ثم يتراسل
+-- مع أهل قريته بهدوء.
+--
+-- قواعد الرسائل:
+--   * المدعو: 500 حرف في اليوم (مجموع ما يرسله) — ويعود الحدّ غداً.
+--   * صاحب الفرح: 100 حرف لكل مدعو (مجموع على المحادثة) بلا حدّ يومي؛ فإذا
+--     نفد الحدّ مع مدعو انتهى له وحده، فيرسّل لغيره بحدّه المستقل.
+--   * طول الرسالة الواحدة: 100 حرف (قيد على الجدول نفسه).
+--
+-- الأمان (مبدأ صفحة القرية نفسه):
+--   * RLS مُفعّلة على الجداول الثلاثة **بلا أي سياسة** — لا يستطيع أحد
+--     قراءتها أو كتابتها مباشرةً، وكل شيء يمرّ حصراً من دوال
+--     `security definer` هذه.
+--   * ولماذا لا سياسة مثل `farah_messages_select_own`؟ لأن هذا التدفّق **بلا
+--     جلسة تسجيل دخول** (`auth.uid()` يعود `null` دائماً)، وجدول `members`
+--     ليس فيه عمود `user_id` أصلاً — فالسياسة هناك لا تُترجم، ولو تُرجمت
+--     لأغلقت الباب على الجميع. الدالة وحدها تحدّد العضو من تليفونه ولا تعطيه
+--     إلا ما يخصّ قريته.
+--   * ملاحظة حذف: صفوف الرسائل والتراخيص والعدّاد تتحذّف تلقائياً مع العضو
+--     (`on delete cascade`)، فيبقى «حقّ الحذف» في صفحة القرية سليماً.
+-- ============================================================================
+
+-- جدول الرسائل — 100 حرف لكل رسالة كحدّ أقصى.
+create table if not exists public.farah_messages (
+  id uuid primary key default gen_random_uuid(),
+  village_id uuid not null references public.villages(id) on delete cascade,
+  sender_id uuid not null references public.members(id) on delete cascade,
+  receiver_id uuid not null references public.members(id) on delete cascade,
+  body text not null check (char_length(body) <= 100),
+  created_at timestamptz default now()
+);
+
+comment on table  public.farah_messages              is 'رسائل تطبيق «فرح» بين أهل القرية الواحدة (1 إلى 1)';
+comment on column public.farah_messages.village_id   is 'قريتها — كل محادثة محصورة في قريتها';
+comment on column public.farah_messages.sender_id    is 'المرسل — يتحذّف معه صفّه عند حذف العضو (حقّ الحذف)';
+comment on column public.farah_messages.receiver_id  is 'المدعو — يتحذّف معه صفّه عند حذف العضو (حقّ الحذف)';
+comment on column public.farah_messages.body         is 'نصّ الرسالة — 100 حرف كحدّ أقصى';
+
+create index if not exists farah_messages_sender_idx on public.farah_messages(sender_id);
+create index if not exists farah_messages_receiver_idx on public.farah_messages(receiver_id);
+-- مفتاح المحادثة: مرسل ← مدعو بترتيب زمني (لجلب آخر رسالة وسلسلة الرسائل).
+create index if not exists farah_messages_pair_idx
+  on public.farah_messages(sender_id, receiver_id, created_at desc);
+
+alter table public.farah_messages enable row level security;
+
+
+-- جدول التراخيص — كود يُوزَّع على صاحب الفرح، ويُفعَّل من داخل التطبيق.
+--   * `member_id` يبقى قابلاً للفراغ عمداً: الأكواد تُولَّد مسبقاً في SQL
+--     Editor ثم يُطالب بها صاحب الفرح فيفتح صلاحياته لنفسه.
+--   * `is_active` تبدأ `false` حتى التفعيل (وإلا كان الكود مفعّلاً قبل
+--     أن يدخله أحد).
+create table if not exists public.farah_licenses (
+  id uuid primary key default gen_random_uuid(),
+  village_id uuid not null references public.villages(id) on delete cascade,
+  member_id uuid references public.members(id) on delete cascade,
+  code text unique not null,
+  is_active boolean default false,
+  activated_at timestamptz default now(),
+  expires_at timestamptz,
+  created_at timestamptz default now()
+);
+
+comment on table  public.farah_licenses          is 'أكواد تفعيل «صاحب الفرح» — كل كود يمنح صاحله 100 حرف لكل مدعو';
+comment on column public.farah_licenses.member_id is 'صاحب الكود — يُملأ عند التفعيل داخل التطبيق';
+comment on column public.farah_licenses.code      is 'كود التفعيل كما يكتبه صاحب الفرح (حروف كبيرة بلا مسافات)';
+
+alter table public.farah_licenses enable row level security;
+
+
+-- جدول عدّاد الرسائل اليومي (لحدّ المدعو: 500 حرف/يوم).
+create table if not exists public.farah_daily_counts (
+  id uuid primary key default gen_random_uuid(),
+  member_id uuid not null references public.members(id) on delete cascade,
+  date date not null default current_date,
+  total_chars int default 0,
+  unique(member_id, date)
+);
+
+comment on table  public.farah_daily_counts            is 'عدّاد أحرف المدعو في كل يوم — أساس حدّ 500 حرف/اليوم';
+comment on column public.farah_daily_counts.total_chars is 'مجموع أحرف ما أرسله العضو في هذا اليوم';
+
+alter table public.farah_daily_counts enable row level security;
+
+
+-- هل يستطيع هذا العضو إرسال هذا العدد من الأحرف؟ (صاحب الفرح ← 100 لكل
+-- مدعو، والمدعو ← 500 في اليوم). تُستدعى من `farah_send` على السيرفر وحدها.
+create or replace function public.farah_can_send(
+  p_sender_id uuid,
+  p_receiver_id uuid,
+  p_chars int
+) returns boolean
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_daily_total int;
+  v_pair_total int;
+  v_is_bride_owner boolean;
+begin
+  -- هل صاحب الفرح؟
+  select exists(select 1 from public.farah_licenses
+    where member_id = p_sender_id and is_active = true) into v_is_bride_owner;
+
+  if v_is_bride_owner then
+    -- صاحب الفرح: 100 حرف لكل مدعو
+    select coalesce(sum(char_length(body)), 0) into v_pair_total
+    from public.farah_messages
+    where sender_id = p_sender_id and receiver_id = p_receiver_id;
+    return (v_pair_total + p_chars) <= 100;
+  else
+    -- المدعو: 500 حرف/يوم
+    select coalesce(total_chars, 0) into v_daily_total
+    from public.farah_daily_counts
+    where member_id = p_sender_id and date = current_date;
+    return (coalesce(v_daily_total, 0) + p_chars) <= 500;
+  end if;
+end;
+$$;
+
+comment on function public.farah_can_send(uuid, uuid, int) is
+  'هل يكفي حدّ هذا المرسِل؟ (صاحب الفرح 100 حرف/مدعو — المدعو 500 حرف/يوم)';
+
+
+-- 18.1 الدخول: تحويل تليفون العضو إلى هويّته الكاملة (بلا OTP).
+create or replace function public.farah_resolve_member(p_phone text)
+returns table (
+  member_id uuid,
+  full_name text,
+  village_id uuid,
+  village_name text,
+  is_owner boolean
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select m.id,
+         m.name,
+         m.village_id,
+         v.name,
+         exists (
+           select 1 from public.farah_licenses l
+            where l.member_id = m.id and l.is_active
+         )
+    from public.members m
+    join public.villages v on v.id = m.village_id
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+$$;
+
+comment on function public.farah_resolve_member(text) is
+  'دخول «فرح»: تليفون العضو ← اسمه الكامل ومعرّفه وقريته وهل هو صاحب فرح';
+
+
+-- 18.2 قائمة أهل القرية (بما فيهم صاحب الفرح بعلامة مميّزة).
+create or replace function public.farah_members(p_phone text)
+returns table (member_id uuid, full_name text, is_owner boolean)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_village uuid;
+begin
+  select m.village_id into v_village
+    from public.members m
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+
+  if v_village is null then
+    return;
+  end if;
+
+  return query
+  select m.id,
+         m.name,
+         exists (
+           select 1 from public.farah_licenses l
+            where l.member_id = m.id and l.is_active
+         )
+    from public.members m
+   where m.village_id = v_village
+   order by m.name;
+end;
+$$;
+
+comment on function public.farah_members(text) is 'أهل قرية صاحب التليفون — أساس شاشة الرئيسية في تطبيق فرح';
+
+
+-- 18.3 قائمة المحادثات: كل أهل القرية + آخر رسالة + المتبقي من الحدّ.
+create or replace function public.farah_conversations(p_phone text)
+returns table (
+  partner_id uuid,
+  partner_name text,
+  partner_is_owner boolean,
+  last_body text,
+  last_at timestamptz,
+  last_from_me boolean,
+  remaining int
+)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_member  uuid;
+  v_village uuid;
+  v_is_owner boolean;
+  v_daily   int;
+begin
+  select m.id, m.village_id,
+         exists (
+           select 1 from public.farah_licenses l
+            where l.member_id = m.id and l.is_active
+         )
+    into v_member, v_village, v_is_owner
+    from public.members m
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+
+  if v_member is null then
+    return;
+  end if;
+
+  select coalesce(c.total_chars, 0) into v_daily
+    from public.farah_daily_counts c
+   where c.member_id = v_member and c.date = current_date;
+
+  return query
+  with peers as (
+    select m.id as pid, m.name as pname
+      from public.members m
+     where m.village_id = v_village and m.id <> v_member
+  ),
+  last as (
+    select distinct on (case when f.sender_id = v_member then f.receiver_id else f.sender_id end)
+           (case when f.sender_id = v_member then f.receiver_id else f.sender_id end) as pid,
+           f.body, f.created_at, (f.sender_id = v_member) as from_me
+      from public.farah_messages f
+     where f.sender_id = v_member or f.receiver_id = v_member
+     order by (case when f.sender_id = v_member then f.receiver_id else f.sender_id end),
+              f.created_at desc
+  ),
+  sent as (
+    select f.receiver_id as pid, sum(char_length(f.body))::int as total
+      from public.farah_messages f
+     where f.sender_id = v_member
+     group by f.receiver_id
+  ),
+  owners as (
+    select l.member_id as mid
+      from public.farah_licenses l
+     where l.is_active
+  )
+  select p.pid,
+         p.pname,
+         (o.mid is not null),
+         l.body,
+         l.created_at,
+         coalesce(l.from_me, false),
+         (case when v_is_owner
+               then 100 - coalesce(s.total, 0)
+               else 500 - coalesce(v_daily, 0) end)
+    from peers p
+    left join last l on l.pid = p.pid
+    left join sent  s on s.pid = p.pid
+    left join owners o on o.mid = p.pid
+   order by l.created_at desc nulls last, p.pname;
+end;
+$$;
+
+comment on function public.farah_conversations(text) is
+  'محادثات صاحب التليفون: اسم كل أهل قريته وآخر رسالة والمتبقي من حدّه';
+
+
+-- 18.4 سلسلة رسائل محادثة واحدة (الأحدث آخرها).
+create or replace function public.farah_thread(
+  p_phone text,
+  p_partner_id uuid,
+  p_limit int default 200
+)
+returns table (id uuid, sender_id uuid, body text, created_at timestamptz)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_member  uuid;
+  v_village uuid;
+begin
+  select m.id, m.village_id into v_member, v_village
+    from public.members m
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+
+  if v_member is null then
+    return;
+  end if;
+
+  if not exists (
+    select 1 from public.members m
+     where m.id = p_partner_id and m.village_id = v_village
+  ) then
+    raise exception 'هذا المدعو غير موجود في قريتك' using errcode = 'P0002';
+  end if;
+
+  return query
+  select t.id, t.sender_id, t.body, t.created_at
+    from (
+      select f.id, f.sender_id, f.body, f.created_at
+        from public.farah_messages f
+       where (f.sender_id = v_member and f.receiver_id = p_partner_id)
+          or (f.sender_id = p_partner_id and f.receiver_id = v_member)
+       order by f.created_at desc
+       limit greatest(coalesce(p_limit, 200), 1)
+    ) t
+   order by t.created_at asc;
+end;
+$$;
+
+comment on function public.farah_thread(text, uuid, int) is
+  'رسائل محادثة واحدة بين عضو التليفون ومدعوّه — الأحدث أخيراً للعرض';
+
+
+-- 18.5 المتبقي من حدّ الإرسال (للمحادثة الحالية).
+create or replace function public.farah_allowance(
+  p_phone text,
+  p_partner_id uuid
+)
+returns table (remaining int, is_owner boolean)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_member  uuid;
+  v_is_owner boolean;
+  v_used    int := 0;
+begin
+  select m.id,
+         exists (
+           select 1 from public.farah_licenses l
+            where l.member_id = m.id and l.is_active
+         )
+    into v_member, v_is_owner
+    from public.members m
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+
+  if v_member is null then
+    return;
+  end if;
+
+  if v_is_owner then
+    select coalesce(sum(char_length(f.body)), 0) into v_used
+      from public.farah_messages f
+     where f.sender_id = v_member and f.receiver_id = p_partner_id;
+    remaining := 100 - v_used;
+  else
+    select coalesce(c.total_chars, 0) into v_used
+      from public.farah_daily_counts c
+     where c.member_id = v_member and c.date = current_date;
+    remaining := 500 - v_used;
+  end if;
+
+  return next;
+end;
+$$;
+
+comment on function public.farah_allowance(text, uuid) is
+  'المتبقي من حدّ الإرسال: للمدعو ما تبقّى من 500 حرف اليوم، ولصاحب الفرح ما تبقّى من 100 حرف لهذا المدعو';
+
+
+-- 18.6 إرسال رسالة — الفحص والإدراج والعدّاد في نداء واحد.
+create or replace function public.farah_send(
+  p_phone text,
+  p_partner_id uuid,
+  p_body text
+)
+returns table (id uuid, body text, created_at timestamptz, remaining int)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_member    uuid;
+  v_village   uuid;
+  v_is_owner  boolean;
+  v_body      text := btrim(coalesce(p_body, ''));
+  v_used      int;
+  v_remaining int;
+  v_row       public.farah_messages%rowtype;
+begin
+  -- (أ) هوية العضو من تليفونه --------------------------------------------
+  select m.id, m.village_id into v_member, v_village
+    from public.members m
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+
+  if v_member is null then
+    raise exception 'سجّل في صفحة القرية أولاً' using errcode = 'P0002';
+  end if;
+
+  -- (ب) المدعو ------------------------------------------------------------
+  if p_partner_id is null or p_partner_id = v_member then
+    raise exception 'اختر أحد أهل القرية' using errcode = 'P0001';
+  end if;
+
+  if not exists (
+    select 1 from public.members m
+     where m.id = p_partner_id and m.village_id = v_village
+  ) then
+    raise exception 'هذا المدعو غير موجود في قريتك' using errcode = 'P0002';
+  end if;
+
+  -- (ج) طول الرسالة -------------------------------------------------------
+  if v_body = '' then
+    raise exception 'اكتب رسالتك أولاً' using errcode = 'P0001';
+  end if;
+
+  if char_length(v_body) > 100 then
+    raise exception 'الرسالة 100 حرف كحدّ أقصى' using errcode = 'P0001';
+  end if;
+
+  -- (د) صاحب الفرح؟ -------------------------------------------------------
+  select exists (
+    select 1 from public.farah_licenses l
+     where l.member_id = v_member and l.is_active
+  ) into v_is_owner;
+
+  -- (هـ) قفل صفّ العضو: يمنع تجاوز الحدّ بطلبَي إرسال متزامنين -------------
+  perform 1 from public.members where id = v_member for update;
+
+  -- (و) الحدود ------------------------------------------------------------
+  if not public.farah_can_send(v_member, p_partner_id, char_length(v_body)) then
+    if v_is_owner then
+      select coalesce(sum(char_length(f.body)), 0) into v_used
+        from public.farah_messages f
+       where f.sender_id = v_member and f.receiver_id = p_partner_id;
+      raise exception 'انتهى حدّ الرسائل لهذا المدعو (بقي % حرف من 100) — راسل مدعواً آخر',
+        100 - v_used using errcode = 'P0001';
+    end if;
+
+    select coalesce(c.total_chars, 0) into v_used
+      from public.farah_daily_counts c
+     where c.member_id = v_member and c.date = current_date;
+    raise exception 'انتهى حدّ رسائلك اليوم (استخدمت % من 500 حرف) — يتجدد غداً',
+      v_used using errcode = 'P0001';
+  end if;
+
+  -- (ز) الإدراج -----------------------------------------------------------
+  insert into public.farah_messages (village_id, sender_id, receiver_id, body)
+  values (v_village, v_member, p_partner_id, v_body)
+  returning * into v_row;
+
+  -- (ح) عدّاد المدعو اليومي فقط (صاحب الفرح بلا حدّ يومي) ------------------
+  if not v_is_owner then
+    insert into public.farah_daily_counts (member_id, date, total_chars)
+    values (v_member, current_date, char_length(v_body))
+    on conflict (member_id, date)
+    do update set total_chars = public.farah_daily_counts.total_chars + excluded.total_chars;
+  end if;
+
+  -- (ط) ما تبقّى بعد الإرسال — يُعرض في عدّاد الحقل ------------------------
+  if v_is_owner then
+    select 100 - coalesce(sum(char_length(f.body)), 0) into v_remaining
+      from public.farah_messages f
+     where f.sender_id = v_member and f.receiver_id = p_partner_id;
+  else
+    select 500 - coalesce(c.total_chars, 0) into v_remaining
+      from public.farah_daily_counts c
+     where c.member_id = v_member and c.date = current_date;
+  end if;
+
+  return query select v_row.id, v_row.body, v_row.created_at, coalesce(v_remaining, 0);
+end;
+$$;
+
+comment on function public.farah_send(text, uuid, text) is
+  'إرسال رسالة بعد فحص الحدود (100 حرف للرسالة، و100 لكل مدعو لصاحب الفرح، و500 يومياً للمدعو)';
+
+
+-- 18.7 تفعيل كود صاحب الفرح.
+create or replace function public.farah_activate(p_phone text, p_code text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_member   uuid;
+  v_village  uuid;
+  v_code     text := upper(btrim(coalesce(p_code, '')));
+  v_license  public.farah_licenses%rowtype;
+begin
+  select m.id, m.village_id into v_member, v_village
+    from public.members m
+   where m.phone = regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g')
+   limit 1;
+
+  if v_member is null then
+    raise exception 'سجّل في صفحة القرية أولاً' using errcode = 'P0002';
+  end if;
+
+  if v_code = '' then
+    raise exception 'اكتب كود التفعيل' using errcode = 'P0001';
+  end if;
+
+  select * into v_license
+    from public.farah_licenses l
+   where l.code = v_code
+   for update;
+
+  if not found then
+    raise exception 'كود التفعيل غير صحيح — راجع الكود مع مكتب القرية'
+      using errcode = 'P0001';
+  end if;
+
+  if v_license.village_id <> v_village then
+    raise exception 'هذا الكود لا يخصّ قريتك' using errcode = 'P0001';
+  end if;
+
+  if v_license.member_id is not null and v_license.member_id <> v_member then
+    raise exception 'هذا الكود مُفعَّل لعضو آخر' using errcode = 'P0001';
+  end if;
+
+  update public.farah_licenses
+     set member_id = v_member,
+         is_active = true,
+         activated_at = now()
+   where id = v_license.id;
+
+  return true;
+end;
+$$;
+
+comment on function public.farah_activate(text, text) is
+  'تفعيل كود صاحب الفرح: يمنح صاحبه 100 حرف لكل مدعو بلا حدّ يومي';
+
+-- صلاحيات تطبيق «فرح» — دواله العامة فقط، والجداول مغلقة (RLS بلا سياسة).
+revoke all on public.farah_messages       from public, anon, authenticated;
+revoke all on public.farah_licenses       from public, anon, authenticated;
+revoke all on public.farah_daily_counts   from public, anon, authenticated;
+
+grant execute on function public.farah_resolve_member(text)  to anon, authenticated;
+grant execute on function public.farah_members(text)         to anon, authenticated;
+grant execute on function public.farah_conversations(text)   to anon, authenticated;
+grant execute on function public.farah_thread(text, uuid, int)   to anon, authenticated;
+grant execute on function public.farah_allowance(text, uuid)     to anon, authenticated;
+grant execute on function public.farah_send(text, uuid, text)    to anon, authenticated;
+grant execute on function public.farah_activate(text, text)      to anon, authenticated;
+
+-- توليد أكواد تفعيل لأصحاب الأفراح (من SQL Editor):
+-- insert into public.farah_licenses (village_id, code)
+-- values ((select id from public.villages where code = 'MAA-2026'), 'FARAH-0001');
+
+
+-- ============================================================================
+-- 19) تحقّق سريع (اختياري — يُعرض في SQL Editor)
 -- ============================================================================
 -- select tablename, rowsecurity from pg_tables where schemaname = 'public' order by tablename;
 -- select schemaname, tablename, policyname, cmd, roles from pg_policies
@@ -829,5 +1398,9 @@ grant execute on function public.admin_overview()    to authenticated;
 -- select * from public.local_ads;
 -- select * from public.platform_admins;
 -- select * from public.admin_overview();
+-- select * from public.farah_licenses;
+-- select * from public.farah_messages order by created_at desc limit 20;
+-- select public.farah_resolve_member('01012345678');
+-- select public.farah_can_send(<member-uuid>, <receiver-uuid>, 10);
 
 -- ✅ نهاية تأسيس قاعدة بيانات صفحة القرية.
