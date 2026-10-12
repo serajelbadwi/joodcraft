@@ -629,6 +629,41 @@ void main() {
       expect(find.text(VillageAdminText.adTitleRequired), findsOneWidget);
       expect(fake.ads, hasLength(1));
     });
+
+    testWidgets('الإعلانات: رابط Google Drive يُحفظ مُطبَّعاً إلى صورة مباشرة', (
+      WidgetTester tester,
+    ) async {
+      final _FakeAdminRepository fake = _FakeAdminRepository(
+        ads: <VillageAd>[],
+      );
+      await _pump(
+        tester,
+        VillageAdsAdminScreen(repository: fake, village: _village()),
+      );
+
+      await tester.tap(find.byKey(const ValueKey<String>('add-ad')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('ad-title')),
+        'إعلان المخبز',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('ad-image-url')),
+        'https://drive.google.com/file/d/1AbC_dEf9ijkLnOp/view?usp=sharing',
+      );
+      await tester.tap(find.byKey(const ValueKey<String>('ad-submit')));
+      await tester.pumpAndSettle();
+      await _drainSnackbar(tester);
+
+      expect(fake.ads, hasLength(1));
+      expect(
+        fake.ads.single.imageUrl,
+        'https://drive.google.com/thumbnail?id=1AbC_dEf9ijkLnOp&sz=w1000',
+        reason: 'صفحة العرض تُحوَّل لصيغة مباشرة قبل الحفظ',
+      );
+      // المصغّرة في القائمة تعتمد الرابط الجديد (لا أيقونة الصورة المكسورة).
+      expect(find.byIcon(Icons.campaign_outlined), findsNothing);
+    });
   });
 
   group('اتجاه الكتابة RTL مثبَّت لا بلغة المضيف', () {

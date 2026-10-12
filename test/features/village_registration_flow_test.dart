@@ -621,18 +621,57 @@ void main() {
 
       expect(find.byType(VillageVideosSection), findsOneWidget);
       expect(find.text(VillageText.videosTitle), findsOneWidget);
-      expect(find.text('افتتاح المدرسة'), findsOneWidget);
-      expect(find.text('حصاد القرية'), findsOneWidget);
+      // العنوان يظهر مرتين: في المشغّل الرئيسي (المختار) وفي مصغّرته.
+      expect(find.text('افتتاح المدرسة'), findsNWidgets(2));
+      expect(
+        find.text('حصاد القرية'),
+        findsOneWidget,
+        reason: 'غير المختار يظهر في الشريط فقط — المشغّل يعرض المختار وحده',
+      );
       expect(
         find.byKey(const ValueKey<String>('village-video-aaa11111111')),
         findsOneWidget,
-        reason: 'لكل فيديو مفتاحه الخاص فلا تختلط البطاقات',
+        reason: 'المشغّل الرئيسي يحمل مفتاح الفيديو المختار فلا تختلط البطاقات',
       );
-      expect(find.text(VillageText.videosOpenOnYoutube), findsNWidgets(2));
+      expect(
+        find.byKey(const ValueKey<String>('village-video-chip-bbb22222222')),
+        findsOneWidget,
+        reason: 'لكل مصغّرة مفتاحها الخاص بها',
+      );
+      // زر يوتيوب في المشغّل الرئيسي وحده — المصغّرات للتبديل فقط.
+      expect(find.text(VillageText.videosOpenOnYoutube), findsNWidgets(1));
       expect(
         repo.videoRequests,
         <String>[VillageText.villageCode],
         reason: 'جلب صامت واحد عند فتح الصفحة — لا ينتظر إدخال الكود',
+      );
+    });
+
+    testWidgets('لمس مصغّرة الشريط يرفع فيديوها إلى المشغّل الرئيسي',
+        (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+        videos: <VillageVideo>[
+          _video('aaa11111111', 'افتتاح المدرسة'),
+          _video('bbb22222222', 'حصاد القرية'),
+        ],
+      );
+      await _pumpScreen(tester, repo);
+
+      await tester.tap(
+        find.byKey(const ValueKey<String>('village-video-chip-bbb22222222')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('village-video-bbb22222222')),
+        findsOneWidget,
+        reason: 'المصغّرة الملوسة صارت هي المشغّل الرئيسي',
+      );
+      expect(
+        find.byKey(const ValueKey<String>('village-video-aaa11111111')),
+        findsNothing,
+        reason: 'الفيديو السابق خرج من المشغّل (iframe واحد فقط دائماً)',
       );
     });
 

@@ -65,11 +65,78 @@ void main() {
       expect(video.isPublished, isTrue, reason: 'غياب التاريخ يعني منشوراً');
     });
 
+    test('aspect_ratio من العمود يُقرأ كما هو', () {
+      final Map<String, dynamic> row = fullRow()
+        ..['aspect_ratio'] = '9:16';
+
+      expect(VillageVideo.fromRow(row).aspect, VillageVideoAspect.tall);
+    });
+
+    test('بلا عمود aspect_ratio تُشتقّ النسبة من صيغة الرابط', () {
+      final Map<String, dynamic> row = fullRow()
+        ..['youtube_url'] = 'https://www.youtube.com/shorts/dQw4w9WgXcQ';
+
+      expect(VillageVideo.fromRow(row).aspect, VillageVideoAspect.tall);
+      expect(VillageVideo.fromRow(fullRow()).aspect, VillageVideoAspect.wide);
+    });
+
     test('تاريخ على صيغة DateTime يُقرأ كما هو', () {
       final DateTime published = DateTime(2026, 2, 3, 4, 5);
       final VillageVideo video =
           VillageVideo.fromRow(<String, dynamic>{'published_at': published});
       expect(video.publishedAt, published);
+    });
+  });
+
+  group('VillageVideoAspect', () {
+    test('parse يقرأ صيغ العمود ويردّ 16:9 لكل قيمة غريبة', () {
+      expect(VillageVideoAspect.parse('16:9'), VillageVideoAspect.wide);
+      expect(VillageVideoAspect.parse('9:16'), VillageVideoAspect.tall);
+      expect(VillageVideoAspect.parse('1:1'), VillageVideoAspect.square);
+      expect(VillageVideoAspect.parse('4:5'), VillageVideoAspect.portrait);
+      expect(VillageVideoAspect.parse('9/16'), VillageVideoAspect.tall,
+          reason: 'الشرطة المائلة تُعامَل كالنقطتين');
+      expect(VillageVideoAspect.parse('7:7'), VillageVideoAspect.wide);
+      expect(VillageVideoAspect.parse(null), VillageVideoAspect.wide);
+      expect(VillageVideoAspect.parse(''), VillageVideoAspect.wide);
+    });
+
+    test('ratio يعطي معامل AspectRatio لكل نسبة', () {
+      expect(VillageVideoAspect.wide.ratio, closeTo(16 / 9, 1e-9));
+      expect(VillageVideoAspect.tall.ratio, closeTo(9 / 16, 1e-9));
+      expect(VillageVideoAspect.square.ratio, 1);
+      expect(VillageVideoAspect.portrait.ratio, closeTo(4 / 5, 1e-9));
+    });
+
+    test('fromYoutubeUrl: shorts وlive ⇒ 9:16 وما عداها 16:9', () {
+      expect(
+        VillageVideoAspect.fromYoutubeUrl(
+            'https://www.youtube.com/shorts/dQw4w9WgXcQ'),
+        VillageVideoAspect.tall,
+      );
+      expect(
+        VillageVideoAspect.fromYoutubeUrl(
+            'https://youtu.be/dQw4w9WgXcQ?t=30'),
+        VillageVideoAspect.wide,
+      );
+      expect(
+        VillageVideoAspect.fromYoutubeUrl(
+            'https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
+        VillageVideoAspect.wide,
+      );
+      expect(
+        VillageVideoAspect.fromYoutubeUrl(
+            'https://www.youtube.com/live/dQw4w9WgXcQ'),
+        VillageVideoAspect.tall,
+      );
+      expect(
+        VillageVideoAspect.fromYoutubeUrl(
+            'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+        VillageVideoAspect.wide,
+      );
+      expect(VillageVideoAspect.fromYoutubeUrl('ليست رابطاً'),
+          VillageVideoAspect.wide,
+          reason: 'أي لصق غريب يُعامَل فيديو عادي');
     });
   });
 
