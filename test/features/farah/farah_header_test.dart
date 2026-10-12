@@ -81,7 +81,7 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
-  testWidgets('شاشة الدخول: الشعار بعرض ‎60%‎ (حدّ أقصى ‎300px‎) بدل الأيقونة', (
+  testWidgets('شاشة الدخول: شعار «Jood Reach» نصّاً بدل الأيقونة', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -93,33 +93,47 @@ void main() {
 
     final Finder logo = find.byKey(const ValueKey<String>('farah-logo'));
     expect(logo, findsOneWidget);
-    // `BoxFit.contain` مطلوب صراحةً: الشعار مربّع فلا يشوَّه أبداً.
-    expect(tester.widget<Image>(logo).fit, BoxFit.contain);
-    // استُبدل بالصورة لا أُضيف إليها: الأيقونة القديمة مفقودة.
+    // الشعار لم يُحذف بل **تحوّل من صورة إلى نصّ**: «Jood Reach» بخط
+    // Amiri داخل عنصر الشعار — فلا `Image` ولا قياس `BoxFit` بعد اليوم.
+    expect(
+      find.descendant(of: logo, matching: find.text(FarahText.joodReachName)),
+      findsOneWidget,
+    );
+    // استُبدل بالنصّ لا أُضيف إليه: الأيقونة القديمة مفقودة.
     expect(find.byIcon(Icons.celebration_rounded), findsNothing);
-    // والاسم باقٍ لقارئ الشاشة رغم أنه لم يُعرض نصّاً.
-    expect(tester.widget<Image>(logo).semanticLabel, FarahText.appName);
   });
 
-  testWidgets('الشعار في ترويسة الدخول يقع ضمن سقف ‎300px‎ فعلياً', (
+  testWidgets('عنوان «Jood Reach» يتكيّف: ‎72px‎ عريضاً و‎56px‎ ضيّقاً', (
     WidgetTester tester,
   ) async {
-    tester.view.physicalSize = const Size(1000, 800);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.reset);
+    // سقف ‎300px‎ انتهى مع الصورة: القاعدة الآن حجم الخطّ حسب العرض —
+    // ونقيس **القاعدة** لا العرض الطبيعي للنصّ (خط الاختبار بديل عن
+    // Amiri فلا معنى لقياس البكسل عليه).
+    Future<double> titleFontSize(double width) async {
+      tester.view.physicalSize = Size(width, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: FarahLoginScreen(repository: _StubFarahRepository()),
-      ),
-    );
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: FarahLoginScreen(repository: _StubFarahRepository()),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    final Size size = tester.getSize(
-      find.byKey(const ValueKey<String>('farah-logo')),
-    );
-    expect(size.width, lessThanOrEqualTo(300));
-    expect(size.width, moreOrLessEquals(300, epsilon: 0.5));
+      final Text title = tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('farah-logo')),
+          matching: find.byType(Text),
+        ),
+      );
+      return title.style!.fontSize!;
+    }
+
+    // عريض (عرض العمود ‎≥480‎): الحجم الأقصى المسموح.
+    expect(await titleFontSize(1000), 72.0);
+    // ضيّق كهاتف: الحجم الأدنى بدل أن يفيض العنوان.
+    expect(await titleFontSize(400), 56.0);
   });
 
   testWidgets('شريط الرئيسية: الشعار بارتفاع ‎40px‎ مكان العنوان', (

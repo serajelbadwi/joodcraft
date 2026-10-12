@@ -42,7 +42,7 @@ class FarahApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      // البداية شاشة افتتاح «Jood Reach» (الاسم الذهبي ‎3s‎ مع لمعة ونبض)
+      // البداية شاشة افتتاح «Jood Reach» (الاسم الذهبي ‎5s‎ مع لمعة ونبض)
       // ثم الدخول تلقائياً بانتقال باهت — ولا تُعدَّ الشاشة الأولى الدخول
       // مباشرةً بعد اليوم.
       home: JoodReachSplashScreen(repository: repository),

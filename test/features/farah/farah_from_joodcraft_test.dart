@@ -151,8 +151,16 @@ void main() {
     );
     // وشاشة الدخول داخل النافذة بشعارها.
     expect(find.byKey(const ValueKey<String>('farah-logo')), findsOneWidget);
-    // وترويسة النافذة تحمل اسم التطبيق.
-    expect(find.text(FarahText.appName), findsOneWidget);
+    // وترويسة النافذة تحمل اسم التطبيق — **مُضيَّقة على شريط الحوار**:
+    // عنوان الدخول يقول «Jood Reach» النصّ نفسه، فمن دون التضييق تلتقي
+    // المرأتان في Finder واحد.
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('farah-dialog-bar')),
+        matching: find.text(FarahText.appName),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('زرّ X يُعيد المستخدم إلى قسمه بالضبط', (
