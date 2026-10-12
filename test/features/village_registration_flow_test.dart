@@ -829,7 +829,8 @@ void main() {
           'is_active': true,
         });
 
-    testWidgets('إعلان برابط Google Drive يظهر بصورة مباشرة وبعنوانه',
+    testWidgets(
+        'إعلان برابط Google Drive يظهر صورته المباشرة وتفاصيله في النافذة',
         (tester) async {
       final _FakeVillageRepository repo = _FakeVillageRepository(
         village: _village(),
@@ -845,7 +846,8 @@ void main() {
         find.byKey(const ValueKey<String>('village-ad-ad1')),
         findsOneWidget,
       );
-      expect(find.text('إعلان المخبز'), findsOneWidget);
+      // البطاقة صورة فقط — العنوان لا يظهر عليها إطلاقاً.
+      expect(find.text('إعلان المخبز'), findsNothing);
 
       final Image image = tester.widget<Image>(
         find.descendant(
@@ -859,9 +861,18 @@ void main() {
         'https://lh3.googleusercontent.com/d/1AbC_dEf9ijkLnOp=w1000',
         reason: 'صفحة العرض Drive تُحوَّل إلى صيغة مباشرة قبل الوصول للصورة',
       );
+
+      // الضغط على الصورة يفتح النافذة: العنوان + الرقم وزرّ الاتصال.
+      await tester.tap(find.byKey(const ValueKey<String>('village-ad-ad1')));
+      await tester.pumpAndSettle();
+      expect(find.text('إعلان المخبز'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('village-ad-dialog-call')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('إعلان بلا صورة يظهر بعنوانه وزر الاتصال', (tester) async {
+    testWidgets('إعلان بلا صورة يعرض أيقونة وتفاصيله في النافذة', (tester) async {
       final _FakeVillageRepository repo = _FakeVillageRepository(
         village: _village(),
         ads: <VillageAd>[
@@ -880,10 +891,12 @@ void main() {
         find.byKey(const ValueKey<String>('village-ad-ad2')),
         findsOneWidget,
       );
-      expect(find.text('إعلان بلا صورة'), findsOneWidget);
+      // بلا صورة: أيقونة بدلها، وبلا نصّ ولا زرّ على البطاقة.
+      expect(find.text('إعلان بلا صورة'), findsNothing);
+      expect(find.byIcon(Icons.campaign_outlined), findsOneWidget);
       expect(
-        find.byKey(const ValueKey<String>('village-ad-call-ad2')),
-        findsOneWidget,
+        find.byKey(const ValueKey<String>('village-ad-dialog-call')),
+        findsNothing,
       );
       // بلا صورة لا صورة تُحمَّل أصلاً.
       expect(
@@ -892,6 +905,15 @@ void main() {
           matching: find.byType(Image),
         ),
         findsNothing,
+      );
+
+      // النافذة تحمل العنوان وزرّ الاتصال بالرقم المُدرج.
+      await tester.tap(find.byKey(const ValueKey<String>('village-ad-ad2')));
+      await tester.pumpAndSettle();
+      expect(find.text('إعلان بلا صورة'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('village-ad-dialog-call')),
+        findsOneWidget,
       );
     });
 
@@ -944,8 +966,11 @@ void main() {
       final double videos = tester
           .getTopLeft(find.text(VillageText.videosTitle))
           .dy;
+      // موضع القسم يُقاس بمفتاحه لا بنصّ عنوانه (العنوان صار «إعلانات»).
       final double ads = tester
-          .getTopLeft(find.text(VillageText.adsTitle))
+          .getTopLeft(
+            find.byKey(const ValueKey<String>('village-ads-section')),
+          )
           .dy;
       final double form = tester
           .getTopLeft(find.byKey(const ValueKey<String>('village-code-gate')))
