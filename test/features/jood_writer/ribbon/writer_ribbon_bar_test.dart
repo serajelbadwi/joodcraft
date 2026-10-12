@@ -1,11 +1,12 @@
 /// اختبارات شريط Ribbon المُطوَّر: التبويبات الخمسة، التبديل، الطيّ،
 /// الارتفاع، وألوان التبويب النشط — مع الغلاف القديم `WriterRibbonBar`.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/jood_writer/domain/jood_writer_block.dart';
 import 'package:joodcraft/features/jood_writer/domain/jood_writer_document.dart';
 import 'package:joodcraft/features/jood_writer/presentation/theme/writer_ribbon_theme.dart';
-import 'package:joodcraft/features/jood_writer/presentation/widgets/ribbon/writer_ribbon_bar.dart';
 import 'package:joodcraft/features/jood_writer/presentation/widgets/writer_ribbon_bar.dart' as legacy;
 import 'package:joodcraft/features/jood_writer/presentation/writer_document_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';

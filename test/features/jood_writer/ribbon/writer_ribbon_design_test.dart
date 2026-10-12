@@ -1,9 +1,10 @@
 /// تبويب «التصميم»: القوالب (21 قالباً في 4 فئات + نافذة الكل)، الإدراج
 /// (أشكال/جداول/رموز/صورة)، وتنسيق الأشكال الابتدائي.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/jood_writer/presentation/widgets/ribbon/writer_ribbon_common.dart';
-import 'package:joodcraft/features/jood_writer/presentation/widgets/ribbon/writer_ribbon_design.dart';
 import 'package:joodcraft/features/jood_writer/presentation/widgets/ribbon/writer_templates_catalog.dart';
 import 'package:joodcraft/features/jood_writer/presentation/writer_document_controller.dart';
 
@@ -141,6 +142,11 @@ void main() {
   ) async {
     await pumpRibbon(tester, tab: 2);
     await tester.tap(find.byKey(const ValueKey<String>('ribbon-insert-image')));
+    await tester.pump();
+    // استجابة قنوات المنصّة تصل على دفعات من حلقة الحدث الحقيقية.
+    for (int i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);

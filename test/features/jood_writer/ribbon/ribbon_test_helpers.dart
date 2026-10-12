@@ -10,7 +10,10 @@
 ///   للمؤقّتات المعلّقة (يُنهي الاختبار فشلاً لو بقي مؤقّت حيّاً).
 library;
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show MethodCall, MethodChannel;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/jood_writer/domain/jood_writer_document.dart';
 import 'package:joodcraft/features/jood_writer/presentation/widgets/ribbon/writer_ribbon_bar.dart';
@@ -96,4 +99,21 @@ Future<WriterDocumentController> pumpRibbon(
 Future<void> selectRibbonTab(WidgetTester tester, int index) async {
   await tester.tap(find.byKey(ValueKey<String>(kRibbonTabKeys[index])));
   await tester.pumpAndSettle();
+}
+
+/// يحاكي قناة `path_provider` بمجلد حقيقي.
+///
+/// قنوات المنصّة غير المُحاكاة لا تردّ في `flutter test` (تبقى معلّقة إلى
+/// الأبد) — فيتعثّر السقوط إلى المجلد المؤقت ولا يظهر أي تنبيه حفظ.
+void mockPathProvider() {
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('plugins.flutter.io/path_provider'),
+    (MethodCall call) async {
+      if (call.method == 'getTemporaryDirectory') {
+        return Directory.systemTemp.path;
+      }
+      return null;
+    },
+  );
 }

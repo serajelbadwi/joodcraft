@@ -1,5 +1,8 @@
 /// تبويب «الرئيسية»: الأقسام الخمسة، وأدواتها الفعلية على الكتلة النشطة
 /// (تنسيق/محاذاة/قوائم/إزاحات) + الكتل السريع + نافذة الفقرة والعدّاسة.
+library;
+
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/jood_writer/domain/jood_writer_block.dart';
 import 'package:joodcraft/features/jood_writer/presentation/widgets/ribbon/writer_ribbon_common.dart';
@@ -13,7 +16,7 @@ void main() {
   ) async {
     await pumpRibbon(tester);
 
-    // أقسام الصفحة (عناوين RichText).
+    // أقسام الصفحة (عناوين RichText) — «الفقرة» يشترك اسمها مع زر النافذة.
     for (final String section in <String>[
       'الكتل',
       'الخطوط',
@@ -21,8 +24,22 @@ void main() {
       'القوائم والمسافات',
       'الفقرة',
     ]) {
-      expect(ribbonSection(section), findsOneWidget, reason: section);
+      expect(
+        ribbonSection(section),
+        findsAtLeastNWidgets(1),
+        reason: section,
+      );
     }
+    // عنوان قسم الفقرة نفسه موجود (maxLines: 1).
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) =>
+            w is RichText &&
+            w.text.toPlainText() == 'الفقرة' &&
+            w.maxLines == 1,
+      ),
+      findsOneWidget,
+    );
 
     // تلميحات الأدوات الأساسية كما في الشاشة القائمة (عقد الاختبار القديم).
     expect(find.byTooltip('إضافة كتلة'), findsOneWidget);

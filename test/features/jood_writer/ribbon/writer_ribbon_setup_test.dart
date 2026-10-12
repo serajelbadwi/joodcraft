@@ -1,5 +1,7 @@
 /// تبويب «التهيئة»: إعداد الصفحة (مقاس/اتجاه/هوامش)، خلفية الصفحة (لون/
 /// علامة مائية/إطار)، وترقيم الصفحات — كلّها إعدادات المستند الحقيقية.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/features/jood_writer/domain/jood_writer_document.dart';
