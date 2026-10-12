@@ -152,7 +152,7 @@ void main() {
     expect(tester.widget<Image>(logo).height, 40);
   });
 
-  testWidgets('الفوتر أسفل الشاشات: يمين شعار JoodCraft ووسط المطوّر ويسار الحقوق', (
+  testWidgets('الفوتر أسفل الشاشات: «من أعمال JoodCraft» + الإمضاء + الحقوق', (
     WidgetTester tester,
   ) async {
     // شاشة طويلة بما يكفي لبناء الفوتر وحده (لا يُبنى ما دون حدّ التمرير).
@@ -168,13 +168,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey<String>('farah-footer')), findsOneWidget);
+    // التصميم الحالي (بطلب صاحب العمل): نصّ العلامة لا شعار، ثم الإمضاء،
+    // ثم حقوق النشر — بلا بطاقة المطوّر (اللّقب والاسم والتليفون محذوفة).
     expect(
-      find.byKey(const ValueKey<String>('farah-footer-brand-logo')),
+      find.byKey(const ValueKey<String>('farah-footer-brand')),
       findsOneWidget,
     );
-    expect(find.text(FarahText.footerFrom), findsOneWidget);
-    expect(find.text(FarahText.footerDeveloperName), findsOneWidget);
-    expect(find.text(FarahText.footerPhone), findsOneWidget);
+    expect(find.text('من أعمال JoodCraft'), findsOneWidget);
     expect(
       find.byKey(const ValueKey<String>('farah-footer-signature')),
       findsOneWidget,

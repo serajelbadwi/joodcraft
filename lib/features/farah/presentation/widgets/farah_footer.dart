@@ -1,12 +1,12 @@
-/// تذييل (فاتور) شاشات «فرح» — ثلاث قطع:
+/// تذييل (فاتور) شاشات «فرح» — عمود متوسّط من ثلاث قطع بالترتيب:
 ///
-/// * **يمين**: شعار JoodCraft + «من أعمال» — التطبيق من إنتاج منصّة القرية.
-/// * **وسط**: بطاقة المطوّر — «المطور» + الاسم + التليفون + الإمضاء.
-/// * **يسار**: حقوق النشر.
+/// 1. «من أعمال JoodCraft» — نصّ فقط بلا أي لوجو.
+/// 2. الإمضاء (`serag_signature.jpeg`).
+/// 3. حقوق النشر.
 ///
-/// الترتيب بـ`Wrap` لا `Row`: على عريض يجلس الثلاثة في صفّ واحد (RTL يمين ←
-/// يسار)، وعلى ضيّق ينزل الزائد سطراً تحته — **ولا نسكاب بأي عرض**، حتى بخطّ
-/// الاختبارات الأوسع من خط Cairo الحقيقي بمرّتين.
+/// ما حُذف عمداً بطلب صاحب العمل: شعار JoodCraft وشعار القرية وبطاقة
+/// المطوّر كاملة (اللّقب «المطور» + الاسم + التليفون) — الفوتر صار توقيعاً
+/// موجزاً لا بطاقة تعريف.
 ///
 /// الشريط لا يحمل خلفية ملوّنة بل **نفس لون الصفحة** `#3D3D3D` عمداً: هالات
 /// `_FarahGlow` خلف المحتوى تلوّن الشريط لو كان شفّافاً، وثبات اللون هو ما
@@ -21,6 +21,10 @@ import '../../../village/presentation/village_theme.dart';
 
 class FarahFooter extends StatelessWidget {
   const FarahFooter({super.key});
+
+  /// نصّ «من أعمال JoodCraft» — هنا لا في `FarahText` عمداً: هذا الملف
+  /// وحده هو ما تغيّر في هذه المهمة، والنصّ هوية هذا التذييل الجديد.
+  static const String _brandLine = 'من أعمال JoodCraft';
 
   @override
   Widget build(BuildContext context) {
@@ -40,151 +44,55 @@ class FarahFooter extends StatelessWidget {
           ),
         ),
       ),
-      // `Wrap` لا `Row`: الأول في RTL يمين، والزائد عند الضيق ينزل سطراً
-      // جديداً بدل أن ينسكب. كلّ نصّ بداخله مرن (`Flexible`/الالتفاف التلقائي)
-      // فلا يزيد ارتفاع الصفّ على ما تتّسع له القطعة نفسها.
-      child: Wrap(
-        alignment: WrapAlignment.spaceEvenly,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: VillageMetrics.space24,
-        runSpacing: VillageMetrics.space8,
+      // عمود متوسّط بثلاث قطع تحت بعضها — لا `Wrap` أفقياً كما كان: بعد
+      // حذف بطاقة المطوّر صار الثلاثة سطراً واحداً لا تحتمل صفّاً.
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const _FooterBrand(),
-          const _FooterDeveloper(),
-          const _FooterCopyright(),
-        ],
-      ),
-    );
-  }
-}
-
-/// يمين الشريط: شعار JoodCraft + «من أعمال».
-class _FooterBrand extends StatelessWidget {
-  const _FooterBrand();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Image.asset(
-          AppAssets.villageLogoImage,
-          key: const ValueKey<String>('farah-footer-brand-logo'),
-          height: 26,
-          fit: BoxFit.contain,
-          // غياب الشعار لا يكسر الفوتر — يبقى نصّ «من أعمال» وحده.
-          errorBuilder: (
-            BuildContext context,
-            Object error,
-            StackTrace? stackTrace,
-          ) =>
-              const SizedBox.shrink(),
-        ),
-        const SizedBox(width: VillageMetrics.space8),
-        Flexible(
-          // مرن: على صفّ ضيّق يلتفّ نصّ «من أعمال» ولا يدفع الشعار للخارج.
-          child: const Text(
-            FarahText.footerFrom,
+          const Text(
+            _brandLine,
+            key: ValueKey<String>('farah-footer-brand'),
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 12,
-              color: VillageColors.muted,
+              fontFamily: AppAssets.cairoFont,
+              fontSize: 14,
+              color: Color(0xB3FFFFFF), // أبيض @ 0.7
               height: 1.5,
             ),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-/// وسط الشريط: بطاقة المطوّر.
-class _FooterDeveloper extends StatelessWidget {
-  const _FooterDeveloper();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Flexible(
-          // مرن: على صفّ ضيّق يأخذ العمود ما يتّسع له من العرض فتلتفّ
-          // الأسماء والتليفون سطرياً — والإمضاء يبقى بحجمه الثابت بجواره.
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                FarahText.footerDeveloperLabel,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: VillageColors.muted,
-                  height: 1.4,
-                ),
-              ),
-              const Text(
-                FarahText.footerDeveloperName,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: VillageColors.white,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 2),
-              const Text(
-                FarahText.footerPhone,
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.ltr,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: VillageColors.goldSoft,
-                  height: 1.4,
-                  letterSpacing: 0.4,
-                ),
-              ),
-            ],
+          const SizedBox(height: VillageMetrics.space12),
+          // الإمضاء: حبر أبيض على أسود (JPEG بلا قناة شفافية). حيلة `screen`
+          // مع لون الشريط: الأسود يصير لون الشريط بالضبط (‎#3D3D3D‎ — يذوب
+          // في الخلفية) والأبيض يبقى أبيضاً: إمضاء بلا ورقة ولا صندوق أسود.
+          Image.asset(
+            AppAssets.developerSignatureImage,
+            key: const ValueKey<String>('farah-footer-signature'),
+            height: 34,
+            fit: BoxFit.contain,
+            color: VillageColors.background,
+            colorBlendMode: BlendMode.screen,
+            errorBuilder: (
+              BuildContext context,
+              Object error,
+              StackTrace? stackTrace,
+            ) =>
+                const SizedBox.shrink(),
           ),
-        ),
-        const SizedBox(width: VillageMetrics.space12),
-        // الإمضاء: حبر أبيض على أسود (JPEG بلا قناة شفافية). حيلة `screen`
-        // مع لون الشريط: الأسود يصير لون الشريط بالضبط (‎#3D3D3D‎ — يذوب
-        // في الخلفية) والأبيض يبقى أبيضاً: إمضاء بلا ورقة ولا صندوق أسود.
-        Image.asset(
-          AppAssets.developerSignatureImage,
-          key: const ValueKey<String>('farah-footer-signature'),
-          height: 34,
-          fit: BoxFit.contain,
-          color: VillageColors.background,
-          colorBlendMode: BlendMode.screen,
-          errorBuilder: (
-            BuildContext context,
-            Object error,
-            StackTrace? stackTrace,
-          ) =>
-              const SizedBox.shrink(),
-        ),
-      ],
-    );
-  }
-}
-
-/// يسار الشريط: حقوق النشر.
-class _FooterCopyright extends StatelessWidget {
-  const _FooterCopyright();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      FarahText.footerCopyright,
-      // الالتفاف التلقائي: على ضيّق ينزل السطر الثاني بتوسيط بدل النسكاب.
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 11.5,
-        color: VillageColors.muted,
-        height: 1.5,
+          const SizedBox(height: VillageMetrics.space8),
+          const Text(
+            FarahText.footerCopyright,
+            key: ValueKey<String>('farah-footer-copyright'),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: AppAssets.cairoFont,
+              fontSize: 12,
+              color: Color(0x80FFFFFF), // أبيض @ 0.5
+              height: 1.5,
+            ),
+          ),
+        ],
       ),
     );
   }

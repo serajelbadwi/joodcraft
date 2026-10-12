@@ -15,7 +15,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../data/supabase_farah_repository.dart';
 import '../data/farah_repository.dart';
 import '../domain/farah_text.dart';
-import 'screens/farah_splash_screen.dart';
+import 'screens/jood_reach_splash_screen.dart';
 import 'farah_theme.dart';
 
 class FarahApp extends StatelessWidget {
@@ -41,9 +41,10 @@ class FarahApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      // البداية شاشة الافتتاح (شعار ‎1.2s‎) ثم الدخول تلقائياً — ولا تُعدَّ
-      // الشاشة الأولى الدخول مباشرةً بعد اليوم.
-      home: FarahSplashScreen(repository: repository),
+      // البداية شاشة افتتاح «Jood Reach» (الاسم الذهبي ‎3s‎ مع لمعة ونبض)
+      // ثم الدخول تلقائياً بانتقال باهت — ولا تُعدَّ الشاشة الأولى الدخول
+      // مباشرةً بعد اليوم.
+      home: JoodReachSplashScreen(repository: repository),
     );
   }
 }
