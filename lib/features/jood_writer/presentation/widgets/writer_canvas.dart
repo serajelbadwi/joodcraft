@@ -637,7 +637,8 @@ class _PageCard extends StatelessWidget {
       width: pageWidth,
       height: pageHeight,
       decoration: BoxDecoration(
-        color: Colors.white,
+        // لون الورق: أبيض افتراضياً، أو لون المستند إن اختار المستخدم.
+        color: doc.pageColor != null ? Color(doc.pageColor!) : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.12),
@@ -648,6 +649,53 @@ class _PageCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
+          // العلامة المائية: نصّ شفّاف مائل خلف المحتوى — كعلامة وورد.
+          if (doc.watermark != null && doc.watermark!.isNotEmpty)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Center(
+                  child: Transform.rotate(
+                    angle: -0.52,
+                    child: Opacity(
+                      opacity: 0.09,
+                      child: Text(
+                        doc.watermark!,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        textDirection: TextDirection.rtl,
+                        style: TextStyle(
+                          fontSize: pageWidth / 6,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          // إطار الطباعة داخل الهوامش — خط رفيع يحدّد منطقة المحتوى.
+          if (doc.pageBorder)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    marginL,
+                    marginT,
+                    marginR,
+                    marginB,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        width: 0.8,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           // المحتوى: صندوق محتوى بمقياس الصفحة تماماً، **مقتصّ** فلا يُرسم
           // شيء خارجه أبداً، وبداخله `OverflowBox` يمنح العمود ارتفاعاً غير
           // محدود — فيُخطَّط العمود بمدى محتواه فلا يُبلَّغ `RenderFlex`

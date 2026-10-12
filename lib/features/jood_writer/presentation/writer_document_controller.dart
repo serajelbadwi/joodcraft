@@ -635,6 +635,92 @@ class WriterDocumentController extends ChangeNotifier {
     }
   }
 
+  void toggleStrikethrough() {
+    final JoodWriterBlock? block = activeBlock;
+    if (block != null) {
+      updateActiveBlock(
+        block.copyWith(isStrikethrough: !block.isStrikethrough),
+      );
+    }
+  }
+
+  /// إزالة كل التنسيق من الكتلة النشطة (كزر «مسح التنسيق» في وورد):
+  /// الخط والحجم واللون والتمييز والشطب والمسافات — كلّها تعود افتراضية.
+  void clearFormatting() {
+    final JoodWriterBlock? block = activeBlock;
+    if (block == null) return;
+    updateActiveBlock(
+      block.copyWith(
+        clearFontFamily: true,
+        clearFontSize: true,
+        clearFontColor: true,
+        clearHighlight: true,
+        isBold: false,
+        isItalic: false,
+        isUnderline: false,
+        isStrikethrough: false,
+        lineSpacing: 1.5,
+        spaceBefore: 0.0,
+        spaceAfter: 8.0,
+        indentCm: 0.0,
+        firstLineIndentCm: 0.0,
+      ),
+    );
+  }
+
+  void setLineSpacing(double spacing) {
+    final JoodWriterBlock? block = activeBlock;
+    if (block != null) {
+      updateActiveBlock(block.copyWith(lineSpacing: spacing));
+    }
+  }
+
+  void setParagraphSpacing({double? before, double? after}) {
+    final JoodWriterBlock? block = activeBlock;
+    if (block == null) return;
+    updateActiveBlock(
+      block.copyWith(spaceBefore: before, spaceAfter: after),
+    );
+  }
+
+  void setIndentCm(double cm) {
+    final JoodWriterBlock? block = activeBlock;
+    if (block != null) {
+      updateActiveBlock(block.copyWith(indentCm: cm.clamp(0.0, 10.0)));
+    }
+  }
+
+  // ------------------------- خصائص الصفحة (الشريط) -------------------------
+
+  /// لون ورق الصفحة — `null` يُرجع الورقة بيضاء كما كانت.
+  void setPageColor(Color? color) {
+    _doc = _doc.copyWith(
+      pageColor: color?.toARGB32(),
+      clearPageColor: color == null,
+    );
+    _markDirty();
+    notifyListeners();
+  }
+
+  /// العلامة المائية (نصّ خلفي شفّاف) — `null` أو فراغ يزيلها.
+  void setWatermark(String? text) {
+    final String? trimmed = text?.trim();
+    _doc = _doc.copyWith(
+      watermark: (trimmed == null || trimmed.isEmpty) ? null : trimmed,
+      clearWatermark: trimmed == null || trimmed.isEmpty,
+    );
+    _markDirty();
+    notifyListeners();
+  }
+
+  void setPageBorder(bool enabled) {
+    if (_doc.pageBorder != enabled) {
+      _doc = _doc.copyWith(pageBorder: enabled);
+      _markDirty();
+      notifyListeners();
+    }
+  }
+
   // -------------------------------- إضافة/حذف الكتل --------------------------------
 
   void addBlockAfterActive() {

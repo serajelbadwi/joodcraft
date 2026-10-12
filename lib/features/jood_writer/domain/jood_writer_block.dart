@@ -58,6 +58,7 @@ class JoodWriterBlock {
     this.isBold = false,
     this.isItalic = false,
     this.isUnderline = false,
+    this.isStrikethrough = false,
     this.highlightColor,
     this.lineSpacing = 1.5,
     this.spaceBefore = 0.0,
@@ -76,6 +77,9 @@ class JoodWriterBlock {
   final bool isBold;
   final bool isItalic;
   final bool isUnderline;
+
+  /// شطب النصّ (S) — مطابق لـ Strikethrough في وورد.
+  final bool isStrikethrough;
   final Color? highlightColor;
 
   /// المستجدات لتطابق MS Word:
@@ -104,6 +108,7 @@ class JoodWriterBlock {
     bool? isBold,
     bool? isItalic,
     bool? isUnderline,
+    bool? isStrikethrough,
     Color? highlightColor,
     bool clearHighlight = false,
     double? lineSpacing,
@@ -123,6 +128,7 @@ class JoodWriterBlock {
       isBold: isBold ?? this.isBold,
       isItalic: isItalic ?? this.isItalic,
       isUnderline: isUnderline ?? this.isUnderline,
+      isStrikethrough: isStrikethrough ?? this.isStrikethrough,
       highlightColor: clearHighlight
           ? null
           : (highlightColor ?? this.highlightColor),
@@ -145,6 +151,7 @@ class JoodWriterBlock {
     if (isBold) 'bold': true,
     if (isItalic) 'italic': true,
     if (isUnderline) 'underline': true,
+    if (isStrikethrough) 'strikethrough': true,
     if (highlightColor != null) 'highlightColor': highlightColor!.toARGB32(),
     'lineSpacing': lineSpacing,
     'spaceBefore': spaceBefore,
@@ -167,6 +174,7 @@ class JoodWriterBlock {
       isBold: json['bold'] as bool? ?? false,
       isItalic: json['italic'] as bool? ?? false,
       isUnderline: json['underline'] as bool? ?? false,
+      isStrikethrough: json['strikethrough'] as bool? ?? false,
       highlightColor: json['highlightColor'] is int
           ? Color(json['highlightColor'] as int)
           : null,

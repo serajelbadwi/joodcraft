@@ -105,7 +105,13 @@ abstract final class JoodWriterTextStyles {
       color: block.fontColor ?? defaultTextColor,
       fontWeight: block.isBold ? FontWeight.bold : base.fontWeight,
       fontStyle: block.isItalic ? FontStyle.italic : null,
-      decoration: block.isUnderline ? TextDecoration.underline : null,
+      // تسطير و/أو شطب — يُدمجان معاً إن اجتمعتا (كما في وورد).
+      decoration: (block.isUnderline || block.isStrikethrough)
+          ? TextDecoration.combine(<TextDecoration>[
+              if (block.isUnderline) TextDecoration.underline,
+              if (block.isStrikethrough) TextDecoration.lineThrough,
+            ])
+          : null,
       backgroundColor: block.highlightColor,
       height: block.lineSpacing,
       // **تباعد الحروف مُثبَّت صفر هنا** لأنّ كل نمطٍ يُدمج مع سياقه ويوارث ما

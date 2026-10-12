@@ -357,6 +357,9 @@ class JoodWriterDocument {
     this.shapes = const <WriterShape>[],
     this.images = const <WriterImage>[],
     this.pageLayout = WriterPageLayout.single,
+    this.pageColor,
+    this.watermark,
+    this.pageBorder = false,
   });
 
   final String title;
@@ -370,6 +373,15 @@ class JoodWriterDocument {
 
   /// تقسيم الصفحة — [single] يعني صفحة كاملة بلا تقسيم.
   final WriterPageLayout pageLayout;
+
+  /// لون ورق الصفحة بصيغة ARGB — `null` = أبيض افتراضي.
+  final int? pageColor;
+
+  /// علامة مائية خلفية (نصّ شفّاف مائل) — `null` = بلا علامة.
+  final String? watermark;
+
+  /// إطار طباعة داخل الهوامش — `false` = بلا إطار.
+  final bool pageBorder;
 
   /// الحجم الفعلي بعد تطبيق الاتجاه.
   JoodWriterPageSize get effectivePageSize => pageSize.oriented(orientation);
@@ -438,6 +450,11 @@ class JoodWriterDocument {
     List<WriterShape>? shapes,
     List<WriterImage>? images,
     WriterPageLayout? pageLayout,
+    int? pageColor,
+    bool clearPageColor = false,
+    String? watermark,
+    bool clearWatermark = false,
+    bool? pageBorder,
   }) {
     return JoodWriterDocument(
       title: title ?? this.title,
@@ -449,6 +466,9 @@ class JoodWriterDocument {
       shapes: shapes ?? this.shapes,
       images: images ?? this.images,
       pageLayout: pageLayout ?? this.pageLayout,
+      pageColor: clearPageColor ? null : (pageColor ?? this.pageColor),
+      watermark: clearWatermark ? null : (watermark ?? this.watermark),
+      pageBorder: pageBorder ?? this.pageBorder,
     );
   }
 
@@ -459,6 +479,9 @@ class JoodWriterDocument {
     'pageLayout': pageLayout.jsonValue,
     'pageNumbering': pageNumbering.toJson(),
     'blocks': <dynamic>[for (final JoodWriterBlock b in blocks) b.toJson()],
+    if (pageColor != null) 'pageColor': pageColor,
+    if (watermark != null && watermark!.isNotEmpty) 'watermark': watermark,
+    if (pageBorder) 'pageBorder': true,
     if (shapes.isNotEmpty)
       'shapes': <dynamic>[for (final WriterShape s in shapes) s.toJson()],
     if (images.isNotEmpty)
@@ -474,6 +497,9 @@ class JoodWriterDocument {
       pageSize: JoodWriterPageSize.fromLabel(json['pageSize'] as String?),
       orientation: WriterOrientation.fromJson(json['orientation'] as String?),
       pageLayout: WriterPageLayout.fromJson(json['pageLayout'] as String?),
+      pageColor: json['pageColor'] is int ? json['pageColor'] as int : null,
+      watermark: json['watermark'] as String?,
+      pageBorder: json['pageBorder'] as bool? ?? false,
       pageNumbering: json['pageNumbering'] != null
           ? PageNumberingConfig.fromJson(
               Map<String, dynamic>.from(json['pageNumbering'] as Map),
