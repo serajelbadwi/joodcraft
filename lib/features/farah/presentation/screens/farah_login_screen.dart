@@ -131,35 +131,35 @@ class _FarahLoginScreenState extends State<FarahLoginScreen> {
           const SizedBox(height: VillageMetrics.space24),
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              // الشعار مربّع ‎1254×1254‎ فيُقيَّد بعرضه: ‎60%‎ من الشاشة
-              // بحدّ أقصى ‎300px‎ — فلا يبتلع الدخول على الهواتف ولا يضيع
-              // على الشاشات العريضة.
-              final double logoWidth =
-                  (constraints.maxWidth * 0.6).clamp(160.0, 300.0);
+              // الاسم بدل الصورة القديمة: Amiri Bold ذهبي متدرّج — ‎72‎ على
+              // العريض وما دونه ‎56‎، و`FittedBox` يمنع أي فيض على الضيّق.
+              final double fontSize = constraints.maxWidth < 480 ? 56.0 : 72.0;
               return Center(
-                child: Image.asset(
-                  AppAssets.farahLogoImage,
-                  key: const ValueKey<String>('farah-logo'),
-                  width: logoWidth,
-                  fit: BoxFit.contain,
-                  // الاسم يبقى لقارئ الشاشة رغم أنه لم يُعرض نصّاً — الصورة
-                  // «شعار» في سمعة الجهاز لا «رسم بلا معنى».
-                  semanticLabel: FarahText.appName,
-                  // الأصل غائب من الحزمة (خطأ توزيع): يظهر اسم التطبيق
-                  // نصّاً بدل مربّع فارغ — لا تنكسر شاشة الدخول أبداً.
-                  errorBuilder: (
-                    BuildContext context,
-                    Object error,
-                    StackTrace? stackTrace,
-                  ) =>
-                      const Text(
-                    'فرح',
-                    style: TextStyle(
-                      fontFamily: AppAssets.amiriFont,
-                      fontSize: 42,
-                      fontWeight: FontWeight.w700,
-                      color: VillageColors.gold,
-                      height: 1.3,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: ShaderMask(
+                    key: const ValueKey<String>('farah-logo'),
+                    shaderCallback: (Rect rect) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: <Color>[
+                        Color(0xFFB8932E),
+                        Color(0xFFD4AF4F),
+                        Color(0xFFB8932E),
+                      ],
+                      stops: <double>[0.0, 0.5, 1.0],
+                    ).createShader(rect),
+                    blendMode: BlendMode.srcIn,
+                    child: Text(
+                      FarahText.joodReachName,
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        fontFamily: AppAssets.amiriFont,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        height: 1.2,
+                      ),
                     ),
                   ),
                 ),

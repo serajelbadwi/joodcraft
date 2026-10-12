@@ -29,7 +29,8 @@ class FarahApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: FarahText.appName,
+      // عنوان النافذة/تبويب المتصفح: هوية **Jood Reach** (لا الاسم القديم).
+      title: FarahText.joodReachName,
       debugShowCheckedModeBanner: false,
       theme: FarahTheme.dark,
       // التطبيق عربي فقط عمداً: جمهوره أهل القرية، والاتجاه RTL من اللغة
