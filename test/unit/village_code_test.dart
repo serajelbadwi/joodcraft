@@ -27,6 +27,23 @@ void main() {
       expect(VillageCode.isValid('123-2026'), isFalse);
     });
 
+    test('يقبل صيغة لوحة المالك: بادئة + بريد 5 + Plus Code مختصر', () {
+      expect(VillageCode.isValid('MAA-31951-25GF'), isTrue);
+      expect(VillageCode.isValid('maa-31951-25gf'), isTrue);
+      expect(VillageCode.normalize('maa-31951-25gf'), 'MAA-31951-25GF');
+      // أجزاء ناقصة أو بريد قصير ⇒ مرفوض.
+      expect(VillageCode.isValid('MAA-31951'), isFalse);
+      expect(VillageCode.isValid('MAA-319-25GF'), isFalse);
+      expect(VillageCode.isValid('MAA-31951-25'), isFalse);
+
+      // القيمة المُتحقَّقة تُقرأ من الصيغتين (بادئة أول جزء في الحالتين).
+      final VillageCodeValue? newFormat = VillageCodeValue.tryParse(
+        'MAA-31951-25GF',
+      );
+      expect(newFormat, isNotNull);
+      expect(newFormat!.prefix, 'MAA');
+    });
+
     test('القيمة المُحلَّلة تُفكَّك إلى بادئة وسنة', () {
       final VillageCodeValue? value = VillageCodeValue.tryParse(' maa-2026 ');
       expect(value, isNotNull);

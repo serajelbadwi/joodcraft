@@ -1438,13 +1438,13 @@ comment on column public.farah_licenses.subscriber_phone is 'تليفون صاح
 comment on column public.farah_licenses.issued_by        is 'مَن أصدر الترخيص (حساب المالك)';
 comment on column public.farah_licenses.months           is 'مدة الترخيص بالأشهر (1 أو 3 أو 12)';
 
--- 20.3 توسيع صيغة الكود: الصيغة القديمة `AAA-YYYY` (ولا تزال تمرّ لبقية
---     الشاشات) + صيغة لوحة المالك `بادئة-بريد-Plus مختصر` مثل
---     MAA-31951-25GF (أو MAA-2026-26MA عند غياب المدخلين الاختياريين).
+-- 20.3 توسيع صيغة الكود: الصيغة القديمة `AAA-YYYY` + صيغة لوحة المالك
+--     `بادئة-بريد-Plus مختصر` مثل MAA-31951-25GF (أو MAA-02026-26MA عند
+--     غياب الرمز البريدي) — نفس صيغتَي `VillageCode.pattern` في التطبيق.
 alter table public.villages drop constraint if exists villages_code_format;
 alter table public.villages add constraint villages_code_format check (
   code ~ '^[A-Z]{3}-[0-9]{4}$'
-  or code ~ '^[A-Z]{2,3}-[0-9]{4,6}-[A-Z0-9]{4,6}$'
+  or code ~ '^[A-Z]{3}-[0-9]{5}-[A-Z0-9]{4,6}$'
 );
 
 -- 20.4 قراءة التراخيص للمالك وحده: الجدول مُغلق بـ`revoke` في القسم 17،
@@ -1456,10 +1456,10 @@ create policy "licenses_select_platform"
   using (public.is_platform_admin());
 
 -- 20.5 توليد كود قرية وإنشاؤها في خطوة واحدة — يعيد الكود المولَّد.
---     البادئة من أولى حروف الاسم اللاتيني (padRight X إلى 3)، والبريد أرقام
---     فقط (بديله السنة الحالية)، وPlus Code مختصر الجزء القبلي لعلامة `+`
---     (مثل 25GF من 25GF+PQ) وبديله سنتان + حرفان من الاسم. التكرار بين قريتين
---     يُحلّ بإضافة رقم محاولة إلى آخر جزء حتى 99.
+--     البادئة من أولى حروف الاسم اللاتيني (padRight X إلى 3)، والبريد خمسة
+--     أرقام (بديله «0 + السنة» مثل 02026)، وPlus Code مختصر الجزء القبلي
+--     لعلامة `+` (مثل 25GF من 25GF+PQ) وبديله سنتان + حرفان من الاسم.
+--     التكرار بين قريتين يُحلّ بإضافة رقم محاولة إلى آخر جزء حتى 99.
 create or replace function public.owner_generate_village_code(
   p_name_ar   text,
   p_name_en   text,
@@ -1493,12 +1493,13 @@ begin
     1, 3
   );
 
-  -- الرمز البريدي: أرقام فقط؛ إن قصّر عن 4 فبديل السنة الحالية.
+  -- الرمز البريدي: خمسة أرقام كما في الرموز المصرية؛ إن خالف فبديل
+  -- «0 + السنة» (02026) — بيدوم الكود الصيغة الجديدة دوماً، وهي الصيغة
+  -- الوحيدة التي تقبلها `VillageCode.pattern` الموسّعة في التسجيل.
   v_postal := regexp_replace(coalesce(p_postal, ''), '[^0-9]', '', 'g');
-  if length(v_postal) < 4 then
-    v_postal := to_char(current_date, 'YYYY');
+  if length(v_postal) <> 5 then
+    v_postal := '0' || to_char(current_date, 'YYYY');
   end if;
-  v_postal := substr(v_postal, 1, 6);
 
   -- Plus Code مختصر: الجزء القبلي لعلامة +؛ إن غاب أو قصر فسنتان + حرفان.
   v_plus := upper(regexp_replace(coalesce(p_plus_code, ''), '[^0-9A-Za-z+]', '', 'g'));

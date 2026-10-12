@@ -202,14 +202,14 @@ abstract final class VillageText {
   static const String deleteNetworkError =
       'لا يوجد اتصال بقاعدة بيانات القرية — راجع الشبكة وأعد المحاولة';
 
-  // ----------------------------- تطبيق «فرح» -----------------------------
-  static const String farahTitle = 'تطبيق «فرح»';
+  // ----------------------------- تطبيق Jood Reach -----------------------------
+  static const String farahTitle = 'Jood Reach';
 
   static const String farahBody =
-      'حمّل تطبيق «فرح» لتتابع مناسبات القرية وأفراحها وتبقى على اطلاع بكل '
-      'جديد — وتصلك الدعوات أينما كنت.';
+      'حمّل تطبيق Jood Reach لتتابع مناسبات القرية وأفراحها وتبقى على اطلاع '
+      'بكل جديد — وتصلك الدعوات أينما كنت.';
 
-  static const String farahCta = 'تحميل تطبيق فرح';
+  static const String farahCta = 'تحميل Jood Reach';
 
   static const String farahSoon =
       'رابط التحميل قيد التجهيز — سيتوفّر قريباً بإذن الله';

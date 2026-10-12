@@ -17,12 +17,12 @@ void main() {
       expect(VillageCodeGenerator.isValid(code), isTrue);
     });
 
-    test('بديل السنة عند غياب الرمز البريدي وPlus Code', () {
+    test('بديل «0 + السنة» عند غياب الرمز البريدي وPlus Code', () {
       final String code = VillageCodeGenerator.generate(
         nameEn: 'Maarra',
         now: DateTime(2025, 7),
       );
-      expect(code, 'MAA-2025-25MA');
+      expect(code, 'MAA-02025-25MA');
       expect(VillageCodeGenerator.isValid(code), isTrue);
     });
 
@@ -31,7 +31,7 @@ void main() {
         nameEn: '  ',
         now: DateTime(2025, 7),
       );
-      expect(code, 'XXX-2025-25QQ');
+      expect(code, 'XXX-02025-25QQ');
       expect(VillageCodeGenerator.isValid(code), isTrue);
     });
 
@@ -41,12 +41,15 @@ void main() {
         plusCode: '8FW4V7WC+R8',
         now: DateTime(2025, 7),
       );
-      expect(code, 'MAA-2025-8FW4');
+      expect(code, 'MAA-02025-8FW4');
     });
 
     test('الصيغة القديمة AAA-YYYY غير مطابقة لمولّد اللوحة', () {
+      // المولّد لا يُنتج الصيغة القديمة (جزآن) ولا بريدياً من 4 أرقام —
+      // البديل حين يفقد الرمز البريدي هو «0 + السنة» (5 أرقام).
       expect(VillageCodeGenerator.isValid('MAA-2026'), isFalse);
-      expect(VillageCodeGenerator.isValid('MAA-2026-26MA'), isTrue);
+      expect(VillageCodeGenerator.isValid('MAA-2026-26MA'), isFalse);
+      expect(VillageCodeGenerator.isValid('MAA-02026-26MA'), isTrue);
     });
   });
 
