@@ -151,6 +151,12 @@ comment on column public.videos.youtube_url  is 'رابط الفيديو كما 
 comment on column public.videos.youtube_id   is 'معرّف الفيديو داخل الرابط — يُبنى منه إطار التضمين';
 comment on column public.videos.published_at is 'موعد النشر — تاريخ مستقبلي يعني مخفياً حتى موعده';
 
+-- نسبة أبعاد المشغّل — 16:9 (يوتيوب عادي) / 9:16 (شورتس) / 1:1 (مربع) / 4:5.
+alter table public.videos
+  add column if not exists aspect_ratio text default '16:9';
+
+comment on column public.videos.aspect_ratio is 'نسبة أبعاد الفيديو (16:9|9:16|1:1|4:5) — تُشتقّ من الرابط عند الإضافة';
+
 create index if not exists videos_village_id_idx
   on public.videos (village_id);
 
