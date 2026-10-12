@@ -43,4 +43,8 @@ abstract final class AppRoutes {
   /// **حول JoodCraft**: صفحة معلومات كاملة عن البرنامج والمطوّر والمميزات
   /// والتراخيص.
   static const String about = '/about';
+
+  /// **لوحة تحكم القرى**: صاحب المكتب يدير كل القرى من مكان واحد —
+  /// إضافة قرى، وفيديوهات، وإعلانات محلية، وأعضاء، وإحصائيات.
+  static const String villageAdmin = '/village-admin';
 }

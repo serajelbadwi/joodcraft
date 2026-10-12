@@ -148,7 +148,7 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
           ),
         ],
       ),
-      // 5) الإدارة — إدارة المديرين المحليين.
+      // 5) الإدارة — إدارة المديرين المحليين + لوحة تحكم القرى.
       TopNavGroup(
         id: 'admin',
         label: context.l10n?.navAdmin ?? 'الإدارة',
@@ -158,6 +158,13 @@ List<TopNavGroup> topNavGroups(BuildContext context) => <TopNavGroup>[
             path: AppRoutes.admins,
             label: context.l10n?.admTitle ?? 'إدارة المديرين',
             icon: Icons.people_rounded,
+          ),
+          // نصّ عربي ثابت كالنصّ في `VillageAdminText` — اللوحة أداة أحادية
+          // اللغة لصاحب المكتب خارج دورة الترجمة العشر لغات.
+          TopNavMenuEntry(
+            path: AppRoutes.villageAdmin,
+            label: 'لوحة تحكم القرى',
+            icon: Icons.villa_rounded,
           ),
         ],
       ),

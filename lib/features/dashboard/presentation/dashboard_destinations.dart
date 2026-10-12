@@ -146,7 +146,11 @@ int destinationIndexForPath(BuildContext context, String path) =>
 
 /// مسارات طبقة عليا تُفتح **فوق** مسار المستخدم الحالي بدل استبداله: خارج
 /// هيكل الفروع فلا موضع لها في [dashboardDestinations] ولا في فهرس الفروع.
-const Set<String> _overlayRoutes = <String>{AppRoutes.about};
+const Set<String> _overlayRoutes = <String>{
+  AppRoutes.about,
+  // لوحة تحكم القرى أداة تُفتح فوق ما يعمل عليه المستخدم وتُغلق بالرجوع.
+  AppRoutes.villageAdmin,
+};
 
 /// ينتقل إلى وجهة داخل هيكل اللوحة **دون إتلاف حالة الأقسام الأخرى**.
 ///

@@ -15,6 +15,8 @@
 --   * الزائر (غير المسجَّل) لا يُدخل شيئاً بنفسه: الإدراج يمرّ حصراً من دالة
 --     `village_register_member` التي تتحقق من الكود والاسم والتليفون والرقم
 --     القومي (وتستخرج تاريخ الميلاد والسن) على السيرفر.
+--   * حقّ الحذف مضمون بالمثل: دالة `village_delete_member` تحذف بيانات عضو
+--     بمطابقة رقميه القومي والتليفون معاً، فلا يستطيع أحد حذف بيانات غيره.
 --   * المستخدم المسجَّل (مسؤول القرية) لا يرى إلا أعضاء قريته وحدها، ولا يُدرج
 --     في جدول الفيديوهات إلا ما يخصّ قريته وحدها.
 --   ملاحظة: لا نُفعّل `force row level security` عن قصد — الدوال تعمل بـ
@@ -489,6 +491,38 @@ $$;
 
 comment on function public.village_code_from_name(text, int) is 'توليد كود قرية بصيغة AAA-YYYY من بادئة لاتينية وسنة';
 
+-- 7.5 حذف بيانات عضو — تنفيذ «حقّ الحذف» الموعود في سياسة الخصوصية.
+--     المطابقة على الرقم القومي **ورقم التليفون معاً**، فلا يُحذف صفّ إلا
+--     بمن يعرف بياناتَه هو؛ وتعود `false` عند عدم التطابق بدل رفع خطأ،
+--     فتعرض الواجهة «لم نجد بيانات متطابقة» بدل رسالة عطل.
+--     تطبيع الأرقام هنا كما في `village_register_member`: أي كتابة صحيحة
+--     (مسافات أو شرطات أو أرقام عربية-هندية) تصل إلى مطابقة واحدة.
+create or replace function public.village_delete_member(
+  p_national_id text,
+  p_phone text
+) returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_nid   text := regexp_replace(coalesce(p_national_id, ''), '[^0-9]', '', 'g');
+  v_phone text := regexp_replace(coalesce(p_phone, ''), '[^0-9]', '', 'g');
+  v_count int;
+begin
+  -- التحقق من التطابق
+  delete from public.members
+  where national_id = v_nid
+    and phone = v_phone;
+
+  get diagnostics v_count = row_count;
+  return v_count > 0;
+end;
+$$;
+
+comment on function public.village_delete_member(text, text) is
+  'حقّ الحذف: حذف بيانات عضو بعد مطابقة رقميه القومي والتليفون (متاحة للزائر) — تعود true عند الحذف وfalse عند عدم التطابق';
+
 
 -- ============================================================================
 -- 8) عرض مسطّح لمسؤول القرية (اختياري)
@@ -539,11 +573,13 @@ revoke all on public.videos from anon;
 grant select                on public.videos to anon;
 grant select, insert, update, delete on public.videos to authenticated;
 
--- الدوال: الواجهة العامة تحتاج دالتين فقط، والباقي للمسجَّلين.
+-- الدوال: الواجهة العامة تحتاج ثلاث دوال فقط (البحث والتسجيل والحذف)، والباقي
+-- للمسجَّلين.
 revoke all on function public.village_register_member(text, text, text, text) from public;
 grant execute on function public.village_lookup(text)                 to anon, authenticated;
 grant execute on function public.village_register_member(text, text, text, text)
   to anon, authenticated;
+grant execute on function public.village_delete_member(text, text)    to anon, authenticated;
 grant execute on function public.claim_village_admin(text)            to authenticated;
 grant execute on function public.current_village_id()                 to authenticated;
 grant execute on function public.is_village_member_of(uuid)           to authenticated;

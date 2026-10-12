@@ -29,6 +29,16 @@ import '../../features/invitations/presentation/screens/invitations_editor_scree
 import '../../features/jood_writer/presentation/screens/jood_writer_screen.dart';
 import '../../features/project_hub/presentation/screens/new_project_screen.dart';
 import '../../features/templates/presentation/screens/template_library_screen.dart';
+import '../../features/village/data/supabase_village_admin_repository.dart';
+import '../../features/village/domain/village.dart';
+import '../../features/village/domain/village_admin_overview.dart';
+import '../../features/village/domain/village_admin_text.dart';
+import '../../features/village/presentation/admin/village_admin_detail_screen.dart';
+import '../../features/village/presentation/admin/village_admin_direction.dart';
+import '../../features/village/presentation/admin/village_admin_gate_screen.dart';
+import '../../features/village/presentation/admin/village_ads_admin_screen.dart';
+import '../../features/village/presentation/admin/village_members_admin_screen.dart';
+import '../../features/village/presentation/admin/village_videos_admin_screen.dart';
 import 'app_routes.dart';
 
 /// موجّه التطبيق الوحيد.
@@ -276,6 +286,76 @@ abstract final class AppRouter {
           builder: (BuildContext context, GoRouterState state) =>
               const AboutScreen(),
         ),
+
+        // ------------------------- لوحة تحكم القرى -------------------------
+        // **خارج** هيكل الفروع مقصود (كصفحة «حول»): تُفتح فوق القسم الحالي
+        // فتبقى حالته حيّة، ولا تُزحزح إضافة هذا المسار فهارس الفروع القائمة —
+        // ولها شاشات فرعية متداخلة بنفس المسار (قرية ← فيديوهات/أعضاء/إعلانات).
+        GoRoute(
+          path: AppRoutes.villageAdmin,
+          name: 'village-admin',
+          builder: (BuildContext context, GoRouterState state) =>
+              const VillageAdminGateScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'village',
+              name: 'village-admin-village',
+              builder: (BuildContext context, GoRouterState state) {
+                final Object? extra = state.extra;
+                return extra is VillageAdminOverview
+                    ? VillageAdminDetailScreen(
+                        repository: const SupabaseVillageAdminRepository(),
+                        overview: extra,
+                      )
+                    : const _AdminExtraMissingScreen();
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'videos',
+                  name: 'village-admin-videos',
+                  builder: (BuildContext context, GoRouterState state) {
+                    final Object? extra = state.extra;
+                    return extra is Village
+                        ? VillageVideosAdminScreen(
+                            repository:
+                                const SupabaseVillageAdminRepository(),
+                            village: extra,
+                          )
+                        : const _AdminExtraMissingScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'members',
+                  name: 'village-admin-members',
+                  builder: (BuildContext context, GoRouterState state) {
+                    final Object? extra = state.extra;
+                    return extra is Village
+                        ? VillageMembersAdminScreen(
+                            repository:
+                                const SupabaseVillageAdminRepository(),
+                            village: extra,
+                          )
+                        : const _AdminExtraMissingScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'ads',
+                  name: 'village-admin-ads',
+                  builder: (BuildContext context, GoRouterState state) {
+                    final Object? extra = state.extra;
+                    return extra is Village
+                        ? VillageAdsAdminScreen(
+                            repository:
+                                const SupabaseVillageAdminRepository(),
+                            village: extra,
+                          )
+                        : const _AdminExtraMissingScreen();
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) =>
           _RouteNotFoundScreen(location: state.uri.toString()),
@@ -308,6 +388,25 @@ abstract final class AppRouter {
   /// يحوّل `extra` إلى قالب دعوة مختار (قادم من لوحة المكتبة).
   static InvitationTemplate? _invitationFromExtra(Object? extra) =>
       extra is InvitationTemplate ? extra : null;
+}
+
+/// شاشة «بيانات مفقودة» لمسارات لوحة التحكم عند فتحها مباشرةً بلا `extra`
+/// (رابط محفوظ أو تحديث للصفحة): رسالة قصيرة وزر رجوع للوحة بدل الانهيار.
+class _AdminExtraMissingScreen extends StatelessWidget {
+  const _AdminExtraMissingScreen();
+
+  @override
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: Scaffold(
+      appBar: AppBar(title: const Text(VillageAdminText.panelTitle)),
+      body: Center(
+        child: FilledButton(
+          onPressed: () => context.go(AppRoutes.villageAdmin),
+          child: const Text(VillageAdminText.backToPanel),
+        ),
+      ),
+    ),
+  );
 }
 
 /// شاشة مسار غير معروف.
