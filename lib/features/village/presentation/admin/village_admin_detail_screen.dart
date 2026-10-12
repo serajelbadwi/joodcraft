@@ -14,6 +14,7 @@ import '../../data/village_admin_repository.dart';
 import '../../domain/village.dart';
 import '../../domain/village_admin_overview.dart';
 import '../../domain/village_admin_text.dart';
+import 'village_admin_direction.dart';
 import 'village_admin_feedback.dart';
 
 class VillageAdminDetailScreen extends StatefulWidget {
@@ -63,7 +64,12 @@ class _VillageAdminDetailScreenState extends State<VillageAdminDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: _buildContent(context),
+  );
+
+  /// محتوى الشاشة — يُغلَّف بـ[VillageAdminDirection] في [build].
+  Widget _buildContent(BuildContext context) {
     final Village village = _overview.village;
     return Scaffold(
       appBar: AppBar(

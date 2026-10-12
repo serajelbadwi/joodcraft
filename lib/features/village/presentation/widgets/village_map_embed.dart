@@ -18,9 +18,12 @@ import 'village_map_embed_stub.dart'
     if (dart.library.js_interop) 'village_map_embed_web.dart' as impl;
 import 'village_section_card.dart';
 
-/// قسم كامل: بطاقة + خريطة + رابط الفتح في تطبيق الخرائط.
-class VillageMapSection extends StatelessWidget {
-  const VillageMapSection({
+/// قسم كامل غير قابل للطيّ: بطاقة + خريطة + رابط الفتح في تطبيق الخرائط.
+///
+/// للنسخة القابلة للطيّ (تبدأ مغلقة بزرّ «عرض الخريطة») انظر
+/// `village_map_section.dart`.
+class VillageMapCard extends StatelessWidget {
+  const VillageMapCard({
     super.key,
     this.query = VillageText.mapQuery,
     this.height = VillageMetrics.mapHeight,

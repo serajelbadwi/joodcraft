@@ -14,6 +14,7 @@ import '../../domain/members_csv.dart';
 import '../../domain/village.dart';
 import '../../domain/village_admin_text.dart';
 import '../../domain/village_member.dart';
+import 'village_admin_direction.dart';
 import 'village_admin_feedback.dart';
 
 class VillageMembersAdminScreen extends StatefulWidget {
@@ -111,19 +112,21 @@ class _VillageMembersAdminScreenState
   Future<void> _delete(VillageMember member) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text(VillageAdminText.deleteMemberTitle),
-        content: Text(VillageAdminText.deleteMemberBody(member.name)),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(VillageAdminText.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(VillageAdminText.delete),
-          ),
-        ],
+      builder: (BuildContext dialogContext) => VillageAdminDirection(
+        child: AlertDialog(
+          title: const Text(VillageAdminText.deleteMemberTitle),
+          content: Text(VillageAdminText.deleteMemberBody(member.name)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text(VillageAdminText.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text(VillageAdminText.delete),
+            ),
+          ],
+        ),
       ),
     );
     if (confirmed != true || !mounted) return;
@@ -139,7 +142,12 @@ class _VillageMembersAdminScreenState
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: _buildContent(context),
+  );
+
+  /// محتوى الشاشة — يُغلَّف بـ[VillageAdminDirection] في [build].
+  Widget _buildContent(BuildContext context) {
     final List<VillageMember>? members = _members;
     return Scaffold(
       appBar: AppBar(title: const Text(VillageAdminText.membersTitle)),

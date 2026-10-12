@@ -16,6 +16,7 @@ import '../../domain/village.dart';
 import '../../domain/village_admin_overview.dart';
 import '../../domain/village_admin_text.dart';
 import '../../domain/village_validators.dart';
+import 'village_admin_direction.dart';
 import 'village_admin_feedback.dart';
 
 class VillageAdminPanelScreen extends StatefulWidget {
@@ -74,8 +75,10 @@ class _VillageAdminPanelScreenState extends State<VillageAdminPanelScreen> {
   Future<void> _showAddVillage() async {
     final Village? created = await showDialog<Village>(
       context: context,
-      builder: (BuildContext dialogContext) =>
-          _AddVillageDialog(repository: widget.repository),
+      // النافذة تُبنى فوق شجرة الـNavigator الجذرية فلا ترث اتجاه الشاشة.
+      builder: (BuildContext dialogContext) => VillageAdminDirection(
+        child: _AddVillageDialog(repository: widget.repository),
+      ),
     );
     if (created == null || !mounted) return;
     context.showSuccess(VillageAdminText.villageCreated);
@@ -83,7 +86,12 @@ class _VillageAdminPanelScreenState extends State<VillageAdminPanelScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: _buildContent(context),
+  );
+
+  /// محتوى الشاشة — يُغلَّف بـ[VillageAdminDirection] في [build].
+  Widget _buildContent(BuildContext context) {
     final List<VillageAdminOverview>? items = _items;
     final bool showFab = items != null && items.isNotEmpty;
 

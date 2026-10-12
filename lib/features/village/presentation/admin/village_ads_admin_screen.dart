@@ -12,9 +12,11 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../data/village_admin_repository.dart';
+import '../../domain/google_drive_link.dart';
 import '../../domain/village.dart';
 import '../../domain/village_ad.dart';
 import '../../domain/village_admin_text.dart';
+import 'village_admin_direction.dart';
 import 'village_admin_feedback.dart';
 
 /// امتدادات الصور المقبولة في رفع إعلان.
@@ -69,10 +71,13 @@ class _VillageAdsAdminScreenState extends State<VillageAdsAdminScreen> {
   Future<void> _edit({VillageAd? existing}) async {
     final VillageAd? saved = await showDialog<VillageAd>(
       context: context,
-      builder: (BuildContext dialogContext) => _AdDialog(
-        repository: widget.repository,
-        villageId: widget.village.id,
-        existing: existing,
+      // النافذة تُبنى فوق شجرة الـNavigator الجذرية فلا ترث اتجاه الشاشة.
+      builder: (BuildContext dialogContext) => VillageAdminDirection(
+        child: _AdDialog(
+          repository: widget.repository,
+          villageId: widget.village.id,
+          existing: existing,
+        ),
       ),
     );
     if (saved == null || !mounted) return;
@@ -83,19 +88,21 @@ class _VillageAdsAdminScreenState extends State<VillageAdsAdminScreen> {
   Future<void> _delete(VillageAd ad) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text(VillageAdminText.deleteAdTitle),
-        content: const Text(VillageAdminText.deleteAdBody),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(VillageAdminText.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(VillageAdminText.delete),
-          ),
-        ],
+      builder: (BuildContext dialogContext) => VillageAdminDirection(
+        child: AlertDialog(
+          title: const Text(VillageAdminText.deleteAdTitle),
+          content: const Text(VillageAdminText.deleteAdBody),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text(VillageAdminText.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text(VillageAdminText.delete),
+            ),
+          ],
+        ),
       ),
     );
     if (confirmed != true || !mounted) return;
@@ -111,7 +118,12 @@ class _VillageAdsAdminScreenState extends State<VillageAdsAdminScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: _buildContent(context),
+  );
+
+  /// محتوى الشاشة — يُغلَّف بـ[VillageAdminDirection] في [build].
+  Widget _buildContent(BuildContext context) {
     final List<VillageAd>? ads = _ads;
     return Scaffold(
       appBar: AppBar(title: const Text(VillageAdminText.adsTitle)),
@@ -264,6 +276,10 @@ class _AdDialogState extends State<_AdDialog> {
   late final TextEditingController _urlController =
       TextEditingController(text: widget.existing?.contactUrl ?? '');
 
+  /// رابط الصورة المُلصوق (من Google Drive أو مباشر) — بديل اختيار ملف.
+  late final TextEditingController _imageUrlController =
+      TextEditingController(text: widget.existing?.imageUrl ?? '');
+
   late DateTime? _startsAt = widget.existing?.startsAt;
   late DateTime? _endsAt = widget.existing?.endsAt;
   late bool _isActive = widget.existing?.isActive ?? true;
@@ -278,6 +294,7 @@ class _AdDialogState extends State<_AdDialog> {
     _titleController.dispose();
     _phoneController.dispose();
     _urlController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -308,6 +325,9 @@ class _AdDialogState extends State<_AdDialog> {
       initialDate: initial,
       firstDate: DateTime(2024),
       lastDate: DateTime(2035),
+      // المُنتقي يُبنى فوق شجرة الـNavigator الجذرية أيضاً.
+      builder: (BuildContext dateContext, Widget? child) =>
+          VillageAdminDirection(child: child ?? const SizedBox.shrink()),
     );
   }
 
@@ -322,9 +342,9 @@ class _AdDialogState extends State<_AdDialog> {
       _error = null;
     });
     try {
-      // (أ) رفع الصورة إن اختيرت جديدة — قبل الحفظ حتى لا يُحفظ إعلان
-      //     بصورة لم تصل.
-      String? imageUrl = widget.existing?.imageUrl;
+      // (أ) الصورة: ملف مُختار ⇒ رفعه إلى الدلو العام؛ وإلا فالرابط المُلصوق
+      //     (يُطبَّع: روابط Google Drive تتحول إلى صيغة صورة مباشرة).
+      String? imageUrl;
       final Uint8List? bytes = _pickedBytes;
       if (bytes != null) {
         imageUrl = await widget.repository.uploadAdImage(
@@ -332,6 +352,8 @@ class _AdDialogState extends State<_AdDialog> {
           bytes: bytes,
           fileName: _pickedName ?? 'ad.png',
         );
+      } else {
+        imageUrl = normalizeGoogleDriveUrl(_imageUrlController.text);
       }
       final VillageAd saved = await widget.repository.saveAd(
         id: widget.existing?.id,
@@ -400,6 +422,20 @@ class _AdDialogState extends State<_AdDialog> {
                 SizedBox(
                   height: 120,
                   child: Image.memory(bytes, fit: BoxFit.contain),
+                ),
+              ],
+              if (bytes == null) ...<Widget>[
+                const SizedBox(height: AppTheme.space12),
+                TextField(
+                  key: const ValueKey<String>('ad-image-url'),
+                  controller: _imageUrlController,
+                  enabled: !_saving,
+                  textDirection: TextDirection.ltr,
+                  decoration: const InputDecoration(
+                    labelText: VillageAdminText.adImageUrlLabel,
+                    hintText: 'https://drive.google.com/file/d/…/view',
+                    helperText: VillageAdminText.adImageUrlHint,
+                  ),
                 ),
               ],
               const SizedBox(height: AppTheme.space16),

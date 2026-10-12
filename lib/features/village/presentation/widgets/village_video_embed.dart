@@ -4,7 +4,8 @@
 /// لماذا منصّة عرض؟ لأن `HtmlElementView` متوفر على الويب وحده، بينما تُبنى
 /// الصفحة لكل المنصات (التحليل والاختبارات) — نفس نهج قسم الخريطة تمامًا.
 ///
-/// نسبة الإطار 16:9 كما اعتادت يوتيوب، وسطحه أسود ليبقى الفيديو أول ما يُرى.
+/// نسبة الإطار تتبع نسبة الفيديو (`aspect_ratio`): 16:9 لعادي، و9:16 للشورتس،
+/// و1:1 للمربع، و4:5 لصيغ إنستجرام — وسطحه أسود ليبقى الفيديو أول ما يُرى.
 library;
 
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class VillageVideoEmbed extends StatelessWidget {
       color: Colors.black,
       width: double.infinity,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: video.aspect.ratio,
         // معرّف ناقص/بلا صيغة ⇒ لا نبني iframe برابط باطل، بل توضيح بدل الفيديو.
         child: video.isPlayable
             ? impl.buildVideoEmbed(

@@ -10,6 +10,7 @@ import '../../data/village_repository.dart';
 import '../../domain/village.dart';
 import '../../domain/village_admin_text.dart';
 import '../../domain/village_video.dart';
+import 'village_admin_direction.dart';
 import 'village_admin_feedback.dart';
 
 class VillageVideosAdminScreen extends StatefulWidget {
@@ -57,10 +58,13 @@ class _VillageVideosAdminScreenState extends State<VillageVideosAdminScreen> {
   Future<void> _edit({VillageVideo? existing}) async {
     final VillageVideo? saved = await showDialog<VillageVideo>(
       context: context,
-      builder: (BuildContext dialogContext) => _VideoDialog(
-        repository: widget.repository,
-        villageId: widget.village.id,
-        existing: existing,
+      // النافذة تُبنى فوق شجرة الـNavigator الجذرية فلا ترث اتجاه الشاشة.
+      builder: (BuildContext dialogContext) => VillageAdminDirection(
+        child: _VideoDialog(
+          repository: widget.repository,
+          villageId: widget.village.id,
+          existing: existing,
+        ),
       ),
     );
     if (saved == null || !mounted) return;
@@ -71,19 +75,21 @@ class _VillageVideosAdminScreenState extends State<VillageVideosAdminScreen> {
   Future<void> _delete(VillageVideo video) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: const Text(VillageAdminText.deleteVideoTitle),
-        content: const Text(VillageAdminText.deleteVideoBody),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(VillageAdminText.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(VillageAdminText.delete),
-          ),
-        ],
+      builder: (BuildContext dialogContext) => VillageAdminDirection(
+        child: AlertDialog(
+          title: const Text(VillageAdminText.deleteVideoTitle),
+          content: const Text(VillageAdminText.deleteVideoBody),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text(VillageAdminText.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text(VillageAdminText.delete),
+            ),
+          ],
+        ),
       ),
     );
     if (confirmed != true || !mounted) return;
@@ -99,7 +105,12 @@ class _VillageVideosAdminScreenState extends State<VillageVideosAdminScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: _buildContent(context),
+  );
+
+  /// محتوى الشاشة — يُغلَّف بـ[VillageAdminDirection] في [build].
+  Widget _buildContent(BuildContext context) {
     final List<VillageVideo>? videos = _videos;
     return Scaffold(
       appBar: AppBar(title: const Text(VillageAdminText.videosTitle)),

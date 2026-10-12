@@ -8,6 +8,8 @@ library;
 
 import 'package:flutter/foundation.dart';
 
+import 'google_drive_link.dart';
+
 @immutable
 class VillageAd {
   const VillageAd({
@@ -24,6 +26,9 @@ class VillageAd {
   });
 
   /// بناء من صف PostgREST — قراءة **متسامحة**: حقل ناقص لا يُسقط القائمة.
+  ///
+  /// رابط صورة Google Drive يُطبَّع هنا إلى صيغة مباشرة (`thumbnail…`)، فتُعرض
+  /// الصورة سواء أُدخل الرابط قديماً بصفحة العرض أو حُفظ حديثاً مُطبَّعاً.
   factory VillageAd.fromRow(Map<String, dynamic> row) {
     final String imageUrl = '${row['image_url'] ?? ''}'.trim();
     final String phone = '${row['contact_phone'] ?? ''}'.trim();
@@ -32,7 +37,7 @@ class VillageAd {
       id: '${row['id'] ?? ''}',
       villageId: '${row['village_id'] ?? ''}',
       title: '${row['title'] ?? ''}'.trim(),
-      imageUrl: imageUrl.isEmpty ? null : imageUrl,
+      imageUrl: normalizeGoogleDriveUrl(imageUrl),
       contactPhone: phone.isEmpty ? null : phone,
       contactUrl: url.isEmpty ? null : url,
       startsAt: _date(row['starts_at']),

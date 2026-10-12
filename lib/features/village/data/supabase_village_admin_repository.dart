@@ -14,6 +14,7 @@ import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/services/supabase_service.dart';
+import '../domain/google_drive_link.dart';
 import '../domain/village.dart';
 import '../domain/village_ad.dart';
 import '../domain/village_admin_overview.dart';
@@ -47,9 +48,10 @@ class SupabaseVillageAdminRepository implements VillageAdminRepository {
   static const String _villageColumns = 'id, name, code, created_at';
   static const String _memberColumns =
       'id, village_id, name, phone, national_id, birth_date, age, created_at';
-  static const String _videoColumns =
+  static const String _videoColumnsBase =
       'id, village_id, title, youtube_url, youtube_id, description, '
       'published_at, created_at';
+  static const String _videoColumns = '$_videoColumnsBase, aspect_ratio';
   static const String _adColumns =
       'id, village_id, title, image_url, contact_phone, contact_url, '
       'starts_at, ends_at, is_active, created_at';
@@ -181,15 +183,30 @@ class SupabaseVillageAdminRepository implements VillageAdminRepository {
   }) async {
     _ensureAvailable();
     try {
-      final List<Map<String, dynamic>> rows = await _supabase
-          .from(videosTable)
-          .select(_videoColumns)
-          .eq('village_id', villageId)
-          .order('created_at', ascending: false);
+      final List<Map<String, dynamic>> rows = await _selectVideoRows(villageId);
       // اللوحة ترى **كل** الصفوف (بما فيها المجدولة) — بعكس الصفحة العامة.
       return rows.map(VillageVideo.fromRow).toList(growable: false);
     } catch (error) {
       throw error is VillageException ? error : _map(error);
+    }
+  }
+
+  /// جلب صفوف فيديوهات القرية — وإن غاب عمود `aspect_ratio` (قبل تشغيل سطر
+  /// `alter table`) يُعاد الطلب بالأعمدة القديمة.
+  Future<List<Map<String, dynamic>>> _selectVideoRows(String villageId) async {
+    try {
+      return await _supabase
+          .from(videosTable)
+          .select(_videoColumns)
+          .eq('village_id', villageId)
+          .order('created_at', ascending: false);
+    } catch (error) {
+      if (!'$error'.contains('aspect_ratio')) rethrow;
+      return await _supabase
+          .from(videosTable)
+          .select(_videoColumnsBase)
+          .eq('village_id', villageId)
+          .order('created_at', ascending: false);
     }
   }
 
@@ -212,34 +229,56 @@ class SupabaseVillageAdminRepository implements VillageAdminRepository {
     }
     // نرسل المعرّف صراحةً: يبقى صالحاً إن غاب المُشغّل `videos_fill_youtube_id`
     // على السيرفر، ويقبله المُشغّل حين موجوداً (يطابقه ثم يطبّع الرابط).
+    // ونسبة الأبعاد تُشتقّ من صيغة الرابط: shorts/live ⇒ 9:16 وما عداها 16:9.
     final Map<String, dynamic> payload = <String, dynamic>{
       'village_id': villageId,
       'title': title.trim(),
       'youtube_url': url,
       'youtube_id': extracted,
+      'aspect_ratio': VillageVideoAspect.fromYoutubeUrl(url).label,
       'description': (description ?? '').trim().isEmpty
           ? null
           : description!.trim(),
     };
     try {
-      if (id == null || id.isEmpty) {
-        final Map<String, dynamic> row = await _supabase
-            .from(videosTable)
-            .insert(payload)
-            .select(_videoColumns)
-            .single();
-        return VillageVideo.fromRow(row);
-      }
-      final Map<String, dynamic> row = await _supabase
-          .from(videosTable)
-          .update(payload)
-          .eq('id', id)
-          .select(_videoColumns)
-          .single();
-      return VillageVideo.fromRow(row);
+      return VillageVideo.fromRow(await _saveVideoRow(
+        id: id,
+        payload: payload,
+      ));
     } catch (error) {
+      // عمود `aspect_ratio` لم يُنشأ بعد (لم يُشغَّل سطر `alter table`) —
+      // نُسقط المفتاح ونعيد المحاولة، والنسبة تُشتقّ من الرابط في النموذج.
+      if ('$error'.contains('aspect_ratio')) {
+        final Map<String, dynamic> legacy =
+            Map<String, dynamic>.of(payload)..remove('aspect_ratio');
+        return VillageVideo.fromRow(
+          await _saveVideoRow(id: id, payload: legacy, legacyColumns: true),
+        );
+      }
       throw error is VillageException ? error : _map(error);
     }
+  }
+
+  /// إدراج أو تعديل صف فيديو وإعادته بالأعمدة المطلوبة.
+  Future<Map<String, dynamic>> _saveVideoRow({
+    required String? id,
+    required Map<String, dynamic> payload,
+    bool legacyColumns = false,
+  }) async {
+    final String columns = legacyColumns ? _videoColumnsBase : _videoColumns;
+    if (id == null || id.isEmpty) {
+      return _supabase
+          .from(videosTable)
+          .insert(payload)
+          .select(columns)
+          .single();
+    }
+    return _supabase
+        .from(videosTable)
+        .update(payload)
+        .eq('id', id)
+        .select(columns)
+        .single();
   }
 
   @override
@@ -282,11 +321,13 @@ class SupabaseVillageAdminRepository implements VillageAdminRepository {
   }) async {
     _ensureAvailable();
     // بناء الصف في النموذج نفسه: ترميز التواريخ وتنقية الحقول في موضع واحد.
+    // رابط Google Drive يُطبَّع إلى صيغة صورة مباشرة قبل الكتابة، فلا يُخزَّن
+    // في القاعدة إلا رابط جاهز للعرض في `Image.network`.
     final Map<String, dynamic> payload = VillageAd(
       id: '',
       villageId: villageId,
       title: title.trim(),
-      imageUrl: (imageUrl ?? '').trim().isEmpty ? null : imageUrl!.trim(),
+      imageUrl: normalizeGoogleDriveUrl(imageUrl ?? ''),
       contactPhone: (contactPhone ?? '').trim().isEmpty
           ? null
           : contactPhone!.trim(),

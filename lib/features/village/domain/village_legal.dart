@@ -35,7 +35,7 @@ abstract final class VillageLegal {
 
   // ------------------------------ التواصل ------------------------------
   /// بريد المكتب لطلبات الاطّلاع أو الحذف.
-  static const String contactEmail = 'village@joodcraft.app';
+  static const String contactEmail = 'serajelroh@gmail.com';
 
   /// تليفون المكتب (نفس رقم المطوّر في فوتر الصفحة).
   static const String contactPhone = '+20 01020005439';

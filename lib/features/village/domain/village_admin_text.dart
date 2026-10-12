@@ -220,6 +220,11 @@ abstract final class VillageAdminText {
 
   static const String adNoImage = 'بلا صورة';
 
+  static const String adImageUrlLabel = 'أو الصق رابط الصورة (اختياري)';
+
+  static const String adImageUrlHint =
+      'رابط Google Drive أو رابط صورة مباشر — يُطبَّع آلياً عند الحفظ';
+
   static const String adPhoneLabel = 'رقم الهاتف (اختياري)';
 
   static const String adUrlLabel = 'رابط التواصل (اختياري)';

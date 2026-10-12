@@ -1,9 +1,10 @@
-/// فيديو واحد كما يُخزَّن في جدول `public.videos` (يُضاف يدوياً من SQL Editor).
+/// فيديو واحد كما يُخزَّن في جدول `public.videos`.
 ///
 /// العمودان `youtube_url` و`youtube_id` يُحفظان معاً عن قصد: الرابط هو ما
 /// يكتبه مسؤول القرية، والمعرّف هو ما يُبنى منه إطار التضمين. وإن غاب المعرّف
 /// استُخرج من الرابط هنا (كما يستخرجه السيرفر في مظلة `videos_fill_youtube_id`)
-/// فالقسم لا يسقط أبداً بسبب صف ناقص.
+/// فالقسم لا يسقط أبداً بسبب صف ناقص. ونسبة الأبعاد `aspect_ratio` تُقرأ إن
+/// وُجدت، وإلا اشُتقّت من صيغة الرابط (shorts ⇒ 9:16 وما عداها 16:9).
 library;
 
 import 'package:flutter/foundation.dart';
@@ -17,6 +18,7 @@ class VillageVideo {
     required this.youtubeId,
     this.description,
     this.publishedAt,
+    this.aspect = VillageVideoAspect.wide,
   });
 
   /// بناء من صف PostgREST — قراءة **متسامحة**: حقل ناقص لا يُسقط القسم كلّه.
@@ -25,6 +27,7 @@ class VillageVideo {
     final String url = '${row['youtube_url'] ?? ''}'.trim();
     final String storedId = '${row['youtube_id'] ?? ''}'.trim();
     final String description = '${row['description'] ?? ''}'.trim();
+    final Object? rawAspect = row['aspect_ratio'];
     return VillageVideo(
       id: '${row['id'] ?? ''}',
       title: '${row['title'] ?? ''}'.trim(),
@@ -35,6 +38,10 @@ class VillageVideo {
       publishedAt: rawDate is DateTime
           ? rawDate
           : (rawDate is String ? DateTime.tryParse(rawDate) : null),
+      // العمود قد يغيب قبل تشغيل سطر `alter table` — تُشتقّ النسبة من الرابط.
+      aspect: '${rawAspect ?? ''}'.trim().isNotEmpty
+          ? VillageVideoAspect.parse(rawAspect)
+          : VillageVideoAspect.fromYoutubeUrl(url),
     );
   }
 
@@ -55,6 +62,9 @@ class VillageVideo {
 
   /// موعد النشر — تاريخٌ مستقبلي يعني مخفياً حتى موعده.
   final DateTime? publishedAt;
+
+  /// نسبة أبعاد المشغّل (16:9 / 9:16 / 1:1 / 4:5).
+  final VillageVideoAspect aspect;
 
   /// هل المعرّف صالحاً لبناء إطار تضمين؟
   bool get isPlayable => VillageYoutube.isValidId(youtubeId);
@@ -77,6 +87,49 @@ class VillageVideo {
 
   @override
   String toString() => 'VillageVideo($title — $youtubeId)';
+}
+
+/// نسبة أبعاد الفيديو — تُخزَّن في عمود `videos.aspect_ratio` وتُدار مشغّل الصفحة.
+enum VillageVideoAspect {
+  wide('16:9'),
+  tall('9:16'),
+  square('1:1'),
+  portrait('4:5');
+
+  const VillageVideoAspect(this.label);
+
+  /// القيمة النصية كما تُحفظ في القاعدة (`16:9` مثلاً).
+  final String label;
+
+  /// النسبة العددية عرضاً على ارتفاعاً — نفس معامل `AspectRatio` في ودجت المشغّل.
+  double get ratio => switch (this) {
+        VillageVideoAspect.wide => 16 / 9,
+        VillageVideoAspect.tall => 9 / 16,
+        VillageVideoAspect.square => 1,
+        VillageVideoAspect.portrait => 4 / 5,
+      };
+
+  /// قراءة متسامحة من قيمة العمود: أي قيمة غريبة أو غائبة تعني 16:9.
+  static VillageVideoAspect parse(Object? raw) {
+    final String value = '${raw ?? ''}'.trim().replaceAll('/', ':');
+    for (final VillageVideoAspect aspect in VillageVideoAspect.values) {
+      if (aspect.label == value) return aspect;
+    }
+    return VillageVideoAspect.wide;
+  }
+
+  /// اشتقاق النسبة من صيغة الرابط عند الإضافة: `shorts`/`live` ⇒ 9:16، وما
+  /// عداها (watch وyoutu.be وembed) فيوتيوب عادي 16:9.
+  static VillageVideoAspect fromYoutubeUrl(String url) {
+    final Uri? uri = Uri.tryParse(url.trim());
+    if (uri == null) return VillageVideoAspect.wide;
+    final List<String> segments = uri.pathSegments;
+    if (segments.isNotEmpty &&
+        (segments.first == 'shorts' || segments.first == 'live')) {
+      return VillageVideoAspect.tall;
+    }
+    return VillageVideoAspect.wide;
+  }
 }
 
 /// صيغ روابط يوتيوب ومعرّفات الفيديو — مصدر واحد للتحويل في الواجهة.

@@ -21,7 +21,7 @@ import '../widgets/village_about_card.dart';
 import '../widgets/village_code_gate.dart';
 import '../widgets/village_footer.dart';
 import '../widgets/village_header.dart';
-import '../widgets/village_map_embed.dart';
+import '../widgets/village_map_section.dart';
 import '../widgets/village_member_form.dart';
 import '../widgets/village_section_card.dart';
 import '../widgets/village_success_card.dart';

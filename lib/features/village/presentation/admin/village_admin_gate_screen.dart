@@ -13,6 +13,7 @@ import '../../data/supabase_village_admin_repository.dart';
 import '../../data/village_admin_repository.dart';
 import '../../data/village_repository.dart';
 import '../../domain/village_admin_text.dart';
+import 'village_admin_direction.dart';
 import 'village_admin_panel_screen.dart';
 
 class VillageAdminGateScreen extends StatefulWidget {
@@ -115,7 +116,12 @@ class _VillageAdminGateScreenState extends State<VillageAdminGateScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => VillageAdminDirection(
+    child: _buildContent(context),
+  );
+
+  /// محتوى الشاشة — يُغلَّف بـ[VillageAdminDirection] في [build].
+  Widget _buildContent(BuildContext context) {
     if (!_repository.isAvailable) return const _UnavailableNote();
 
     if (_authenticated) {

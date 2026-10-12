@@ -40,9 +40,13 @@ class SupabaseVillageRepository implements VillageRepository {
   /// جدول الفيديوهات — قراءته عامة (سياسة `videos_select_public`).
   static const String videosTable = 'videos';
 
-  /// أعمدة الفيديوهات المطلوبة — لا نسحب عموداً لا يُعرض.
-  static const String _videoColumns =
+  /// أعمدة الفيديوهات الأساسية — تُطلب حين يغيب عمود `aspect_ratio` (قبل
+  /// تشغيل سطر `alter table` في `supabase_village.sql`).
+  static const String _videoColumnsBase =
       'id, title, youtube_url, youtube_id, description, published_at';
+
+  /// أعمدة الفيديوهات المطلوبة — لا نسحب عموداً لا يُعرض.
+  static const String _videoColumns = '$_videoColumnsBase, aspect_ratio';
 
   @override
   Future<Village?> lookupVillage(String code) async {
@@ -105,11 +109,7 @@ class SupabaseVillageRepository implements VillageRepository {
       if (villageId == null) return const <VillageVideo>[];
 
       // (ب) قراءة مباشرة من الجدول (سياسة القراءة العامة) — لا دالة ولا دور.
-      final List<Map<String, dynamic>> rows = await _supabase
-          .from(videosTable)
-          .select(_videoColumns)
-          .eq('village_id', villageId)
-          .order('published_at', ascending: false);
+      final List<Map<String, dynamic>> rows = await _selectVideoRows(villageId);
 
       final List<VillageVideo> videos = <VillageVideo>[];
       for (final Map<String, dynamic> row in rows) {
@@ -120,6 +120,29 @@ class SupabaseVillageRepository implements VillageRepository {
       return videos;
     } catch (error) {
       throw error is VillageException ? error : _map(error);
+    }
+  }
+
+  /// جلب صفوف فيديو قرية واحدة — وإن غاب عمود `aspect_ratio` بعد تشغيل
+  /// `alter table`، يُعاد الطلب بالأعمدة القديمة وتُشتقّ النسبة من الرابط
+  /// داخل النموذج (`VillageVideo.fromRow`) فلا يختفي القسم بانتظار SQL.
+  Future<List<Map<String, dynamic>>> _selectVideoRows(String villageId) async {
+    try {
+      return await _supabase
+          .from(videosTable)
+          .select(_videoColumns)
+          .eq('village_id', villageId)
+          .order('published_at', ascending: false);
+    } catch (error) {
+      if (!'$error'.contains('aspect_ratio')) rethrow;
+      debugPrint(
+        '[village] عمود aspect_ratio غير المنشأ بعد — جلب بالأعمدة القديمة',
+      );
+      return await _supabase
+          .from(videosTable)
+          .select(_videoColumnsBase)
+          .eq('village_id', villageId)
+          .order('published_at', ascending: false);
     }
   }
 

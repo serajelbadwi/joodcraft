@@ -10,6 +10,7 @@ import 'core/fonts/custom_font_controller.dart';
 import 'core/locale/locale_controller.dart';
 import 'core/pdf/pdf_font_catalog.dart';
 import 'core/projects/projects_controller.dart';
+import 'core/services/supabase_service.dart';
 import 'core/theme/theme_controller.dart';
 import 'features/auth/data/local_auth_repository.dart';
 
@@ -23,7 +24,11 @@ import 'features/auth/data/local_auth_repository.dart';
 ///    المشاريع فوراً من الذاكرة.
 /// 4) تجهيز **حساب محلي** على القرص (بريد وكلمة مرور) — فالتطبيق يطلب تسجيل
 ///    الدخول قبل أي شاشة، والهوية تُتحقَّق محلياً بلا شبكة.
-/// 5) تشغيل التطبيق — بلا أي تهيئة شبكة: لا Supabase ولا رفع ولا تزامن.
+/// 5) تهيئة عميل Supabase عند توفّر المفاتيح — مطلوبة لـ«لوحة تحكم القرى».
+///    المفاتيح تُقرأ تلقائياً (`--dart-define` ← `env.json` ← `assets/env/env.json`)
+///    بلا أي علامة تشغيل، وإن غابت لا ينهار شيء: تُخطَّأ التهيئة بهدوء وتبقى
+///    باقي الشاشات المحلّية كما هي، وتعرض بوابة القرى ملاحظة الخدمة غير المُهيّأة.
+/// 6) تشغيل التطبيق — بلا رفع ولا تزامن.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -65,6 +70,13 @@ Future<void> main() async {
   // «الإدارة» بلا انتظار ولا شبكة.
   final ExportAuditLog auditLog = ExportAuditLog.instance;
   await auditLog.restore();
+
+  // Supabase: تُقرأ المفاتيح تلقائياً من أفضل مصدر متاح (dart-define ←
+  // env.json على القرص ← assets/env/env.json المحزوم) — فلا حاجة لأي علامة
+  // تشغيل على Windows. إن غابت المفاتيح أو فشلت التهيئة تبقى كل الشاشات
+  // المحلّية كما هي؛ وتعرض بوابة «لوحة تحكم القرى» ملاحظة الخدمة غير
+  // المُهيّأة بدل الانهيار (نفس سلوك صفحة القرية على الويب).
+  await SupabaseService.initialize();
 
   runApp(
     JoodCraftApp(
