@@ -146,9 +146,12 @@ void main() {
       expect(OcrTextPostProcessor.process(raw), raw);
     });
 
-    test('لا يحذف الكلمة اللاتينية في طرف السطر بلا سياق عربي', () {
-      const String raw = 'عنوان 123';
-      expect(OcrTextPostProcessor.process(raw), raw);
+    test('الرقم في طرف السطر لا يُحذف — يُحوَّل هندياً (القاعدة 9)', () {
+      // رقم بجوار عربي ليس «كلمة لاتينية» فلا يدخل باب الحذف أصلاً،
+      // ويُحوَّله تحويل الأرقام الهندية غيراً لا منتمياً للرموز الوهمية.
+      expect(OcrTextPostProcessor.process('عنوان 123'), 'عنوان ١٢٣');
+      // بلا أي سياق عربي: لا تُمسّ أرقامه إطلاقاً.
+      expect(OcrTextPostProcessor.process('123'), '123');
     });
 
     test('يحذف أكثر من سطرين متتاليين إلى سطرين', () {

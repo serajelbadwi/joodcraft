@@ -80,7 +80,7 @@ class OcrTextPostProcessor {
   /// وتُلقي البقيّة.
   static const Set<String> _knownAcronyms = <String>{
     // أنظمة ووظائف
-    'API', 'PDF', 'PNG', 'JPG', 'OCR', 'CSS', 'HTML', 'SQL', 'USB', 'SIM',
+    'API', 'PDF', 'PNG', 'JPG', 'OCR', 'CSS', 'HTML', 'SQL', 'USB', 'SIM', 'URL',
     // دول وجهات
     'US', 'UK', 'UAE', 'KSA', 'EU', 'UN', 'HQ', 'PIN', 'VAT',
     // أدوار ومسمّيات
