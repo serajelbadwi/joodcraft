@@ -28,6 +28,7 @@ import '../widgets/village_success_card.dart';
 import '../widgets/village_videos_section.dart';
 import 'privacy_policy_screen.dart';
 import 'terms_screen.dart';
+import 'village_delete_data_screen.dart';
 
 /// خطوات التدفّق.
 enum VillageStep { code, form, done }
@@ -330,6 +331,9 @@ class _VillageRegistrationScreenState extends State<VillageRegistrationScreen> {
                       ],
                       const SizedBox(height: VillageMetrics.space24),
                       _buildRegistrationSection(),
+                      // حقّ الحذف (سياسة الخصوصية): مدخله أسفل النموذج مباشرة.
+                      const SizedBox(height: VillageMetrics.space16),
+                      _DeleteDataEntry(repository: widget.repository),
                       const VillageFooter(),
                     ],
                   ),
@@ -505,6 +509,45 @@ class _ServiceUnavailableNote extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// مدخل «حذف بياناتي» أسفل النموذج — يفتح صفحة الحذف بمستودع الصفحة نفسها.
+///
+/// نصّ أحمر صغير بدل زرّ ذهبي كامل: تنفيذ لحقّ الحذف الموعود في سياسة
+/// الخصوصية، لكنه لا ينافس زرّ التسجيل الأساسي بصرياً.
+class _DeleteDataEntry extends StatelessWidget {
+  const _DeleteDataEntry({required this.repository});
+
+  final VillageRepository repository;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TextButton.icon(
+        key: const ValueKey<String>('village-delete-data-button'),
+        onPressed: () => Navigator.of(context).push<void>(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => VillageDeleteDataScreen(
+              repository: repository,
+            ),
+          ),
+        ),
+        icon: const Icon(
+          Icons.delete_outline_rounded,
+          size: 19,
+          color: VillageColors.danger,
+        ),
+        label: const Text(
+          VillageText.deleteDataButton,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: VillageColors.danger,
+          ),
+        ),
       ),
     );
   }

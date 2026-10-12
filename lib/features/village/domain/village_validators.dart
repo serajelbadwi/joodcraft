@@ -147,6 +147,46 @@ abstract final class VillageText {
 
   static const String createAnother = 'تسجيل فرد آخر';
 
+  // ------------------------------ حذف البيانات ------------------------------
+  /// حقّ الحذف الموعود في سياسة الخصوصية — مدخله زرّ أسفل النموذج، وتنفيذه
+  /// صفحة مستقلة تُطابق الرقم القومي والتليفون قبل الحذف على السيرفر.
+  static const String deleteDataButton = 'حذف بياناتي من السجل';
+
+  static const String deleteTitle = 'حذف بياناتي من السجل';
+
+  static const String deleteWarningTitle = 'تحذير — لا يمكن التراجع';
+
+  static const String deleteWarningBody =
+      'حذف بياناتك نهائي: يُمحى اسمك ورقم تليفونك ورقمك القومي من سجل القرية، '
+      'ولن تُسترجَع بعد الحذف — وإن رغبت بالعودة فالتسجيل يبدأ من جديد.';
+
+  static const String deleteFormHint =
+      'اكتب الرقم القومي ورقم التليفون المسجَّلين وقت التسجيل: لا يُحذف أي '
+      'بيانات إلا إذا تطابقا تماماً.';
+
+  static const String deleteSubmit = 'احذف بياناتي';
+
+  static const String deleteSubmitting = 'جارٍ الحذف…';
+
+  static const String deleteCancel = 'إلغاء';
+
+  static const String deleteNotFound =
+      'لم نجد بيانات متطابقة في السجل — تأكّد من الرقم القومي ورقم التليفون';
+
+  static const String deleteSuccessTitle = 'تم حذف بياناتك';
+
+  static const String deleteSuccessBody =
+      'حُذفت بياناتك من سجل القرية ولن تظهر في القائمة بعد اليوم. '
+      'شكرًا لثقتك — والبوابة مفتوحة أمامك إن رغبت بالتسجيل لاحقاً.';
+
+  static const String deleteDone = 'العودة إلى التسجيل';
+
+  static const String deleteGenericError =
+      'تعذّر حذف بياناتك — تحقّق من الاتصال بالإنترنت وأعد المحاولة';
+
+  static const String deleteNetworkError =
+      'لا يوجد اتصال بقاعدة بيانات القرية — راجع الشبكة وأعد المحاولة';
+
   // ----------------------------- تطبيق «فرح» -----------------------------
   static const String farahTitle = 'تطبيق «فرح»';
 

@@ -43,6 +43,15 @@ class _FakeVillageRepository implements VillageRepository {
   /// سجلّ الأكواد التي جُلبت فيديوهاتها — للتحقق من إعادة الجلب بتبدّل الكود.
   final List<String> videoRequests = <String>[];
 
+  /// سجلّ طلبات الحذف — للتحقق من تطبيع الرقم القومي والتليفون قبل الإرسال.
+  final List<String> deleted = <String>[];
+
+  /// هل ينجح الحذف (أي تطابق الرقم القومي والتليفون)؟
+  bool deleteResult = true;
+
+  /// استثناء يُرمى عند الحذف (شبكة/تهيئة…).
+  VillageException? failDeleteWith;
+
   /// الكود الذي يُعِدّ [village] (مع التطبيع).
   static const String validCode = 'MAA-2026';
 
@@ -67,6 +76,17 @@ class _FakeVillageRepository implements VillageRepository {
     if (failure != null) throw failure;
     registered.add('$villageCode|$name|$phone|$nationalId');
     return 'member-1';
+  }
+
+  @override
+  Future<bool> deleteMember({
+    required String nationalId,
+    required String phone,
+  }) async {
+    final VillageException? failure = failDeleteWith;
+    if (failure != null) throw failure;
+    deleted.add('$nationalId|$phone');
+    return deleteResult;
   }
 
   @override
@@ -105,8 +125,9 @@ Future<void> _pumpScreen(
   _FakeVillageRepository repo, {
   String initialVillageCode = VillageText.villageCode,
 }) async {
-  // شاشة طويلة بما يكفي لعرض كامل التدفّق بلا تمرير إجباري.
-  tester.view.physicalSize = const Size(1100, 2400);
+  // شاشة طويلة بما يكفي لعرض كامل التدفّق بلا تمرير إجباري (الترويسة تحمل
+  // شعار القرية الصورة، فارتفع ارتفاع الصفحة عن قياس العنوان النصّي القديم).
+  tester.view.physicalSize = const Size(1100, 2600);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 
@@ -560,6 +581,25 @@ void main() {
       );
       expect(submit.onPressed, isNull);
       expect(repo.registered, hasLength(1), reason: 'لا يُطلب إدراج ثانٍ');
+    });
+  });
+
+  group('ترويسة الصفحة', () {
+    testWidgets('الشعار الصورة يحلّ محلّ جملة اسم القرية في الترويسة',
+        (tester) async {
+      final _FakeVillageRepository repo = _FakeVillageRepository(
+        village: _village(),
+      );
+      await _pumpScreen(tester, repo);
+
+      expect(
+        find.byKey(const ValueKey<String>('village-logo')),
+        findsOneWidget,
+        reason: 'شعار logo.png يحلّ محلّ العنوان النصّي',
+      );
+      // لا يُعرض اسم القرية كنصّ في الصفحة (الشعار بديل عنه) — والترحيب
+      // والبطاقات تحملان الاسم ضمن جُمَل أخرى لا كعنوان.
+      expect(find.text(VillageText.villageName), findsNothing);
     });
   });
 

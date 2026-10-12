@@ -2,10 +2,11 @@
 /// واستعلام مباشر من الجدول حيث القراءة العامة وحدها.
 ///
 /// لماذا RPC؟ لأن الصفحة **عامة**: الزائر غير مسجَّل دخول، وسياسات RLS تمنع أي
-/// وصول مباشر إلى `members` أو `villages` من دور `anon`. الدالتان
-/// `village_lookup` و`village_register_member` تعملان بـ `security definer`
-/// على السيرفر، فتُنجَز العمليتان المصرَّح بهما فقط: التحقق من الكود، وإدراج
-/// عضو جديد بعد تحقّق كامل من الرقم القومي على السيرفر.
+/// وصول مباشر إلى `members` أو `villages` من دور `anon`. الدوال الثلاث
+/// `village_lookup` و`village_register_member` و`village_delete_member` تعمل
+/// بـ `security definer` على السيرفر، فتُنجَز العمليات المصرَّح بها فقط:
+/// التحقق من الكود، وإدراج عضو جديد بعد تحقّق كامل من الرقم القومي على
+/// السيرفر، وحذف بيانات عضو بعد مطابقة رقميه القومي والتليفون (حقّ الحذف).
 ///
 /// استثناء واحد هو جدول `videos`: قراءته عامة بسياسة `videos_select_public`
 /// (الفيديو محتوى مُعلَن لا سرّاً)، فيكفي `select` بـ `village_id` — ويتبقّى
@@ -36,6 +37,9 @@ class SupabaseVillageRepository implements VillageRepository {
   /// أسماء الدوال على السيرفر — مصدر واحد للحقيقة.
   static const String lookupFunction = 'village_lookup';
   static const String registerFunction = 'village_register_member';
+
+  /// دالة حذف بيانات العضو (حقّ الحذف) — مطابقة الرقم القومي + التليفون.
+  static const String deleteFunction = 'village_delete_member';
 
   /// جدول الفيديوهات — قراءته عامة (سياسة `videos_select_public`).
   static const String videosTable = 'videos';
@@ -96,6 +100,36 @@ class SupabaseVillageRepository implements VillageRepository {
       }
       return '$response';
     } catch (error) {
+      throw error is VillageException ? error : _map(error);
+    }
+  }
+
+  @override
+  Future<bool> deleteMember({
+    required String nationalId,
+    required String phone,
+  }) async {
+    _ensureAvailable();
+    // التطبيع قبل الإرسال كما في التسجيل — والسجلّ لا يحمل أرقاماً قومية
+    // (بيان شخصي)، وإنما نجاح الطلب ونتيجته فقط.
+    debugPrint(
+      '[village] RPC $deleteFunction(nid: ${VillageValidators.normalizeDigits(nationalId).length} '
+      'رقماً, phone: ${VillageValidators.normalizeDigits(phone).length} رقماً)',
+    );
+    try {
+      final dynamic response = await _supabase.rpc(
+        deleteFunction,
+        params: <String, dynamic>{
+          'p_national_id': VillageValidators.normalizeDigits(nationalId),
+          'p_phone': VillageValidators.normalizeDigits(phone),
+        },
+      );
+      // الدالة تُعيد `boolean`: true ⇒ حُذف صفٍّ واحد على الأقل، false ⇒ لا تطابق.
+      final bool deleted = response == true;
+      debugPrint('[village] RPC $deleteFunction → $deleted');
+      return deleted;
+    } catch (error) {
+      debugPrint('[village] RPC $deleteFunction FAILED: $error');
       throw error is VillageException ? error : _map(error);
     }
   }
