@@ -194,12 +194,15 @@ void main() {
     OcrEngine engine,
     Uint8List bytes, {
     required OcrSettings settings,
+    required bool useDictionary,
   }) async {
     final OcrResult result = await engine.extract(
       image: bytes,
       settings: settings,
     );
-    return OcrTextPostProcessor.process(result.text);
+    // القاموس **خاصّ بالمسار الجديد** — المسار القديم لم يكن فيه قاموس أصلاً،
+    // وإعطاؤه القاموس يُخفّف الفارق الحقيقي بينهما.
+    return OcrTextPostProcessor.process(result.text, useDictionary: useDictionary);
   }
 
   OcrEngine buildEngine() =>
@@ -244,6 +247,7 @@ void main() {
           engine,
           page,
           settings: _oldSettings,
+          useDictionary: false,
         );
         debugPrint('STEP extract old: done ${total.elapsedMilliseconds} ms');
 
@@ -253,6 +257,7 @@ void main() {
           engine,
           page,
           settings: _newSettings,
+          useDictionary: true,
         );
         debugPrint('STEP extract new: done ${total.elapsedMilliseconds} ms');
 

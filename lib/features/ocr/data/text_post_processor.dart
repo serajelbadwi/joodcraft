@@ -14,7 +14,7 @@
 /// | الرموز المُبلَّغ عنها (`by`,`so`,`ne`,`dal`,`cai`,`land`) | كلمة إنجليزية معروفة (`hello`, `world`, `internet`…) |
 /// | رمز داخل قوس مرجع (`[ق: AVA]` ← `[ق: ]`) | روابط وبريد (`example.com`, `user@host`) |
 ///
-/// ## القواعد (ثلاث عشرة)
+/// ## القواعد (أربع عشرة)
 ///
 /// 1.  المحارف غير المرئية وTatweel
 /// 2.  لاتيني ملتصق بالعربي
@@ -29,10 +29,13 @@
 /// 11. الأقواس المزخرفة: `تعالى: …)` ← `تعالى: ﴿…﴾`
 /// 12. المسافات
 /// 13. حذف الفراغ في الطرفين
+/// 14. **تصحيح الكلمة العربية بالقاموس** (مسافة تحرير 1، بلا التباس)
 ///
 /// **حدود هذا المعالج:** تحسين تلقائيّ **لا بديل** عن المراجعة البشرية —
 /// لذلك يبقى النصّ قابلاً للتحرير، وتُعرض ملاحظة `ocrCleanupNote` عند تغيّره.
 library;
+
+import 'arabic_word_list.dart';
 
 class OcrTextPostProcessor {
   const OcrTextPostProcessor._();
@@ -269,7 +272,11 @@ class OcrTextPostProcessor {
   ///
   /// تُطبَّق القواعد بالترتيب آمن: إزالة الضجيج ← فصل اللاتيني عن العربي
   /// ← التصحيحات الإسلامية والرقمية ← المسافات. النصّ الفارغ يُعاد كما هو.
-  static String process(String raw) {
+  ///
+  /// [useDictionary] يجعل القاموس العربي يعمل في تصحيح الكلمات (القاعدة 15).
+  /// مفعّل افتراضياً؛ ويُطفأ في الاختبارات حين يُراد اختبار القواعد الأخرى
+  /// بمعزل عن أثر القاموس.
+  static String process(String raw, {bool useDictionary = true}) {
     if (raw.isEmpty) return raw;
 
     String text = raw;
@@ -287,7 +294,10 @@ class OcrTextPostProcessor {
     text = _cleanReferenceBrackets(text); // 12) [ق: AVA] → [ق: ]
     text = _restoreOrnateBrackets(text); // 13) ‏﴿‏…‏﴾‎
     text = _normalizeWhitespace(text); // 14) المسافات
-    return text.trim(); // 15) بلا مسافات في الطرفين
+    if (useDictionary) {
+      text = _correctArabicWords(text); // 15) قاموس
+    }
+    return text.trim(); // 16) بلا مسافات في الطرفين
   }
 
   /// هل غيّر المعالج النصّ؟ (يُستخدم لعرض ملاحظة التنظيف في الواجهة).
@@ -692,5 +702,178 @@ class OcrTextPostProcessor {
       if (line.contains(cue)) return true;
     }
     return false;
+  }
+
+  // ==========================================================================
+  //  القاموس العربي — تصحيح الكلمات بمسافة تحرير 1
+  // ==========================================================================
+
+  /// قاموس الكلمات مبنيّ مرّة واحدة: المفتاح مُطبَّع، والقيمة شكلها الأصلي.
+  ///
+  /// التطبيع للمقابلة فقط (`أإآ` ← `ا`، `ى` ← `ي`، وحذف التطويل): المحرّك قد
+  /// يكتب `الأمان` حيث الصواب `الامان`، وتوحيتهما مختلفة شكلياً متطابقة
+  /// معنىً. والقيمة تبقى على شكل القاموس كي لا يُفرَض شكلٌ على المستخدم
+  /// بلا داعٍ.
+  static final Map<String, String> _dictionary = _buildDictionary();
+
+  static Map<String, String> _buildDictionary() {
+    final Map<String, String> map = <String, String>{};
+    for (final String word in ArabicWordList.raw.split('\n')) {
+      final String key = _lookupKey(word);
+      if (key.length < 3) continue;
+      // أوّل ظهور يفوز: المصدر مرتَّب **بتكرار الورود**، فالشكل الأكثر
+      // شيوعاً هو ما يبقى مرجعاً للتصحيح.
+      map.putIfAbsent(key, () => word);
+    }
+    return map;
+  }
+
+  /// حروف التشكيل: تنقيتها الخمس، وحركة السكون والشدة ونحوهما — كلّها تُحذف
+  /// من مفتاح المقارنة.
+  ///
+  /// 📐 **حذفها شرطٌ لا ترف:** القاموس بلا تشكيل، فكلّ كلمةٍ مُشكَّلة تغيب
+  /// عنه حرفياً. وبدون هذا الحذف كان التصحيح يقع **على كلماتٍ صحيحة**: نصٌّ
+  /// فيه `ثانٍ` (معرّفة بتنوين) يبحث عنه فلا يجده، ثمّ يجد `ثاني` على مسافة
+  /// تبديلٍ واحدة فيُبدله بها — خطأٌ يولّده المعالج لا المحرّك.
+  static final RegExp _diacritics = RegExp('[\u064B-\u0655\u0670]');
+
+  /// المفتاح المُطبَّع لكلمة القاموس أو للنصّ المُقارَن.
+  static String _lookupKey(String word) => word
+      .replaceAll(_diacritics, '')
+      .replaceAll(_tatweel, '')
+      .replaceAll(RegExp('[أإآٱ]'), 'ا')
+      .replaceAll('ى', 'ي');
+
+  /// حروف عربية تُبنى منها كل توليدات التعديل الواحد.
+  static const String _arabicAlphabet =
+      'ابتثجحخدذرزسشصضطظعغفقكلمنهويءآأإؤئاةىٱ';
+
+  /// أقلّ طول لكلمة تُصحَّح. القِصَر هنا خطرٌ لا فائدة: كلمتان بثلاثة حروف
+  /// بينهما تعديل واحد قد تُقلب معنى الجملة (`من` ← `فن`، `على` ← `علن`).
+  static const int _minCorrectionLength = 4;
+
+  /// **القاعدة 15** — تصحيح الكلمة العربية غير الموجودة في القاموس.
+  ///
+  /// **المنهج:** للكلمة المجهولة تُولَّد كل كلمات **مسافة التحرير 1**
+  /// (تبديل حرف، حذفه، إضافته، أو عكس متجاورَين — طريقة Norvig)، ويُبحَث
+  /// عن كلٍّ منها في القاموس. ويُرجَع التصحيح **فقط** إن كان هناك **مرشّحٌ
+  /// واحد لا غير**:
+  ///
+  /// - **مرشّح واحد** ← التصحيح بيّن، ونادراً ما يكون خطأً (`الحلام` ← `الحلال`).
+  /// - **مرشّحان أو أكثر** ← التباسٌ: بعض المرشّحات هو الصواب وبعضها لا.
+  ///   والاختيار هنا تخمينٌ بلا دليل، فيُترك النصّ كما هو — خطأٌ معروف
+  ///   أسلم من «تصحيح» يزيد الخطأ.
+  /// - **لا مرشّح** ← الكلمة غالباً صحيحة لكنها غائبة عن القاموس (اسم،
+  ///   مصطلح، كلمة قرآنية). تُترك كما هي.
+  ///
+  /// **حروف السوابق** (`و ف ب ل ك`) تُفصَل قبل البحث وتُعاد بعده — وإلا
+  /// لاختلّت كل كلمة مسبوقة بسابق، وهي كثيرة جداً في العربية.
+  static String _correctArabicWords(String text) {
+    if (_dictionary.isEmpty) return text;
+    final List<String> out = <String>[];
+    for (final String line in text.split('\n')) {
+      // سطر بلا عربي: لا معنى لتصحيح عربي.
+      if (!_isArabicDominant(line)) {
+        out.add(line);
+        continue;
+      }
+      final List<String> tokens = line.split(' ');
+      for (int i = 0; i < tokens.length; i++) {
+        final String core = _coreOf(tokens[i]);
+        if (core.length < _minCorrectionLength) continue;
+        if (core.contains('.') || core.contains('@')) continue; // رابط/بريد
+        final String? fixed = _correctCore(core);
+        if (fixed == null || fixed == core) continue;
+        tokens[i] = tokens[i].replaceFirst(core, fixed);
+      }
+      out.add(tokens.join(' '));
+    }
+    return out.join('\n');
+  }
+
+  /// يُصحّح نواةً واحدة، أو يُعيد `null` إن لم يكن التصحيح بيّناً.
+  static String? _correctCore(String core) {
+    final String prefix = _cliticPrefix(core);
+    final String stem = core.substring(prefix.length);
+    if (stem.length < _minCorrectionLength) return null;
+
+    final String key = _lookupKey(stem);
+    if (_dictionary.containsKey(key)) return null; // موجودة — لا مساس
+
+    final String? corrected = _uniqueEdit1(key);
+    if (corrected == null) return null;
+    // الشكل الأصلي من القاموس (لا المفتاح المطبَّع) + السابق المفصول.
+    return '$prefix${_dictionary[corrected]}';
+  }
+
+  /// سابقة عربية ملتصقة أوّلها (حرف واحد أو اثنان: `و`، `وال`، `ال`، `لل`).
+  ///
+  /// **الترتيب ليس اعتباطياً:** `وال/فال/بال/كال` تسبق `ال`، وإلا اقتُطع أوّلها
+  /// فبقي `وال` ثمّ بحث عن «كتاب» فلم يُوجد. و`ال` تسبق حروف الوصل المنفردة،
+  /// لأنّ أصلها ألف اللام التعريف.
+  static String _cliticPrefix(String word) {
+    const List<String> prefixes = <String>[
+      'وال',
+      'فال',
+      'بال',
+      'كال',
+      'لل',
+      'ال',
+      'و',
+      'ف',
+      'ب',
+      'ل',
+      'ك',
+    ];
+    for (final String prefix in prefixes) {
+      if (word.length > prefix.length + 2 && word.startsWith(prefix)) {
+        return prefix;
+      }
+    }
+    return '';
+  }
+
+  /// المرشّح الوحيد في القاموس على مسافة تحرير 1 من [key] — أو `null`.
+  static String? _uniqueEdit1(String key) {
+    final Set<String> variants = _edit1Variants(key);
+    String? found;
+    for (final String variant in variants) {
+      final String? hit = _dictionary[variant];
+      if (hit == null) continue;
+      if (found != null) return null; // مرشّحان ⇒ التباس
+      found = variant;
+    }
+    return found;
+  }
+
+  /// كل توليدات مسافة التحرير 1 من [word] (طريقة Norvig).
+  ///
+  /// التوليد أسرع من البحث في القاموس كله بكثير: بضع مئات من المفاتيح
+  /// بدل عشرة آلاف لكل كلمة — والفهرس `Map` يجعل كل اختبار O(1).
+  static Set<String> _edit1Variants(String word) {
+    final Set<String> out = <String>{};
+    final List<String> letters = _arabicAlphabet.split('');
+    final int n = word.length;
+
+    // حذف حرف من كل موضع.
+    for (int i = 0; i < n; i++) {
+      out.add(word.substring(0, i) + word.substring(i + 1));
+    }
+    // عكس حرفَين متجاورَين.
+    for (int i = 0; i < n - 1; i++) {
+      out.add(
+        '${word.substring(0, i)}${word[i + 1]}${word[i]}${word.substring(i + 2)}',
+      );
+    }
+    // استبدال حرف في كل موضع، وإضافة حرف في كل موضع.
+    for (int i = 0; i <= n; i++) {
+      for (final String letter in letters) {
+        if (i < n) {
+          out.add('${word.substring(0, i)}$letter${word.substring(i + 1)}');
+        }
+        out.add('${word.substring(0, i)}$letter${word.substring(i)}');
+      }
+    }
+    return out;
   }
 }
