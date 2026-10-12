@@ -16,7 +16,8 @@ void main() {
   ) async {
     await pumpRibbon(tester);
 
-    // أقسام الصفحة (عناوين RichText) — «الفقرة» يشترك اسمها مع زر النافذة.
+    // أقسام الصفحة — عناوين RichText مستقلّة. محدِّد ribbonSection يستبعد
+    // تسميات الأزرار، ف«الفقرة» المشتركة مع زر النافذة تخرج نتيجة واحدة.
     for (final String section in <String>[
       'الكتل',
       'الخطوط',
@@ -24,22 +25,11 @@ void main() {
       'القوائم والمسافات',
       'الفقرة',
     ]) {
-      expect(
-        ribbonSection(section),
-        findsAtLeastNWidgets(1),
-        reason: section,
-      );
+      expect(ribbonSection(section), findsOneWidget, reason: section);
     }
-    // عنوان قسم الفقرة نفسه موجود (maxLines: 1).
-    expect(
-      find.byWidgetPredicate(
-        (Widget w) =>
-            w is RichText &&
-            w.text.toPlainText() == 'الفقرة' &&
-            w.maxLines == 1,
-      ),
-      findsOneWidget,
-    );
+    // زر نافذة الفقرة (Text) يحمل الاسم ذاته — المحدِّد الافتراضي يراه
+    // وحده، وribbonSection يرى عنوان القسم وحده: لا تداخل بين المطاوِتين.
+    expect(find.text('الفقرة'), findsOneWidget);
 
     // تلميحات الأدوات الأساسية كما في الشاشة القائمة (عقد الاختبار القديم).
     expect(find.byTooltip('إضافة كتلة'), findsOneWidget);

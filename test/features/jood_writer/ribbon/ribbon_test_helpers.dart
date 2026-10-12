@@ -29,9 +29,31 @@ const List<String> kRibbonTabKeys = <String>[
   'ribbon-tab-review',
 ];
 
-/// عنوان قسم داخل الشريط — يُرسم بـ`RichText` (انظر [RibbonSection]).
-Finder ribbonSection(String title) =>
-    find.text(title, findRichText: true);
+/// عنوان قسم داخل الشريط — يُرسم بـ`RichText` مستقلّ لا بـ`Text`
+/// (انظر [RibbonSection] وتعليق البناء هناك).
+///
+/// **لماذا لا `find.text(title, findRichText: true)`؟** ذلك المحدِّد يطابق
+/// أيضاً تسميات الأزرار: زر نافذة «الفقرة» يحمل الاسم ذاته لعنوان قسم
+/// «الفقرة» فتخرج النتيجة 2 بدل 1. نقتصر هنا على `RichText` المستقلّ
+/// خارج أي عنصر `Text` (تسمية الزر تمرّ عبر `Text` → RichText داخلي).
+Finder ribbonSection(String title) => find.byElementPredicate(
+  (Element element) {
+    final Widget widget = element.widget;
+    if (widget is! RichText) return false;
+    if (widget.text.toPlainText() != title) return false;
+    // استبعد RichText الداخلي لعنصر Text (تسمية زر «الفقرة» مثلاً).
+    bool insideText = false;
+    element.visitAncestorElements((Element ancestor) {
+      if (ancestor.widget is Text) {
+        insideText = true;
+        return false; // وجدنا النية — توقّف.
+      }
+      return true;
+    });
+    return !insideText;
+  },
+  description: 'section title "$title"',
+);
 
 /// مضيف الشريط: يُقتل المتحكّم عند تفكيك الشجرة (انظر وثيقة الملف).
 class RibbonTestHost extends StatefulWidget {
