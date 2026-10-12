@@ -62,6 +62,8 @@ class OcrSettings {
     this.binarize = true,
     this.denoise = true,
     this.deskew = true,
+    this.multiPass = true,
+    this.contrast = true,
   });
 
   /// اللغة المطلوبة (الافتراضي: عربي + إنجليزي).
@@ -91,11 +93,26 @@ class OcrSettings {
   /// الحروف — لكنه يُزيل بقع الغبار ونقاط الماسح التي تُقرأ أحرفاً زائفة.
   final bool denoise;
 
+  /// رفع التباين بمدّ القيم على كامل المدى (0..255) قبل العتبة.
+  ///
+  /// 🔆 **ينقذ الصور الباهتة:** حبر خفيف أو ظلّ أو كاميرا قديمة يجمع النصّ
+  /// في شريحة رمادية ضيّقة، فلا يفصل Otsu شيئاً فيها فتخرج النتيجة فارغة.
+  /// مدّ المدى يفصل الاثنين قبل أن تُبنى العتبة.
+  final bool contrast;
+
   /// تصحيح الميل بالملف الإسقاطي (projection profile).
   ///
   /// 📐 **لا يمسّ الصورة المستقيمة:** يُطبَّق فقط إن تجاوز الميل المقيس
   /// حدّ [_deskewThreshold]، وإلا يعود `0` فلا دوران ولا فقدان دقة.
   final bool deskew;
+
+  /// تشغيل عدّة مرورات بأوضاع تقطيع مختلفة واختيار الأفضل.
+  ///
+  /// 🔁 **الافتراضي مفعّل، والزمن محفوظ:** الوضع المطلوب أوّلاً، وإن كانت
+  /// نتيجته **جديدة كافية** (ثقة ‎≥ 80%‎ و‎3‎ كلمات فأكثر) يُقبل فوراً
+  /// بمرور واحد. البدائل (‎PSM 3/4/6‎) لا تُشغَّل إلاّ عند الضعف — فالصورة
+  /// الجيدة تبقى سريعة (مرور واحد)، والصعبة وحدها تدفع ثمناً.
+  final bool multiPass;
 
   /// حدود آمنة للتكبير في الواجهة.
   static const double minScale = 1.0;
@@ -117,6 +134,8 @@ class OcrSettings {
     bool? binarize,
     bool? denoise,
     bool? deskew,
+    bool? multiPass,
+    bool? contrast,
   }) {
     return OcrSettings(
       language: language ?? this.language,
@@ -126,6 +145,8 @@ class OcrSettings {
       binarize: binarize ?? this.binarize,
       denoise: denoise ?? this.denoise,
       deskew: deskew ?? this.deskew,
+      multiPass: multiPass ?? this.multiPass,
+      contrast: contrast ?? this.contrast,
     );
   }
 

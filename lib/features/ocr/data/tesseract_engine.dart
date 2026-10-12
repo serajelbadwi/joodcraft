@@ -13,6 +13,7 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
@@ -106,7 +107,10 @@ class TesseractEngine extends OcrEngine {
     } on Object {
       return OcrEngineStatus.binaryNotRunnable;
     }
-    final String? tessData = _resolveTessDataDir(executable);
+    final String? tessData = _resolveTessDataDirFor(
+      executable,
+      const OcrSettings(),
+    );
     if (tessData == null || !Directory(tessData).existsSync()) {
       return OcrEngineStatus.missingLanguageData;
     }
@@ -161,33 +165,49 @@ class TesseractEngine extends OcrEngine {
     return null;
   }
 
-  String? _resolveTessDataDir(String executable) {
+  /// مجلد بيانات اللغة الذي **يحتوي النماذج المطلوبة فعلاً**.
+  ///
+  /// الترتيب بالجودة: `tessdata_best` (نماذج ‎LSTM‎ مدرَّبة بعناية،
+  /// ‎ara‎ بـ‎12 MB‎) ثم `tessdata` (‎ara‎ بـ‎1.4 MB‎). لكن الجودة لا قيمة
+  /// لها إن لم يكن النموذج موجوداً — فيُرجَّح المجلد **الأدقّ المتوفّر فيه
+  /// الملف**، لا الأول بلا فحص. وإلا اختار `best` وفيه `ara` فقط، ثم انكسر
+  /// اختيار `eng` أو `ara+eng` على المستخدم.
+  String? _resolveTessDataDirFor(String executable, OcrSettings settings) {
     if (_cachedTessDataDir != null) return _cachedTessDataDir;
-    if (_overrideTessDataDir != null) return _overrideTessDataDir;
+    if (_overrideTessDataDir != null) return _cachedTessDataDir = _overrideTessDataDir;
 
     final String? fromEnv = Platform.environment['TESSDATA_DIR'];
     if (fromEnv != null && Directory(fromEnv).existsSync()) {
-      _cachedTessDataDir = fromEnv;
-      return _cachedTessDataDir;
+      if (_hasLanguages(fromEnv, settings)) return _cachedTessDataDir = fromEnv;
     }
+
     final String base = _dirname(executable);
-    // 1) `tessdata_best` إن وُجد — نماذج أكبر وأدقّ (LSTM مدرَّب بعناية).
-    //    تثبيت UB-Mannheim الافتراضي لا يُنشئه، لكن من يُنزّله يدوياً يجني
-    //    فرقاً في العربية تحديداً.
-    final String best = _join(base, 'tessdata_best');
-    if (Directory(best).existsSync()) {
-      _cachedTessDataDir = best;
-      return _cachedTessDataDir;
+    final List<String> candidates = <String>[
+      _join(base, 'tessdata_best'),
+      _join(base, 'tessdata'),
+    ];
+    for (final String candidate in candidates) {
+      if (Directory(candidate).existsSync() && _hasLanguages(candidate, settings)) {
+        return _cachedTessDataDir = candidate;
+      }
     }
-    // 2) `tessdata` العادي — وهو في التثبيت الافتراضي يحمل نماذج `best`
-    //    أصلاً (ara.traineddata ≈ 1.4 MB لا 0.8 MB)، فلا خسارة على عدم وجوده.
-    final String beside = _join(base, 'tessdata');
-    if (Directory(beside).existsSync()) {
-      _cachedTessDataDir = beside;
-      return _cachedTessDataDir;
+    // لا أحد فيه الملفات: نُرجع الأوّل الموجود كي تعطي رسالة الخطأ له
+    // مساراً تُقرأ منه الحالة.
+    for (final String candidate in candidates) {
+      if (Directory(candidate).existsSync()) return candidate;
     }
     return null;
   }
+
+  /// هل يتوفّر في [dir] كل ملفات لغات [settings]؟
+  bool _hasLanguages(String dir, OcrSettings settings) => settings
+      .language
+      .tesseractCode
+      .split('+')
+      .every(
+        (String code) =>
+            File(_join(dir, '$code.traineddata')).existsSync(),
+      );
 
   // ==========================================================================
   //  الاستخراج
@@ -203,15 +223,8 @@ class TesseractEngine extends OcrEngine {
     if (executable == null) {
       throw const OcrEngineUnavailableException(OcrEngineStatus.missingBinary);
     }
-    final String? tessData = _resolveTessDataDir(executable);
+    final String? tessData = _resolveTessDataDirFor(executable, settings);
     if (tessData == null) {
-      throw const OcrEngineUnavailableException(
-        OcrEngineStatus.missingLanguageData,
-      );
-    }
-    final String languageFile =
-        '${settings.language.tesseractCode.split('+').first}.traineddata';
-    if (!File(_join(tessData, languageFile)).existsSync()) {
       throw const OcrEngineUnavailableException(
         OcrEngineStatus.missingLanguageData,
       );
@@ -219,7 +232,8 @@ class TesseractEngine extends OcrEngine {
 
     final Stopwatch stopwatch = Stopwatch()..start();
 
-    // 1) معالجة قبلية + ملف مؤقّت.
+    // 1) معالجة قبلية + ملف مؤقّت — **مرّة واحدة** لكل المرورات الثلاثة:
+    //    الصورة نفسها لا تتغيّر، فلا معنى لتكبيرها وتثبيتها ثلاث مرّات.
     final PreprocessedImage prepared = ImagePreprocessor.preprocess(
       image,
       settings: settings,
@@ -234,68 +248,43 @@ class TesseractEngine extends OcrEngine {
       final String outputBase = _join(work.path, 'out');
       await File(imagePath).writeAsBytes(prepared.bytes, flush: true);
 
-      // 2) عملية Tesseract — مخرجات نص + TSV (كلمات وثقتها).
-      //
-      // `--oem 1`: محرّك LSTM وحده. الافتراضي (0) يجرب المحرّك القديم أولاً
-      // على بعض النسخ، وسلوكه غير حتمي بين نسخة وأخرى — والتثبيت صراحةً
-      // يضمن نفس النتيجة على كل جهاز.
-      //
-      // `user_defined_dpi`: انظر [assumedDpi] — الصورة المُكبَّرة تفقد EXIF
-      // فيفترض المحرّك 70dpi وتنحرف تقديرات السطر.
-      final List<String> arguments = <String>[
-        imagePath,
-        outputBase,
-        '--tessdata-dir',
-        tessData,
-        '-l',
-        settings.language.tesseractCode,
-        '--psm',
-        '${settings.psm.value}',
-        '--oem',
-        '1',
-        '-c',
-        'preserve_interword_spaces=1',
-        '-c',
-        'user_defined_dpi=$assumedDpi',
-        '-c',
-        'tessedit_create_tsv=1',
-      ];
+      // 2) المرورات: المطلوب أوّلاً، ومعه بدائله **عند الحاجة فقط**.
+      final List<Attempt> attempts = <Attempt>[];
+      final List<int> tried = <int>[];
 
-      final ProcessResult result;
-      try {
-        result = await Process.run(executable, arguments).timeout(timeout);
-      } on Object catch (error) {
-        throw OcrExtractionException(
-          'فشل تشغيل محرّك الاستخراج بعد ${timeout.inSeconds} ثانية.',
-          cause: error,
+      for (final int psm in _psmPlan(settings)) {
+        if (tried.contains(psm)) continue;
+        tried.add(psm);
+        final Attempt attempt = await _runPass(
+          executable: executable,
+          tessData: tessData,
+          settings: settings,
+          imagePath: imagePath,
+          outputBase: outputBase,
+          psm: psm,
         );
-      }
-      if (result.exitCode != 0) {
-        final String detail = _stderrOf(result);
-        throw OcrExtractionException('أعاد المحرّك خطأً ($detail).');
+        attempts.add(attempt);
+        // بوابة الخروج المبكر: نتيجة جيدة تكفي — لا تُحرق الوقت في بدائل
+        // لا لزوم لها. (الزمن معيار قبول صريح: أقلّ من 5 ثوانٍ/صفحة.)
+        if (!settings.multiPass || !_isWeak(attempt)) break;
       }
 
-      final File tsvFile = File('$outputBase.tsv');
-      if (!tsvFile.existsSync()) {
-        throw const OcrExtractionException('لم يُنتج المحرّك ملف نتائج.');
-      }
-      final String tsv = await tsvFile.readAsString();
-      final List<WordBox> words = _parseTsv(
-        tsv,
-      ); // `tessedit_create_tsv=1` يُسقِط ملف الـ‎.txt عمداً — فيُبنى النص من TSV
-      // نفسه (سطراً بسطر حسب block/par/line) فلا نحتاج عملية ثانية.
-      final String text = _textFromTsv(tsv);
+      // 3) اختيار الأفضل — وليس الأوّل.
+      final Attempt best = attempts.reduce(
+        (Attempt a, Attempt b) => b.score > a.score ? b : a,
+      );
 
       stopwatch.stop();
       return OcrResult(
-        text: text,
-        confidence: _confidenceOf(words),
-        wordBoxes: words,
+        text: best.text,
+        confidence: best.confidence,
+        wordBoxes: best.words,
         language: settings.language.tesseractCode,
         elapsedMs: stopwatch.elapsedMilliseconds,
         imageWidth: prepared.width,
         imageHeight: prepared.height,
         sourceName: sourceName,
+        appliedPsms: attempts.map((Attempt a) => a.psm).toList(growable: false),
       );
     } finally {
       // حذف الملفات المؤقتة دائماً (صور المستخدم لا تُبقي أثراً).
@@ -309,8 +298,123 @@ class TesseractEngine extends OcrEngine {
     }
   }
 
+  /// خطة المرورات: الوضع المطلوب أوّلاً، ثم بدائله بترتيب `_fallbackPsms`.
+  ///
+  /// التبديل بين أوضاع التقطيع يُغيّر طريقة تجميع الأسطر في فقرات، وهو ما
+  /// يُغيّر عدد الكلمات المستخرجة وثقتها — ولهذا يُقاس الأثر فعلياً بدل
+  /// تخمينه. والوضع المطلوب يبقى أوّلاً دائماً لأنّه اختيار المستخدم.
+  List<int> _psmPlan(OcrSettings settings) => <int>[
+    settings.psm.value,
+    ..._fallbackPsms,
+  ];
+
+  /// بدائل التقطيع عند ضعف النتيجة (قيمة `--psm`).
+  ///
+  /// 3 = تقسيم تلقائي (صفحة مختلطة)، 4 = عمود نصّي واحد، 6 = كتلة واحدة.
+  /// الثلاثة يغطّون الحالات الشائعة للمستندات العربية: صفحة فيها عناوين
+  /// وفقّرات، عمود واحد، وبطاقة/شهادة واحدة.
+  static const List<int> _fallbackPsms = <int>[3, 4, 6];
+
+  /// هل النتيجة ضعيفة بحاجة لبديل؟
+  ///
+  /// الشرطان معاً: **ثقة منخفضة** أو **كلمات قليلة** — أيّهما تحقّقوجرّب
+  /// البدائل. أمّا القويّة فتُقبل فوراً بلا إضاعة زمن.
+  static bool _isWeak(Attempt attempt) =>
+      attempt.wordCount < 3 || attempt.confidence < _goodEnoughConfidence;
+
+  /// حدّ الثقة المقبول لإسقاط البدائل (0..1).
+  static const double _goodEnoughConfidence = 0.80;
+
+  /// تشغيل مرور واحد بوضع تقطيع معيّن.
+  Future<Attempt> _runPass({
+    required String executable,
+    required String tessData,
+    required OcrSettings settings,
+    required String imagePath,
+    required String outputBase,
+    required int psm,
+  }) async {
+    // `--oem 1`: محرّك LSTM وحده. الافتراضي (0) يجرّب القديم على بعض النسخ
+    // وسلوكه غير حتمي بين نسخة وأخرى — والتثبيت صراحةً يضمن نفس النتيجة.
+    //
+    // `user_defined_dpi`: الصورة المُكبَّرة تفقد EXIF فيفترض المحرّك 70dpi
+    // فيظنّ النصّ أعلى ‎6×‎ من حقيقته فتنحرف تقديرات السطر.
+    final List<String> arguments = <String>[
+      imagePath,
+      outputBase,
+      '--tessdata-dir',
+      tessData,
+      '-l',
+      settings.language.tesseractCode,
+      '--psm',
+      '$psm',
+      '--oem',
+      '1',
+      '-c',
+      'preserve_interword_spaces=1',
+      '-c',
+      'user_defined_dpi=$assumedDpi',
+      '-c',
+      'tessedit_create_tsv=1',
+    ];
+
+    final ProcessResult result;
+    try {
+      result = await Process.run(executable, arguments).timeout(timeout);
+    } on Object catch (error) {
+      throw OcrExtractionException(
+        'فشل تشغيل محرّك الاستخراج بعد ${timeout.inSeconds} ثانية.',
+        cause: error,
+      );
+    }
+    if (result.exitCode != 0) {
+      final String detail = _stderrOf(result);
+      throw OcrExtractionException('أعاد المحرّك خطأً ($detail).');
+    }
+
+    final File tsvFile = File('$outputBase.tsv');
+    if (!tsvFile.existsSync()) {
+      throw const OcrExtractionException('لم يُنتج المحرّك ملف نتائج.');
+    }
+    final String tsv = await tsvFile.readAsString();
+    final List<WordBox> words = _parseTsv(tsv);
+    final String text = _textFromTsv(tsv);
+
+    // سجلّ لا كلاس: [Attempt] `typedef` لسجلّ مسمّى، فيُبنى بقوس لا بنداء.
+    return (
+      psm: psm,
+      text: text,
+      words: words,
+      confidence: _confidenceOf(words),
+      wordCount: _knownWordsOf(words),
+      score: _scoreOf(words),
+    );
+  }
+
+  /// معامل اختيار الأفضل بين المرورات — يجمع **الثقة والعدد**.
+  ///
+  /// لماذا الجذر لا الضرب فقط؟ لأنّ الضرب وحده يُفضّل مروراً فيه كلمةٌ كثيرة
+  /// وثقةٌ ضعيفة على مرورٍ كلماته أقلّ وثقته عالية، والحالان لا تساويان.
+  /// والعدد تحت جذر **مُشبَع** (`n/(n+4)`) فلا يُغلّب حجمٌ بلا معنى: عند
+  /// ‎0‎ كلمة يكون الصفر، وعند ‎20‎ يكون ‎0.83‎.
+  static double _scoreOf(List<WordBox> words) {
+    final double confidence = _confidenceOf(words);
+    final int count = _knownWordsOf(words);
+    if (count == 0) return 0;
+    final double saturation = count / (count + 4);
+    return confidence * math.sqrt(saturation);
+  }
+
+  /// عدد الكلمات المعروفة (نصّ غير فارغ وثقة مقيسة).
+  static int _knownWordsOf(List<WordBox> words) => words
+      .where((WordBox b) => b.text.trim().isNotEmpty && b.confidence >= 0)
+      .length;
+
   /// متوسط ثقة الكلمات المعروفة على مقياس 0..1.
-  double _confidenceOf(List<WordBox> words) {
+  ///
+  /// `static` لأنها تحسب من البايتات وحدها — ولا تعتمد على أي حالةٍ للكائن،
+  /// وهو ما يمكّن [_scoreOf] من الاستدعاء وهي نفسها `static`.
+  static double _confidenceOf(List<WordBox> words) {
     final List<WordBox> known = words
         .where(
           (WordBox box) => box.text.trim().isNotEmpty && box.confidence >= 0,
@@ -423,3 +527,16 @@ class TesseractEngine extends OcrEngine {
     return cut <= 0 ? '.' : filePath.substring(0, cut);
   }
 }
+
+/// نتيجة مرور استخراج واحد — بلا حالة إضافية، تُقارن بالبقيّة.
+///
+/// وجود هذا النوع هو ما يجعل «اختيار الأفضل» قابلاً للاختبار: المعامل
+/// محسوب هنا مرّة واحدة، والمقارنة بين المرورات لا تحتاج إعادة قراءة.
+typedef Attempt = ({
+  int psm,
+  String text,
+  List<WordBox> words,
+  double confidence,
+  int wordCount,
+  double score,
+});

@@ -135,7 +135,18 @@ abstract final class ImagePreprocessor {
       applied.add('إزالة ضوضاء');
     }
 
-    // 6) العتبة (أبيض/أسود صافي) — آخراً، على صورة نظيفة.
+    // 6) رفع التباين — قبل العتبة كي تُبنى العتبة على مدى أوسع.
+    //
+    // `normalize` يمدّ القيم على كامل المدى (0..255) بدل أن تتجمّع في شريحة
+    // ضيّقة منه. النصّ الباهت (حبر خفيف، صورة مظلّلة، كاميرا قديمة) يخرج
+    // من ذلك واضحاً بدل رمادي شبه موحّد لا يفصل Otsu فيه شيئاً — وهي الحالة
+    // التي تُخرج Tesseract نصّاً فارغاً أو ضعيفاً.
+    if (settings.contrast) {
+      image = img.normalize(image, min: 0, max: 255);
+      applied.add('رفع تباين');
+    }
+
+    // 7) العتبة (أبيض/أسود صافي) — آخراً، على صورة نظيفة.
     if (settings.binarize) {
       final int threshold = otsuThreshold(image);
       image = img.luminanceThreshold(image, threshold: threshold / 255);

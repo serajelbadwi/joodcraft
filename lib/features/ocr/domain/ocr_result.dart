@@ -57,6 +57,7 @@ class OcrResult {
     required this.imageHeight,
     this.sourceName,
     this.totalWordsOverride,
+    this.appliedPsms = const <int>[],
   });
 
   /// النص المستخرَج كما يُعرض للمستخدم — **قابل للتعديل دائماً**.
@@ -83,6 +84,13 @@ class OcrResult {
 
   /// عدّاد كلمات إضافي لتجميع صفحات PDF (حين لا يكفي عدّ صناديق الصفحة الأخيرة).
   final int? totalWordsOverride;
+
+  /// أوضاع التقطيع التي شُغّلت فعلاً على هذه الصفحة (‎3/4/6‎…).
+  ///
+  /// سجلٌّ للتشخيص: إن ظهر أكثر من وضع فالصورة كانت **ضعيفة** فجُرّبت لها
+  /// البدائل؛ وإن ظهر واحد فنتيجتها قبلت من أوّل مرور. ولذلك لا يُعرض
+  /// للمستخدم كعنوان — لكنه يُقرأ في التقارير وعند الشكوى من بطء.
+  final List<int> appliedPsms;
 
   /// هل في النص ما يُفيد؟ (Tesseract قد يُعيد صفحة بلا كلمات).
   bool get hasText => text.trim().isNotEmpty;
