@@ -13,6 +13,10 @@ abstract final class AppAssets {
   /// `flutter_launcher_icons`. المصدر الوحيد في `assets/images/`.
   static const String appIconImage = 'assets/images/icon.png';
 
+  /// شعار صفحة القرية — خطّ العربي المذهّب لاسم القرية، يحلّ محلّ عنوان
+  /// النصّ في ترويسة الصفحة العامة (`village_header.dart`).
+  static const String villageLogoImage = 'assets/images/logo.png';
+
   // ==========================================================================
   //                            قوالب نموذجية (JSON)
   // ==========================================================================
