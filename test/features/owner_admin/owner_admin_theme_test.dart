@@ -19,7 +19,7 @@ void main() {
       await pumpOwnerAdmin(
         tester,
         FakeOwnerAdminRepository(
-          villages: <OwnerVillage>[seedVillage()],
+          domains: <OwnerDomain>[seedDomain()],
           licenses: <OwnerLicense>[
             _license(isActive: true, months: 12),
           ],
@@ -48,7 +48,7 @@ void main() {
     testWidgets('ألوان شريط التبويبات من colorScheme', (WidgetTester tester) async {
       await pumpOwnerAdmin(
         tester,
-        FakeOwnerAdminRepository(villages: <OwnerVillage>[seedVillage()]),
+        FakeOwnerAdminRepository(domains: <OwnerDomain>[seedDomain()]),
         brightness: Brightness.dark,
       );
 
@@ -65,7 +65,7 @@ void main() {
       await pumpOwnerAdmin(
         tester,
         FakeOwnerAdminRepository(
-          villages: <OwnerVillage>[seedVillage()],
+          domains: <OwnerDomain>[seedDomain()],
           licenses: <OwnerLicense>[_license(isActive: true, months: 12)],
         ),
         brightness: Brightness.dark,
@@ -118,7 +118,7 @@ void main() {
         (WidgetTester tester) async {
       await pumpOwnerAdmin(
         tester,
-        FakeOwnerAdminRepository(villages: <OwnerVillage>[seedVillage()]),
+        FakeOwnerAdminRepository(domains: <OwnerDomain>[seedDomain()]),
       );
 
       final ThemeData light = AppTheme.light;
@@ -142,8 +142,8 @@ OwnerLicense _license({
 }) => OwnerLicense(
   id: 'l1',
   code: 'FRH-MAA-001',
-  villageId: 'v1',
-  villageName: 'قرية التجارب',
+  domainId: 'v1',
+  domainName: 'نطاق التجارب',
   subscriberName: 'مكتب الأمل',
   subscriberPhone: '01001234567',
   months: months,

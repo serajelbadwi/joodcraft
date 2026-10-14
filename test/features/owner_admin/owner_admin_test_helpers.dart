@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/features/owner_admin/data/owner_admin_repository.dart';
 import 'package:joodcraft/features/owner_admin/domain/owner_models.dart';
-import 'package:joodcraft/features/owner_admin/domain/village_code_generator.dart';
+import 'package:joodcraft/features/owner_admin/domain/domain_code_generator.dart';
 import 'package:joodcraft/features/owner_admin/presentation/owner_admin_gate_screen.dart';
 import 'package:joodcraft/features/owner_admin/presentation/owner_admin_screen.dart';
 
@@ -14,33 +14,33 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
     this.available = true,
     this.signedIn = true,
     this.isAdmin = true,
-    List<OwnerVillage>? villages,
+    List<OwnerDomain>? domains,
     List<OwnerLicense>? licenses,
     Map<String, int>? memberCounts,
     this.signInError,
-    this.createVillageError,
+    this.createDomainError,
     this.createLicenseError,
-  }) : villages = villages ?? <OwnerVillage>[],
+  }) : domains = domains ?? <OwnerDomain>[],
        licenses = licenses ?? <OwnerLicense>[],
        memberCounts = memberCounts ?? <String, int>{};
 
   bool available;
   bool signedIn;
   bool isAdmin;
-  List<OwnerVillage> villages;
+  List<OwnerDomain> domains;
   List<OwnerLicense> licenses;
   Map<String, int> memberCounts;
 
   String? signInError;
-  OwnerAdminException? createVillageError;
+  OwnerAdminException? createDomainError;
   OwnerAdminException? createLicenseError;
 
   /// عدد مرات فشل الجلب القادم — يُستعمل لاختبار شاشة الخطأ وإعادة المحاولة.
-  int fetchVillagesFailures = 0;
+  int fetchDomainsFailures = 0;
   int fetchLicensesFailures = 0;
 
   final List<String> calls = <String>[];
-  int _villageSeq = 0;
+  int _domainSeq = 0;
 
   @override
   bool get isAvailable => available;
@@ -62,13 +62,13 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
   }
 
   @override
-  Future<List<OwnerVillage>> fetchVillages() async {
-    calls.add('fetchVillages');
-    if (fetchVillagesFailures > 0) {
-      fetchVillagesFailures -= 1;
-      throw const OwnerAdminException('تعذّر جلب القرى');
+  Future<List<OwnerDomain>> fetchDomains() async {
+    calls.add('fetchDomains');
+    if (fetchDomainsFailures > 0) {
+      fetchDomainsFailures -= 1;
+      throw const OwnerAdminException('تعذّر جلب النطاقات');
     }
-    return List<OwnerVillage>.of(villages);
+    return List<OwnerDomain>.of(domains);
   }
 
   @override
@@ -78,7 +78,7 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
   }
 
   @override
-  Future<String> createVillage({
+  Future<String> createDomain({
     required String nameAr,
     required String nameEn,
     required String governorate,
@@ -86,20 +86,20 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
     String? postalCode,
     String? plusCode,
   }) async {
-    calls.add('createVillage $nameAr');
-    final OwnerAdminException? error = createVillageError;
+    calls.add('createDomain $nameAr');
+    final OwnerAdminException? error = createDomainError;
     if (error != null) throw error;
-    final String code = VillageCodeGenerator.generate(
+    final String code = DomainCodeGenerator.generate(
       nameEn: nameEn,
       postalCode: postalCode,
       plusCode: plusCode,
     );
-    _villageSeq += 1;
-    villages = <OwnerVillage>[
-      ...villages,
-      OwnerVillage(
+    _domainSeq += 1;
+    domains = <OwnerDomain>[
+      ...domains,
+      OwnerDomain(
         // بادئة `nv` تفصل المُنشأة عن المزروع (`v1`) فلا يتصادم المعرّف.
-        id: 'nv$_villageSeq',
+        id: 'nv$_domainSeq',
         name: nameAr,
         nameEn: nameEn,
         code: code,
@@ -111,30 +111,30 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
   }
 
   @override
-  Future<void> updateVillage({
+  Future<void> updateDomain({
     required String id,
     String? name,
     String? code,
     String? governorate,
   }) async {
-    calls.add('updateVillage $id');
-    villages = <OwnerVillage>[
-      for (final OwnerVillage village in villages)
-        village.id == id
-            ? village.copyWith(
+    calls.add('updateDomain $id');
+    domains = <OwnerDomain>[
+      for (final OwnerDomain domain in domains)
+        domain.id == id
+            ? domain.copyWith(
                 name: name,
                 code: code,
                 governorate: governorate,
               )
-            : village,
+            : domain,
     ];
   }
 
   @override
-  Future<void> deleteVillage(String id) async {
-    calls.add('deleteVillage $id');
-    villages = villages
-        .where((OwnerVillage village) => village.id != id)
+  Future<void> deleteDomain(String id) async {
+    calls.add('deleteDomain $id');
+    domains = domains
+        .where((OwnerDomain domain) => domain.id != id)
         .toList(growable: false);
   }
 
@@ -150,18 +150,18 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
 
   @override
   Future<String> createLicense({
-    required String villageId,
+    required String domainId,
     required String subscriberName,
     required String phone,
     required int months,
   }) async {
-    calls.add('createLicense $villageId $months');
+    calls.add('createLicense $domainId $months');
     final OwnerAdminException? error = createLicenseError;
     if (error != null) throw error;
-    final OwnerVillage village = villages.firstWhere(
-      (OwnerVillage item) => item.id == villageId,
+    final OwnerDomain domain = domains.firstWhere(
+      (OwnerDomain item) => item.id == domainId,
     );
-    final String prefix = village.code.split('-').first;
+    final String prefix = domain.code.split('-').first;
 
     // «التسلسل التالي الشاغر» — نفس منطق دالة الخادم: يتجاوز الأكواد
     // القائمة بنفس البادئة ولا يكرّرها.
@@ -182,8 +182,8 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
       OwnerLicense(
         id: 'l${licenses.length + 1}',
         code: code,
-        villageId: villageId,
-        villageName: village.name,
+        domainId: domainId,
+        domainName: domain.name,
         subscriberName: subscriberName,
         subscriberPhone: phone,
         months: months,
@@ -195,15 +195,15 @@ class FakeOwnerAdminRepository implements OwnerAdminRepository {
   }
 }
 
-/// قرية بذرة سريعة للاختبارات.
-OwnerVillage seedVillage({
+/// نطاق بذرة سريعة للاختبارات.
+OwnerDomain seedDomain({
   String id = 'v1',
   String name = 'منشأة الأمراء',
   String nameEn = 'Maarra',
   String code = 'MAA-2026',
   String? governorate = 'الغربية',
   String? center = 'ميت غمر',
-}) => OwnerVillage(
+}) => OwnerDomain(
   id: id,
   name: name,
   nameEn: nameEn,

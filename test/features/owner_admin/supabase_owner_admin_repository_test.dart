@@ -9,7 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 ///
 /// الخطأ الحقيقي الذي كان يُخفى خلف «تعذّر جلب التراخيص»:
 /// `PostgrestException(42703) — column farah_licenses.subscriber_name does
-/// not exist`، لأن قسم 20 من `supabase_village.sql` (أعمدة المشترك والمدة)
+/// not exist`، لأن قسم 20 من `supabase_domain.sql` (أعمدة المشترك والمدة)
 /// لم يكن مُشغَّلاً على القاعدة بينما التطبيق يطلب تلك الأعمدة.
 ///
 /// هذه الاختبارات تقفل الإصلاح: التراخيص تظهر رغم غياب الأعمدة، والرسالة
@@ -25,7 +25,7 @@ void main() {
             const <String>{
               'id',
               'code',
-              'village_id',
+              'domain_id',
               'is_active',
               'created_at',
             },
@@ -33,16 +33,16 @@ void main() {
               <String, dynamic>{
                 'id': 'l1',
                 'code': 'FRH-MAA-001',
-                'village_id': 'v1',
+                'domain_id': 'v1',
                 'is_active': false,
                 'created_at': '2026-10-01T10:00:00Z',
               },
             ],
           ),
-          'villages': _FakeTable(
+          'domains': _FakeTable(
             const <String>{'id', 'name'},
             <Map<String, dynamic>>[
-              <String, dynamic>{'id': 'v1', 'name': 'قرية التجارب'},
+              <String, dynamic>{'id': 'v1', 'name': 'نطاق التجارب'},
             ],
           ),
         }),
@@ -52,8 +52,8 @@ void main() {
 
       expect(licenses, hasLength(1));
       expect(licenses.single.code, 'FRH-MAA-001');
-      // اسم القرية يُلحق من جدول القرى رغم الأعمدة الناقصة.
-      expect(licenses.single.villageName, 'قرية التجارب');
+      // اسم النطاق يُلحق من جدول النطاقات رغم الأعمدة الناقصة.
+      expect(licenses.single.domainName, 'نطاق التجارب');
       // بيانات المشترك غائبة بلا انهيار — الشاشة تعرض «—» لا شاشة خطأ.
       expect(licenses.single.subscriberName, isNull);
       expect(licenses.single.durationLabel, '—');
@@ -67,7 +67,7 @@ void main() {
             const <String>{
               'id',
               'code',
-              'village_id',
+              'domain_id',
               'subscriber_name',
               'subscriber_phone',
               'months',
@@ -78,7 +78,7 @@ void main() {
               <String, dynamic>{
                 'id': 'l1',
                 'code': 'FRH-MAA-001',
-                'village_id': 'v1',
+                'domain_id': 'v1',
                 'subscriber_name': 'مكتب الأمل',
                 'subscriber_phone': '01001234567',
                 'months': 3,
@@ -87,10 +87,10 @@ void main() {
               },
             ],
           ),
-          'villages': _FakeTable(
+          'domains': _FakeTable(
             const <String>{'id', 'name'},
             <Map<String, dynamic>>[
-              <String, dynamic>{'id': 'v1', 'name': 'قرية التجارب'},
+              <String, dynamic>{'id': 'v1', 'name': 'نطاق التجارب'},
             ],
           ),
         }),
@@ -112,13 +112,13 @@ void main() {
             const <String>{
               'id',
               'code',
-              'village_id',
+              'domain_id',
               'is_active',
               'created_at',
             },
             const <Map<String, dynamic>>[],
           ),
-          'villages': _FakeTable(
+          'domains': _FakeTable(
             const <String>{'id', 'name'},
             const <Map<String, dynamic>>[],
           ),
@@ -137,7 +137,7 @@ void main() {
             const <String>{
               'id',
               'code',
-              'village_id',
+              'domain_id',
               'is_active',
               'created_at',
             },
@@ -147,7 +147,7 @@ void main() {
               message: 'permission denied for table farah_licenses',
             ),
           ),
-          'villages': _FakeTable(
+          'domains': _FakeTable(
             const <String>{'id', 'name'},
             const <Map<String, dynamic>>[],
           ),
@@ -176,7 +176,7 @@ void main() {
 
       await expectLater(
         repository.createLicense(
-          villageId: 'v1',
+          domainId: 'v1',
           subscriberName: 'مكتب الأمل',
           phone: '01001234567',
           months: 3,
@@ -185,7 +185,7 @@ void main() {
           isA<OwnerAdminException>().having(
             (OwnerAdminException e) => e.message,
             'message',
-            contains('supabase_village.sql'),
+            contains('supabase_domain.sql'),
           ),
         ),
       );
