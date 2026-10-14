@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:joodcraft/core/theme/app_theme.dart';
 import 'package:joodcraft/features/owner_admin/data/owner_admin_repository.dart';
 import 'package:joodcraft/features/owner_admin/domain/owner_models.dart';
 import 'package:joodcraft/features/owner_admin/domain/village_code_generator.dart';
@@ -212,23 +213,44 @@ OwnerVillage seedVillage({
 );
 
 /// يفتح شاشة اللوحة مباشرةً (بلا بوابة) — لاختبارات التبويبين.
+///
+/// [brightness] يضبط المظهر: فاتح افتراضياً (يوافق بقيّة اختبارات اللوحة
+/// التي لا تعنى بالثيم)، وداكن لاختبارات الوضع الليلي.
 Future<void> pumpOwnerAdmin(
   WidgetTester tester,
-  OwnerAdminRepository repository,
-) async {
+  OwnerAdminRepository repository, {
+  Brightness brightness = Brightness.light,
+}) async {
   await tester.pumpWidget(
-    MaterialApp(home: OwnerAdminScreen(repository: repository)),
+    MaterialApp(
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: brightness == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      home: OwnerAdminScreen(repository: repository),
+    ),
   );
   await tester.pumpAndSettle();
 }
 
 /// يفتح بوابة اللوحة — لاختبارات الصلاحية والدخول.
+///
+/// [brightness] مثل [pumpOwnerAdmin]: يضبط المظهر فاتحاً أو داكناً.
 Future<void> pumpOwnerGate(
   WidgetTester tester,
-  OwnerAdminRepository repository,
-) async {
+  OwnerAdminRepository repository, {
+  Brightness brightness = Brightness.light,
+}) async {
   await tester.pumpWidget(
-    MaterialApp(home: OwnerAdminGateScreen(repository: repository)),
+    MaterialApp(
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: brightness == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      home: OwnerAdminGateScreen(repository: repository),
+    ),
   );
   await tester.pumpAndSettle();
 }

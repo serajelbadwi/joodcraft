@@ -188,7 +188,7 @@ abstract final class AppTheme {
           foregroundColor: AppColors.navy,
           disabledBackgroundColor: scheme.outline,
           disabledForegroundColor: disabledFg,
-          minimumSize: const Size.fromHeight(controlHeight),
+          minimumSize: const Size(0, controlHeight),
           padding: const EdgeInsets.symmetric(horizontal: space24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
@@ -201,7 +201,7 @@ abstract final class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: elevatedBg,
           foregroundColor: AppColors.onNavy,
-          minimumSize: const Size.fromHeight(controlHeight),
+          minimumSize: const (0, controlHeight),
           padding: const EdgeInsets.symmetric(horizontal: space24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
@@ -214,7 +214,7 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: scheme.primary,
           side: BorderSide(color: scheme.outline, width: 1.2),
-          minimumSize: const Size.fromHeight(controlHeight),
+          minimumSize: const Size(0, controlHeight),
           padding: const EdgeInsets.symmetric(horizontal: space24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),

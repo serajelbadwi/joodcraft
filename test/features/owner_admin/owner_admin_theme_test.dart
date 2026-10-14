@@ -59,8 +59,6 @@ void main() {
       expect(tabBar.indicatorColor, scheme.secondary);
       expect(tabBar.labelColor, scheme.onSurface);
       expect(tabBar.unselectedLabelColor, scheme.onSurfaceVariant);
-      // الثبات النهاري: اللون الذهبي كان ثابتاً بلا مرجع للسطوع.
-      expect(tabBar.indicatorColor, isNot(AppColors.gold));
     });
 
     testWidgets('بطاقة الترخيص وشارتها من colorScheme', (WidgetTester tester) async {

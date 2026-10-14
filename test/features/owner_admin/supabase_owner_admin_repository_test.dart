@@ -205,61 +205,46 @@ class _FakeTable {
 }
 
 /// منشئ استعلامات وهمي يحاكي PostgREST: يرفض عموداً غير موجود بالرمز
-/// `42703` (نفس ما يفعله الخادم حين يُختار عمودٌ غائب).
-class _FakePostgrest implements Future<List<Map<String, dynamic>>> {
-  _FakePostgrest(this._table, this._schema);
+/// `42703` (نفس ما يفعله الخادم حين يُختار عمودٌ غائب)، ويرفض الجدول
+/// كاملاً بالخطأ الثابت إن وُجد (`42501` مثل منع RLS).
+///
+/// يُنفّذ واجهة `PostgrestFilterBuilder<PostgrestList>` الحقيقية كي ينجح
+/// التحويل الضمني لنوع إرجاع `.select(...)`؛ وما عدا `then` يمرّ عبر
+/// `noSuchMethod` ويعيد نفس الكائن لسلاسل `order`/`limit`/`eq`.
+class _FakeFilterBuilder implements PostgrestFilterBuilder<PostgrestList> {
+  _FakeFilterBuilder(this._table, this._schema, this._selected);
 
   final String _table;
   final _FakeTable _schema;
-  List<String> _selected = const <String>[];
-
-  _FakePostgrest select([String? columns]) {
-    _selected = (columns ?? '')
-        .split(',')
-        .map((String c) => c.trim())
-        .where((String c) => c.isNotEmpty)
-        .toList(growable: false);
-    return this;
-  }
-
-  _FakePostgrest order(String column, {bool ascending = true}) => this;
-
-  _FakePostgrest limit(int count) => this;
+  final List<String> _selected;
 
   @override
-  Stream<List<Map<String, dynamic>>> asStream() async* {
-    yield await _resolve();
-  }
+  PostgrestTransformBuilder<PostgrestList> order(
+    String column, {
+    bool ascending = false,
+    bool nullsFirst = false,
+    String? referencedTable,
+  }) => this;
 
   @override
-  Future<List<Map<String, dynamic>>> catchError(
-    Function onError, {
-    bool Function(Object)? test,
-  }) => Future<List<Map<String, dynamic>>>.value(_schema.rows);
+  PostgrestTransformBuilder<PostgrestList> limit(
+    int count, {
+    String? referencedTable,
+  }) => this;
 
   @override
   Future<R> then<R>(
-    FutureOr<R> Function(List<Map<String, dynamic>>) onValue, {
+    FutureOr<R> Function(PostgrestList value) onValue, {
     Function? onError,
   }) => _resolve().then<R>(onValue, onError: onError);
 
+  /// كل ما لم يُعرَّف صراحةً سلسلة استعلام — يرجع نفس الكائن.
   @override
-  Future<List<Map<String, dynamic>>> timeout(
-    Duration timeLimit, {
-    FutureOr<List<Map<String, dynamic>>> Function()? onTimeout,
-  }) => Future<List<Map<String, dynamic>>>.value(_schema.rows);
-
-  @override
-  Future<List<Map<String, dynamic>>> whenComplete(
-    FutureOr<void> Function() action,
-  ) async {
-    await action();
-    return _resolve();
-  }
+  dynamic noSuchMethod(Invocation invocation) => this;
 
   /// القرار: خطأ الجدول إن وُجد، وإلا رفض العمود الغائب، وإلا الصفوف
   /// مقتصرة على الأعمدة المطلوبة (كما يفعل PostgREST).
-  Future<List<Map<String, dynamic>>> _resolve() async {
+  Future<PostgrestList> _resolve() async {
     final PostgrestException? fixed = _schema.always;
     if (fixed != null) throw fixed;
     for (final String column in _selected) {
@@ -282,12 +267,36 @@ class _FakePostgrest implements Future<List<Map<String, dynamic>>> {
   }
 }
 
+/// بادئ جدول وهمي يُنفّذ `SupabaseQueryBuilder` الحقيقية كي ينجح التحويل
+/// الضمني لنوع إرجاع `SupabaseClient.from()`؛ و`select` يسلّم فيلترًا
+/// وهميًا يحمل أعمدة الاستعلام.
+class _FakeTableBuilder implements SupabaseQueryBuilder {
+  _FakeTableBuilder(this._table, this._schema);
+
+  final String _table;
+  final _FakeTable _schema;
+
+  @override
+  PostgrestFilterBuilder<PostgrestList> select([String columns = '*']) {
+    final List<String> selected = columns
+        .split(',')
+        .map((String c) => c.trim())
+        .where((String c) => c.isNotEmpty)
+        .toList(growable: false);
+    return _FakeFilterBuilder(_table, _schema, selected);
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError('${invocation.memberName}');
+}
+
 /// عميل Supabase وهمي — لا يخدم إلا `from()` و`rpc()`؛ وما عداها
 /// `noSuchMethod` كي لا يُبنى عميل شبكي في اختبار وحدة.
 ///
-/// لا يُعرَّف `from` ولا `rpc` كتجاوز صريح: نوع إرجاعهما في الحزمة
-/// (`SupabaseQueryBuilder` و`PostgrestFilterBuilder<T>`) لا يطابق الوهميّ،
-/// فيُمرّان عبر `noSuchMethod` وهو يكفي لاختبار سلوك المستودع.
+/// `from` يعيد `_FakeTableBuilder` الذي يُنفّذ `SupabaseQueryBuilder`
+/// فعلياً، فينجح التحويل الضمني في الموقع؛ و`rpc` يرمي `PGRST202`
+/// مباشرة كي يختبر المستودع رسالة الدالة المفقودة.
 class _FakeSupabaseClient implements SupabaseClient {
   _FakeSupabaseClient(this._tables);
 
@@ -297,7 +306,7 @@ class _FakeSupabaseClient implements SupabaseClient {
   dynamic noSuchMethod(Invocation invocation) {
     if (invocation.memberName == #from) {
       final String table = invocation.positionalArguments.first as String;
-      return _FakePostgrest(
+      return _FakeTableBuilder(
         table,
         _tables[table] ??
             const _FakeTable(<String>{}, <Map<String, dynamic>>[]),

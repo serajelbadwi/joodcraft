@@ -84,7 +84,7 @@ create table if not exists public.members (
   constraint members_phone_format     check (phone ~ '^01[0125][0-9]{8}$'),
   -- رقم قومي: 14 رقماً يبدأ بقرن 2 (‎1900s‎) أو 3 (‎2000s‎)
   constraint members_nid_format       check (national_id ~ '^[23][0-9]{13}$'),
-  constraint members_nid_unique       unique (national_id),
+  constraint members_national_id_key  unique (national_id),
   constraint members_age_minimum      check (age >= 18),
   constraint members_birth_not_future check (birth_date <= current_date)
 );
@@ -110,6 +110,52 @@ create index if not exists members_village_idx
   on public.members (village_id);
 create index if not exists members_village_created_idx
   on public.members (village_id, created_at desc);
+
+-- 2.1 تنظيف التكرار ثم فرض قيد الفريد على الرقم القومي.
+--     المبدأ: **رقم قومي واحد = شخص واحد**؛ أما التليفون فيُسمَح بتكراره
+--     (أب وابن على نفس الرقم مثلاً). القيد موجود في تعريف الجدول أعلاه،
+--     لكن قاعدة بيانات أُنشئت قبل إضافته قد بقيت بلا قيد فدخلها تكرار —
+--     فهذا المقطع يجعلها مطابقة، ويُشغَّل بأمانة على قاعدةٍ نظيفة أو ملوثة.
+--     (الحذف والأسماء كلها معرّفات `if exists`، فالتشغيل المتكرر بلا أثر.)
+--
+-- (أ) تطبيع أي رقم قومي كُتب قديماً بمسافات أو شرطات أو أرقام عربية-هندية —
+--     وفقط إن كان ناتجه رقماً صحيحاً (14 رقماً يبدأ بـ 2 أو 3)، وإلا يبقى
+--     كما هو فلا نُفقد بيانات ولا نكسر قيد الصيغة.
+update public.members
+   set national_id = regexp_replace(national_id, '[^0-9]', '', 'g')
+ where national_id <> regexp_replace(national_id, '[^0-9]', '', 'g')
+   and regexp_replace(national_id, '[^0-9]', '', 'g') ~ '^[23][0-9]{13}$';
+
+-- (ب) حذف الصفوف المكرّرة — يُبقَى **الأقدم** (`created_at`)، وعند التساوي
+--     يُبقَى الأصغر `id`. (ملاحظة: `id` عشوائي uuid، فـ `min(id)` وحده
+--     لا يعني «الأقدم».)
+delete from public.members
+ where id in (
+   select id
+     from (
+       select id,
+              row_number() over (
+                partition by national_id
+                order by created_at, id
+              ) as rn
+         from public.members
+     ) ranked
+    where rn > 1
+ );
+
+-- (ج) قيد الفريد — يُحذف أي اسم سابق للمقيد ثم يُضاف الاسم المعتمد، فلا
+--     يتراكم قيدان متطابقان على العمود نفسه.
+alter table public.members
+  drop constraint if exists members_nid_unique;
+
+alter table public.members
+  drop constraint if exists members_national_id_key;
+
+alter table public.members
+  add constraint members_national_id_key unique (national_id);
+
+comment on constraint members_national_id_key on public.members is
+  'رقم قومي واحد = شخص واحد (التليفون وحده هو المسموح بتكراره)';
 
 
 -- ============================================================================
@@ -1394,6 +1440,9 @@ grant execute on function public.farah_activate(text, text)      to anon, authen
 --   where schemaname = 'public' order by tablename, policyname;
 -- select * from public.villages;
 -- select count(*) from public.members;
+-- يجب أن يعود فارغاً بعد تشغيل المقطع 2.1 (رقم قومي واحد = شخص واحد):
+-- select national_id, count(*) from public.members
+--   group by national_id having count(*) > 1;
 -- select count(*) from public.videos;
 -- select * from public.local_ads;
 -- select * from public.platform_admins;
@@ -1608,5 +1657,56 @@ grant execute on function public.owner_generate_village_code(text, text, text, t
   to authenticated;
 grant execute on function public.owner_create_license(uuid, text, text, int)
   to authenticated;
+
+-- 20.7 قراءة التراخيص في نداء واحد: `owner_list_licenses()` تُرجع كل تراخيص
+--     «صاحب الفرح» باسم قريتها ومدة المدة المتبقية، للمالك وحده.
+--
+-- لماذا دالة لا `select` مباشر؟ لأن القراءة المباشرة تحتاج منحة `select` على
+-- الجدول + سياسة RLS (20.4)، وكلاهما قد يُشغَّل في مشروع ولا يُشغَّل في آخر؛
+-- والدالة `security definer` تفحص `is_platform_admin()` بنفسها فتبقى الحماية
+-- في القاعدة مهما حدث لسياسة RLS.
+--
+-- ملاحظة على العميل: `SupabaseOwnerAdminRepository` يقرأ من الجدول مباشرةً
+-- (أغنى الأعمدة ثم الأصلية) لأنه يعمل على كل صور القاعدة؛ وهذه الدالة بديل
+-- جاهز لمن يفضّل نداءً واحداً — أو للتشخيص من SQL Editor:
+--   select * from public.owner_list_licenses();
+create or replace function public.owner_list_licenses()
+returns table (
+  id               uuid,
+  code             text,
+  village_id       uuid,
+  village_name     text,
+  subscriber_name  text,
+  subscriber_phone text,
+  months           int,
+  is_active        boolean,
+  created_at       timestamptz,
+  expires_at       timestamptz
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select l.id,
+         l.code,
+         l.village_id,
+         v.name,
+         l.subscriber_name,
+         l.subscriber_phone,
+         l.months,
+         l.is_active,
+         l.created_at,
+         l.expires_at
+    from public.farah_licenses l
+    left join public.villages v on v.id = l.village_id
+   where public.is_platform_admin()
+   order by l.created_at desc;
+$$;
+
+comment on function public.owner_list_licenses() is
+  'لوحة المالك: كل تراخيص صاحب الفرح مع أسماء القرى — للمالك وحده (is_platform_admin)';
+
+grant execute on function public.owner_list_licenses() to authenticated;
 
 -- ✅ نهاية إضافات لوحة تحكم المالك.
