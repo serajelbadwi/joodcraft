@@ -3,12 +3,14 @@
 /// الاشتراك: اختيار القرية + اسم صاحب المكتب + رقم التليفون + المدة
 /// (شهر / 3 شهور / سنة). الكود `FRH-<بادئة القرية>-<تسلسل>` يولّده الخادم
 /// في دالة `owner_create_license` ويعيده — تراه الشاشة في تنبيه فوري.
+///
+/// ألوان الحوار من `colorScheme` (سطح الحوار ونصّه وخطؤه) فيتبع الوضع
+/// الليلي كما بقيّة JoodCraft.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../data/owner_admin_repository.dart';
 import '../domain/owner_models.dart';
 
@@ -156,7 +158,9 @@ class _LicenseFormDialogState extends State<LicenseFormDialog> {
                   Text(
                     _error!,
                     key: const ValueKey<String>('license-form-error'),
-                    style: const TextStyle(color: AppColors.danger),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ],
               ],

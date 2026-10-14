@@ -160,7 +160,7 @@ class _OwnerVillagesTabState extends State<OwnerVillagesTab> {
           FilledButton(
             key: const ValueKey<String>('village-delete-confirm'),
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.danger,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('حذف'),
@@ -293,6 +293,7 @@ class _OwnerVillagesTabState extends State<OwnerVillagesTab> {
       if (village.center != null && village.center!.isNotEmpty)
         village.center!,
     ].join(' • ');
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Padding(
@@ -317,9 +318,9 @@ class _OwnerVillagesTabState extends State<OwnerVillagesTab> {
                     const SizedBox(height: 2),
                     Text(
                       village.nameEn!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.inkMuted,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -327,18 +328,18 @@ class _OwnerVillagesTabState extends State<OwnerVillagesTab> {
                   Text(
                     village.code,
                     key: ValueKey<String>('village-code-${village.id}'),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.goldDeep,
+                      color: scheme.goldDeep,
                       fontFamily: 'monospace',
                     ),
                   ),
                   Text(
                     location.isEmpty ? '—' : location,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.inkMuted,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -362,9 +363,9 @@ class _OwnerVillagesTabState extends State<OwnerVillagesTab> {
                 IconButton(
                   key: ValueKey<String>('village-delete-${village.id}'),
                   tooltip: 'حذف',
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_outline,
-                    color: AppColors.danger,
+                    color: scheme.danger,
                   ),
                   onPressed: () => _deleteVillage(village),
                 ),

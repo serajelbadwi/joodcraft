@@ -17,18 +17,48 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../domain/data/domain_repository.dart';
 import '../data/owner_admin_repository.dart';
 import '../data/supabase_owner_admin_repository.dart';
 import '../domain/owner_models.dart';
 import 'owner_admin_screen.dart';
 
+/// حالة عرض مشتركة: هيكل ثيم كامل بخلفية `Theme.of(context)` وشريط علوي
+/// من `colorScheme` — فالوضع الليلي يغطّي بوابة اللوحة كما بقيّة التطبيق.
+///
+/// `colorScheme.brandSurface` هو نفس الكحلي النهاري في الوضع الفاتح، وسليت
+/// `#3E3E3E` الموحّد في الوضع الداكن (راجع `AppSchemeColors`).
+class _ThemedScaffold extends StatelessWidget {
+  const _ThemedScaffold({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme scheme = theme.colorScheme;
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: scheme.surface,
+        foregroundColor: scheme.onSurface,
+      ),
+      body: child,
+    );
+  }
+}
+
 class OwnerAdminGateScreen extends StatefulWidget {
-  const OwnerAdminGateScreen({super.key, this.repository});
+  const OwnerAdminGateScreen({super.key, this.repository, this.domainRepository});
 
   /// المستودع — `null` في التطبيق (يبنى فوق `SupabaseService`)، وهميّ في
   /// الاختبارات.
   final OwnerAdminRepository? repository;
+
+  /// مستودع النطاقات — يتيح للاختبارات تمرير نسخة وهمية.
+  final DomainRepository? domainRepository;
 
   @override
   State<OwnerAdminGateScreen> createState() => _OwnerAdminGateScreenState();
@@ -118,19 +148,18 @@ class _OwnerAdminGateScreenState extends State<OwnerAdminGateScreen> {
       _GateStage.denied => _DeniedView(
         onBack: () => context.go(AppRoutes.dashboard),
       ),
-      _GateStage.panel => OwnerAdminScreen(repository: _repository),
+      _GateStage.panel => OwnerAdminScreen(
+        repository: _repository,
+        domainRepository: widget.domainRepository,
+      ),
     };
   }
 
   Widget _buildLogin(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('إدارة المالك'),
-        backgroundColor: AppColors.navy,
-        foregroundColor: AppColors.onNavy,
-      ),
-      body: Center(
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return _ThemedScaffold(
+      title: 'إدارة المالك',
+      child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Card(
@@ -151,12 +180,12 @@ class _OwnerAdminGateScreenState extends State<OwnerAdminGateScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    Text(
                       'هذه اللوحة مخصّصة لصاحب المشروع فقط — سجّل دخول '
                       'حساب المنصّة على Supabase.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.inkMuted,
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -195,7 +224,7 @@ class _OwnerAdminGateScreenState extends State<OwnerAdminGateScreen> {
                       Text(
                         _error!,
                         key: const ValueKey<String>('owner-login-error'),
-                        style: const TextStyle(color: AppColors.danger),
+                        style: TextStyle(color: scheme.error),
                       ),
                     ],
                     const SizedBox(height: 16),
@@ -229,23 +258,19 @@ class _UnavailableView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('إدارة المالك'),
-        backgroundColor: AppColors.navy,
-        foregroundColor: AppColors.onNavy,
-      ),
-      body: Center(
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return _ThemedScaffold(
+      title: 'إدارة المالك',
+      child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Icon(
+              Icon(
                 Icons.cloud_off_rounded,
                 size: 44,
-                color: AppColors.inkMuted,
+                color: scheme.onSurfaceVariant,
               ),
               const SizedBox(height: 12),
               const Text(
@@ -253,11 +278,14 @@ class _UnavailableView extends StatelessWidget {
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'أضِف مفاتيح Supabase عبر --dart-define أو env.json ثم أعد '
                 'التشغيل — اللوحة تعمل على قاعدة البيانات المباشرة.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: AppColors.inkMuted),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: scheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 16),
               FilledButton(
@@ -280,20 +308,16 @@ class _DeniedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('إدارة المالك'),
-        backgroundColor: AppColors.navy,
-        foregroundColor: AppColors.onNavy,
-      ),
-      body: Center(
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    return _ThemedScaffold(
+      title: 'إدارة المالك',
+      child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Icon(Icons.lock_outline, size: 44, color: AppColors.danger),
+              Icon(Icons.lock_outline, size: 44, color: scheme.error),
               const SizedBox(height: 12),
               const Text(
                 'غير مصرَّح',
@@ -301,11 +325,14 @@ class _DeniedView extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'هذه اللوحة مخصّصة لصاحب المنصّة فقط — حسابك الحالي غير '
                 'مُسجَّل في `platform_admins`.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: AppColors.inkMuted),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: scheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 16),
               FilledButton(

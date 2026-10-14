@@ -108,10 +108,11 @@ class _GenerateCodeDialogState extends State<GenerateCodeDialog> {
                   key: const ValueKey<String>('generate-result'),
                   textDirection: TextDirection.ltr,
                   textAlign: TextAlign.left,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.goldDeep,
+                    // ذهبي يُضيء ليلاً (`AppSchemeColors.goldDeep`).
+                    color: Theme.of(context).colorScheme.goldDeep,
                     fontFamily: 'monospace',
                   ),
                 ),

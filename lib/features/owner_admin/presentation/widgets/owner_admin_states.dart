@@ -1,9 +1,10 @@
 /// حالات العرض المشتركة للوحة المالك: خطأ مع إعادة المحاولة، وقائمة فارغة.
+///
+/// كل الألوان من `Theme.of(context).colorScheme` — لا ثوابت `AppColors`
+/// النهارية — فيتبع التبويبان الوضع الليلي كما بقيّة JoodCraft.
 library;
 
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_colors.dart';
 
 /// رسالة خطأ مع زر إعادة المحاولة — تُستدعى حين يفشل جلب البيانات.
 class OwnerAdminErrorView extends StatelessWidget {
@@ -18,13 +19,14 @@ class OwnerAdminErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Icon(Icons.error_outline, size: 40, color: AppColors.danger),
+            Icon(Icons.error_outline, size: 40, color: scheme.error),
             const SizedBox(height: 12),
             Text(
               message,
@@ -52,13 +54,14 @@ class OwnerAdminEmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Text(
           message,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 15, color: AppColors.inkMuted),
+          style: TextStyle(fontSize: 15, color: scheme.onSurfaceVariant),
         ),
       ),
     );

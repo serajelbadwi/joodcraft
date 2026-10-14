@@ -223,7 +223,9 @@ class _VillageFormDialogState extends State<VillageFormDialog> {
                   Text(
                     _error!,
                     key: const ValueKey<String>('village-form-error'),
-                    style: const TextStyle(color: AppColors.danger),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ],
               ],
@@ -253,12 +255,14 @@ class _VillageFormDialogState extends State<VillageFormDialog> {
 
   /// قسم توليد الكود في وضع الإضافة: مدخلان اختياريان + معاينة حيّة.
   Widget _buildCodeSection() {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.goldSoft,
+        // حاوية ذهبية دافئة: `darkGoldSoft` ليلاً و`goldSoft` نهاراً.
+        color: scheme.secondaryContainer,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.gold),
+        border: Border.all(color: scheme.secondary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -288,10 +292,10 @@ class _VillageFormDialogState extends State<VillageFormDialog> {
             key: const ValueKey<String>('village-code-preview'),
             textDirection: TextDirection.ltr,
             textAlign: TextAlign.left,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: AppColors.goldDeep,
+              color: scheme.goldDeep,
               fontFamily: 'monospace',
             ),
           ),

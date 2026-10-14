@@ -3,6 +3,9 @@
 /// قائمة تراخيص «صاحب الفرح» كما أصدرها مالك المنصّة: الكود والقرية واسم
 /// المشترك وتليفونه والتاريخ والمدة وحالة التفعيل — مع زر إصدار ترخيص
 /// جديد (قرية + اسم صاحب المكتب + تليفون + مدة شهر/3 شهور/سنة).
+///
+/// كل ألوان البطاقة من `Theme.of(context).colorScheme` — بلا أي ثابت نهاري
+/// — فيتبع التبويب الوضع الليلي كما بقيّة JoodCraft.
 library;
 
 import 'package:flutter/material.dart';
@@ -129,6 +132,7 @@ class _OwnerLicensesTabState extends State<OwnerLicensesTab> {
   Widget _buildRow(OwnerLicense license) {
     final String date = _formatDate(license.createdAt);
     final bool active = license.isActive;
+    final ColorScheme scheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Padding(
@@ -138,7 +142,7 @@ class _OwnerLicensesTabState extends State<OwnerLicensesTab> {
           children: <Widget>[
             Icon(
               active ? Icons.verified_rounded : Icons.confirmation_number_outlined,
-              color: active ? AppColors.success : AppColors.inkMuted,
+              color: active ? scheme.success : scheme.onSurfaceVariant,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -181,9 +185,9 @@ class _OwnerLicensesTabState extends State<OwnerLicensesTab> {
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           license.subscriberPhone!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.inkMuted,
+                            color: scheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -191,9 +195,9 @@ class _OwnerLicensesTabState extends State<OwnerLicensesTab> {
                   const SizedBox(height: 2),
                   Text(
                     '$date · المدة: ${license.durationLabel}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.inkMuted,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -203,7 +207,11 @@ class _OwnerLicensesTabState extends State<OwnerLicensesTab> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: active ? AppColors.successSoft : AppColors.navyWash,
+                // حاوية الحالة: خضراء للنجاح، ورائية للتعطيل — كلتاهما
+                // تتبدّل مع السطوع فتظل النص مقروءاً فوقها.
+                color: active
+                    ? scheme.secondaryContainer
+                    : scheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
@@ -211,7 +219,7 @@ class _OwnerLicensesTabState extends State<OwnerLicensesTab> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: active ? AppColors.success : AppColors.inkMuted,
+                  color: active ? scheme.success : scheme.onSurfaceVariant,
                 ),
               ),
             ),
